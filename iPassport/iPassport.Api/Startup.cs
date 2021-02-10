@@ -26,6 +26,8 @@ namespace iPassport.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iPassport.Api", Version = "v1" });
             });
+            ///Helth Checks
+            services.AddHealthChecks();
 
             #region Dependency Injection
             AddDependencyInjection(services);
@@ -54,10 +56,12 @@ namespace iPassport.Api
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
+                       
+           app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/api/health");
+
             });
         }
 
