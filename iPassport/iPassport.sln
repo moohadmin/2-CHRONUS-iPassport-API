@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iPassport.Api", "iPassport.Api\iPassport.Api.csproj", "{92EE1252-D6AE-42B9-9C38-BC6493CBFBC5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iPassport.Application", "iPassport.Application\iPassport.Application.csproj", "{5A339048-FA1A-4440-B499-B1DB2AD1535F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iPassport.Domain", "iPassport.Domain\iPassport.Domain.csproj", "{EC914DE3-3ACC-430A-B4F2-B6EA02308F4F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iPassport.Infra", "iPassport.Infra\iPassport.Infra.csproj", "{B0C41AEF-B660-47E9-91AD-42726505A7F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iPassport.Test", "iPassport.Test\iPassport.Test.csproj", "{AA5DF0F8-0ED4-46B3-8B9E-624731BEC48C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92EE1252-D6AE-42B9-9C38-BC6493CBFBC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92EE1252-D6AE-42B9-9C38-BC6493CBFBC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92EE1252-D6AE-42B9-9C38-BC6493CBFBC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92EE1252-D6AE-42B9-9C38-BC6493CBFBC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A339048-FA1A-4440-B499-B1DB2AD1535F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A339048-FA1A-4440-B499-B1DB2AD1535F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A339048-FA1A-4440-B499-B1DB2AD1535F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A339048-FA1A-4440-B499-B1DB2AD1535F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC914DE3-3ACC-430A-B4F2-B6EA02308F4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC914DE3-3ACC-430A-B4F2-B6EA02308F4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC914DE3-3ACC-430A-B4F2-B6EA02308F4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC914DE3-3ACC-430A-B4F2-B6EA02308F4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0C41AEF-B660-47E9-91AD-42726505A7F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0C41AEF-B660-47E9-91AD-42726505A7F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0C41AEF-B660-47E9-91AD-42726505A7F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0C41AEF-B660-47E9-91AD-42726505A7F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA5DF0F8-0ED4-46B3-8B9E-624731BEC48C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA5DF0F8-0ED4-46B3-8B9E-624731BEC48C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA5DF0F8-0ED4-46B3-8B9E-624731BEC48C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA5DF0F8-0ED4-46B3-8B9E-624731BEC48C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {649118EE-FC6D-41FB-A475-8CAE3DAFEEE4}
+	EndGlobalSection
+EndGlobal
