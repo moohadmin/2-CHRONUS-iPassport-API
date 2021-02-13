@@ -1,7 +1,6 @@
 ﻿using iPassport.Domain.Entities;
 using iPassport.Infra.Mappings;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace iPassport.Infra.Contexts
 {
@@ -25,11 +24,5 @@ namespace iPassport.Infra.Contexts
 
             base.OnModelCreating(modelBuilder);
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder
-                .EnableSensitiveDataLogging()
-                .EnableDetailedErrors()
-                .LogTo(Console.WriteLine);
     }
 }
