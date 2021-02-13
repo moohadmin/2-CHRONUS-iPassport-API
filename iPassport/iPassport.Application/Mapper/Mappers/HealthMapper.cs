@@ -4,11 +4,15 @@ using iPassport.Domain.Entities;
 
 namespace iPassport.Application.Mapper.Mappers
 {
-    public class HealthMapper : Profile
+    public static class HealthMapper
     {
-        public HealthMapper()
+        /// <summary>
+        /// mapping rules InstallmentTypeMapper
+        /// </summary>
+        /// <param name="profile"></param>
+        public static void Map(Profile profile)
         {
-            CreateMap<Health, HealthViewModel>()
+            profile.CreateMap<Health, HealthViewModel>()
                 .ForMember(des => des.HealthId, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.Status, act => act.MapFrom(src => src.Status))
                 .ForMember(des => des.CreateDate, act => act.MapFrom(src => src.CreateDate))
