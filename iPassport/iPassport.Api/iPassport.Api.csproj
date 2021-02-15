@@ -31,4 +31,8 @@
     <ProjectReference Include="..\iPassport.Infra\iPassport.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Request\" />
+  </ItemGroup>
+
 </Project>

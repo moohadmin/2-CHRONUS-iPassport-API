@@ -6,8 +6,8 @@ namespace iPassport.Domain.Entities
     {
         protected Entity()
         {
-            CreateDate = DateTime.UtcNow;
-            UpdateDate = DateTime.UtcNow;
+            CreateDate = DateTime.Now;
+            UpdateDate = DateTime.Now;
         }
 
         public Guid Id { get; protected set; }

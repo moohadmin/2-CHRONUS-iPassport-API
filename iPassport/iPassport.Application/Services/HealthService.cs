@@ -23,7 +23,7 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> SetHealthyAsync()
         {
             var health = new Health();
-            health.Heahty();
+            health.Healthy();
 
             await _repository.InsertAsync(health);
 
