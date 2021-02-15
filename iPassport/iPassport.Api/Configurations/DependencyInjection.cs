@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using iPassport.Application.Interfaces;
+using iPassport.Application.Services;
+using iPassport.Domain.Entities;
+using iPassport.Domain.Repositories;
+using iPassport.Infra.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iPassport.Api.Configurations
 {
@@ -6,12 +11,18 @@ namespace iPassport.Api.Configurations
     public static class DependencyInjection
     {
         /// Dependency Injection Register
-        public static void RegisterDependencyInjection(IServiceCollection services) => ConfigureServiceRepository(services);
-
-        /// Dependency Injection Configure
-        public static void ConfigureServiceRepository(IServiceCollection services)
+        public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
         {
-            //Doing
+            #region DI Services
+            services.AddScoped<IHealthService, HealthService>();
+            #endregion
+
+            #region DI Repositories
+            services.AddScoped<IRepository<Entity>, Repository<Entity>>();
+            services.AddScoped<IHealthRepository, HealthRepository>();
+            #endregion
+
+            return services;
         }
     }
 }
