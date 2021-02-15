@@ -10,6 +10,6 @@
 
         public bool Status { get; private set; }
 
-        public void Heahty() => Status = true;
+        public void Healthy() => Status = true;
     }
 }
