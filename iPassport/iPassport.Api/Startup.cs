@@ -3,14 +3,18 @@ using iPassport.Api.Configurations;
 using iPassport.Api.Configurations.Filters;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Resources;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace iPassport.Api
 {
@@ -43,6 +47,55 @@ namespace iPassport.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iPassport.Api", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description =
+                    @"
+                        JWT Authorization utilizando esquema de Bearer no header da chamada.
+                        Informe 'Bearer' mais a sua chave de autorização no input abaixo.
+                        Exemplo: 'Bearer 12345abcdef'
+                    ",
+                    Name = "Authorization",
+                    Scheme = "Bearer",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        }, new List<string>()
+                    }
+                });
+            });
+
+            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Secret").Value);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
             });
 
             ///Add DB Context
@@ -80,6 +133,7 @@ namespace iPassport.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
                        
             app.UseEndpoints(endpoints =>
