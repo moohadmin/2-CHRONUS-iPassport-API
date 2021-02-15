@@ -8,4 +8,8 @@
     <Folder Include="Repositories\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Refit" Version="6.0.15" />
+  </ItemGroup>
+
 </Project>
