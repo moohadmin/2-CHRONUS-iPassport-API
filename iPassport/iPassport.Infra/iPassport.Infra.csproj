@@ -5,11 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\" />
+    <PackageReference Include="Refit" Version="6.0.15" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Refit" Version="6.0.15" />
+    <ProjectReference Include="..\iPassport.Application\iPassport.Application.csproj" />
+    <ProjectReference Include="..\iPassport.Domain\iPassport.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

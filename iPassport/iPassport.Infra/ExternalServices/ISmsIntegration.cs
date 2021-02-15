@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace iPassport.Application.Interfaces
+namespace iPassport.Infra.ExternalServices
 {
     public interface ISmsIntegration
     {
