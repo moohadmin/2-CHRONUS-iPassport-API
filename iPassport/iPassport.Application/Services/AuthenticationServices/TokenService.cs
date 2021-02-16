@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Application.Interfaces;
+using iPassport.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -8,12 +9,16 @@ using System.Text;
 
 namespace iPassport.Application.Services.AuthenticationServices
 {
-    public static class TokenService
+    public class TokenService : ITokenService
     {
-        public static string Generate(IConfiguration configuration, User user)
+        private readonly IConfiguration _configuration;
+
+        public TokenService(IConfiguration configuration) => _configuration = configuration;
+
+        public string Generate(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(configuration.GetSection("Secret").Value);
+            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

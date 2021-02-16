@@ -53,7 +53,7 @@ namespace iPassport.Api
                     Description =
                     @"
                         JWT Authorization utilizando esquema de Bearer no header da chamada.
-                        Informe 'Bearer' mais a sua chave de autorização no input abaixo.
+                        Informe 'Bearer' mais a sua chave de autorizacÃ£o no input abaixo.
                         Exemplo: 'Bearer 12345abcdef'
                     ",
                     Name = "Authorization",
@@ -79,7 +79,8 @@ namespace iPassport.Api
                 });
             });
 
-            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Secret").Value);
+            var secret = SecretConfiguration.GetSecret(Configuration);
+            var key = Encoding.ASCII.GetBytes(secret);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
