@@ -13,6 +13,8 @@ namespace iPassport.Infra.Contexts
         /// Declaração das Entidades para o EntityFramework
         /// </summary>
         public DbSet<Health> Healths { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserDetails> UserDetails { get; set; }
 
 
         /// <summary>
