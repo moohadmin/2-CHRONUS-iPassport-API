@@ -2,7 +2,7 @@ stages:
   - build
 
 variables:
-  PROJECT_BASE: './iPassport/'
+  PROJECT_BASE: './iPassport/iPassport.sln'
 
 include:  
   ## build ##
