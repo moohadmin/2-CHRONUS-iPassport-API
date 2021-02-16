@@ -1,9 +1,6 @@
 stages:
   - build
 
-variables:
-  PROJECT_BASE: './iPassport/'
-
 include:  
   ## build ##
   - project: devops/ship 
