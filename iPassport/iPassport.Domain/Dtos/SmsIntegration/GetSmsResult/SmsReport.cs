@@ -1,12 +1,7 @@
-﻿using iPassport.Domain.Utils;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace iPassport.Domain.Dtos
+namespace iPassport.Domain.Dtos.SmsIntegration.GetSmsResult
 {
     public class SmsReport
     {
@@ -44,7 +39,7 @@ namespace iPassport.Domain.Dtos
         /// Tells when the SMS was sent. Has the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
         /// </summary>
         [JsonProperty("sentAt")]
-        public FormattedDate SentAt { get; set; }
+        public DateTime SentAt { get; set; } //
         /// <summary>
         /// Message ID.
         /// </summary>
@@ -54,7 +49,7 @@ namespace iPassport.Domain.Dtos
         /// Tells when the SMS was finished processing by Infobip (i.e., delivered to the destination, delivered to the destination network, etc.). Has the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ.
         /// </summary>
         [JsonProperty("doneAt")]
-        public FormattedDate DoneAt { get; set; }
+        public DateTime DoneAt { get; set; }
         /// <summary>
         /// Indicates whether the message is successfully sent, not sent, delivered, not delivered, waiting for delivery or any other possible status.
         /// </summary>

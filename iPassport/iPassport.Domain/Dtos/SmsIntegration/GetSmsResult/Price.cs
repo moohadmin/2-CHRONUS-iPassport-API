@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace iPassport.Domain.Dtos
+namespace iPassport.Domain.Dtos.SmsIntegration.GetSmsResult
 {
     /// <summary>
     /// Sent SMS price.
