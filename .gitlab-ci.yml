@@ -1,0 +1,13 @@
+stages:
+  - build
+
+variables:
+  PROJECT_BASE: './iPassport/'
+
+include:  
+  ## build ##
+  - project: devops/ship 
+    file: /templates/build/.job-build-dotnet-core.yml
+  ## exceptions ##
+  - project: devops/ship
+    file: /templates/exceptions/.retry-on-system-failures.yml
