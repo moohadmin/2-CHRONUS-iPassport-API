@@ -4,7 +4,7 @@ stages:
 include:  
   ## build ##
   - project: devops/ship 
-    file: /templates/build/.job-build-dotnet-core.yml
+    file: /templates/build/.job-build-dotnet-core-sdk5.yml
   ## exceptions ##
   - project: devops/ship
-    file: /templates/exceptions/.retry-on-system-failures.yml
+    file: /templates/exceptions/.retry-on-system-failures.yml    
