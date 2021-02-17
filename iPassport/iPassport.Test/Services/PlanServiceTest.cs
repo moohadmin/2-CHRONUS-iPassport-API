@@ -31,24 +31,6 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        public void GetAll()
-        {
-            var seed = PlanSeed.GetPlans();
-
-            // Arrange
-            _mockRepository.Setup(r => r.FindAll().Result).Returns(seed);
-
-            // Act
-            var result = _service.GetAll();
-
-            // Assert
-            _mockRepository.Verify(a => a.FindAll(), Times.Once);
-            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
-            Assert.IsNotNull(result.Result.Data);
-            Assert.IsInstanceOfType(result.Result.Data, typeof(IList<PlanViewModel>));
-        }
-
-        [TestMethod]
         public void Add()
         {
             var mockRequest = Mock.Of<PlanCreateDto>();

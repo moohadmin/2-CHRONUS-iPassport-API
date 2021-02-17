@@ -21,15 +21,6 @@ namespace iPassport.Application.Services
             _repository = repository;
         }
 
-        public async Task<ResponseApi> GetAll()
-        {
-            var res = await _repository.FindAll();
-
-            var result = _mapper.Map<IList<PlanViewModel>>(res);
-
-            return new ResponseApi(true, "Lista de Planos", result);
-        }
-
         public async Task<ResponseApi> Add(PlanCreateDto dto)
         {
             var plan = new Plan();

@@ -28,21 +28,6 @@ namespace iPassport.Test.Controllers
             _controller = new PlanController(_mapper, _mockService.Object) { };
         }
 
-        [TestMethod]
-        public void GetAll_MustReturnOk()
-        {
-            var seed = PlanSeed.GetPlans();
-            
-            // Arrange
-            _mockService.Setup(r => r.GetAll()).Returns(Task.FromResult(new ResponseApi(true, "Test Success!", seed)));
-
-            // Act
-            var result = _controller.GetAll();
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-        }
 
         [TestMethod]
         public void Post_MustReturnOk()
