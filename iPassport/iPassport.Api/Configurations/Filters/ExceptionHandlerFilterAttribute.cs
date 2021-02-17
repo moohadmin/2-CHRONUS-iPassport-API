@@ -82,7 +82,10 @@ namespace iPassport.Api.Configurations.Filters
         private void LogError(Exception exception)
         {
             logger.Error(exception, exception.Message);
-            logger.Error(exception, exception.InnerException?.ToString());
+            if (exception.InnerException != null)
+            {
+                logger.Error(exception, exception.InnerException.ToString());
+            }            
             logger.Error(exception, exception.StackTrace);
         }
     }
