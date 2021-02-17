@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Interfaces;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Entities.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,7 +16,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public TokenService(IConfiguration configuration) => _configuration = configuration;
 
-        public string GenerateBasic(User user)
+        public string GenerateBasic(Users user, UserDetails userDetails)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
@@ -25,8 +26,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Sid, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.UserDetails.FullName),
-                    new Claim(ClaimTypes.Role, user.Role)
+                    new Claim(ClaimTypes.Name, userDetails.FullName)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
