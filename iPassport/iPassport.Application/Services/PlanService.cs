@@ -2,6 +2,8 @@
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,7 +27,17 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<IList<PlanViewModel>>(res);
 
-            return new ResponseApi(true, "List of Plans", result);
+            return new ResponseApi(true, "Lista de Planos", result);
+        }
+
+        public async Task<ResponseApi> Add(PlanCreateDto dto)
+        {
+            var plan = new Plan();
+            plan = plan.Create(dto);
+
+            await _repository.InsertAsync(plan);
+
+            return new ResponseApi(true, "Plano criado com sucesso!", plan);
         }
     }
 }
