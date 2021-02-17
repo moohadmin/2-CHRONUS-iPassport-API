@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 
-namespace iPassport.Application.Mapper
+namespace iPassport.Api.AutoMapper
 {
     public class AutoMapperConfig
     {
-        public AutoMapperConfig() { }
+        protected AutoMapperConfig() { }
 
         public static MapperConfiguration RegisterMapper()
         {

@@ -23,6 +23,8 @@ namespace iPassport.Infra.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new HealthMap());
+            modelBuilder.ApplyConfiguration(new UserMap());
+            modelBuilder.ApplyConfiguration(new UserDetailsMap());
 
             base.OnModelCreating(modelBuilder);
         }

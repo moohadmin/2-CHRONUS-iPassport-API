@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
-using iPassport.Application.Mapper.Mappers;
+using iPassport.Api.AutoMapper.Mappers;
 
-namespace iPassport.Application.Mapper
+namespace iPassport.Api.AutoMapper
 {
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
         {
             HealthMapper.Map(this);
+            UserMapper.Map(this);
         }
     }
 }

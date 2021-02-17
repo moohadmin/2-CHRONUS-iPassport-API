@@ -31,8 +31,6 @@ namespace iPassport.Test.Controllers
             // Act
             var result = _controller.GetAll();
 
-            OkObjectResult okResult = result.Result as OkObjectResult;
-
             // Assert
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
