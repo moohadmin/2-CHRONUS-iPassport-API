@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using iPassport.Application.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace iPassport.Api.AutoMapper

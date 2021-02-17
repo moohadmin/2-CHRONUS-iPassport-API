@@ -2,14 +2,10 @@
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Entities;
 
-namespace iPassport.Application.Mapper.Mappers
+namespace iPassport.Api.AutoMapper.Mappers
 {
     public static class HealthMapper
     {
-        /// <summary>
-        /// mapping rules InstallmentTypeMapper
-        /// </summary>
-        /// <param name="profile"></param>
         public static void Map(Profile profile)
         {
             profile.CreateMap<Health, HealthViewModel>()

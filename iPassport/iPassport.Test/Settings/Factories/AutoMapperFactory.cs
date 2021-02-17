@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using iPassport.Application.Mapper;
+using iPassport.Api.AutoMapper;
 
 namespace iPassport.Test.Settings.Factories
 {

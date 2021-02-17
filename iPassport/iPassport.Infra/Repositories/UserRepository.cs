@@ -11,8 +11,7 @@ namespace iPassport.Infra.Repositories
     {
         public UserRepository(iPassportContext context) : base(context) { }
 
-        public async Task<User> BasicLogin(string username, string password) => await _DbSet.Where(x => x.Username == username && x.Password == password).FirstOrDefaultAsync();
-
-        public async Task<User> LoginWithEmail(string email, string password) => await _DbSet.Where(x => x.Email == email && x.Password == password).FirstOrDefaultAsync();
+        public async Task<User> FindWithDoc(string doc) => 
+            await _DbSet.Where(x => x.UserDetails.CPF == doc || x.UserDetails.CNS == doc).FirstOrDefaultAsync();
     }
 }

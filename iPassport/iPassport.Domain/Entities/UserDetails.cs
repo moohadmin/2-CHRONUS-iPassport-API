@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Dtos;
+using System;
 
 namespace iPassport.Domain.Entities
 {
@@ -6,13 +7,14 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, string fullName, int cpf, int cns, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo)
+        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passport, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo)
         {
-            Id = Guid.NewGuid();
             UserId = userId;
             FullName = fullName;
             CPF = cpf;
+            RG = rg;
             CNS = cns;
+            Passport = passport;
             Birthday = birthday;
             Gender = gender;
             Breed = breed;
@@ -24,8 +26,10 @@ namespace iPassport.Domain.Entities
 
         public Guid UserId { get; private set; }
         public string FullName { get; private set; }
-        public int CPF { get; private set; }
-        public int CNS { get; private set; }
+        public string CPF { get; private set; }
+        public string RG { get; private set; }
+        public string CNS { get; private set; }
+        public string Passport { get; private set; }
         public DateTime Birthday { get; private set; }
         public string Gender { get; private set; }
         public string Breed { get; private set; }
@@ -35,5 +39,7 @@ namespace iPassport.Domain.Entities
         public string Photo { get; private set; }
 
         public virtual User User { get; set; }
+
+        public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
     }
 }

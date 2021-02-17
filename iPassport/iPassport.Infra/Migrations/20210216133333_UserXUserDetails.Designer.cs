@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210216133333_UserXUserDetails")]
+    partial class UserXUserDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,7 +106,7 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(128)");
@@ -115,17 +117,11 @@ namespace iPassport.Infra.Migrations
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("Passport")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Photo")
                         .HasColumnType("nvarchar");
 
-                    b.Property<string>("RG")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
