@@ -9,6 +9,7 @@ namespace iPassport.Domain.Entities
 
         public Plan(string type, string description, decimal? price = null) : base()
         {
+            Id = Guid.NewGuid();
             Type = type;
             Description = description;
             
