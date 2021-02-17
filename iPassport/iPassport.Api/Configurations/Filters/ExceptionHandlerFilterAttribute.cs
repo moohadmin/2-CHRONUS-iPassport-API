@@ -72,7 +72,7 @@ namespace iPassport.Api.Configurations.Filters
             context.Result = new JsonResult(new ServerErrorResponse
             (
                 context.Exception.Message,
-                null,
+                context.Exception.InnerException?.Message,
                 context.Exception.StackTrace
             ));
 
@@ -82,6 +82,10 @@ namespace iPassport.Api.Configurations.Filters
         private void LogError(Exception exception)
         {
             logger.Error(exception, exception.Message);
+            if (exception.InnerException != null)
+            {
+                logger.Error(exception, exception.InnerException.ToString());
+            }            
             logger.Error(exception, exception.StackTrace);
         }
     }
