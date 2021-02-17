@@ -15,6 +15,8 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using FluentValidation.AspNetCore;
+using System.Reflection;
 
 namespace iPassport.Api
 {
@@ -27,22 +29,29 @@ namespace iPassport.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+                
             services.AddControllers(options =>
-                options.Filters.Add(typeof(ExceptionHandlerFilterAttribute))).ConfigureApiBehaviorOptions(options => 
+            {
+                options.Filters.Add(typeof(ExceptionHandlerFilterAttribute));
+                options.Filters.Add(typeof(ValidateModelStateFilterAttribute));
+            })
+            .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssembly(Assembly.Load("iPassport.Api")))
+            .ConfigureApiBehaviorOptions(options => 
+            {
+                options.InvalidModelStateResponseFactory = c =>
                 {
-                    options.InvalidModelStateResponseFactory = c =>
-                    {
-                        var resource = c.HttpContext.RequestServices.GetRequiredService<Resource>();
-                        var errorMessage = resource.GetMessage("InvalidJson");
+                    var resource = c.HttpContext.RequestServices.GetRequiredService<Resource>();
+                    var errorMessage = resource.GetMessage("InvalidJson");
 
-                        return new BadRequestObjectResult(new ServerErrorResponse
-                                    (
-                                        errorMessage,
-                                        null,
-                                        null
-                                    ));
-                    };
-                });
+                    return new BadRequestObjectResult(new ServerErrorResponse
+                                (
+                                    errorMessage,
+                                    null,
+                                    null
+                                ));
+                };
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             services.AddSwaggerGen(c =>
             {
