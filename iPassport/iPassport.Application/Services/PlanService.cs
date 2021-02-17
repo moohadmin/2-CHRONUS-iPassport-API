@@ -30,5 +30,14 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, "Plano criado com sucesso!", plan);
         }
+
+        public async Task<ResponseApi> GetAll()
+        {
+            var res = await _repository.FindAll();
+
+            var result = _mapper.Map<IList<PlanViewModel>>(res);
+
+            return new ResponseApi(true, "Lista de Planos", result);
+        }
     }
 }
