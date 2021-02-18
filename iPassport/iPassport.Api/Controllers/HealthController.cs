@@ -1,6 +1,7 @@
 ﻿using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace iPassport.Api.Controllers
     /// <summary>
     ///  HealthController
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class HealthController : ControllerBase
