@@ -1,9 +1,10 @@
 using iPassport.Domain.Entities;
+using iPassport.Domain.Entities.Authentication;
 
 namespace iPassport.Application.Interfaces
 {
     public interface ITokenService
     {
-         string GenerateBasic(User user);
+         string GenerateBasic(Users user, UserDetails userDetails);
     }
 }

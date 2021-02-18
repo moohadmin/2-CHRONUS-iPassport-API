@@ -5,6 +5,6 @@ namespace iPassport.Application.Interfaces
 {
     public interface IAccountService
     {
-        Task<ResponseApi> BasicLogin(string username, string password, string document);
+        Task<ResponseApi> BasicLogin(string username, string password);
     }
 }

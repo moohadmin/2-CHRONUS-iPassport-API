@@ -24,6 +24,7 @@ namespace iPassport.Domain.Entities
             Photo = photo;
         }
 
+
         public Guid UserId { get; private set; }
         public string FullName { get; private set; }
         public string CPF { get; private set; }
@@ -37,8 +38,6 @@ namespace iPassport.Domain.Entities
         public string Occupation { get; private set; }
         public string Address { get; private set; }
         public string Photo { get; private set; }
-
-        public virtual User User { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
     }

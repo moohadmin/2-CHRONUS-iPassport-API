@@ -1,41 +1,46 @@
-using System.Threading.Tasks;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
-using iPassport.Application.Models.ViewModels;
-using iPassport.Domain.Dtos;
-using iPassport.Domain.Entities;
+using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Repositories;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace iPassport.Application.Services.AuthenticationServices
 {
     public class AccountService : IAccountService
     {
-        private readonly IAccountRepository _accountRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly ITokenService _tokenService;
+        private readonly UserManager<Users> _userManager;
 
-        public AccountService(IAccountRepository accountRepository, IUserRepository userRepository, ITokenService tokenService)
+        public AccountService(IUserDetailsRepository userDetailsRepository, ITokenService tokenService, UserManager<Users> userManager)
         {
-            _accountRepository = accountRepository;
-            _userRepository = userRepository;
+            _userDetailsRepository = userDetailsRepository;
             _tokenService = tokenService;
+            _userManager = userManager;
         }
 
-        public async Task<ResponseApi> BasicLogin(string username, string password, string document)
+        public async Task<ResponseApi> BasicLogin(string username, string password)
         {
-            var docValid = await _userRepository.FindWithDoc(document);
-            if (docValid == null)
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
                 return new ResponseApi(false, "Usuário não cadastrado!", null);
 
-            var user = await _accountRepository.BasicLogin(username, password);
-            if(user == null)
-                return new ResponseApi(false, "Usuário ou Senha inválidos!", null);
+            var userDetails = await _userDetailsRepository.FindWithUser(user.Id);
+            if (userDetails == null)
+                return new ResponseApi(false, "Usuário não cadastrado!", null);
 
-            var token = _tokenService.GenerateBasic(user);
+            if (await _userManager.CheckPasswordAsync(user, password))
+            {
+                var token = _tokenService.GenerateBasic(user, userDetails);
 
-            return new ResponseApi(true, "Usuário Autenticado!", token);
+                if (token == null)
+                    return new ResponseApi(false, "Usuário ou Senha inválidos!", null);
+
+                return new ResponseApi(false, "Usuário Autenticado!", token);
+            }
+
+            return new ResponseApi(true, "Usuário ou Senha Inválido!", null);
         }
-
-
     }
 }
