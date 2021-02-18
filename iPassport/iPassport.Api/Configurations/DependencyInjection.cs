@@ -4,6 +4,7 @@ using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace iPassport.Api.Configurations
@@ -40,6 +41,13 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IPlanRepository, PlanRepository>();
 
+            #endregion
+
+            #region DI Settings
+
+            // ASP.NET HttpContext dependency
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
             #endregion
 
             return services;

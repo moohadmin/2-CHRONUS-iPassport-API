@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Dtos;
 using System;
+using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
 {
@@ -18,9 +19,11 @@ namespace iPassport.Domain.Entities
         }
 
         public Plan Create(PlanCreateDto dto) => new Plan(dto.Type, dto.Description, dto.Price);
-
         public string Type { get; private set; }
         public string Description { get; private set; }
         public decimal Price { get; private set; }
+
+        public virtual IEnumerable<User> Users { get; set; }
+
     }
 }

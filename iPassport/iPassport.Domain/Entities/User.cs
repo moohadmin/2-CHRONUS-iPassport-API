@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using System;
 
 namespace iPassport.Domain.Entities
 {
@@ -26,12 +27,15 @@ namespace iPassport.Domain.Entities
         public string Mobile { get; private set; }
         public string Profile { get; private set; }
         public string Role { get; private set; }
+        public Guid PlanId { get; private set; }
 
         public virtual UserDetails UserDetails { get; set; }
-
+        public virtual Plan Plan { get; set; }
 
         public void ResetPassword(string pwd) => Password = pwd;
 
         public User Create(UserCreateDto dto) => new User(dto.Username, dto.Password, dto.PasswordIsValid, dto.Email, dto.Mobile, dto.Profile, dto.Role);
+
+        public void AssociatePlan(Guid plandId) => PlanId = plandId;
     }
 }

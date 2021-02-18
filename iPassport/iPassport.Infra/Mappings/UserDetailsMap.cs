@@ -36,7 +36,7 @@ namespace iPassport.Infra.Mappings
                 .HasColumnType("nvarchar");
 
             builder.Property(x => x.Occupation)
-                .HasColumnType("nvarchar(");
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.Address)
                 .HasColumnType("nvarchar");

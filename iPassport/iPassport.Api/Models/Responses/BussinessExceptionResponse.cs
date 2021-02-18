@@ -19,6 +19,5 @@
             this.Error = error;
             this.Success = false;
         }
-        
     }
 }
