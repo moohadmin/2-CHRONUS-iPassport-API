@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210217230918_UserDetails")]
+    partial class UserDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,46 +39,6 @@ namespace iPassport.Infra.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Healths");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("Mobile")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar");
-
-                    b.Property<bool>("PasswordIsValid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Profile")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>

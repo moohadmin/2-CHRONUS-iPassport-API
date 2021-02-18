@@ -10,35 +10,33 @@ namespace iPassport.Infra.Mappings
         {
             builder.HasKey(k => k.Id);
 
-            builder.HasOne(x => x.User)
-                .WithOne(s => s.UserDetails)
-                .HasForeignKey<UserDetails>(s => s.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
+            builder.Property(x => x.UserId)
+                .HasColumnType("uniqueidentifier")
                 .IsRequired();
 
             builder.Property(x => x.FullName)
-                .HasColumnType("nvarchar(128)");
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.CPF)
-                .HasColumnType("nvarchar(20)");
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.CNS)
-                .HasColumnType("nvarchar(20)");
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.Birthday)
                 .HasColumnType("DateTime");
 
             builder.Property(x => x.Gender)
-                .HasColumnType("nvarchar(20)");
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.Breed)
-                .HasColumnType("nvarchar(20)");
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.BloodType)
-                .HasColumnType("nvarchar(5)");
+                .HasColumnType("nvarchar");
 
             builder.Property(x => x.Occupation)
-                .HasColumnType("nvarchar(128)");
+                .HasColumnType("nvarchar(");
 
             builder.Property(x => x.Address)
                 .HasColumnType("nvarchar");
