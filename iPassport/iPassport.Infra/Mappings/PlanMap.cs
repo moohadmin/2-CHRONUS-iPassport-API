@@ -24,10 +24,10 @@ namespace iPassport.Infra.Mappings
             builder.Property(p => p.Price)
                 .HasColumnType("decimal");
 
-            builder.HasMany(p => p.Users)
-                .WithOne(u => u.Plan)
-                .HasForeignKey(u => u.PlanId)
-                .OnDelete(DeleteBehavior.SetNull);
+            //builder.HasMany(p => p.Users)
+            //    .WithOne(u => u.Plan)
+            //    .HasForeignKey(u => u.PlanId)
+            //    .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

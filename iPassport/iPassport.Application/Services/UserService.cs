@@ -17,7 +17,7 @@ namespace iPassport.Application.Services
     {
         private readonly IUserDetailsRepository _detailsRepository;
         private readonly IPlanRepository _planRepository;
-        private readonly IUserRepository _userRepository;
+        //private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _accessor;
 
         private readonly UserManager<Users> _userManager;
@@ -61,6 +61,7 @@ namespace iPassport.Application.Services
             var user = await GetCurrentUser();
             
             user.AssociatePlan(planId);
+
             _userRepository.Update(user);
 
             return new ResponseApi(true, "Plano associado com sucesso", user);
@@ -74,15 +75,14 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, "Plano do usuário", plan);
         }
 
-        private async Task<User> GetCurrentUser()
+        private async Task<Guid> GetCurrentUser()
         {
-            var userId = _accessor.HttpContext.User.GetLoggedUserId<Guid>();
-            var user = await _userRepository.Find(userId);
-           
-            if (user == null)
+            var userId = _accessor.HttpContext.User.FindFirst("UserId");
+            
+            if (userId == null)
                 throw new NotFoundException("Usuário não encontrado");
 
-            return user;
+            return (Guid)Convert.ChangeType(userId, typeof(Guid));
         }
     }
 }
