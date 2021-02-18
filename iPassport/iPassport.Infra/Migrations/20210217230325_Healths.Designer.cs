@@ -10,8 +10,8 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    [Migration("20210213000602_Health")]
-    partial class Health
+    [Migration("20210217230325_Healths")]
+    partial class Healths
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

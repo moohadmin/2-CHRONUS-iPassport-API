@@ -31,7 +31,7 @@ namespace iPassport.Api.Controllers
         [HttpPost("BasicLogin")]
         public async Task<ActionResult> BasicLogin([FromBody]BasicLoginRequest request)
         {
-            var res = await _service.BasicLogin(request.Username, request.Password, request.Document);
+            var res = await _service.BasicLogin(request.Username, request.Password);
             return Ok(res);
         }
 
