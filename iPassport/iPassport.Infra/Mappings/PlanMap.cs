@@ -11,17 +11,17 @@ namespace iPassport.Infra.Mappings
     {
         public void Configure(EntityTypeBuilder<Plan> builder)
         {
-            builder.HasKey(k => k.Id);
+            builder.HasKey(p => p.Id);
 
-            builder.Property(c => c.Type)
+            builder.Property(p => p.Type)
                 .HasColumnType("nvarchar(50)")
                 .IsRequired();
 
-            builder.Property(c => c.Description)
+            builder.Property(p => p.Description)
                 .HasColumnType("nvarchar(300)")
                 .IsRequired();
 
-            builder.Property(c => c.Price)
+            builder.Property(p => p.Price)
                 .HasColumnType("decimal");
         }
     }

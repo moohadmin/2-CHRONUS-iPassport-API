@@ -35,6 +35,21 @@ namespace iPassport.Api.Configurations.Filters
                 return;
             }
 
+            if (context.Exception is NotFoundException)
+            {
+                var statusCode = (context.Exception as NotFoundException).HttpCode;
+
+                context.HttpContext.Response.ContentType = "application/json";
+                context.HttpContext.Response.StatusCode = statusCode;
+                context.Result = new JsonResult(new BussinessExceptionResponse
+                (
+                    context.Exception.Message
+                ));
+
+                LogError(context.Exception);
+                return;
+            }
+
             context.HttpContext.Response.ContentType = "application/json";
 
             if (context.Exception is PersistenceException)
