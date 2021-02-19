@@ -1,22 +1,21 @@
-﻿using iPassport.Application.Exceptions;
-using iPassport.Application.Interfaces;
-using iPassport.Domain.Dtos.SmsIntegration.GetSmsResult;
-using iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsRequest;
-using iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsResponse;
+﻿using iPassport.Application.Interfaces;
+using iPassport.Domain.Dtos.PinIntegration;
+using iPassport.Domain.Dtos.PinIntegration.FindPin;
+using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
+using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Infra.ExternalServices
 {
     public class SmsIntegration : ISmsExternalService
     {
-
         private readonly IConfiguration _config;
+
         public SmsIntegration(IConfiguration config)
         {
             _config = config;
@@ -27,66 +26,91 @@ namespace iPassport.Infra.ExternalServices
         /// </summary>
         /// <param name="idMessage">Message id to search</param>
         /// <returns></returns>
-        public Task<SmsReportResponse> FindPin(string idMessage)
+        public Task<PinReportResponseDto> FindPinSent(string idMessage)
         {
+            PinReportResponseDto simulatedFindResponse = PinIntegrationSimulatedFind();
+            if (simulatedFindResponse != null)
+                return Task.FromResult(simulatedFindResponse);
+
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
             queryParams.Add("messageId", idMessage);
 
-            var response = RunIntegration(Method.GET, GetFindMessageUrl(), ParameterType.QueryString, null, queryParams);
-            var ResponseContent = JsonConvert.DeserializeObject<SmsReportResponse>(response.Content);
+            var response = RunIntegration(Method.GET, GetFindMessageUrl(), ParameterType.QueryString, queryParams);
+            var ResponseContent = JsonConvert.DeserializeObject<PinReportResponseDto>(response.Content);
 
             return Task.FromResult(ResponseContent);
-            
         }
+
+
 
         /// <summary>
         /// Envia mensagem SMS
         /// </summary>
-        /// <param name="smsAdvancedTextualRequest">Dto with the data for sending the SMS message</param>
+        /// <param name="sendPinRequestDto">Dto with the data for sending the SMS message</param>
         /// <returns></returns>
-        public Task<SmsSendReponse> SendPin(SmsAdvancedTextualRequest smsAdvancedTextualRequest)
-        {            
-            smsAdvancedTextualRequest.Messages.First().From = GetSmsFromNumber();
-            var requestBody = JsonConvert.SerializeObject(smsAdvancedTextualRequest, new JsonSerializerSettings
+        public Task<SendPinResponseDto> SendPin(SendPinRequestDto sendPinRequestDto)
+        {
+            SendPinResponseDto simulatedSentResponse = PinIntegrationSimulatedSent();
+            if (simulatedSentResponse != null)
+                return Task.FromResult(simulatedSentResponse);
+
+            sendPinRequestDto.Messages.From = GetSmsFromNumber();
+            var requestBody = JsonConvert.SerializeObject(sendPinRequestDto, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 PreserveReferencesHandling = PreserveReferencesHandling.None,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
 
-            var response = RunIntegration(Method.POST, GetSendMessageUrl(), ParameterType.RequestBody, requestBody, null);            
-            var ResponseContent = JsonConvert.DeserializeObject<SmsSendReponse>(response.Content);
-            
+            Dictionary<string, string> integrationParams = new Dictionary<string, string>();
+            integrationParams.Add("RequestBody", requestBody);
+
+            var response = RunIntegration(Method.POST, GetSendMessageUrl(), ParameterType.RequestBody, integrationParams);
+            var ResponseContent = JsonConvert.DeserializeObject<SendPinResponseDto>(response.Content);
+
             return Task.FromResult(ResponseContent);
         }
 
-        private IRestResponse RunIntegration(Method method, string ComunicationUrl, ParameterType parameterType, string requestBody, Dictionary<string, string> queryParams)
+        /// <summary>
+        /// Run Integration with external service and return response
+        /// </summary>
+        /// <param name="method">method used to comunication</param>
+        /// <param name="ComunicationUrl">Endpoint url </param>
+        /// <param name="parameterType">Type of parans </param>        
+        /// <param name="integrationParams">integration Params</param>
+        /// <returns></returns>
+        private IRestResponse RunIntegration(Method method, string ComunicationUrl, ParameterType parameterType, Dictionary<string, string> integrationParams)
         {
             var client = new RestClient(ComunicationUrl);
             client.Timeout = -1;
+
             var request = new RestRequest(method);
             request.AddHeader("Authorization", GetAuthorizationKey());
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Accept", "application/json");
 
             switch (parameterType)
-            {                
+            {
                 case ParameterType.RequestBody:
                     request.AddParameter("application/json",
-                            requestBody,
+                            integrationParams.GetValueOrDefault("RequestBody"),
                             ParameterType.RequestBody);
+                    integrationParams.GetValueOrDefault("RequestBody");
                     break;
                 case ParameterType.QueryString:
-                    foreach (KeyValuePair<string, string> entry in queryParams)
+                    foreach (KeyValuePair<string, string> entry in integrationParams)
                     {
                         request.AddQueryParameter(entry.Key, entry.Value);
                     }
-                    break;                
+                    break;
                 default:
                     throw new Exception("Tipo de paramentro não permitido.");
             }
 
             IRestResponse response = client.Execute(request);
+
+            if ((int)response.StatusCode >= 400 && (int)response.StatusCode < 600)
+                throw new Exception(response.Content);
 
             return response;
         }
@@ -95,36 +119,91 @@ namespace iPassport.Infra.ExternalServices
         /// Get Authorization Key
         /// </summary>
         /// <returns></returns>
-        private string GetAuthorizationKey()
-        {
-            return _config.GetSection("SmsIntegration").GetSection("AuthenticationKey").Value;
-        } 
+        private string GetAuthorizationKey() => _config.GetSection("SmsIntegration").GetSection("AuthenticationKey").Value;
 
         /// <summary>
         /// Get Send Url
         /// </summary>
         /// <returns></returns>
-        private string GetSendMessageUrl()
-        {
-            return String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("SendApiUrl").Value);
-        
-        }
+        private string GetSendMessageUrl() => String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("SendApiUrl").Value);
+
         /// <summary>
         /// Get sms result Url
         /// </summary>
         /// <returns></returns>
-        private string GetFindMessageUrl()
-        {
-            return String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("GetApiUrl").Value);
-        }
+        private string GetFindMessageUrl() => String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("GetApiUrl").Value);
 
         /// <summary>
         /// Get From Number
         /// </summary>
         /// <returns></returns>
-        private string GetSmsFromNumber()
+        private string GetSmsFromNumber() => _config.GetSection("SmsIntegration").GetSection("FromNumber").Value;
+
+
+        /// <summary>
+        /// Mock to Find Pin Response
+        /// </summary>
+        /// <returns></returns>
+        private PinReportResponseDto PinIntegrationSimulatedFind()
         {
-            return _config.GetSection("SmsIntegration").GetSection("FromNumber").Value;
+            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
+            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado) == true)
+            {
+                return new PinReportResponseDto()
+                {
+                    Results = new List<PinReportResponseDetailsDto>()
+                    {
+                        new PinReportResponseDetailsDto()
+                        {
+                             MessageId = "123456789",
+                             Status = new StatusDto()
+                             {
+                                GroupId= 3,
+                                GroupName= "DELIVERED",
+                                Id= 5,
+                                Name= "DELIVERED_TO_HANDSET",
+                                Description= "Message delivered to handset"
+                             }
+                        }
+                    }
+                };
+            }
+
+            return null;
         }
+
+        /// <summary>
+        /// Mock to Sent Pin Response
+        /// </summary>
+        /// <returns></returns>
+        private SendPinResponseDto PinIntegrationSimulatedSent()
+        {
+            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
+            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado) == true)
+            {
+                return new SendPinResponseDto()
+                {
+                    Messages = new List<SendPindResponseDetailsDto>()
+                    {
+                        new SendPindResponseDetailsDto()
+                        {
+                             MessageId = "123456789",
+                             Status = new StatusDto()
+                             {
+                                GroupId= 3,
+                                GroupName= "DELIVERED",
+                                Id= 5,
+                                Name= "DELIVERED_TO_HANDSET",
+                                Description= "Message delivered to handset"
+                             }
+                        }
+                    }
+                };
+            }
+
+            return null;
+        }
+
+
     }
 }

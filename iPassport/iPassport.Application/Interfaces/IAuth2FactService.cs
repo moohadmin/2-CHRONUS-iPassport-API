@@ -3,13 +3,18 @@
     public interface IAuth2FactService
     {
         /// <summary>
-        /// Teste Envio de SMS
+        /// Send Pin to client
         /// </summary>
-        void AuthClientSend();
+        void SendPin();
+        
         /// <summary>
-        /// Teste Consulta de Envio de SMS
+        /// Query Sent PIN by idMessage
         /// </summary>
-        void AuthClientRecieve();
+        /// <param name="idMessage">idMessage sent to client</param>
+        void FindPinSent(string idMessage);
+
+        
+        
 
     }
 }
