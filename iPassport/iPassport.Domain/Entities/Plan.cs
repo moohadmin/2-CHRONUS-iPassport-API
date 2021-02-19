@@ -23,7 +23,7 @@ namespace iPassport.Domain.Entities
         public string Description { get; private set; }
         public decimal Price { get; private set; }
 
-        public virtual IEnumerable<User> Users { get; set; }
+        public virtual IEnumerable<UserDetails> Users { get; set; }
 
     }
 }

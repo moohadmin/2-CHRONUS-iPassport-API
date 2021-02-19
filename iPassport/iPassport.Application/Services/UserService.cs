@@ -1,5 +1,4 @@
 ﻿using iPassport.Application.Exceptions;
-using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
@@ -17,15 +16,13 @@ namespace iPassport.Application.Services
     {
         private readonly IUserDetailsRepository _detailsRepository;
         private readonly IPlanRepository _planRepository;
-        //private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _accessor;
 
         private readonly UserManager<Users> _userManager;
 
-        public UserService(IUserDetailsRepository detailsRepository, IUserRepository userRepository, IPlanRepository planRepository, IHttpContextAccessor accessor, UserManager<Users> userManager)
+        public UserService(IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IHttpContextAccessor accessor, UserManager<Users> userManager)
         {
             _detailsRepository = detailsRepository;
-            _userRepository = userRepository;
             _planRepository = planRepository;
             _accessor = accessor;
             _userManager = userManager;
@@ -58,24 +55,25 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AssociatePlan(Guid planId)
         {
-            var user = await GetCurrentUser();
-            
-            user.AssociatePlan(planId);
+            var userId = GetCurrentUser();
 
-            _userRepository.Update(user);
+            var userDetails = await _detailsRepository.Find(userId);
+            userDetails.AssociatePlan(planId);
 
-            return new ResponseApi(true, "Plano associado com sucesso", user);
+            _detailsRepository.Update(userDetails);
+
+            return new ResponseApi(true, "Plano associado com sucesso", userDetails);
         }
 
         public async Task<ResponseApi> GetUserPlan()
         {
-            var user = await GetCurrentUser();
-            var plan = await _planRepository.Find(user.Id);
+            var userId = GetCurrentUser();
+            var plan = await _planRepository.Find(userId);
 
             return new ResponseApi(true, "Plano do usuário", plan);
         }
 
-        private async Task<Guid> GetCurrentUser()
+        private Guid GetCurrentUser()
         {
             var userId = _accessor.HttpContext.User.FindFirst("UserId");
             
