@@ -58,9 +58,13 @@ namespace iPassport.Application.Services
 
             if(userDetails != null)
             {
+                if (userDetails.UserHavePhoto())
+                     throw new BusinessException("Usuário já Tem Foto Cadastrada");
+
                 userDetails.PhotoNameGenerator(userImageDto);
                 var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
                 userDetails.AddPhoto(imageUrl);
+                _detailsRepository.Update(userDetails);
             }
             else
             {

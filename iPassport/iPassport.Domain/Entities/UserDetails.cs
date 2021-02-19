@@ -42,7 +42,7 @@ namespace iPassport.Domain.Entities
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
 
         public void AddPhoto(string imageUrl) {
-            if (String.IsNullOrWhiteSpace(Photo))
+            if (String.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
             {
                 Photo = imageUrl;
             }
@@ -57,6 +57,9 @@ namespace iPassport.Domain.Entities
         {
             dto.FileName = "ProfileImageUserId_" + UserId;            
         }
-        
+
+        public bool UserHavePhoto() => !String.IsNullOrWhiteSpace(Photo);
+
+
     }
 }
