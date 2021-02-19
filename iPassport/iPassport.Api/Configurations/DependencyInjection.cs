@@ -26,16 +26,15 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IExternalStorageService, ExternalStorageService>();
 
+            services.AddScoped<ISmsExternalService, SmsIntegration>();
+
+            services.AddScoped<IAuth2FactService, Auth2FactService>();
             #endregion
 
             #region DI Repositories
             services.AddScoped<IRepository<Entity>, Repository<Entity>>();
 
             services.AddScoped<IHealthRepository, HealthRepository>();
-
-            services.AddScoped<IAccountRepository, AccountRepository>();
-
-            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
 
