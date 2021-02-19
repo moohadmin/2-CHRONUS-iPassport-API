@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Interfaces;
 using iPassport.Application.Services;
+using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.ExternalServices;
@@ -16,13 +17,29 @@ namespace iPassport.Api.Configurations
         {
             #region DI Services
             services.AddScoped<IHealthService, HealthService>();
+
+            services.AddScoped<ITokenService, TokenService>();
+            
+            services.AddScoped<IAccountService, AccountService>();
+
+            services.AddScoped<IUserService, UserService>();
+
             services.AddScoped<ISmsExternalService, SmsIntegration>();
+
             services.AddScoped<IAuth2FactService, Auth2FactService>();
             #endregion
 
             #region DI Repositories
             services.AddScoped<IRepository<Entity>, Repository<Entity>>();
+
             services.AddScoped<IHealthRepository, HealthRepository>();
+
+            services.AddScoped<IAccountRepository, AccountRepository>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
+
             #endregion
 
             return services;

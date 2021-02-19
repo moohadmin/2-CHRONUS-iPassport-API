@@ -1,14 +1,17 @@
-﻿using System;
+﻿using iPassport.Domain.Dtos;
 
 namespace iPassport.Domain.Entities
 {
     public class User : Entity
     {
-        public User(string username, string password, string email, string mobile, string profile, string role)
+        public User() { }
+
+        public User(string username, string password, bool passwordIsValid, string email, string mobile, string profile, string role)
         {
-            Id = Guid.NewGuid();
+            Id = System.Guid.NewGuid();
             Username = username;
             Password = password;
+            PasswordIsValid = passwordIsValid;
             Email = email;
             Mobile = mobile;
             Profile = profile;
@@ -18,6 +21,7 @@ namespace iPassport.Domain.Entities
 
         public string Username { get; private set; }
         public string Password { get; private set; }
+        public bool PasswordIsValid { get; private set; }
         public string Email { get; private set; }
         public string Mobile { get; private set; }
         public string Profile { get; private set; }
@@ -25,6 +29,9 @@ namespace iPassport.Domain.Entities
 
         public virtual UserDetails UserDetails { get; set; }
 
+
         public void ResetPassword(string pwd) => Password = pwd;
+
+        public User Create(UserCreateDto dto) => new User(dto.Username, dto.Password, dto.PasswordIsValid, dto.Email, dto.Mobile, dto.Profile, dto.Role);
     }
 }

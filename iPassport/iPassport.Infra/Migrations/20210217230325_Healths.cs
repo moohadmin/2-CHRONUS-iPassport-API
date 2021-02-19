@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace iPassport.Infra.Migrations
 {
-    public partial class Health : Migration
+    public partial class Healths : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

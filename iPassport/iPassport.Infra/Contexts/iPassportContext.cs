@@ -13,7 +13,6 @@ namespace iPassport.Infra.Contexts
         /// Declaração das Entidades para o EntityFramework
         /// </summary>
         public DbSet<Health> Healths { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
 
 
@@ -23,6 +22,7 @@ namespace iPassport.Infra.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new HealthMap());
+            //modelBuilder.ApplyConfiguration(new UserDetailsMap());
 
             base.OnModelCreating(modelBuilder);
         }

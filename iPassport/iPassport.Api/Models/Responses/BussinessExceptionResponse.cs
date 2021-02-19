@@ -5,11 +5,20 @@
     /// </summary>
     public class BussinessExceptionResponse
     {
-        /// Error property
-        public string Error { get; private set; }
+        /// <summary>
+        /// Sucess
+        /// </summary>
+        public bool Success { get; set; }
 
+        /// Error property
+        public string Error { get; private set; }      
 
         /// Constructor default
-        public BussinessExceptionResponse(string error) => this.Error = error;
+        public BussinessExceptionResponse(string error) 
+        {
+            this.Error = error;
+            this.Success = false;
+        }
+        
     }
 }

@@ -3,9 +3,12 @@ using iPassport.Api.Configurations;
 using iPassport.Api.Configurations.Filters;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Resources;
+using iPassport.Domain.Entities.Authentication;
+using iPassport.Infra.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +47,31 @@ namespace iPassport.Api
                     };
                 });
 
+            ///Add Identity DB Context
+            services.AddIdentityDataContext(Configuration);
+
+            services.AddIdentity<Users, Roles>().AddEntityFrameworkStores<PassportIdentityContext>().AddDefaultTokenProviders();
+
+            var secret = SecretConfiguration.GetSecret(Configuration);
+            var key = Encoding.ASCII.GetBytes(secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "iPassport.Api", Version = "v1" });
@@ -53,7 +81,7 @@ namespace iPassport.Api
                     Description =
                     @"
                         JWT Authorization utilizando esquema de Bearer no header da chamada.
-                        Informe 'Bearer' mais a sua chave de autorização no input abaixo.
+                        Informe 'Bearer' mais a sua chave de autorizacÃ£o no input abaixo.
                         Exemplo: 'Bearer 12345abcdef'
                     ",
                     Name = "Authorization",
@@ -77,25 +105,6 @@ namespace iPassport.Api
                         }, new List<string>()
                     }
                 });
-            });
-
-            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("Secret").Value);
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
             });
 
             ///Add DB Context
