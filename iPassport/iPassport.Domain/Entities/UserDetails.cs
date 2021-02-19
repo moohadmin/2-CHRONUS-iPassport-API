@@ -40,5 +40,23 @@ namespace iPassport.Domain.Entities
         public string Photo { get; private set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
+
+        public void AddPhoto(string imageUrl) {
+            if (String.IsNullOrWhiteSpace(Photo))
+            {
+                Photo = imageUrl;
+            }
+            else
+            {
+                //throw new BusinessException("O Usuário já tem foto carregada");
+            }
+            
+        }
+
+        public void PhotoNameGenerator( UserImageDto dto)
+        {
+            dto.FileName = "ProfileImageUserId_" + UserId;            
+        }
+        
     }
 }

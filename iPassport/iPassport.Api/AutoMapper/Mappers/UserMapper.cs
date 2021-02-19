@@ -28,6 +28,11 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Occupation, act => act.MapFrom(src => src.Occupation))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
                 .ForMember(des => des.Photo, act => act.MapFrom(src => src.Photo));
+            
+            profile.CreateMap<UserImageRequest, UserImageDto>()
+                //.ForMember(des => des.FileName, act => act.MapFrom(src => src.FileName))
+                //.ForMember(des => des.UserId, act => act.MapFrom(src => src.UserId))
+                .ForMember(des => des.ImageFile, act => act.MapFrom(src => src.ImageFile));
         }
     }
 }

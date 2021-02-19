@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\iPassport.Application\iPassport.Application.csproj" />
     <ProjectReference Include="..\iPassport.Domain\iPassport.Domain.csproj" />
   </ItemGroup>
 
