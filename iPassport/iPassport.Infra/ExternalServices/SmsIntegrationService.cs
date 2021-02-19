@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace iPassport.Infra.ExternalServices
 {
-    public class SmsIntegration : ISmsExternalService
+    public class SmsIntegrationService : ISmsExternalService
     {
         private readonly IConfiguration _config;
 
-        public SmsIntegration(IConfiguration config)
+        public SmsIntegrationService(IConfiguration config)
         {
             _config = config;
         }
@@ -32,8 +32,10 @@ namespace iPassport.Infra.ExternalServices
             if (simulatedFindResponse != null)
                 return Task.FromResult(simulatedFindResponse);
 
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add("messageId", idMessage);
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                { "messageId", idMessage }
+            };
 
             var response = RunIntegration(Method.GET, GetFindMessageUrl(), ParameterType.QueryString, queryParams);
             var ResponseContent = JsonConvert.DeserializeObject<PinReportResponseDto>(response.Content);
@@ -62,8 +64,10 @@ namespace iPassport.Infra.ExternalServices
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
 
-            Dictionary<string, string> integrationParams = new Dictionary<string, string>();
-            integrationParams.Add("RequestBody", requestBody);
+            Dictionary<string, string> integrationParams = new Dictionary<string, string>
+            {
+                { "RequestBody", requestBody }
+            };
 
             var response = RunIntegration(Method.POST, GetSendMessageUrl(), ParameterType.RequestBody, integrationParams);
             var ResponseContent = JsonConvert.DeserializeObject<SendPinResponseDto>(response.Content);
@@ -81,8 +85,10 @@ namespace iPassport.Infra.ExternalServices
         /// <returns></returns>
         private IRestResponse RunIntegration(Method method, string ComunicationUrl, ParameterType parameterType, Dictionary<string, string> integrationParams)
         {
-            var client = new RestClient(ComunicationUrl);
-            client.Timeout = -1;
+            var client = new RestClient(ComunicationUrl)
+            {
+                Timeout = -1
+            };
 
             var request = new RestRequest(method);
             request.AddHeader("Authorization", GetAuthorizationKey());
@@ -147,7 +153,7 @@ namespace iPassport.Infra.ExternalServices
         private PinReportResponseDto PinIntegrationSimulatedFind()
         {
             var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
-            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado) == true)
+            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
             {
                 return new PinReportResponseDto()
                 {
@@ -179,7 +185,7 @@ namespace iPassport.Infra.ExternalServices
         private SendPinResponseDto PinIntegrationSimulatedSent()
         {
             var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
-            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado) == true)
+            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
             {
                 return new SendPinResponseDto()
                 {

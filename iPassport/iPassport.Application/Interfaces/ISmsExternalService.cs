@@ -18,6 +18,6 @@ namespace iPassport.Application.Interfaces
         /// </summary>
         /// <param name="smsAdvancedTextualRequest">Dto with the data for sending the SMS message</param>
         /// <returns></returns>
-        Task<SendPinResponseDto> SendPin(SendPinRequestDto smsAdvancedTextualRequest);        
+        Task<SendPinResponseDto> SendPin(SendPinRequestDto sendPinRequestDto);        
     }
 }

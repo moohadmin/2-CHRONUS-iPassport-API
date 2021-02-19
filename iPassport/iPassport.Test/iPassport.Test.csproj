@@ -19,8 +19,4 @@
     <ProjectReference Include="..\iPassport.Application\iPassport.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Seeds\" />
-  </ItemGroup>
-
 </Project>

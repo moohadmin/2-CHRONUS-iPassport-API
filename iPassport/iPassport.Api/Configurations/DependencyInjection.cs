@@ -24,7 +24,7 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IUserService, UserService>();
 
-            services.AddScoped<ISmsExternalService, SmsIntegration>();
+            services.AddScoped<ISmsExternalService, SmsIntegrationService>();
 
             services.AddScoped<IAuth2FactService, Auth2FactService>();
             #endregion
