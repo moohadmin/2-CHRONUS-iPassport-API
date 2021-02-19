@@ -3,6 +3,7 @@ using iPassport.Application.Services;
 using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
+using iPassport.Infra.ExternalServices;
 using iPassport.Infra.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +24,9 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IUserService, UserService>();
 
+            services.AddScoped<ISmsExternalService, SmsIntegration>();
+
+            services.AddScoped<IAuth2FactService, Auth2FactService>();
             #endregion
 
             #region DI Repositories
