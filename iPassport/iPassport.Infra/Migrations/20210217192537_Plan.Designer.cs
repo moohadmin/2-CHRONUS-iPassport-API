@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210217192537_Plan")]
+    partial class Plan
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,6 +69,46 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("Plans");
                 });
 
+            modelBuilder.Entity("iPassport.Domain.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("DateTime");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Mobile")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar");
+
+                    b.Property<bool>("PasswordIsValid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Profile")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("DateTime");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
                     b.Property<Guid>("Id")
@@ -74,43 +116,40 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar");
 
                     b.Property<DateTime>("Birthday")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("BloodType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("Breed")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CNS")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("CPF")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Occupation")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Passport")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Photo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PlanId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("nvarchar");
 
                     b.Property<string>("RG")
                         .HasColumnType("nvarchar(max)");
@@ -123,23 +162,26 @@ namespace iPassport.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlanId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserDetails");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
-                    b.HasOne("iPassport.Domain.Entities.Plan", "Plan")
-                        .WithMany("Users")
-                        .HasForeignKey("PlanId");
+                    b.HasOne("iPassport.Domain.Entities.User", "User")
+                        .WithOne("UserDetails")
+                        .HasForeignKey("iPassport.Domain.Entities.UserDetails", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Plan");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>
+            modelBuilder.Entity("iPassport.Domain.Entities.User", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("UserDetails");
                 });
 #pragma warning restore 612, 618
         }

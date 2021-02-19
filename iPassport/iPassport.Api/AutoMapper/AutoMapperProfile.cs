@@ -9,6 +9,7 @@ namespace iPassport.Api.AutoMapper
         {
             HealthMapper.Map(this);
             UserMapper.Map(this);
+            PlanMapper.Map(this);
         }
     }
 }

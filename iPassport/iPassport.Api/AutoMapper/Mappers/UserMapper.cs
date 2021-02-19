@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using iPassport.Api.Models.Requests;
+using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -28,6 +30,9 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Occupation, act => act.MapFrom(src => src.Occupation))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
                 .ForMember(des => des.Photo, act => act.MapFrom(src => src.Photo));
+
+            profile.CreateMap<UserDetails, UserDetailsViewModel>()
+                .ReverseMap();
         }
     }
 }

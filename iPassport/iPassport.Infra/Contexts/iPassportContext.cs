@@ -14,7 +14,7 @@ namespace iPassport.Infra.Contexts
         /// </summary>
         public DbSet<Health> Healths { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
-
+        public DbSet<Plan> Plans { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
@@ -22,7 +22,8 @@ namespace iPassport.Infra.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new HealthMap());
-            //modelBuilder.ApplyConfiguration(new UserDetailsMap());
+            modelBuilder.ApplyConfiguration(new UserDetailsMap());
+            modelBuilder.ApplyConfiguration(new PlanMap());
 
             base.OnModelCreating(modelBuilder);
         }
