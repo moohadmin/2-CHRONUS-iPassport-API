@@ -7,5 +7,6 @@ namespace iPassport.Application.Interfaces
     public interface IPlanService
     {
         Task<ResponseApi> Add(PlanCreateDto dto);
+        Task<ResponseApi> GetAll();
     }
 }

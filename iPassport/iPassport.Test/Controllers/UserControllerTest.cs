@@ -1,62 +1,60 @@
 ﻿using AutoMapper;
 using iPassport.Api.Controllers;
-using iPassport.Api.Models.Requests;
 using iPassport.Application.Interfaces;
-using iPassport.Application.Models;
-using iPassport.Domain.Dtos;
-using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Controllers
 {
     [TestClass]
-    public class PlanControllerTest
+    public class UserControllerTest
     {
-        Mock<IPlanService> _mockService;
+        Mock<IUserService> _mockService;
         IMapper _mapper;
-        PlanController _controller;
+        UserController _controller;
 
         [TestInitialize]
         public void Setup()
         {
-            _mockService = new Mock<IPlanService>();
+            _mockService = new Mock<IUserService>();
             _mapper = AutoMapperFactory.Create();
-            _controller = new PlanController(_mapper, _mockService.Object) { };
+            _controller = new UserController(_mapper, _mockService.Object);
         }
 
         [TestMethod]
-        public void Post_MustReturnOk()
+        public void PutUserPlan_MustReturnOk()
         {
-            var mockRequest = Mock.Of<PlanCreateRequest>();
+            var mockRequest = Guid.NewGuid();
 
             // Arrange
-            _mockService.Setup(r => r.Add(It.IsAny<PlanCreateDto>()));
+            _mockService.Setup(r => r.AssociatePlan(It.IsAny<Guid>()));
 
             // Act
-            var result = _controller.Post(mockRequest);
+            var result = _controller.PutUserPlan(mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.Add(It.IsAny<PlanCreateDto>()), Times.Once);
+            _mockService.Verify(a => a.AssociatePlan(It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
 
         [TestMethod]
-        public void GetAll_MustReturnOk()
+        public void PostUserPlan_MustReturnOk()
         {
-            var seed = PlanSeed.GetPlans();
+            var mockRequest = Guid.NewGuid();
 
             // Arrange
-            _mockService.Setup(r => r.GetAll()).Returns(Task.FromResult(new ResponseApi(true, "Test Success!", seed)));
+            _mockService.Setup(r => r.AssociatePlan(It.IsAny<Guid>()));
 
             // Act
-            var result = _controller.GetAll();
+            var result = _controller.PostUserPlan(mockRequest);
 
             // Assert
+            _mockService.Verify(a => a.AssociatePlan(It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

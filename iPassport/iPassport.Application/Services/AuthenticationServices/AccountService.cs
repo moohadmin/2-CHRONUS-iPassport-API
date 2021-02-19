@@ -27,8 +27,14 @@ namespace iPassport.Application.Services.AuthenticationServices
                 return new ResponseApi(false, "Usuário não cadastrado!", null);
 
             var userDetails = await _userDetailsRepository.FindWithUser(user.Id);
+
+            /// Caso exista um user cadastrado, porém não tem o cadastro da userDetails, 
+            /// será excluido o user pois não é permitido um user sem userDetails
             if (userDetails == null)
+            {
+                await _userManager.DeleteAsync(user);
                 return new ResponseApi(false, "Usuário não cadastrado!", null);
+            }
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {

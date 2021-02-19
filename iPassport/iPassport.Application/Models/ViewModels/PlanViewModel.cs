@@ -1,9 +1,10 @@
-﻿using System;
+﻿using iPassport.Domain.Entities;
+using System;
 
 namespace iPassport.Application.Models.ViewModels
 {
     /// <summary>
-    /// GetAll Plan Model
+    /// Plan View Model
     /// </summary>
     public class PlanViewModel
     {
