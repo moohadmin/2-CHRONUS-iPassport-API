@@ -34,10 +34,6 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IHealthRepository, HealthRepository>();
 
-            services.AddScoped<IAccountRepository, AccountRepository>();
-
-            services.AddScoped<IUserRepository, UserRepository>();
-
             services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
 
             #endregion
