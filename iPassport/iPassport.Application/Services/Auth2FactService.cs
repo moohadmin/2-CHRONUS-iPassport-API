@@ -17,7 +17,7 @@ namespace iPassport.Application.Services
         public void AuthClientRecieve()
         {
 
-            var result = _smsExternalServices.GetSmsResult(null);
+            var result = _smsExternalServices.FindPin(null);
             
         }
 
@@ -27,7 +27,7 @@ namespace iPassport.Application.Services
         public void AuthClientSend()
         {
 
-            var result = _smsExternalServices.SendSmsMessage(null);
+            var result = _smsExternalServices.SendPin(null);
         }
     }
 }
