@@ -1,4 +1,5 @@
-﻿using iPassport.Application.Interfaces;
+﻿using iPassport.Application.Exceptions;
+using iPassport.Application.Interfaces;
 using iPassport.Domain.Dtos.SmsIntegration.GetSmsResult;
 using iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsRequest;
 using iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsResponse;
@@ -26,24 +27,16 @@ namespace iPassport.Infra.ExternalServices
         /// </summary>
         /// <param name="idMessage">Message id to search</param>
         /// <returns></returns>
-        public Task<SmsReportResponse> GetSmsResult(string idMessage)
+        public Task<SmsReportResponse> FindPin(string idMessage)
         {
-            var client = new RestClient(GetSmsResultUrl());
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+            queryParams.Add("messageId", idMessage);
 
-            client.Timeout = -1;
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("Authorization", GetAuthorizationKey());
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", "application/json");
-            if (!String.IsNullOrWhiteSpace(idMessage))
-            {
-                request.AddQueryParameter("messageId", idMessage);
-            }
-
-            IRestResponse response = client.Execute(request);
+            var response = RunIntegration(Method.GET, GetFindMessageUrl(), ParameterType.QueryString, null, queryParams);
             var ResponseContent = JsonConvert.DeserializeObject<SmsReportResponse>(response.Content);
 
             return Task.FromResult(ResponseContent);
+            
         }
 
         /// <summary>
@@ -51,11 +44,9 @@ namespace iPassport.Infra.ExternalServices
         /// </summary>
         /// <param name="smsAdvancedTextualRequest">Dto with the data for sending the SMS message</param>
         /// <returns></returns>
-        public Task<SmsSendReponse> SendSmsMessage(SmsAdvancedTextualRequest smsAdvancedTextualRequest)
-        {
-            var client = new RestClient(GetSendMessageUrl());
+        public Task<SmsSendReponse> SendPin(SmsAdvancedTextualRequest smsAdvancedTextualRequest)
+        {            
             smsAdvancedTextualRequest.Messages.First().From = GetSmsFromNumber();
-
             var requestBody = JsonConvert.SerializeObject(smsAdvancedTextualRequest, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -63,20 +54,43 @@ namespace iPassport.Infra.ExternalServices
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
 
-            client.Timeout = -1;
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("Authorization", GetAuthorizationKey());
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", "application/json");
-            request.AddParameter("application/json",
-                            requestBody,
-                            ParameterType.RequestBody);
-
-            IRestResponse response = client.Execute(request);
+            var response = RunIntegration(Method.POST, GetSendMessageUrl(), ParameterType.RequestBody, requestBody, null);            
             var ResponseContent = JsonConvert.DeserializeObject<SmsSendReponse>(response.Content);
             
             return Task.FromResult(ResponseContent);
         }
+
+        private IRestResponse RunIntegration(Method method, string ComunicationUrl, ParameterType parameterType, string requestBody, Dictionary<string, string> queryParams)
+        {
+            var client = new RestClient(ComunicationUrl);
+            client.Timeout = -1;
+            var request = new RestRequest(method);
+            request.AddHeader("Authorization", GetAuthorizationKey());
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Accept", "application/json");
+
+            switch (parameterType)
+            {                
+                case ParameterType.RequestBody:
+                    request.AddParameter("application/json",
+                            requestBody,
+                            ParameterType.RequestBody);
+                    break;
+                case ParameterType.QueryString:
+                    foreach (KeyValuePair<string, string> entry in queryParams)
+                    {
+                        request.AddQueryParameter(entry.Key, entry.Value);
+                    }
+                    break;                
+                default:
+                    throw new Exception("Tipo de paramentro não permitido.");
+            }
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         /// <summary>
         /// Get Authorization Key
         /// </summary>
@@ -84,31 +98,26 @@ namespace iPassport.Infra.ExternalServices
         private string GetAuthorizationKey()
         {
             return _config.GetSection("SmsIntegration").GetSection("AuthenticationKey").Value;
-        }
-        /// <summary>
-        /// Get service API Base Url
-        /// </summary>
-        /// <returns></returns>
-        private string GetServiceBaseUrl()
-        {
-            return _config.GetSection("SmsIntegration").GetSection("BaseUrl").Value;
-        }
+        } 
+
         /// <summary>
         /// Get Send Url
         /// </summary>
         /// <returns></returns>
         private string GetSendMessageUrl()
         {
-            return String.Concat(GetServiceBaseUrl(), _config.GetSection("SmsIntegration").GetSection("SendApiUrl").Value);
+            return String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("SendApiUrl").Value);
+        
         }
         /// <summary>
         /// Get sms result Url
         /// </summary>
         /// <returns></returns>
-        private string GetSmsResultUrl()
+        private string GetFindMessageUrl()
         {
-            return String.Concat(GetServiceBaseUrl(), _config.GetSection("SmsIntegration").GetSection("GetApiUrl").Value);
+            return String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("GetApiUrl").Value);
         }
+
         /// <summary>
         /// Get From Number
         /// </summary>

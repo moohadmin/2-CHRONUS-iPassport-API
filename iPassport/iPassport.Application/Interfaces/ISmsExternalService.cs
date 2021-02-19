@@ -12,12 +12,12 @@ namespace iPassport.Application.Interfaces
         /// </summary>
         /// <param name="idMessage">Message id to search</param>
         /// <returns></returns>
-        Task<SmsReportResponse> GetSmsResult(string idMessage);
+        Task<SmsReportResponse> FindPin(string idMessage);
         /// <summary>
         /// Envia mensagem SMS
         /// </summary>
         /// <param name="smsAdvancedTextualRequest">Dto with the data for sending the SMS message</param>
         /// <returns></returns>
-        Task<SmsSendReponse> SendSmsMessage(SmsAdvancedTextualRequest smsAdvancedTextualRequest);        
+        Task<SmsSendReponse> SendPin(SmsAdvancedTextualRequest smsAdvancedTextualRequest);        
     }
 }
