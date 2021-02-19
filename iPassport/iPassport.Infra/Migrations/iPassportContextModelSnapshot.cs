@@ -39,46 +39,6 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("Healths");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("Mobile")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar");
-
-                    b.Property<bool>("PasswordIsValid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Profile")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
                     b.Property<Guid>("Id")
