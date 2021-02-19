@@ -1,6 +1,6 @@
-﻿using iPassport.Domain.Dtos.SmsIntegration.GetSmsResult;
-using iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsRequest;
-using iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsResponse;
+﻿using iPassport.Domain.Dtos.PinIntegration.FindPin;
+using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
+using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Interfaces
@@ -12,12 +12,12 @@ namespace iPassport.Application.Interfaces
         /// </summary>
         /// <param name="idMessage">Message id to search</param>
         /// <returns></returns>
-        Task<SmsReportResponse> FindPin(string idMessage);
+        Task<PinReportResponseDto> FindPinSent(string idMessage);
         /// <summary>
         /// Envia mensagem SMS
         /// </summary>
         /// <param name="smsAdvancedTextualRequest">Dto with the data for sending the SMS message</param>
         /// <returns></returns>
-        Task<SmsSendReponse> SendPin(SmsAdvancedTextualRequest smsAdvancedTextualRequest);        
+        Task<SendPinResponseDto> SendPin(SendPinRequestDto sendPinRequestDto);        
     }
 }

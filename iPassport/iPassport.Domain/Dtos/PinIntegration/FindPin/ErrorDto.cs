@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace iPassport.Domain.Dtos.SmsIntegration.GetSmsResult
+namespace iPassport.Domain.Dtos.PinIntegration.FindPin
 {
     /// <summary>
     /// Indicates whether the error occurred during the query execution.
     /// </summary>
-    public class Error
+    public class ErrorDto
     {
         /// <summary>
         /// Human-readable description of the error..

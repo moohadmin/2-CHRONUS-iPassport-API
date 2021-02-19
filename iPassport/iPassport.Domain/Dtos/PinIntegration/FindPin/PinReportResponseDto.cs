@@ -1,14 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace iPassport.Domain.Dtos.SmsIntegration.GetSmsResult
+namespace iPassport.Domain.Dtos.PinIntegration.FindPin
 {
-    public class SmsReportResponse
+    public class PinReportResponseDto
     {
         /// <summary>
         /// Array Of Objects retorned
         /// </summary>
         [JsonProperty("results")]
-        public IList<SmsReport> Results { get; set; }
+        public IList<PinReportResponseDetailsDto> Results { get; set; }
     }
 }

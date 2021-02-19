@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace iPassport.Domain.Dtos.SmsIntegration.GetSmsResult
+namespace iPassport.Domain.Dtos.PinIntegration.FindPin
 {
-    public class SmsReport
+    public class PinReportResponseDetailsDto
     {
         /// <summary>
         /// The number of parts the sent SMS was split into.
@@ -27,7 +27,7 @@ namespace iPassport.Domain.Dtos.SmsIntegration.GetSmsResult
         /// Indicates whether the error occurred during the query execution.
         /// </summary>
         [JsonProperty("error")]
-        public Error Error { get; set; }
+        public ErrorDto Error { get; set; }
         
         /// <summary>
         /// Destination address.
@@ -54,23 +54,13 @@ namespace iPassport.Domain.Dtos.SmsIntegration.GetSmsResult
         /// Indicates whether the message is successfully sent, not sent, delivered, not delivered, waiting for delivery or any other possible status.
         /// </summary>
         [JsonProperty("status")]
-        public Status Status { get; set; }
+        public StatusDto Status { get; set; }
         /// <summary>
         /// Sender ID that can be alphanumeric or numeric.
         /// </summary>
         [JsonProperty("from")]
-        public string From { get; set; }
-        /// <summary>
-        /// Callback data sent through callbackData field in fully featured SMS message.
-        /// </summary>
-        [JsonProperty("callbackData")]
-        public string CallbackData { get; set; }
-
-        /// <summary>
-        /// Sent SMS price.
-        /// </summary>
-        [JsonProperty("price")]
-        public Price Price { get; set; }
+        public string From { get; set; }        
+        
     }
 
 }

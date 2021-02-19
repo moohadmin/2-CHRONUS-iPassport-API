@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
 
 
-namespace iPassport.Domain.Dtos.SmsIntegration
+namespace iPassport.Domain.Dtos.PinIntegration
 {
     /// <summary>
     /// Indicates whether the message is successfully sent, not sent, delivered, not delivered, waiting for delivery or any other possible status.
     /// </summary>
-    public class Status
+    public class StatusDto
     {
         /// <summary>
         /// Status ID.

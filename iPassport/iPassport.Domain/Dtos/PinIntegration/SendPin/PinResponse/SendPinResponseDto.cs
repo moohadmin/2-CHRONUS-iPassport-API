@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsResponse
+namespace iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse
 {
-    public class SmsSendReponse
+    public class SendPinResponseDto
     {
         /// <summary>
         /// The ID that uniquely identifies the request. Bulk ID will be received only when you send 
@@ -16,6 +16,6 @@ namespace iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsResponse
         /// Array of sent message objects, one object per every message.
         /// </summary>
         [JsonProperty("messages")]
-        public IList<SmsResponseDetails> Messages { get; set; }
+        public IList<SendPindResponseDetailsDto> Messages { get; set; }
     }
 }
