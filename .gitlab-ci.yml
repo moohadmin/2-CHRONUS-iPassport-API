@@ -1,15 +1,19 @@
 stages:
-  - test
   - build
+  - test
+  - docker
 
 
 include:
-  ## test ##
-  - project: devops/ship 
-    file: /templates/test/unit/.job-test-unit-dotnet-core-sdk5.yml
   ## build ##
   - project: devops/ship 
     file: /templates/build/.job-build-dotnet-core-sdk5.yml
+  ## test ##
+  - project: devops/ship 
+    file: /templates/test/unit/.job-test-unit-dotnet-core-sdk5.yml
+  ## docker ##
+  - project: devops/ship 
+    file: /templates/docker/.job-docker-gitlab-registry.yml
   ## exceptions ##
   - project: devops/ship
     file: /templates/exceptions/.retry-on-system-failures.yml    
