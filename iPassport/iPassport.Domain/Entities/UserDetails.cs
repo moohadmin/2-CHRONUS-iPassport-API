@@ -7,7 +7,7 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passport, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo)
+        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passport, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, Guid? planId = null) : base()
         {
             UserId = userId;
             FullName = fullName;
@@ -22,6 +22,9 @@ namespace iPassport.Domain.Entities
             Occupation = occupation;
             Address = address;
             Photo = photo;
+            
+            if (planId.HasValue)
+                PlanId = planId.Value;
         }
 
 
@@ -38,7 +41,7 @@ namespace iPassport.Domain.Entities
         public string Occupation { get; private set; }
         public string Address { get; private set; }
         public string Photo { get; private set; }
-        public Guid PlanId { get; private set; }
+        public Guid? PlanId { get; private set; }
 
         public virtual Plan Plan { get; set; }
 

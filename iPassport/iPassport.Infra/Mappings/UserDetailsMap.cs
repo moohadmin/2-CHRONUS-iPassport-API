@@ -15,34 +15,34 @@ namespace iPassport.Infra.Mappings
                 .IsRequired();
 
             builder.Property(x => x.FullName)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.CPF)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.CNS)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.Birthday)
                 .HasColumnType("DateTime");
 
             builder.Property(x => x.Gender)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.Breed)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.BloodType)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.Occupation)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.Address)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.Photo)
-                .HasColumnType("nvarchar");
+                .HasColumnType("nvarchar(max)");
 
             builder.Property(c => c.CreateDate)
                 .HasColumnType("DateTime")
@@ -51,6 +51,9 @@ namespace iPassport.Infra.Mappings
             builder.Property(c => c.UpdateDate)
                 .HasColumnType("DateTime")
                 .IsRequired();
+
+            builder.HasOne(c => c.Plan)
+                .WithMany(p => p.Users);
         }
     }
 }

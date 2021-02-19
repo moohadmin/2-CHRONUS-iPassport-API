@@ -10,8 +10,8 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    [Migration("20210219130653_Update_UserDetails")]
-    partial class Update_UserDetails
+    [Migration("20210219150314_Update_PlanFk_UserDetails")]
+    partial class Update_PlanFk_UserDetails
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -76,42 +76,42 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Birthday")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("BloodType")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Breed")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CNS")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CPF")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Occupation")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Passport")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Photo")
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PlanId")
+                    b.Property<Guid?>("PlanId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("RG")
@@ -134,9 +134,7 @@ namespace iPassport.Infra.Migrations
                 {
                     b.HasOne("iPassport.Domain.Entities.Plan", "Plan")
                         .WithMany("Users")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .HasForeignKey("PlanId");
 
                     b.Navigation("Plan");
                 });
