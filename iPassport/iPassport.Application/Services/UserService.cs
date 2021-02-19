@@ -57,6 +57,14 @@ namespace iPassport.Application.Services
             return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
         }
 
+        public async Task<ResponseApi> GetLoggedUser()
+        {
+            var userId = GetCurrentUser();
+            var userDetails = await _detailsRepository.FindWithUser(userId);
+
+            return new ResponseApi(true, "Usuario Logado", _mapper.Map<UserDetailsViewModel>(userDetails));
+        }
+
         public async Task<ResponseApi> AssociatePlan(Guid planId)
         {
             var userId = GetCurrentUser();

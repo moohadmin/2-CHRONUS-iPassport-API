@@ -43,6 +43,8 @@ namespace iPassport.Application.Services.AuthenticationServices
                 if (token == null)
                     return new ResponseApi(false, "Usuário ou Senha inválidos!", null);
 
+                userDetails.UpdateLastLogin();
+
                 return new ResponseApi(false, "Usuário Autenticado!", token);
             }
 

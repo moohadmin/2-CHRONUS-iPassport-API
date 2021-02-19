@@ -10,5 +10,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> Add(UserCreateDto dto);
         Task<ResponseApi> AssociatePlan(Guid planId);
         Task<ResponseApi> GetUserPlan();
+        Task<ResponseApi> GetLoggedUser();
     }
 }
