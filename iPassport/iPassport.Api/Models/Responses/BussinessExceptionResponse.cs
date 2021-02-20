@@ -11,14 +11,13 @@
         public bool Success { get; set; }
 
         /// Error property
-        public string Error { get; private set; }      
+        public object Error { get; private set; }      
 
         /// Constructor default
-        public BussinessExceptionResponse(string error) 
+        public BussinessExceptionResponse(object error) 
         {
             this.Error = error;
             this.Success = false;
         }
-        
     }
 }
