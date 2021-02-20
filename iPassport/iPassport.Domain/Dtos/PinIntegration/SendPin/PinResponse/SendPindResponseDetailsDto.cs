@@ -1,15 +1,15 @@
 ﻿using Newtonsoft.Json;
 
-namespace iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsResponse
+namespace iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse
 {
-    public class SmsResponseDetails
+    public class SendPindResponseDetailsDto
     {
         /// <summary>
         /// Indicates whether the message is successfully sent, not sent, delivered, not delivered, 
         /// waiting for delivery or any other possible status.
         /// </summary>
         [JsonProperty("status")]
-        public Status Status { get; set; }
+        public StatusDto Status { get; set; }
         /// <summary>
         /// The ID that uniquely identifies the message sent.
         /// </summary>

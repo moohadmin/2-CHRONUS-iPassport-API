@@ -1,25 +1,29 @@
-﻿using iPassport.Api.Models.Responses;
+﻿using AutoMapper;
+using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Domain.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
-    /// <summary>
-    ///  AuthController
-    /// </summary>
-    [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    [ApiController]
+    public class PlanController : ControllerBase
     {
-        private readonly IAuth2FactService _auth2FactService;
-        public AuthController(IAuth2FactService auth2FactService)
+        private readonly IMapper _mapper;
+        private readonly IPlanService _service;
+
+        public PlanController(IMapper mapper, IPlanService service)
         {
-            _auth2FactService = auth2FactService;
+            _mapper = mapper;
+            _service = service;
         }
 
         /// <summary>
-        /// Teste Envio de SMS
+        /// This API Create Plan
         /// </summary>
         /// <returns></returns>
         /// <response code="204">Server returns no data.</response>
@@ -29,32 +33,27 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        public OkResult Post()
+        public async Task<ActionResult> Post([FromBody] PlanCreateRequest request)
         {
-            _auth2FactService.AuthClientSend();
-            return Ok();
+            var res = await _service.Add(_mapper.Map<PlanCreateDto>(request));
+            return Ok(res);
         }
 
-        
-
         /// <summary>
-        /// Teste Consulta de Envio de SMS
+        /// his API is list all Plans
         /// </summary>
         /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
+        /// <response code="200">Ok.</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="500">Due to server problems, it is not possible to get your data now</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        public OkResult Get()
+        public async Task<ActionResult> GetAll()
         {
-            _auth2FactService.AuthClientRecieve();
-            return Ok();
+            var res = await _service.GetAll();
+            return Ok(res);
         }
-
-
-        
     }
 }

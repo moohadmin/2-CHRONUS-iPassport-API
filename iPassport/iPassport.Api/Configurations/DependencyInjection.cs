@@ -5,6 +5,7 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.ExternalServices;
 using iPassport.Infra.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace iPassport.Api.Configurations
@@ -26,9 +27,11 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IExternalStorageService, ExternalStorageService>();
 
-            services.AddScoped<ISmsExternalService, SmsIntegration>();
+            services.AddScoped<ISmsExternalService, SmsIntegrationService>();
 
             services.AddScoped<IAuth2FactService, Auth2FactService>();
+            services.AddScoped<IPlanService, PlanService>();
+
             #endregion
 
             #region DI Repositories
@@ -38,6 +41,15 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
 
+            services.AddScoped<IPlanRepository, PlanRepository>();
+
+            #endregion
+
+            #region DI Settings
+
+            // ASP.NET HttpContext dependency
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
             #endregion
 
             return services;

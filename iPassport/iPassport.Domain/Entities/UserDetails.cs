@@ -7,7 +7,7 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passport, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo)
+        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passport, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, Guid? planId = null) : base()
         {
             UserId = userId;
             FullName = fullName;
@@ -22,6 +22,9 @@ namespace iPassport.Domain.Entities
             Occupation = occupation;
             Address = address;
             Photo = photo;
+            
+            if (planId.HasValue)
+                PlanId = planId.Value;
         }
 
 
@@ -38,6 +41,9 @@ namespace iPassport.Domain.Entities
         public string Occupation { get; private set; }
         public string Address { get; private set; }
         public string Photo { get; private set; }
+        public Guid? PlanId { get; private set; }
+
+        public virtual Plan Plan { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
 
@@ -45,12 +51,7 @@ namespace iPassport.Domain.Entities
             if (String.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
             {
                 Photo = imageUrl;
-            }
-            else
-            {
-                //throw new BusinessException("O Usuário já tem foto carregada");
-            }
-            
+            }            
         }
 
         public void PhotoNameGenerator( UserImageDto dto)
@@ -60,6 +61,8 @@ namespace iPassport.Domain.Entities
 
         public bool UserHavePhoto() => !String.IsNullOrWhiteSpace(Photo);
 
+
+        public void AssociatePlan(Guid plandId) => PlanId = plandId;
 
     }
 }

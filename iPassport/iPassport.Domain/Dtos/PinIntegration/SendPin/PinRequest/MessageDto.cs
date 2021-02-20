@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsRequest
+namespace iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest
 {
-    public class Message
+    
+    public class MessageDto
     {
         /// <summary>
         /// Represents a sender ID which can be alphanumeric or numeric. Alphanumeric sender ID length should be
@@ -15,7 +16,7 @@ namespace iPassport.Domain.Dtos.SmsIntegration.SendSms.SendSmsRequest
         /// List of Destinations
         /// </summary>
         [JsonProperty("destinations")]
-        public IList<Destination> Destinations { get; set; }
+        public IList<DestinationDto> Destinations { get; set; }
         /// <summary>
         /// Text of the message that will be sent.
         /// </summary>

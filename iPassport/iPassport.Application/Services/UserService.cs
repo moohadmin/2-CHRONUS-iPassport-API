@@ -1,11 +1,15 @@
-﻿using iPassport.Application.Exceptions;
+﻿using AutoMapper;
+using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -13,12 +17,19 @@ namespace iPassport.Application.Services
     public class UserService : IUserService
     {
         private readonly IUserDetailsRepository _detailsRepository;
+        private readonly IPlanRepository _planRepository;
+        private readonly IHttpContextAccessor _accessor;
+        private readonly IMapper _mapper;
+
         private readonly UserManager<Users> _userManager;
         private readonly IExternalStorageService _externalStorageService;
 
-        public UserService(IUserDetailsRepository detailsRepository, UserManager<Users> userManager, IExternalStorageService externalStorageService)
+        public UserService(IUserDetailsRepository detailsRepository, IPlanRepository planRepository,IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService)
         {
             _detailsRepository = detailsRepository;
+            _planRepository = planRepository;
+            _mapper = mapper;
+            _accessor = accessor;
             _userManager = userManager;
             _externalStorageService = externalStorageService;
         }
@@ -34,7 +45,7 @@ namespace iPassport.Application.Services
 
             /// Add User in iPassportIdentityContext
             var result = await _userManager.CreateAsync(user, dto.Password);
-            if(result.Errors.Equals(0))
+            if(!result.Succeeded)
                 return new ResponseApi(result.Succeeded, "Usuário não pode ser criado!", result.Errors);
 
             /// Re-Hidrated UserId to UserDetails
@@ -47,6 +58,48 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
         }
+
+        public async Task<ResponseApi> AssociatePlan(Guid planId)
+        {
+            var userId = GetCurrentUser();
+
+            var userDetails = await _detailsRepository.FindWithUser(userId);
+            var plan = await _planRepository.Find(planId);
+            
+            if (plan == null)
+                throw new NotFoundException("Plano não encontrado");
+
+            userDetails.AssociatePlan(plan.Id);
+            userDetails.Plan = plan;
+
+            _detailsRepository.Update(userDetails);
+
+            return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<UserDetailsViewModel>(userDetails));
+        }
+
+        public async Task<ResponseApi> GetUserPlan()
+        {
+            var userId = GetCurrentUser();
+
+            var userDetails = await _detailsRepository.FindWithUser(userId);
+            var plan = await _planRepository.Find((Guid)userDetails.PlanId);
+
+            if (plan == null)
+                throw new NotFoundException("Plano não encontrado");
+
+            return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
+        }
+
+        private Guid GetCurrentUser()
+        {
+            var userId = _accessor.HttpContext.User.FindFirst("UserId");
+            
+            if (userId == null)
+                throw new NotFoundException("Usuário não encontrado");
+
+            return Guid.Parse(userId.Value);
+        }
+
                 
   
         public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)

@@ -1,5 +1,5 @@
 ﻿using iPassport.Application.Interfaces;
-
+using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
 
 namespace iPassport.Application.Services
 {
@@ -12,22 +12,20 @@ namespace iPassport.Application.Services
         }
 
         /// <summary>
-        /// Teste Consulta de Envio de SMS
+        /// Query Sent PIN by idMessage
         /// </summary>
-        public void AuthClientRecieve()
-        {
-
-            var result = _smsExternalServices.FindPin(null);
-            
+        /// <param name="idMessage">idMessage sent to client</param>
+        public void FindPinSent(string idMessage)
+        {           
+            var result = _smsExternalServices.FindPinSent(idMessage);
         }
 
         /// <summary>
-        /// Teste Envio de SMS
+        /// Send Pin to client
         /// </summary>
-        public void AuthClientSend()
-        {
-
-            var result = _smsExternalServices.SendPin(null);
+        public void SendPin()
+        {            
+            var result = _smsExternalServices.SendPin(new SendPinRequestDto());            
         }
     }
 }

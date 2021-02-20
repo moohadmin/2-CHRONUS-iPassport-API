@@ -29,7 +29,7 @@ namespace iPassport.Api.Configurations
                 .EnableSensitiveDataLogging(true)
                 .EnableDetailedErrors());
 #else
-            services.AddDbContext<iPassportIdentityContext>();
+            services.AddDbContext<PassportIdentityContext>();
 #endif
 
             return services;
