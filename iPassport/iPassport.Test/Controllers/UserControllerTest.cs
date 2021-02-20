@@ -58,5 +58,20 @@ namespace iPassport.Test.Controllers
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
+
+        [TestMethod]
+        public void GetCurrentUser_MustReturnOk()
+        {
+            // Arrange
+            _mockService.Setup(r => r.GetCurrentUser());
+
+            // Act
+            var result = _controller.GetCurrentUser();
+
+            // Assert
+            _mockService.Verify(a => a.GetCurrentUser(), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
     }
 }

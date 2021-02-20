@@ -44,11 +44,12 @@ namespace iPassport.Application.Services.AuthenticationServices
                     return new ResponseApi(false, "Usuário ou Senha inválidos!", null);
 
                 userDetails.UpdateLastLogin();
+                _userDetailsRepository.Update(userDetails);
 
-                return new ResponseApi(false, "Usuário Autenticado!", token);
+                return new ResponseApi(true, "Usuário Autenticado!", token);
             }
 
-            return new ResponseApi(true, "Usuário ou Senha Inválido!", null);
+            return new ResponseApi(false, "Usuário ou Senha Inválido!", null);
         }
     }
 }
