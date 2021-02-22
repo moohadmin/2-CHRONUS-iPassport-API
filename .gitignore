@@ -8,7 +8,7 @@
 
 #iPassport
 #Upload Image
-/Content/Image
+Content/Image/
 
 /.vs
 #/.vscode
