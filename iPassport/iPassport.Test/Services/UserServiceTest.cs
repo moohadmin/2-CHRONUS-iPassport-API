@@ -3,6 +3,7 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Services;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
@@ -23,7 +24,8 @@ namespace iPassport.Test.Services
         Mock<IPlanRepository> _planMockRepository;
         IUserService _service;
         IMapper _mapper;
-        IHttpContextAccessor _accessor;        
+        IHttpContextAccessor _accessor;
+        Mock<IExternalStorageService> _externalStorageService;
 
         [TestInitialize]
         public void Setup()
@@ -32,9 +34,9 @@ namespace iPassport.Test.Services
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepository = new Mock<IUserDetailsRepository>();
             _planMockRepository = new Mock<IPlanRepository>();
-            
+            _externalStorageService = new Mock<IExternalStorageService>();
 
-            _service = new UserService(_mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, null, null);
+            _service = new UserService(_mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, null, _externalStorageService.Object);
         }
 
         [TestMethod]
@@ -80,5 +82,29 @@ namespace iPassport.Test.Services
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(PlanViewModel));
         }
+
+        [TestMethod]
+        public void AddUserImage_SavesPhotoUrlIntoUserDetails()
+        {
+            var userSeed = UserSeed.GetUserDetailsWithoutPhoto();
+            var mockRequest = new UserImageDto();
+            var SaveUrl = "./Content/Image/Teste.jpg";
+            // Arrange
+            _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(userSeed);
+            _externalStorageService.Setup(x => x.UploadFileAsync(mockRequest).Result).Returns(SaveUrl);
+            _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()));
+            // Act
+            var result = _service.AddUserImage(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.FindWithUser(It.IsAny<Guid>()), Times.Once);
+            _externalStorageService.Verify(a => a.UploadFileAsync(mockRequest), Times.Once);
+            Assert.AreEqual(userSeed.Photo, SaveUrl);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(string));
+           
+        }
+
     }
 }

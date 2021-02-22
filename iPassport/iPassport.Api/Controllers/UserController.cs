@@ -54,7 +54,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpPost("UploadImage")]
-        public async Task<ActionResult> UserImageUpdload([FromForm] UserImageRequest request)
+        public async Task<ActionResult> UserImageUpload([FromForm] UserImageRequest request)
         {
             var res = await _service.AddUserImage(_mapper.Map<UserImageDto>(request));
             return Ok(res);

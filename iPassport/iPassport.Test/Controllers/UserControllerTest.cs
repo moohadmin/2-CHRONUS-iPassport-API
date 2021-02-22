@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using iPassport.Api.Controllers;
+using iPassport.Api.Models.Requests;
 using iPassport.Application.Interfaces;
+using iPassport.Domain.Dtos;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -55,6 +57,23 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockService.Verify(a => a.AssociatePlan(It.IsAny<Guid>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void UserImageUpdload_MustReturnOk()
+        {
+            var mockRequest = new UserImageRequest();
+
+            // Arrange
+            _mockService.Setup(r => r.AddUserImage(It.IsAny<UserImageDto>()));
+
+            // Act
+            var result = _controller.UserImageUpload(mockRequest);
+
+            // Assert
+            _mockService.Verify(a => a.AddUserImage(It.IsAny<UserImageDto>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

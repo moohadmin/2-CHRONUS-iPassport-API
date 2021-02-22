@@ -104,9 +104,7 @@ namespace iPassport.Application.Services
   
         public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)
         {
-#if (DEBUG)
-            userImageDto.UserId = new System.Guid("F2A29195-B601-46F6-611D-08D8D481292A");
-#endif
+            userImageDto.UserId = GetCurrentUser();
             var userDetails = await _detailsRepository.FindWithUser(userImageDto.UserId);
 
             if(userDetails != null)
