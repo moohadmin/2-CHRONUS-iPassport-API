@@ -59,9 +59,17 @@ namespace iPassport.Application.Services
             return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
         }
 
+        public async Task<ResponseApi> GetCurrentUser()
+        {
+            var userId = GetCurrentUserId();
+            var userDetails = await _detailsRepository.FindWithUser(userId);
+
+            return new ResponseApi(true, "Usuario Logado", _mapper.Map<UserDetailsViewModel>(userDetails));
+        }
+
         public async Task<ResponseApi> AssociatePlan(Guid planId)
         {
-            var userId = GetCurrentUser();
+            var userId = GetCurrentUserId();
 
             var userDetails = await _detailsRepository.FindWithUser(userId);
             var plan = await _planRepository.Find(planId);
@@ -79,7 +87,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetUserPlan()
         {
-            var userId = GetCurrentUser();
+            var userId = GetCurrentUserId();
 
             var userDetails = await _detailsRepository.FindWithUser(userId);
             var plan = await _planRepository.Find((Guid)userDetails.PlanId);
@@ -90,7 +98,7 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
         }
 
-        private Guid GetCurrentUser()
+        private Guid GetCurrentUserId()
         {
             var userId = _accessor.HttpContext.User.FindFirst("UserId");
             
@@ -104,7 +112,7 @@ namespace iPassport.Application.Services
   
         public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)
         {
-            userImageDto.UserId = GetCurrentUser();
+            userImageDto.UserId = GetCurrentUserId();
             var userDetails = await _detailsRepository.FindWithUser(userImageDto.UserId);
 
             if(userDetails != null)

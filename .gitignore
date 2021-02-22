@@ -508,7 +508,8 @@ MigrationBackup/
 
 # End of https://www.gitignore.io/api/dotnetcore,aspnetcore,visualstudio
 
-*/**/Properties/*
 /app
 
 */**/*_generated_*
+.vscode/launch.json
+.vscode/tasks.json

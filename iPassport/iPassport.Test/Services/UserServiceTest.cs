@@ -84,6 +84,24 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
+        public void GetCurrentUser()
+        {
+            var seed = UserSeed.GetUserDetails();
+
+            // Arrange
+            _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(seed);
+
+            // Act
+            var result = _service.GetCurrentUser();
+
+            // Assert
+            _mockRepository.Verify(a => a.FindWithUser(It.IsAny<Guid>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(UserDetailsViewModel));
+        }
+
+        [TestMethod]
         public void AddUserImage_SavesPhotoUrlIntoUserDetails()
         {
             var userSeed = UserSeed.GetUserDetailsWithoutPhoto();
