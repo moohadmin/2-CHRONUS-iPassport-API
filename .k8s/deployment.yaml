@@ -134,9 +134,9 @@ spec:
           limits:
             memory: "1024Mi"
             cpu: "1000m"
-    volumes:
-      - name: ${APP_NAME}-${APP_GROUP}-storage
-        persistentVolumeClaim:
-          claimName: ${APP_NAME}-${APP_GROUP}-pvc
+      volumes:
+        - name: ${APP_NAME}-${APP_GROUP}-storage
+          persistentVolumeClaim:
+            claimName: ${APP_NAME}-${APP_GROUP}-pvc
 
         
