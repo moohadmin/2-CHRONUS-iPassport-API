@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 namespace iPassport.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
+    [ApiController]    
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -71,6 +70,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpPut("Plan")]
         public async Task<ActionResult> PutUserPlan(Guid planId)
         {
@@ -88,6 +88,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpPost("Plan")]
         public async Task<ActionResult> PostUserPlan(Guid planId)
         {
@@ -106,6 +107,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpGet("Plan")]
         public async Task<ActionResult> GetUserPlan()
         {
