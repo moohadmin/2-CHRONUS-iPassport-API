@@ -4,12 +4,19 @@
     {
         public PassportDetails() { }
 
-        public System.Guid PassportId { get; private set; }
+        /// <summary>
+        /// Passport Id
+        /// </summary>
+        public System.Guid PassportId { get; private set; }        
         
         /// <summary>
         /// Expiration Data
         /// </summary>
         public System.DateTime ExpirationDate { get; private set; }
         
+        /// <summary>
+        /// Passport
+        /// </summary>
+        public virtual Passport Passport { get; set; }
     }
 }

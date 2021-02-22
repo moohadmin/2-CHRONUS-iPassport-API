@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210222182153_Passport")]
+    partial class Passport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,31 +65,6 @@ namespace iPassport.Infra.Migrations
                         .IsUnique();
 
                     b.ToTable("Passports");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.PassportDetails", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<Guid>("PassportId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PassportId");
-
-                    b.ToTable("PassportDetails");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>
@@ -152,7 +129,7 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");
@@ -193,17 +170,6 @@ namespace iPassport.Infra.Migrations
                     b.Navigation("UserDetails");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.PassportDetails", b =>
-                {
-                    b.HasOne("iPassport.Domain.Entities.Passport", "Passport")
-                        .WithMany("PassportDetails")
-                        .HasForeignKey("PassportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Passport");
-                });
-
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.Plan", "Plan")
@@ -211,11 +177,6 @@ namespace iPassport.Infra.Migrations
                         .HasForeignKey("PlanId");
 
                     b.Navigation("Plan");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.Passport", b =>
-                {
-                    b.Navigation("PassportDetails");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>
