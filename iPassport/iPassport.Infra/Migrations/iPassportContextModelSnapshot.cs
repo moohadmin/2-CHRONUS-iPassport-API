@@ -100,8 +100,11 @@ namespace iPassport.Infra.Migrations
                 b.Property<string>("Gender")
                     .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Occupation")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Occupation")
+                        .HasColumnType("nvarchar(max)");
 
                 b.Property<string>("Passport")
                     .HasColumnType("nvarchar(max)");

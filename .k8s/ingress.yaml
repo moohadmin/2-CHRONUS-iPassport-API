@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.allow-http: "false"
+  labels:
+    app: ${APP_NAME}-${APP_GROUP}
+  name: ${APP_NAME}-${APP_GROUP}
+spec:
+  rules:
+  - host: ${APP_NAME}.${APP_GROUP}.${ENVIRONMENT}.solutis.xyz
+    http:
+      paths:
+      - backend:
+          serviceName: ${APP_NAME}-${APP_GROUP}
+          servicePort: 80
+        path: /
+  tls:
+  - hosts:
+    - ${APP_NAME}.${APP_GROUP}.${ENVIRONMENT}.solutis.xyz
+    secretName: crt-ship-${APP_NAME}-${APP_GROUP}
