@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}-${APP_GROUP}
+  labels:
+    app: ${APP_NAME}-${APP_GROUP}
+    role: backend
+    env: dev
+  annotations:
+    downscaler/uptime: Mon-Fri 07:30-23:30 America/Bahia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APP_NAME}-${APP_GROUP}
+      role: backend
+      env: dev
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME}-${APP_GROUP}
+        role: backend
+        env: dev
+    spec:
+      nodeSelector:
+        preemptible: "true"
+      tolerations:
+      - effect: NoSchedule
+        key: type
+        operator: Equal
+        value: preemptible
+      imagePullSecrets:
+      - name: gitlab-auth
+      containers:
+      - name: ${APP_NAME}-${APP_GROUP}
+        image: ${IMAGE_TAG}
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: DB_HOST
+              name: ${APP_NAME}-${APP_GROUP}
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: DB_NAME
+              name: ${APP_NAME}-${APP_GROUP}
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: DB_USER
+              name: ${APP_NAME}-${APP_GROUP}
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PASSWORD
+              name: ${APP_NAME}-${APP_GROUP}
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+          initialDelaySeconds: 120
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+          initialDelaySeconds: 130
+          timeoutSeconds: 10
+          failureThreshold: 10
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}-${APP_GROUP}-DB
+  labels:
+    app: ${APP_NAME}-${APP_GROUP}-DB
+    role: backend
+    env: dev
+  annotations:
+    downscaler/uptime: Mon-Fri 07:30-23:30 America/Bahia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APP_NAME}-${APP_GROUP}-DB
+      role: backend
+      env: dev
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME}-${APP_GROUP}-DB
+        role: backend
+        env: dev
+    spec:
+      nodeSelector:
+        preemptible: "true"
+      tolerations:
+      - effect: NoSchedule
+        key: type
+        operator: Equal
+        value: preemptible
+      containers:
+      - name: ${APP_NAME}-${APP_GROUP}-DB
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PASSWORD
+              name: ${APP_NAME}-${APP_GROUP}
+        volumeMounts:
+        - mountPath: "/var/opt/mssql"
+          name: ${APP_NAME}-${APP_GROUP}-storage
+        ports:
+        - containerPort: 1433
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "100m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        volumes:
+        - name: ${APP_NAME}-${APP_GROUP}-storage
+          persistentVolumeClaim:
+            claimName: ${APP_NAME}-${APP_GROUP}-pvc
+        

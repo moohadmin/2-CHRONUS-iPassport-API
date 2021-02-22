@@ -20,6 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using FluentValidation.AspNetCore;
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 
 namespace iPassport.Api
 {
@@ -139,6 +140,8 @@ namespace iPassport.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHealthChecks("/api/health");
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "iPassport.Api v1"));
 
@@ -157,8 +160,8 @@ namespace iPassport.Api
                        
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/api/health").WithMetadata(new AllowAnonymousAttribute());
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/api/health");
             });
         }
     }
