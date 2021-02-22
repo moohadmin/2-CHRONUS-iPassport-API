@@ -29,7 +29,7 @@ include:
     - gcloud config set project $PROJECT
     - gcloud config set compute/zone $ZONE
     - gcloud container clusters get-credentials $CLUSTER --zone $ZONE
-    - for YAML in $(ls .k8s/*.yaml);do cat $YAML | envsubst | kubectl apply -n $environment -f -;done
+    - for YAML in $(ls .k8s/*.yaml);do cat $YAML | envsubst | kubectl apply -n $ENVIRONMENT -f -;done
   retry:
     max: 2
     when:
@@ -39,27 +39,24 @@ include:
 
 deploy:develop:
   extends: .deploy
-  variables:    
+  variables:   
+    ENVIRONMENT: dev 
     IMAGE_TAG: ${CI_REGISTRY_IMAGE}:develop
-  environment:
-    name: dev
   only:
     - develop  
 
 deploy:release:
   extends: .deploy
   variables:    
+    ENVIRONMENT: test 
     IMAGE_TAG: ${CI_REGISTRY_IMAGE}:release
-  environment:
-    name: test
   only:
     - /^release\/[0-9.]+$/
 
 deploy:tags:
   extends: .deploy
   variables:    
+    ENVIRONMENT: test
     IMAGE_TAG:  ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
-  environment:
-    name: test
   only:
     - tags
