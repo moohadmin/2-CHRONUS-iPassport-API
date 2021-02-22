@@ -16,7 +16,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: ${APP_NAME}-${APP_GROUP}-DB
+  name: ${APP_NAME}-${APP_GROUP}-db
 spec:
   type: ClusterIP
   ports:
@@ -25,5 +25,5 @@ spec:
     targetPort: 1433
     protocol: TCP
   selector:
-    app: ${APP_NAME}-${APP_GROUP}-DB
+    app: ${APP_NAME}-${APP_GROUP}-db
     role: backend

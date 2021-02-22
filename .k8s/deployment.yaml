@@ -82,9 +82,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${APP_NAME}-${APP_GROUP}-DB
+  name: ${APP_NAME}-${APP_GROUP}-db
   labels:
-    app: ${APP_NAME}-${APP_GROUP}-DB
+    app: ${APP_NAME}-${APP_GROUP}-db
     role: backend
     env: dev
   annotations:
@@ -93,13 +93,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ${APP_NAME}-${APP_GROUP}-DB
+      app: ${APP_NAME}-${APP_GROUP}-db
       role: backend
       env: dev
   template:
     metadata:
       labels:
-        app: ${APP_NAME}-${APP_GROUP}-DB
+        app: ${APP_NAME}-${APP_GROUP}-db
         role: backend
         env: dev
     spec:
@@ -111,7 +111,7 @@ spec:
         operator: Equal
         value: preemptible
       containers:
-      - name: ${APP_NAME}-${APP_GROUP}-DB
+      - name: ${APP_NAME}-${APP_GROUP}-db
         image: mcr.microsoft.com/mssql/server:2017-latest
         imagePullPolicy: IfNotPresent
         env:
