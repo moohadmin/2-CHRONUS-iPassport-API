@@ -6,6 +6,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,13 +19,15 @@ namespace iPassport.Application.Services
         private readonly IPassportRepository _repository;
         private readonly IPassportUseRepository _useRepository;
         private readonly IUserDetailsRepository _userDetailsRepository;
+        private readonly IHttpContextAccessor _accessor;
 
-        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository )
+        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor)
         {
             _mapper = mapper;
             _repository = repository;
             _userDetailsRepository = userDetailsRepository;
             _useRepository = useRepository;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi> Get(string userId)
@@ -94,7 +97,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException("Passport Expirado");
 
             dto.CitizenId = passport.UserDetailsId;
-
+            //dto.AgentId = _accessor.GetCurrentUserId()
             return dto;
         }
     }

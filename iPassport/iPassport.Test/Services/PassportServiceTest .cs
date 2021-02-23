@@ -6,6 +6,7 @@ using iPassport.Application.Services;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -19,6 +20,7 @@ namespace iPassport.Test.Services
         Mock<IPassportRepository> _mockRepository;
         Mock<IPassportUseRepository> _mockUseRepository;
         Mock<IUserDetailsRepository> _mockUserDeatilsRepository;
+        IHttpContextAccessor _accessor;
         IPassportService _service;
         IMapper _mapper;
 
@@ -29,7 +31,9 @@ namespace iPassport.Test.Services
             _mockRepository = new Mock<IPassportRepository>();
             _mockUserDeatilsRepository = new Mock<IUserDetailsRepository>();
             _mockUseRepository = new Mock<IPassportUseRepository>();
-            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDeatilsRepository.Object, _mockUseRepository.Object);
+            _accessor = HttpContextAccessorFactory.Create();
+
+            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDeatilsRepository.Object, _mockUseRepository.Object, _accessor);
         }
 
         [TestMethod]
