@@ -30,7 +30,7 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<IList<VaccineViewModel>>(res.Data);
 
-            return new PagedResponseApi(true, "vacinas do usuário" , res.PageNumber, res.PageSize, res.TotalPages,res.TotalRecords, result);
+            return new PagedResponseApi(true, "vacinas do usuário" , res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
     }
 }

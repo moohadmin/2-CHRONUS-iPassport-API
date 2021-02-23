@@ -1,4 +1,6 @@
-﻿namespace iPassport.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace iPassport.Domain.Entities
 {
     public class PagedData<T> where T : class 
     {
@@ -7,6 +9,6 @@
         public int TotalPages { get; set; }
         public int TotalRecords { get; set; }
 
-        public T Data { get; set; }
+        public IList<T> Data { get; set; }
     }
 }
