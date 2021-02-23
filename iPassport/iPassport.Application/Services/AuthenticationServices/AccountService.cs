@@ -17,7 +17,6 @@ namespace iPassport.Application.Services.AuthenticationServices
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IUserRepository _userRepository;
         
-
         private readonly UserManager<Users> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IAuth2FactService _auth2FactService;
@@ -62,6 +61,38 @@ namespace iPassport.Application.Services.AuthenticationServices
             }
 
             return new ResponseApi(false, "Usuário ou Senha Inválido!", null);
+        }
+
+        public async Task<ResponseApi> EmailLogin(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                throw new BusinessException("Usuário não cadastrado!");
+
+            var userDetails = await _userDetailsRepository.FindWithUser(user.Id);
+
+            /// Caso exista um user cadastrado, porém não tem o cadastro da userDetails, 
+            /// será excluido o user pois não é permitido um user sem userDetails
+            if (userDetails == null)
+            {
+                await _userManager.DeleteAsync(user);
+                throw new BusinessException("Usuário não cadastrado!");
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, password))
+            {
+                var token = _tokenService.GenerateBasic(user, userDetails);
+
+                if (token == null)
+                    throw new BusinessException("Usuário ou Senha inválidos!");
+
+                userDetails.UpdateLastLogin();
+                _userDetailsRepository.Update(userDetails);
+
+                return new ResponseApi(true, "Usuário Autenticado!", token);
+            }
+
+            throw new BusinessException("Usuário ou Senha Inválido!");
         }
 
         public ResponseApi SendPin(string phone, string doctype, string doc)
