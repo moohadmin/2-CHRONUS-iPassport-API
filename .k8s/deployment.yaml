@@ -36,10 +36,25 @@ spec:
         image: ${IMAGE_TAG}
         imagePullPolicy: IfNotPresent
         env:
-        - name: CONNECTION_STRING
+        - name: DB_HOST
           valueFrom:
             configMapKeyRef:
-              key: CONNECTION_STRING
+              key: DB_HOST
+              name: ${APP_NAME}-${APP_GROUP}
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: DB_NAME
+              name: ${APP_NAME}-${APP_GROUP}
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: DB_USER
+              name: ${APP_NAME}-${APP_GROUP}
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PASSWORD
               name: ${APP_NAME}-${APP_GROUP}
         ports:
         - containerPort: 80
