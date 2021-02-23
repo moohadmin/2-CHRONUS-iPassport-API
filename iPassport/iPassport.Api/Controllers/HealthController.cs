@@ -10,9 +10,8 @@ namespace iPassport.Api.Controllers
     /// <summary>
     ///  HealthController
     /// </summary>
-    [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/test/[controller]")]
     public class HealthController : ControllerBase
     {
         private readonly IHealthService _service;
