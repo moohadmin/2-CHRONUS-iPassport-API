@@ -6,7 +6,7 @@ namespace iPassport.Infra.Contexts
 {
     public class iPassportContext : DbContext
     {
-        public iPassportContext(DbContextOptions options) : base(options) { }
+        public iPassportContext(DbContextOptions<iPassportContext> options) : base(options) { }
         public iPassportContext() { }
 
         /// <summary>
@@ -15,6 +15,7 @@ namespace iPassport.Infra.Contexts
         public DbSet<Health> Healths { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
         public DbSet<Plan> Plans { get; set; }
+        public DbSet<Auth2FactMobile> Auth2FactMobile { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
