@@ -27,6 +27,8 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IUserService, UserService>();
 
+            services.AddScoped<IExternalStorageService, ExternalStorageService>();
+
             services.AddScoped<ISmsExternalService, SmsIntegrationService>();
 
             services.AddScoped<IAuth2FactService, Auth2FactService>();
@@ -61,3 +63,4 @@ namespace iPassport.Api.Configurations
         }
     }
 }
+

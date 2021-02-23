@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 namespace iPassport.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController]    
+    
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -42,6 +43,25 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
+        /// This Add User Image
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Operation OK</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpPost("UploadImage")]
+        public async Task<ActionResult> UserImageUpload([FromForm] UserImageRequest request)
+        {
+            var res = await _service.AddUserImage(_mapper.Map<UserImageDto>(request));
+            return Ok(res);
+
+        }
+
+        /// <summary>
         /// This API Associate Plan to User
         /// </summary>
         /// <returns></returns>
@@ -51,6 +71,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpPut("Plan")]
         public async Task<ActionResult> PutUserPlan(Guid planId)
         {
@@ -68,6 +89,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpPost("Plan")]
         public async Task<ActionResult> PostUserPlan(Guid planId)
         {
@@ -86,6 +108,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpGet("Plan")]
         public async Task<ActionResult> GetUserPlan()
         {
