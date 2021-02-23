@@ -91,7 +91,7 @@ namespace iPassport.Application.Services
             var plan = await _planRepository.Find((Guid)userDetails.PlanId);
 
             if (plan == null)
-                throw new NotFoundException("Plano não encontrado");
+                throw new BusinessException("Plano não encontrado");
 
             return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
         }
@@ -104,6 +104,14 @@ namespace iPassport.Application.Services
                 throw new NotFoundException("Usuário não encontrado");
 
             return Guid.Parse(userId.Value);
+        }
+
+        public async Task<UserDetails> GetCurrentUserDetails()
+        {
+            var userId = GetCurrentUserId();
+            var userDetails = await _detailsRepository.FindWithUser(userId);
+
+            return userDetails;
         }
     }
 }

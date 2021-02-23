@@ -12,15 +12,16 @@ namespace iPassport.Infra.Mappings
 
             builder.Property(x => x.PassId)
                 .HasColumnType("int")                
+                .UseIdentityColumn(1,1)                
                 .IsRequired();
 
             builder.HasOne(x => x.UserDetails)
                     .WithOne(x => x.Passport)
                     .HasForeignKey<Passport>(x => x.UserDetailsId);
 
-            builder.HasMany(x => x.PassportDetails)
+            builder.HasMany(x => x.ListPassportDetails)
                     .WithOne(x => x.Passport)
-                    .HasForeignKey( x=> x.PassportId);
+                    .HasForeignKey(x => x.PassportId);
 
         }
     }

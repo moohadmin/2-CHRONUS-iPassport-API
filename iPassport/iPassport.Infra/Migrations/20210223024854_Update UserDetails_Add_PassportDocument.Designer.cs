@@ -10,8 +10,8 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    [Migration("20210222192755_Update UserDetails_Add_RG_Add_PassportDocument_Add_LastLogin")]
-    partial class UpdateUserDetails_Add_RG_Add_PassportDocument_Add_LastLogin
+    [Migration("20210223024854_Update UserDetails_Add_PassportDocument")]
+    partial class UpdateUserDetails_Add_PassportDocument
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,7 +51,11 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PassId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
@@ -159,7 +163,7 @@ namespace iPassport.Infra.Migrations
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PassportDocument")
+                    b.Property<string>("PassportDoc")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Photo")
@@ -198,7 +202,7 @@ namespace iPassport.Infra.Migrations
             modelBuilder.Entity("iPassport.Domain.Entities.PassportDetails", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.Passport", "Passport")
-                        .WithMany("PassportDetails")
+                        .WithMany("ListPassportDetails")
                         .HasForeignKey("PassportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -217,7 +221,7 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.Passport", b =>
                 {
-                    b.Navigation("PassportDetails");
+                    b.Navigation("ListPassportDetails");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>

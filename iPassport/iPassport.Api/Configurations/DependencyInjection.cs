@@ -28,7 +28,10 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ISmsExternalService, SmsIntegrationService>();
 
             services.AddScoped<IAuth2FactService, Auth2FactService>();
+
             services.AddScoped<IPlanService, PlanService>();
+
+            services.AddScoped<IPassportService, PassportService>();
 
             #endregion
 
@@ -40,6 +43,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
 
             services.AddScoped<IPlanRepository, PlanRepository>();
+
+            services.AddScoped<IPassportRepository, PassportRepository>();
 
             #endregion
 
@@ -54,3 +59,4 @@ namespace iPassport.Api.Configurations
         }
     }
 }
+

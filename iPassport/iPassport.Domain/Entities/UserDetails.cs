@@ -14,7 +14,7 @@ namespace iPassport.Domain.Entities
             CPF = cpf;
             RG = rg;
             CNS = cns;
-            PassportDocument = passportDocument;
+            PassportDoc = passportDocument;
             Birthday = birthday;
             Gender = gender;
             Breed = breed;
@@ -36,7 +36,7 @@ namespace iPassport.Domain.Entities
         /// <summary>
         /// Document Passport Description
         /// </summary>
-        public string PassportDocument { get; private set; }
+        public string PassportDoc { get; private set; }
         public DateTime Birthday { get; private set; }
         public DateTime? LastLogin { get; set; }
         public string Gender { get; private set; }

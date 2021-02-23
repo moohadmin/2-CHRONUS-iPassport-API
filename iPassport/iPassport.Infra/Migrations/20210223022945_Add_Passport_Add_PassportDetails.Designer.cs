@@ -10,8 +10,8 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    [Migration("20210222190743_PassportDetails")]
-    partial class PassportDetails
+    [Migration("20210223022945_Add_Passport_Add_PassportDetails")]
+    partial class Add_Passport_Add_PassportDetails
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,7 +51,11 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PassId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
@@ -154,7 +158,7 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DateTime");
 
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");
@@ -198,7 +202,7 @@ namespace iPassport.Infra.Migrations
             modelBuilder.Entity("iPassport.Domain.Entities.PassportDetails", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.Passport", "Passport")
-                        .WithMany("PassportDetails")
+                        .WithMany("ListPassportDetails")
                         .HasForeignKey("PassportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -217,7 +221,7 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.Passport", b =>
                 {
-                    b.Navigation("PassportDetails");
+                    b.Navigation("ListPassportDetails");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>

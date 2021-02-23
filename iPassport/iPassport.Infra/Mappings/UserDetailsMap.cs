@@ -26,7 +26,7 @@ namespace iPassport.Infra.Mappings
             builder.Property(x => x.CNS)
                 .HasColumnType("nvarchar(max)");
 
-            builder.Property(x => x.PassportDocument)
+            builder.Property(x => x.PassportDoc)
                 .HasColumnType("nvarchar(max)");
 
             builder.Property(x => x.Birthday)

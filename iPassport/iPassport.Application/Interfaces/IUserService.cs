@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using System;
 using System.Threading.Tasks;
 
