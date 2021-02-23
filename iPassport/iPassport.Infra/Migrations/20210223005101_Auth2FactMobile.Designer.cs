@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210223005101_Auth2FactMobile")]
+    partial class Auth2FactMobile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,61 +71,6 @@ namespace iPassport.Infra.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Healths");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.Passport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PassId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
-                        .HasAnnotation("SqlServer:IdentitySeed", 1)
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserDetailsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserDetailsId")
-                        .IsUnique();
-
-                    b.ToTable("Passports");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.PassportDetails", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<Guid>("PassportId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PassportId");
-
-                    b.ToTable("PassportDetails");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>
@@ -187,13 +134,10 @@ namespace iPassport.Infra.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("DateTime");
-
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PassportDoc")
+                    b.Property<string>("Passport")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Photo")
@@ -218,28 +162,6 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("UserDetails");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.Passport", b =>
-                {
-                    b.HasOne("iPassport.Domain.Entities.UserDetails", "UserDetails")
-                        .WithOne("Passport")
-                        .HasForeignKey("iPassport.Domain.Entities.Passport", "UserDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserDetails");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.PassportDetails", b =>
-                {
-                    b.HasOne("iPassport.Domain.Entities.Passport", "Passport")
-                        .WithMany("ListPassportDetails")
-                        .HasForeignKey("PassportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Passport");
-                });
-
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.Plan", "Plan")
@@ -249,19 +171,9 @@ namespace iPassport.Infra.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.Passport", b =>
-                {
-                    b.Navigation("ListPassportDetails");
-                });
-
             modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
-                {
-                    b.Navigation("Passport");
                 });
 #pragma warning restore 612, 618
         }

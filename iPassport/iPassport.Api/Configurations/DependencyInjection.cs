@@ -3,8 +3,10 @@ using iPassport.Application.Services;
 using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using iPassport.Infra.ExternalServices;
 using iPassport.Infra.Repositories;
+using iPassport.Infra.Repositories.AuthenticationRepositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -40,9 +42,13 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IHealthRepository, HealthRepository>();
 
+            services.AddScoped<IUserRepository, UserRepository>();
+
             services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
 
             services.AddScoped<IPlanRepository, PlanRepository>();
+
+            services.AddScoped<IAuth2FactMobileRepository, Auth2FactMobileRepository>();
 
             services.AddScoped<IPassportRepository, PassportRepository>();
 
