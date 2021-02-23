@@ -34,7 +34,7 @@ spec:
       containers:
       - name: ${APP_NAME}-${APP_GROUP}
         image: ${IMAGE_TAG}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: DB_HOST
           valueFrom:
