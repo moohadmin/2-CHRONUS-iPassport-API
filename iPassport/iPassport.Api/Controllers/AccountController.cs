@@ -36,24 +36,24 @@ namespace iPassport.Api.Controllers
             return Ok(res);
         }
 
-        ///// <summary>
-        ///// This API is LoginWithEmail
-        ///// </summary>
-        ///// <returns></returns>
+        /// <summary>
+        /// This API is LoginWithEmail
+        /// </summary>
+        /// <returns></returns>
         /// <response code="200">Server returns Ok/response>
         /// <response code="204">Server returns no data.</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
         /// <response code="500">Due to server problems, it is not possible to get your data now</response>
-        //[ProducesResponseType(typeof(ResponseApi), 200)]
-        //[ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
-        //[ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        //[HttpPost]
-        //public async Task<ActionResult> LoginWithEmail()
-        //{
-        //    var res = await _service.LoginWithEmail();
-        //    return Ok(res);
-        //}
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPost("LoginByEmail")]
+        public async Task<ActionResult> LoginByEmail([FromBody]EmailLoginRequest request)
+        {
+            var res = await _service.EmailLogin(request.Email, request.Password);
+            return Ok(res);
+        }
 
         /// <summary>
         /// This API is LoginMobile
