@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210223005101_Auth2FactMobile")]
+    partial class Auth2FactMobile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,9 +133,6 @@ namespace iPassport.Infra.Migrations
 
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");

@@ -15,5 +15,8 @@ namespace iPassport.Infra.Repositories
         public async Task<UserDetails> FindWithUser(Guid id) =>
             await _DbSet.Where(x => x.UserId == id).FirstOrDefaultAsync();
 
+        //public async Task<UserDetails> FindByPhone(string phone) =>
+        //    await _DbSet.Where(x => x.)
+
     }
 }
