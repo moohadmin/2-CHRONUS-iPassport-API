@@ -5,7 +5,6 @@ using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
-using Microsoft.AspNetCore.Http;
 
 using System.Threading.Tasks;
 
@@ -16,14 +15,12 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
         private readonly IPassportRepository _repository;
         private readonly IUserDetailsRepository _userDetailsRepository;
-        private readonly IHttpContextAccessor _accessor;
 
-        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IHttpContextAccessor accessor)
+        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository)
         {
             _mapper = mapper;
             _repository = repository;
             _userDetailsRepository = userDetailsRepository;
-            _accessor = accessor;
         }
         public async Task<ResponseApi> Get(string userId)
         {
