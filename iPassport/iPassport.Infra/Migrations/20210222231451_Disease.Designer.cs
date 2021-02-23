@@ -3,36 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210222231451_Disease")]
+    partial class Disease
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.3")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("DiseaseVaccine", b =>
-                {
-                    b.Property<Guid>("DiseasesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("VaccinesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("DiseasesId", "VaccinesId");
-
-                    b.HasIndex("VaccinesId");
-
-                    b.ToTable("DiseaseVaccine");
-                });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Disease", b =>
                 {
@@ -174,88 +161,6 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("UserDetails");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.UserVaccine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<int>("Dose")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("VaccinationDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<Guid>("VaccineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VaccineId");
-
-                    b.ToTable("UserVaccines");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.Vaccine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("DateTime");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<int>("ExpirationTime")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ImunizationTime")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Laboratory")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<int>("RequiredDoses")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("DateTime");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Vaccines");
-                });
-
-            modelBuilder.Entity("DiseaseVaccine", b =>
-                {
-                    b.HasOne("iPassport.Domain.Entities.Disease", null)
-                        .WithMany()
-                        .HasForeignKey("DiseasesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("iPassport.Domain.Entities.Vaccine", null)
-                        .WithMany()
-                        .HasForeignKey("VaccinesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.Plan", "Plan")
@@ -265,38 +170,9 @@ namespace iPassport.Infra.Migrations
                     b.Navigation("Plan");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.UserVaccine", b =>
-                {
-                    b.HasOne("iPassport.Domain.Entities.UserDetails", "UserDetails")
-                        .WithMany("UserVaccines")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("iPassport.Domain.Entities.Vaccine", "Vaccine")
-                        .WithMany("UserVaccines")
-                        .HasForeignKey("VaccineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserDetails");
-
-                    b.Navigation("Vaccine");
-                });
-
             modelBuilder.Entity("iPassport.Domain.Entities.Plan", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
-                {
-                    b.Navigation("UserVaccines");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.Vaccine", b =>
-                {
-                    b.Navigation("UserVaccines");
                 });
 #pragma warning restore 612, 618
         }

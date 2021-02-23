@@ -15,6 +15,9 @@ namespace iPassport.Infra.Contexts
         public DbSet<Health> Healths { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
         public DbSet<Plan> Plans { get; set; }
+        public DbSet<Disease> Diseases { get; set; }
+        public DbSet<Vaccine> Vaccines { get; set; }
+        public DbSet<UserVaccine> UserVaccines { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
@@ -24,6 +27,9 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new HealthMap());
             modelBuilder.ApplyConfiguration(new UserDetailsMap());
             modelBuilder.ApplyConfiguration(new PlanMap());
+            modelBuilder.ApplyConfiguration(new DiseaseMap());
+            modelBuilder.ApplyConfiguration(new VaccineMap());
+            modelBuilder.ApplyConfiguration(new UserVaccineMap());
 
             base.OnModelCreating(modelBuilder);
         }

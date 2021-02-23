@@ -14,6 +14,7 @@ namespace iPassport.Test.Controllers
     public class UserControllerTest
     {
         Mock<IUserService> _mockService;
+        Mock<IVaccineService> _mockVaccineService;
         IMapper _mapper;
         UserController _controller;
 
@@ -21,8 +22,9 @@ namespace iPassport.Test.Controllers
         public void Setup()
         {
             _mockService = new Mock<IUserService>();
+            _mockVaccineService = new Mock<IVaccineService>();
             _mapper = AutoMapperFactory.Create();
-            _controller = new UserController(_mapper, _mockService.Object);
+            _controller = new UserController(_mapper, _mockService.Object, _mockVaccineService.Object);
         }
 
         [TestMethod]

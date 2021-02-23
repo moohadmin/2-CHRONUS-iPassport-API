@@ -4,6 +4,7 @@ using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,16 +14,18 @@ namespace iPassport.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IUserService _service;
+        private readonly IVaccineService _vaccineService;
 
-        public UserController(IMapper mapper, IUserService userService)
+        public UserController(IMapper mapper, IUserService userService, IVaccineService vaccineService)
         {
             _mapper = mapper;
             _service = userService;
+            _vaccineService = vaccineService;
         }
 
         /// <summary>
@@ -109,6 +112,25 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> GetCurrentUser()
         {
             var res = await _service.GetCurrentUser();
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API Get the User vaccines
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Ok.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="404">NotFound Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Vaccine")]
+        public async Task<ActionResult> GetPagedUserVaccines([FromQuery] PageFilterRequest request)
+        {
+            var res = await _vaccineService.GetUserVaccines(_mapper.Map<PageFilter>(request));
+
             return Ok(res);
         }
     }

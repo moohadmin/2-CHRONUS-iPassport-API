@@ -1,9 +1,12 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Infra.Repositories
@@ -41,6 +44,23 @@ namespace iPassport.Infra.Repositories
         {
             _DbSet.Remove(obj);
             _context.SaveChanges();
+        }
+
+        protected async Task<PagedData<T>> Paginate(IQueryable<T> dbSet, PageFilter filter)
+        {
+            (int take, int skip) = CalcPageOffset(filter);
+
+            var data = await dbSet.Take(take).Skip(skip).ToListAsync();
+            var totalPages = data.Count / filter.PageSize;
+
+            return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = data.Count };
+        }
+
+        private static (int, int) CalcPageOffset(PageFilter filter)
+        {
+            int skip = (filter.PageNumber - 1) * filter.PageSize;
+            int take = skip + filter.PageSize;
+            return (take, skip);
         }
     }
 }

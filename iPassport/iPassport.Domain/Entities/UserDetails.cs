@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Dtos;
 using System;
+using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
 {
@@ -45,6 +46,7 @@ namespace iPassport.Domain.Entities
         public Guid? PlanId { get; private set; }
 
         public virtual Plan Plan { get; set; }
+        public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
         public void AssociatePlan(Guid plandId) => PlanId = plandId;

@@ -14,7 +14,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "CONNECTION_STRING": "Server={DB_HOST};Database={DB_NAME};User Id={DB_USER};Password={DB_PASSWORD};",
+        "CONNECTION_STRING": "Server=host.docker.internal;Database=iPassportDB;User Id=sa;Password=P@ssw0rd!;",
         "DB_HOST": "host.docker.internal",
         "DB_NAME": "iPassportDB",
         "DB_USER": "sa",

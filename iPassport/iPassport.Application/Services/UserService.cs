@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
@@ -59,7 +60,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetCurrentUser()
         {
-            var userId = GetCurrentUserId();
+            var userId = _accessor.GetCurrentUserId();
             var userDetails = await _detailsRepository.FindWithUser(userId);
 
             return new ResponseApi(true, "Usuario Logado", _mapper.Map<UserDetailsViewModel>(userDetails));
@@ -67,7 +68,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AssociatePlan(Guid planId)
         {
-            var userId = GetCurrentUserId();
+            var userId = _accessor.GetCurrentUserId();
 
             var userDetails = await _detailsRepository.FindWithUser(userId);
             var plan = await _planRepository.Find(planId);
@@ -85,7 +86,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetUserPlan()
         {
-            var userId = GetCurrentUserId();
+            var userId = _accessor.GetCurrentUserId();
 
             var userDetails = await _detailsRepository.FindWithUser(userId);
             var plan = await _planRepository.Find((Guid)userDetails.PlanId);
@@ -94,16 +95,6 @@ namespace iPassport.Application.Services
                 throw new NotFoundException("Plano não encontrado");
 
             return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
-        }
-
-        private Guid GetCurrentUserId()
-        {
-            var userId = _accessor.HttpContext.User.FindFirst("UserId");
-            
-            if (userId == null)
-                throw new NotFoundException("Usuário não encontrado");
-
-            return Guid.Parse(userId.Value);
         }
     }
 }

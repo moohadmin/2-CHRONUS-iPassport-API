@@ -1,0 +1,41 @@
+﻿using iPassport.Domain.Dtos;
+using System;
+
+namespace iPassport.Domain.Entities
+{
+    public class UserVaccine : Entity
+    {
+        public UserVaccine() { }
+
+        public UserVaccine(DateTime vaccinationDate, int dose, Guid vaccineId, Guid userId)
+        {
+            Id = Guid.NewGuid();
+            VaccinationDate = vaccinationDate;
+            Dose = dose;
+            VaccineId = vaccineId;
+            UserId = userId;
+        }
+
+        public DateTime VaccinationDate { get; private set; }
+        public int Dose { get; private set; }
+        public Guid VaccineId { get; private set; }
+        public Guid UserId { get; private set; }
+
+        public virtual UserDetails UserDetails { get; set; }
+        public virtual Vaccine Vaccine { get; set; }
+
+        public UserVaccine Create(UserVaccineCreateDto dto) => new UserVaccine(dto.VaccinationDate, dto.Dose, dto.VaccineId, dto.UserId);
+        public DateTime GetExpirationDate(Vaccine vaccine) => VaccinationDate.AddDays(vaccine.ExpirationTime);
+        public bool IsImmunized(Vaccine vaccine)
+        {
+            var today = DateTime.Now;
+
+            if (VaccinationDate.AddDays(vaccine.ImunizationTime) >= today // Time for the vaccine to start taking effect
+                && VaccinationDate.AddDays(vaccine.ExpirationTime) < today // Vaccine shelf life
+                && Dose == vaccine.RequiredDoses) // Amount of required dosage
+                return true;
+
+            return false;
+        }
+    }
+}

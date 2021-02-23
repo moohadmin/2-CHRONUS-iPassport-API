@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using iPassport.Infra.Contexts;
 
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210223133754_UserVaccine")]
+    partial class UserVaccine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,30 +183,33 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Dose")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserDetailsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("VaccinationDate")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("VaccineId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserDetailsId");
 
                     b.HasIndex("VaccineId");
 
-                    b.ToTable("UserVaccines");
+                    b.ToTable("UserVaccine");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Vaccine", b =>
@@ -269,9 +274,7 @@ namespace iPassport.Infra.Migrations
                 {
                     b.HasOne("iPassport.Domain.Entities.UserDetails", "UserDetails")
                         .WithMany("UserVaccines")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserDetailsId");
 
                     b.HasOne("iPassport.Domain.Entities.Vaccine", "Vaccine")
                         .WithMany("UserVaccines")

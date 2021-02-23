@@ -1,5 +1,4 @@
-﻿using iPassport.Domain.Entities;
-using System;
+﻿using System;
 
 namespace iPassport.Application.Models.ViewModels
 {
@@ -32,5 +31,9 @@ namespace iPassport.Application.Models.ViewModels
         /// Update date
         /// </summary>
         public DateTime UpdateDate { get; set; }
+        /// <summary>
+        /// Observation
+        /// </summary>
+        public string Observation { get; set; }
     }
 }
