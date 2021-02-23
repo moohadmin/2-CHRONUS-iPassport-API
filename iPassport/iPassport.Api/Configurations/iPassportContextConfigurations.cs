@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace iPassport.Api.Configurations
 {
@@ -16,8 +15,7 @@ namespace iPassport.Api.Configurations
 
         public static IServiceCollection AddCustomDataContext(this IServiceCollection services, IConfiguration configuration)
         {
-            //string connection = configuration.GetConnectionString("DefaultConnection");
-            string connection = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            string connection = System.Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             services.AddScoped((provider) =>
             {

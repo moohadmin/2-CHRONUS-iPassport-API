@@ -6,6 +6,10 @@
 /src/bin
 /src/obj
 
+#iPassport
+#Upload Image
+**/Content/Image/
+
 /.vs
 #/.vscode
 gitlabKey

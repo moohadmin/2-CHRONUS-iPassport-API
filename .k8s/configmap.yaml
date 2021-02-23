@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: ${APP_NAME}-${APP_GROUP}
 data:
+  CONNECTION_STRING: ${CONNECTION_STRING}
   DB_HOST: ${DB_HOST}
   DB_NAME: ${DB_NAME}
   DB_USER: ${DB_USER}

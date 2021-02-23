@@ -33,6 +33,9 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<UserDetails, UserDetailsViewModel>()
                 .ReverseMap();
+            
+            profile.CreateMap<UserImageRequest, UserImageDto>()                
+                .ForMember(des => des.ImageFile, act => act.MapFrom(src => src.ImageFile));
         }
     }
 }

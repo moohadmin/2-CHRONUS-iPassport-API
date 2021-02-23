@@ -34,8 +34,13 @@ spec:
       containers:
       - name: ${APP_NAME}-${APP_GROUP}
         image: ${IMAGE_TAG}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
+        - name: CONNECTION_STRING
+          valueFrom:
+            configMapKeyRef:
+              key: CONNECTION_STRING
+              name: ${APP_NAME}-${APP_GROUP}
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
@@ -76,7 +81,7 @@ spec:
             memory: 128Mi
             cpu: 100m
           limits:
-            memory: 526Mi
+            memory: 128Mi
             cpu: 100m
 ---
 apiVersion: apps/v1

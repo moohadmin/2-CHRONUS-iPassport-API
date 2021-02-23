@@ -8,14 +8,14 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passport, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, Guid? planId = null) : base()
+        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, Guid? planId = null) : base()
         {
             UserId = userId;
             FullName = fullName;
             CPF = cpf;
             RG = rg;
             CNS = cns;
-            Passport = passport;
+            PassportDoc = passportDocument;
             Birthday = birthday;
             Gender = gender;
             Breed = breed;
@@ -34,7 +34,10 @@ namespace iPassport.Domain.Entities
         public string CPF { get; private set; }
         public string RG { get; private set; }
         public string CNS { get; private set; }
-        public string Passport { get; private set; }
+        /// <summary>
+        /// Document Passport Description
+        /// </summary>
+        public string PassportDoc { get; private set; }
         public DateTime Birthday { get; private set; }
         public DateTime? LastLogin { get; set; }
         public string Gender { get; private set; }
@@ -46,9 +49,29 @@ namespace iPassport.Domain.Entities
         public Guid? PlanId { get; private set; }
 
         public virtual Plan Plan { get; set; }
+        /// <summary>
+        /// Entity Passport
+        /// </summary>
+        public virtual Passport Passport { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
+
+        public void AddPhoto(string imageUrl) {
+            if (String.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
+            {
+                Photo = imageUrl;
+            }            
+        }
+
+        public void PhotoNameGenerator( UserImageDto dto)
+        {
+            dto.FileName = "ProfileImageUserId_" + UserId;            
+        }
+
+        public bool UserHavePhoto() => !String.IsNullOrWhiteSpace(Photo);
+
+
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
         public void UpdateLastLogin() => LastLogin = DateTime.Now;
     }

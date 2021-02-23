@@ -6,7 +6,7 @@ namespace iPassport.Infra.Contexts
 {
     public class iPassportContext : DbContext
     {
-        public iPassportContext(DbContextOptions options) : base(options) { }
+        public iPassportContext(DbContextOptions<iPassportContext> options) : base(options) { }
         public iPassportContext() { }
 
         /// <summary>
@@ -15,6 +15,9 @@ namespace iPassport.Infra.Contexts
         public DbSet<Health> Healths { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
         public DbSet<Plan> Plans { get; set; }
+        public DbSet<Auth2FactMobile> Auth2FactMobile { get; set; }
+        public DbSet<Passport> Passports { get; set; }
+        public DbSet<PassportDetails> PassportDetails { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Vaccine> Vaccines { get; set; }
         public DbSet<UserVaccine> UserVaccines { get; set; }
@@ -27,6 +30,8 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new HealthMap());
             modelBuilder.ApplyConfiguration(new UserDetailsMap());
             modelBuilder.ApplyConfiguration(new PlanMap());
+            modelBuilder.ApplyConfiguration(new PassportMap());
+            modelBuilder.ApplyConfiguration(new PassportDetailsMap());
             modelBuilder.ApplyConfiguration(new DiseaseMap());
             modelBuilder.ApplyConfiguration(new VaccineMap());
             modelBuilder.ApplyConfiguration(new UserVaccineMap());

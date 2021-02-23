@@ -57,9 +57,6 @@ namespace iPassport.Api
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            ///Add Identity DB Context
-            services.AddIdentityDataContext(Configuration);
-
             services.AddIdentity<Users, Roles>().AddEntityFrameworkStores<PassportIdentityContext>().AddDefaultTokenProviders();
 
             var secret = SecretConfiguration.GetSecret(Configuration);
@@ -117,8 +114,14 @@ namespace iPassport.Api
                 });
             });
 
+            /// Update Migrations
+            services.AddHostedService<MigrationsWork>();
+
             ///Add DB Context
             services.AddCustomDataContext(Configuration);
+
+            ///Add Identity DB Context
+            services.AddIdentityDataContext(Configuration);
 
             ///Helth Checks
             services.AddHealthChecks();
