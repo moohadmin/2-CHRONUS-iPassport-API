@@ -76,7 +76,7 @@ spec:
             memory: 128Mi
             cpu: 100m
           limits:
-            memory: 526Mi
+            memory: 128Mi
             cpu: 100m
 ---
 apiVersion: apps/v1

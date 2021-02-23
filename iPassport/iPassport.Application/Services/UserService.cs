@@ -22,14 +22,16 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
 
         private readonly UserManager<Users> _userManager;
+        private readonly IExternalStorageService _externalStorageService;
 
-        public UserService(IUserDetailsRepository detailsRepository, IPlanRepository planRepository,IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager)
+        public UserService(IUserDetailsRepository detailsRepository, IPlanRepository planRepository,IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService)
         {
             _detailsRepository = detailsRepository;
             _planRepository = planRepository;
             _mapper = mapper;
             _accessor = accessor;
             _userManager = userManager;
+            _externalStorageService = externalStorageService;
         }
 
         public async Task<ResponseApi> Add(UserCreateDto dto)
@@ -73,7 +75,7 @@ namespace iPassport.Application.Services
             var plan = await _planRepository.Find(planId);
             
             if (plan == null)
-                throw new NotFoundException("Plano não encontrado");
+                throw new BusinessException("Plano não encontrado");
 
             userDetails.AssociatePlan(plan.Id);
             userDetails.Plan = plan;
@@ -101,17 +103,35 @@ namespace iPassport.Application.Services
             var userId = _accessor.HttpContext.User.FindFirst("UserId");
             
             if (userId == null)
-                throw new NotFoundException("Usuário não encontrado");
+                throw new BusinessException("Usuário não encontrado");
 
             return Guid.Parse(userId.Value);
         }
 
-        public async Task<UserDetails> GetCurrentUserDetails()
+                
+  
+        public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)
         {
-            var userId = GetCurrentUserId();
-            var userDetails = await _detailsRepository.FindWithUser(userId);
+            userImageDto.UserId = GetCurrentUserId();
+            var userDetails = await _detailsRepository.FindWithUser(userImageDto.UserId);
 
-            return userDetails;
+            if(userDetails == null)
+                throw new BusinessException("Usuário não cadastrado");
+            
+            if (userDetails.UserHavePhoto())
+                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
+
+            userDetails.PhotoNameGenerator(userImageDto);
+            var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
+            userDetails.AddPhoto(imageUrl);
+            _detailsRepository.Update(userDetails);
+
+            return new ResponseApi(true, "Imagem Adicionada", userDetails.Photo);
         }
+    
+
+
+
+        
     }
 }

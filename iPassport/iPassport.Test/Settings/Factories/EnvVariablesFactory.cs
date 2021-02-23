@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace iPassport.Test.Seeds
+namespace iPassport.Test.Settings.Factories
 {
     public static class EnvVariablesFactory
     {

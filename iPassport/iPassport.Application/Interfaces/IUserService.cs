@@ -12,5 +12,12 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> AssociatePlan(Guid planId);
         Task<ResponseApi> GetUserPlan();
         Task<ResponseApi> GetCurrentUser();
+        
+        /// <summary>
+        /// ADD photo to user
+        /// </summary>
+        /// <param name="userImageDto"></param>
+        /// <returns></returns>
+        Task<ResponseApi> AddUserImage(UserImageDto userImageDto);
     }
 }

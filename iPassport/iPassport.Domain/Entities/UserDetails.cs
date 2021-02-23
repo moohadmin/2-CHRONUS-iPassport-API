@@ -54,6 +54,22 @@ namespace iPassport.Domain.Entities
         public virtual Passport Passport { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
+
+        public void AddPhoto(string imageUrl) {
+            if (String.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
+            {
+                Photo = imageUrl;
+            }            
+        }
+
+        public void PhotoNameGenerator( UserImageDto dto)
+        {
+            dto.FileName = "ProfileImageUserId_" + UserId;            
+        }
+
+        public bool UserHavePhoto() => !String.IsNullOrWhiteSpace(Photo);
+
+
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
         public void UpdateLastLogin() => LastLogin = DateTime.Now;
     }

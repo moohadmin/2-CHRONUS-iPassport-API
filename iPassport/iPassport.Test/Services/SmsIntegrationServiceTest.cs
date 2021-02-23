@@ -3,7 +3,7 @@ using iPassport.Domain.Dtos.PinIntegration.FindPin;
 using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
 using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
 using iPassport.Infra.ExternalServices;
-using iPassport.Test.Seeds;
+using iPassport.Test.Settings.Factories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
