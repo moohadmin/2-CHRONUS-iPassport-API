@@ -6,7 +6,7 @@ namespace iPassport.Infra.Contexts
 {
     public class iPassportContext : DbContext
     {
-        public iPassportContext(DbContextOptions options) : base(options) { }
+        public iPassportContext(DbContextOptions<iPassportContext> options) : base(options) { }
         public iPassportContext() { }
 
         /// <summary>
