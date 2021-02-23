@@ -75,7 +75,7 @@ namespace iPassport.Application.Services
             var plan = await _planRepository.Find(planId);
             
             if (plan == null)
-                throw new NotFoundException("Plano não encontrado");
+                throw new BusinessException("Plano não encontrado");
 
             userDetails.AssociatePlan(plan.Id);
             userDetails.Plan = plan;
@@ -93,7 +93,7 @@ namespace iPassport.Application.Services
             var plan = await _planRepository.Find((Guid)userDetails.PlanId);
 
             if (plan == null)
-                throw new NotFoundException("Plano não encontrado");
+                throw new BusinessException("Plano não encontrado");
 
             return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
         }
@@ -103,7 +103,7 @@ namespace iPassport.Application.Services
             var userId = _accessor.HttpContext.User.FindFirst("UserId");
             
             if (userId == null)
-                throw new NotFoundException("Usuário não encontrado");
+                throw new BusinessException("Usuário não encontrado");
 
             return Guid.Parse(userId.Value);
         }
@@ -115,23 +115,23 @@ namespace iPassport.Application.Services
             userImageDto.UserId = GetCurrentUserId();
             var userDetails = await _detailsRepository.FindWithUser(userImageDto.UserId);
 
-            if(userDetails != null)
-            {
-                if (userDetails.UserHavePhoto())
-                     throw new BusinessException("Usuário já Tem Foto Cadastrada");
-
-                userDetails.PhotoNameGenerator(userImageDto);
-                var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
-                userDetails.AddPhoto(imageUrl);
-                _detailsRepository.Update(userDetails);
-            }
-            else
-            {
+            if(userDetails == null)
                 throw new BusinessException("Usuário não cadastrado");
-            }
+            
+            if (userDetails.UserHavePhoto())
+                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
+
+            userDetails.PhotoNameGenerator(userImageDto);
+            var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
+            userDetails.AddPhoto(imageUrl);
+            _detailsRepository.Update(userDetails);
 
             return new ResponseApi(true, "Imagem Adicionada", userDetails.Photo);
         }
+    
+
+
+
+        
     }
 }
-

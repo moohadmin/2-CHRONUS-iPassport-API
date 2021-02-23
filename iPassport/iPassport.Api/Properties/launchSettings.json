@@ -21,7 +21,7 @@
     "iPassport.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "environmentVariables": {
+      "environmentVariables": {        
         "CONNECTION_STRING": "Server=localhost;Database=iPassportDB;User Id=sa;Password=P@ssw0rd!;",
         "ASPNETCORE_ENVIRONMENT": "Development"
 

@@ -16,6 +16,8 @@ namespace iPassport.Infra.Contexts
         public DbSet<UserDetails> UserDetails { get; set; }
         public DbSet<Plan> Plans { get; set; }
         public DbSet<Auth2FactMobile> Auth2FactMobile { get; set; }
+        public DbSet<Passport> Passports { get; set; }
+        public DbSet<PassportDetails> PassportDetails { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
@@ -25,6 +27,8 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new HealthMap());
             modelBuilder.ApplyConfiguration(new UserDetailsMap());
             modelBuilder.ApplyConfiguration(new PlanMap());
+            modelBuilder.ApplyConfiguration(new PassportMap());
+            modelBuilder.ApplyConfiguration(new PassportDetailsMap());
 
             base.OnModelCreating(modelBuilder);
         }

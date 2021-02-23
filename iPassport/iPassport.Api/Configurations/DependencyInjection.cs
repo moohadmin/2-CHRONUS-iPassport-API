@@ -35,6 +35,8 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IPlanService, PlanService>();
 
+            services.AddScoped<IPassportService, PassportService>();
+
             #endregion
 
             #region DI Repositories
@@ -49,6 +51,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IPlanRepository, PlanRepository>();
 
             services.AddScoped<IAuth2FactMobileRepository, Auth2FactMobileRepository>();
+
+            services.AddScoped<IPassportRepository, PassportRepository>();
 
             #endregion
 
