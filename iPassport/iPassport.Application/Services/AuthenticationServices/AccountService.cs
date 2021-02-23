@@ -55,10 +55,13 @@ namespace iPassport.Application.Services.AuthenticationServices
                 if (token == null)
                     return new ResponseApi(false, "Usuário ou Senha inválidos!", null);
 
-                return new ResponseApi(false, "Usuário Autenticado!", token);
+                userDetails.UpdateLastLogin();
+                _userDetailsRepository.Update(userDetails);
+
+                return new ResponseApi(true, "Usuário Autenticado!", token);
             }
 
-            return new ResponseApi(true, "Usuário ou Senha Inválido!", null);
+            return new ResponseApi(false, "Usuário ou Senha Inválido!", null);
         }
 
         public ResponseApi SendPin(string phone, string doctype, string doc)

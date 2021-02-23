@@ -92,5 +92,23 @@ namespace iPassport.Api.Controllers
             var res = await _service.GetUserPlan();
             return Ok(res);
         }
+
+        /// <summary>
+        /// This API Get the current User
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="204">Server returns no data.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="404">NotFound Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Current")]
+        public async Task<ActionResult> GetCurrentUser()
+        {
+            var res = await _service.GetCurrentUser();
+            return Ok(res);
+        }
     }
 }

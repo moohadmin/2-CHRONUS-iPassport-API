@@ -35,6 +35,7 @@ namespace iPassport.Domain.Entities
         public string CNS { get; private set; }
         public string Passport { get; private set; }
         public DateTime Birthday { get; private set; }
+        public DateTime? LastLogin { get; set; }
         public string Gender { get; private set; }
         public string Breed { get; private set; }
         public string BloodType { get; private set; }
@@ -47,6 +48,6 @@ namespace iPassport.Domain.Entities
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
-
+        public void UpdateLastLogin() => LastLogin = DateTime.Now;
     }
 }
