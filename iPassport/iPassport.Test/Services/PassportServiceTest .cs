@@ -17,6 +17,7 @@ namespace iPassport.Test.Services
     public class PassportServiceTest
     {
         Mock<IPassportRepository> _mockRepository;
+        Mock<IPassportUseRepository> _mockUseRepository;
         Mock<IUserDetailsRepository> _mockUserDeatilsRepository;
         IPassportService _service;
         IMapper _mapper;
@@ -27,7 +28,8 @@ namespace iPassport.Test.Services
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<IPassportRepository>();
             _mockUserDeatilsRepository = new Mock<IUserDetailsRepository>();
-            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDeatilsRepository.Object);
+            _mockUseRepository = new Mock<IPassportUseRepository>();
+            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDeatilsRepository.Object, _mockUseRepository.Object);
         }
 
         [TestMethod]

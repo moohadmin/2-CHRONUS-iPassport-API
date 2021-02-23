@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models.Requests;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 
 namespace iPassport.Api.AutoMapper.Mappers
@@ -13,6 +15,11 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.UserFullname, act => act.MapFrom(src => src.UserDetails.FullName))
                 .ForMember(des => des.ExpirationDate, act => act.MapFrom(src => src.GetLastPassportDetails().ExpirationDate))
                 .ForMember(des => des.PassportDetailsId, act => act.MapFrom(src => src.GetLastPassportDetails().Id));
+
+            profile.CreateMap<PassportUseCreateRequest, PassportUseCreateDto>()
+                .ForMember(des => des.Longitude, act => act.MapFrom(src => src.Longitude))
+                .ForMember(des => des.Latitude, act => act.MapFrom(src => src.Latitude))
+                .ForMember(des => des.PassportDetailsId, act => act.MapFrom(src => src.PassportDetailsId));
         }
     }
 }

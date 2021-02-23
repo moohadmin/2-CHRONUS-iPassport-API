@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
 {
@@ -28,6 +29,10 @@ namespace iPassport.Domain.Entities
         /// </summary>
         public virtual Passport Passport { get; set; }
 
+        public virtual IEnumerable<PassportUse> PassportUses { get; set; }
+
         public PassportDetails Create(DateTime expirationDate, Passport passport) => new PassportDetails(expirationDate, passport);
+
+        public bool IsExpired() => ExpirationDate < DateTime.Today;
     }
 }

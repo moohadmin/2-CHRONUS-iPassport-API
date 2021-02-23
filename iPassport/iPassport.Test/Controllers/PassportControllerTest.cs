@@ -1,4 +1,5 @@
-﻿using iPassport.Api.Controllers;
+﻿using AutoMapper;
+using iPassport.Api.Controllers;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Test.Seeds;
@@ -14,13 +15,15 @@ namespace iPassport.Test.Controllers
     public class PassportControllerTest
     {
         Mock<IPassportService> _mockService;
+        IMapper _mapper;
         PassportController _controller;
 
         [TestInitialize]
         public void Setup()
         {
             _mockService = new Mock<IPassportService>();
-            _controller = new PassportController(_mockService.Object);
+            _mapper = AutoMapperFactory.Create();
+            _controller = new PassportController(_mockService.Object, _mapper);
             
         }
 
