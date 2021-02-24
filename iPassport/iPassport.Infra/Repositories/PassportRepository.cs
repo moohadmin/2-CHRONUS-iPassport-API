@@ -18,6 +18,7 @@ namespace iPassport.Infra.Repositories
         
         public async Task<Passport> FindByPassportDetails(Guid passportDetailsId) =>
             await _DbSet.Where(x => x.ListPassportDetails.Any(z => z.Id == passportDetailsId))
-                    .Include(x => x.ListPassportDetails).FirstOrDefaultAsync();
+                    .Include(x => x.ListPassportDetails)
+                    .Include(x => x.UserDetails).FirstOrDefaultAsync();
     }
 }

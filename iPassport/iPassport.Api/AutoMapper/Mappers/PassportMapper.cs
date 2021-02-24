@@ -17,8 +17,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.PassportDetailsId, act => act.MapFrom(src => src.GetLastPassportDetails().Id));
 
             profile.CreateMap<PassportUseCreateRequest, PassportUseCreateDto>()
-                .ForMember(des => des.Longitude, act => act.MapFrom(src => src.Longitude))
-                .ForMember(des => des.Latitude, act => act.MapFrom(src => src.Latitude))
+                .ForMember(des => des.Longitude, act => act.MapFrom(src => src.Longitude.ToString()))
+                .ForMember(des => des.Latitude, act => act.MapFrom(src => src.Latitude.ToString()))
                 .ForMember(des => des.PassportDetailsId, act => act.MapFrom(src => src.PassportDetailsId));
         }
     }

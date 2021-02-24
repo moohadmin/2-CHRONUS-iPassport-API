@@ -18,17 +18,19 @@ namespace iPassport.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IPassportRepository _repository;
+        private readonly IPassportDetailsRepository _passportDetailsRepository;
         private readonly IPassportUseRepository _useRepository;
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IHttpContextAccessor _accessor;
 
-        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor)
+        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository)
         {
             _mapper = mapper;
             _repository = repository;
             _userDetailsRepository = userDetailsRepository;
             _useRepository = useRepository;
             _accessor = accessor;
+            _passportDetailsRepository = passportDetailsRepository;
         }
 
         public async Task<ResponseApi> Get()
@@ -53,8 +55,10 @@ namespace iPassport.Application.Services
             {
                 if (passport.IsAllDetailsExpired())
                 {
-                    passport.AddNewPassportDetails(null);
-                    _repository.Update(passport);
+                    var passportDetails = passport.NewPassportDetails(null);
+                    await _passportDetailsRepository.InsertAsync(passportDetails);
+
+                    //passport = await _repository.Find(userDetails.Id);
                 }
             }
 
@@ -70,7 +74,7 @@ namespace iPassport.Application.Services
 
             await _useRepository.InsertAsync(passportUse);
 
-            return new ResponseApi(true, "Acesso Aprovado", "Ok");
+            return new ResponseApi(true, "Acesso Aprovado");
         }
         public async Task<ResponseApi> AddAccessDenied(PassportUseCreateDto dto)
         {
@@ -82,7 +86,7 @@ namespace iPassport.Application.Services
 
             await _useRepository.InsertAsync(passportUse);
 
-            return new ResponseApi(true, "Acesso Recusado", "Ok");
+            return new ResponseApi(true, "Acesso Recusado");
         }
 
         private async Task<PassportUseCreateDto> ValidPassportToAcess(PassportUseCreateDto dto)
@@ -94,9 +98,14 @@ namespace iPassport.Application.Services
 
             if (passport.ListPassportDetails.First(x => x.Id == dto.PassportDetailsId).IsExpired())
                 throw new BusinessException("Passport Expirado");
+            
+            var agentUserDetails = await _userDetailsRepository.FindWithUser(_accessor.GetCurrentUserId());
+
+            if (agentUserDetails == null)
+                throw new BusinessException("Agente Não Encontrado");
 
             dto.CitizenId = passport.UserDetailsId;
-            dto.AgentId = _accessor.GetCurrentUserId();
+            dto.AgentId = agentUserDetails.Id;
 
             return dto;
         }

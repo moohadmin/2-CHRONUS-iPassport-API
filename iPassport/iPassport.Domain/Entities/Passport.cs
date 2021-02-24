@@ -63,7 +63,7 @@ namespace iPassport.Domain.Entities
         /// Get last PassportDetails
         /// </summary>
         /// <returns></returns>
-        public PassportDetails GetLastPassportDetails() => ListPassportDetails.OrderByDescending(x => CreateDate).FirstOrDefault();
+        public PassportDetails GetLastPassportDetails() => ListPassportDetails.OrderBy(x => x.CreateDate).LastOrDefault();
         /// <summary>
         /// Get Expiration Date
         /// </summary>
@@ -73,12 +73,11 @@ namespace iPassport.Domain.Entities
 
         public bool IsAllDetailsExpired() => ListPassportDetails.All(x => x.IsExpired());
 
-        public void AddNewPassportDetails(int? ExpirationTime)
+        public PassportDetails NewPassportDetails(int? ExpirationTime)
         {
             var details = new PassportDetails();
-            details.Create(GetExpirationDate(ExpirationTime), this);
-
-            ListPassportDetails.Append(details);
+            details = details.Create(GetExpirationDate(ExpirationTime), this);
+            return details;
         }
 
     }

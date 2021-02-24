@@ -8,10 +8,10 @@ namespace iPassport.Api.Models.Validators.Plans
         public PassportUseCreateRequestValidator()
         {
             RuleFor(s => s.Latitude)
-                .SetValidator(new RequiredFieldValidator<string>("Latitude"));
+                .SetValidator(new LatitudeValidator("Latitude"));
 
             RuleFor(s => s.Longitude)
-                .SetValidator(new RequiredFieldValidator<string>("Longitude"));
+                .SetValidator(new LongitudeValidator("Longitude"));
 
             RuleFor(s => s.PassportDetailsId)
                 .SetValidator(new GuidValidator("PassportDetailsId"));

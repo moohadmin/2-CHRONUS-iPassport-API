@@ -30,11 +30,13 @@ namespace iPassport.Infra.Mappings
             builder.HasOne(x => x.Agent)
                 .WithMany()
                 .HasForeignKey(x => x.AgentId)
+                .OnDelete(DeleteBehavior.ClientCascade)
                 .IsRequired();
 
             builder.HasOne(x => x.Citizen)
                 .WithMany()
-                .HasForeignKey(x => x.CitizenId)
+                .HasForeignKey(x => x.CitizenId)                
+                .OnDelete(DeleteBehavior.ClientNoAction)
                 .IsRequired();
         }
     }

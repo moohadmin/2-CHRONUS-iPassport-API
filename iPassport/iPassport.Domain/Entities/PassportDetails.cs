@@ -7,11 +7,11 @@ namespace iPassport.Domain.Entities
     {
         public PassportDetails() { }
 
-        public PassportDetails(DateTime expirationDate, Passport passport) : base()
+        public PassportDetails(DateTime expirationDate, Guid passportId) : base()
         {
             Id = Guid.NewGuid();
-            ExpirationDate = expirationDate;
-            Passport = passport;
+            ExpirationDate = expirationDate;            
+            PassportId = passportId;
         }
 
         /// <summary>
@@ -31,7 +31,8 @@ namespace iPassport.Domain.Entities
 
         public virtual IEnumerable<PassportUse> PassportUses { get; set; }
 
-        public PassportDetails Create(DateTime expirationDate, Passport passport) => new PassportDetails(expirationDate, passport);
+        public PassportDetails Create(DateTime expirationDate, Passport passport) => new PassportDetails(expirationDate, passport.Id);
+        public PassportDetails Create(DateTime expirationDate, Guid PassportId) => new PassportDetails(expirationDate, PassportId);
 
         public bool IsExpired() => ExpirationDate < DateTime.Today;
     }

@@ -11,10 +11,10 @@ namespace iPassport.Api.Models.Requests
         /// <summary>
         /// Latitude
         /// </summary>
-        public string Latitude { get; set; }
+        public double Latitude { get; set; }
         /// <summary>
         /// Longitude
         /// </summary>
-        public string Longitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

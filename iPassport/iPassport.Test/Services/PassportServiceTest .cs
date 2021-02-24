@@ -3,6 +3,8 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Services;
+using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -18,22 +21,32 @@ namespace iPassport.Test.Services
     public class PassportServiceTest
     {
         Mock<IPassportRepository> _mockRepository;
+        Mock<IPassportDetailsRepository> _mockRepositoryPassportDetails;
         Mock<IPassportUseRepository> _mockUseRepository;
-        Mock<IUserDetailsRepository> _mockUserDeatilsRepository;
+        Mock<IUserDetailsRepository> _mockUserDetailsRepository;
         IHttpContextAccessor _accessor;
         IPassportService _service;
         IMapper _mapper;
+        PassportUseCreateDto _accessDto;
 
         [TestInitialize]
         public void Setup()
         {
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<IPassportRepository>();
-            _mockUserDeatilsRepository = new Mock<IUserDetailsRepository>();
+            _mockUserDetailsRepository = new Mock<IUserDetailsRepository>();
             _mockUseRepository = new Mock<IPassportUseRepository>();
             _accessor = HttpContextAccessorFactory.Create();
+            _mockRepositoryPassportDetails = new Mock<IPassportDetailsRepository>();
 
-            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDeatilsRepository.Object, _mockUseRepository.Object, _accessor);
+            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object);
+
+            _accessDto = new PassportUseCreateDto()
+            {
+                PassportDetailsId = Guid.Parse("3d7d5b92-0ec3-465c-9342-e2c37ad7f5b0"),
+                Latitude = "10.10",
+                Longitude = "11.50"
+            };
         }
 
         [TestMethod]
@@ -42,7 +55,7 @@ namespace iPassport.Test.Services
             var userSeed = UserSeed.GetUserDetails();
             var passportSeed = PassportSeed.Get();
             // Arrange
-            _mockUserDeatilsRepository.Setup(r => r.FindWithUser(It.IsNotNull<Guid>()).Result).Returns(userSeed);
+            _mockUserDetailsRepository.Setup(r => r.FindWithUser(It.IsNotNull<Guid>()).Result).Returns(userSeed);
             _mockRepository.Setup(r => r.FindByUser(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
             // Act
             var result = _service.Get();
@@ -51,6 +64,43 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(PassportViewModel));
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void AddAccessApproved_MustReturnsOK()
+        {
+            var userSeed = UserSeed.GetUserDetails();
+            var passportSeed = PassportSeed.Get();
+            // Arrange
+            _mockUserDetailsRepository.Setup(r => r.FindWithUser(It.IsNotNull<Guid>()).Result).Returns(userSeed);
+            _mockRepository.Setup(r => r.FindByPassportDetails(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
+            _mockUseRepository.Setup(r => r.InsertAsync(It.IsAny<PassportUse>()));
+            // Act
+            var result = _service.AddAccessApproved(_accessDto);
+
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.AreEqual("Acesso Aprovado", result.Result.Message);
+            
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void AddAccessDenied_MustReturnsOK()
+        {
+            var userSeed = UserSeed.GetUserDetails();
+            var passportSeed = PassportSeed.Get();
+            // Arrange
+            _mockUserDetailsRepository.Setup(r => r.FindWithUser(It.IsNotNull<Guid>()).Result).Returns(userSeed);
+            _mockRepository.Setup(r => r.FindByPassportDetails(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
+            _mockUseRepository.Setup(r => r.InsertAsync(It.IsAny<PassportUse>()));
+            // Act
+            var result = _service.AddAccessDenied(_accessDto);
+
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.AreEqual("Acesso Recusado", result.Result.Message);
         }
     }
 }
