@@ -7,7 +7,7 @@ namespace iPassport.Application.Interfaces
 
     public interface IPassportService
     {
-        Task<ResponseApi> Get(string userId);
+        Task<ResponseApi> Get();
         Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto);
         Task<ResponseApi> AddAccessDenied(PassportUseCreateDto dto);
     }

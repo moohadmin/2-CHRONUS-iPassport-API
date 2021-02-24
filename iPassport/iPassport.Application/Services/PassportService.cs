@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
@@ -30,11 +31,9 @@ namespace iPassport.Application.Services
             _accessor = accessor;
         }
 
-        public async Task<ResponseApi> Get(string userId)
+        public async Task<ResponseApi> Get()
         {
-            Guid UserId;
-            if (!Guid.TryParse(userId, out UserId))
-                throw new BusinessException("Usuário não encontrado.");
+            Guid UserId = _accessor.GetCurrentUserId();
 
             var userDetails = await _userDetailsRepository.FindWithUser(UserId);
 
@@ -97,7 +96,8 @@ namespace iPassport.Application.Services
                 throw new BusinessException("Passport Expirado");
 
             dto.CitizenId = passport.UserDetailsId;
-            //dto.AgentId = _accessor.GetCurrentUserId()
+            dto.AgentId = _accessor.GetCurrentUserId();
+
             return dto;
         }
     }

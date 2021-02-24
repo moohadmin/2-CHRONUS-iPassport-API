@@ -39,14 +39,13 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void Get_MustReturnsOK()
         {
-            string userId = "97d4bb42-a0cb-4a72-abaa-ded84823a166";
             var userSeed = UserSeed.GetUserDetails();
             var passportSeed = PassportSeed.Get();
             // Arrange
             _mockUserDeatilsRepository.Setup(r => r.FindWithUser(It.IsNotNull<Guid>()).Result).Returns(userSeed);
             _mockRepository.Setup(r => r.FindByUser(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
             // Act
-            var result = _service.Get(userId);
+            var result = _service.Get();
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));

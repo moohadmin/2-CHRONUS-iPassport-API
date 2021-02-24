@@ -4,6 +4,7 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -16,6 +17,7 @@ namespace iPassport.Test.Controllers
     {
         Mock<IPassportService> _mockService;
         IMapper _mapper;
+        IHttpContextAccessor _accessor;
         PassportController _controller;
 
         [TestInitialize]
@@ -24,7 +26,7 @@ namespace iPassport.Test.Controllers
             _mockService = new Mock<IPassportService>();
             _mapper = AutoMapperFactory.Create();
             _controller = new PassportController(_mockService.Object, _mapper);
-            
+            _accessor = HttpContextAccessorFactory.Create();
         }
 
         
@@ -35,7 +37,7 @@ namespace iPassport.Test.Controllers
 
             // Arrange
             _controller.ControllerContext = ControllerContextFactory.Create();
-            _mockService.Setup(r => r.Get("7d4bb42-a0cb-4a72-abaa-ded84823a166")).Returns(Task.FromResult(new ResponseApi(true, "Test Success!", seed)));
+            _mockService.Setup(r => r.Get()).Returns(Task.FromResult(new ResponseApi(true, "Test Success!", seed)));
 
             // Act
             var result = _controller.Get();

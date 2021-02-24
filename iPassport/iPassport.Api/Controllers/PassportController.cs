@@ -38,7 +38,7 @@ namespace iPassport.Api.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var res = await _service.Get(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            var res = await _service.Get();
             return Ok(res);
         }
 
