@@ -6,6 +6,8 @@ using iPassport.Domain.Repositories;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using iPassport.Domain.Dtos;
+using iPassport.Application.Exceptions;
 
 namespace iPassport.Application.Services
 {
@@ -40,7 +42,7 @@ namespace iPassport.Application.Services
             {
                 From = "Moohtech",
                 Destinations = dests,
-                Text = pin
+                Text = $"{pin} - Is your iPassport verification PIN."
             };
 
             var sendPinRequestDto = new SendPinRequestDto
@@ -52,12 +54,30 @@ namespace iPassport.Application.Services
 
             var message = resultPin.Result.Messages.FirstOrDefault();
 
+            var twoFactDto = new Auth2FactMobileDto 
+            {
+                UserId = userId,
+                Phone = phone,
+                Pin = pin,
+                IsUsed = false,
+                MessageId = message.MessageId
+            };
+
             var twoFact = new Auth2FactMobile();
-            twoFact.Create(userId, phone, pin, false, message.MessageId);
+            var twoFactCreated = twoFact.Create(twoFactDto);
+            _auth2FactRepository.InsertAsync(twoFactCreated);
 
-            _auth2FactRepository.InsertAsync(twoFact);
+            return twoFactCreated;
+        }
 
-            return twoFact;
+        public Auth2FactMobile ValidPin(Guid userId, string pin)
+        {
+            var pinvalid = _auth2FactRepository.FindByUserAndPin(userId, pin);
+
+            if(pinvalid.Result == null)
+                throw new BusinessException("PIN inválido!");
+
+            return pinvalid.Result;
         }
 
         private string PinGenerate()

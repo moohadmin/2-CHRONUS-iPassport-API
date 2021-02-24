@@ -1,4 +1,5 @@
 ﻿using System;
+using iPassport.Domain.Dtos;
 
 namespace iPassport.Domain.Entities
 {
@@ -22,7 +23,6 @@ namespace iPassport.Domain.Entities
         public bool IsUsed { get; private set; }
         public string MessageId { get; private set; }
 
-        public Auth2FactMobile Create(Guid userId, string phone, string pin, bool isUsed, string messageId) =>
-            new Auth2FactMobile(userId, phone, pin, isUsed, messageId);
+        public Auth2FactMobile Create(Auth2FactMobileDto dto) => new Auth2FactMobile(dto.UserId, dto.Phone, dto.Pin, dto.IsUsed, dto.MessageId);
     }
 }
