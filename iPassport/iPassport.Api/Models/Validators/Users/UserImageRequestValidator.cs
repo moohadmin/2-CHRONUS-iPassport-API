@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
 
-namespace iPassport.Api.Models.Validators.Plans
+namespace iPassport.Api.Models.Validators.Users
 {
     public class UserImageRequestValidator : AbstractValidator<UserImageRequest>
     {

@@ -16,10 +16,11 @@ namespace iPassport.Api.Models.Validators
 
     public class GuidValidator : AbstractValidator<Guid>
     {
-        public GuidValidator()
+        public GuidValidator() { }
+        public GuidValidator(string fieldName)
         {
             RuleFor(x => x)
-                .SetValidator(new RequiredFieldValidator<Guid>("Id"))
+                .SetValidator(new RequiredFieldValidator<Guid>(fieldName))
                 .Must(g => Guid.TryParse(g.ToString(), out g)).WithMessage("Identificador inválido");
         }
     }
@@ -45,6 +46,30 @@ namespace iPassport.Api.Models.Validators
             RuleFor(x => x.ContentType).NotNull().Must(x => x.Equals("image/jpeg") || x.Equals("image/jpg") || x.Equals("image/png"))
                 .WithMessage("Formato do arquivo de imagem não suportado. Formatos aceitos: jpeg, jpg, png");
 
+        }
+    }
+
+    public class LatitudeValidator : AbstractValidator<double>
+    {
+        public LatitudeValidator() { }
+        public LatitudeValidator(string fieldName)
+        {
+            RuleFor(x => x)
+                .NotNull().WithMessage($"O campo {fieldName} é obrigatório")
+                .LessThanOrEqualTo(90).WithMessage($"O campo {fieldName} deve está entre -90 a 90")
+                .GreaterThanOrEqualTo(-90).WithMessage($"O campo {fieldName} deve está entre -90 a 90");
+        }
+    }
+
+    public class LongitudeValidator : AbstractValidator<double>
+    {
+        public LongitudeValidator() { }
+        public LongitudeValidator(string fieldName)
+        {
+            RuleFor(x => x)                
+                .NotNull().WithMessage($"O campo {fieldName} é obrigatório")
+                .LessThanOrEqualTo(180).WithMessage($"O campo {fieldName} deve está entre -180 a 180")
+                .GreaterThanOrEqualTo(-180).WithMessage($"O campo {fieldName}  deve está entre -180 a 180");
         }
     }
 }
