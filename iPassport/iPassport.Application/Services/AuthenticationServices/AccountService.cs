@@ -101,9 +101,9 @@ namespace iPassport.Application.Services.AuthenticationServices
             if(userDetails == null)
                 throw new BusinessException("Usuário não cadastrado!");
 
-            var pinvalid =  _auth2FactService.ValidPin(userDetails.Id, pin);
+            var pinvalid =  _auth2FactService.ValidPin(userDetails.UserId, pin);
 
-            var user = _userRepository.FindById(userDetails.Id);
+            var user = _userRepository.FindById(userDetails.UserId);
 
             var token = _tokenService.GenerateBasic(user.Result, userDetails);
 

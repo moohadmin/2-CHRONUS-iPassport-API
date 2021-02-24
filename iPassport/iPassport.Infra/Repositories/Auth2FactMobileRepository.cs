@@ -12,7 +12,10 @@ namespace iPassport.Infra.Repositories
     {
         public Auth2FactMobileRepository(iPassportContext context) : base(context) { }
 
-        public async Task<Auth2FactMobile> FindByUserAndPin(Guid id, string pin) =>
-            await _DbSet.Where(x => x.UserId == id && x.Pin == pin).FirstOrDefaultAsync();
+        public async Task<Auth2FactMobile> FindByUserAndPin(Guid id, string pin) 
+        {
+            var res = await _DbSet.Where(x => x.UserId == id && x.Pin == pin).FirstOrDefaultAsync();
+            return res;
+        }
     }
 }

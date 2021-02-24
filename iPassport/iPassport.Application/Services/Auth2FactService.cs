@@ -74,7 +74,7 @@ namespace iPassport.Application.Services
         {
             var pinvalid = _auth2FactRepository.FindByUserAndPin(userId, pin);
 
-            if(pinvalid == null)
+            if(pinvalid.Result == null)
                 throw new BusinessException("PIN inválido!");
 
             return pinvalid.Result;
