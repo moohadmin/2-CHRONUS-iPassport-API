@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
-
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -14,19 +18,24 @@ namespace iPassport.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IPassportRepository _repository;
+        private readonly IPassportDetailsRepository _passportDetailsRepository;
+        private readonly IPassportUseRepository _useRepository;
         private readonly IUserDetailsRepository _userDetailsRepository;
+        private readonly IHttpContextAccessor _accessor;
 
-        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository)
+        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository)
         {
             _mapper = mapper;
             _repository = repository;
             _userDetailsRepository = userDetailsRepository;
+            _useRepository = useRepository;
+            _accessor = accessor;
+            _passportDetailsRepository = passportDetailsRepository;
         }
-        public async Task<ResponseApi> Get(string userId)
+
+        public async Task<ResponseApi> Get()
         {
-            System.Guid UserId;
-            if (!System.Guid.TryParse(userId, out UserId))
-                throw new BusinessException("Usuário não encontrado.");
+            Guid UserId = _accessor.GetCurrentUserId();
 
             var userDetails = await _userDetailsRepository.FindWithUser(UserId);
 
@@ -42,8 +51,58 @@ namespace iPassport.Application.Services
 
                 await _repository.InsertAsync(passport);
             }
+            else
+            {
+                if (passport.IsAllDetailsExpired())
+                {
+                    var passportDetails = passport.NewPassportDetails(null);
+                    await _passportDetailsRepository.InsertAsync(passportDetails);
+                }
+            }
 
             return new ResponseApi(true, "Passport do Usuário", _mapper.Map<PassportViewModel>(passport));
+        }
+        public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
+        {
+            dto = await ValidPassportToAcess(dto);
+            dto.AllowAccess = true;
+
+            var passportUse = new PassportUse();
+            passportUse = passportUse.Create(dto);
+
+            await _useRepository.InsertAsync(passportUse);
+
+            return new ResponseApi(true, "Acesso Aprovado");
+        }
+        public async Task<ResponseApi> AddAccessDenied(PassportUseCreateDto dto)
+        {
+            dto = await ValidPassportToAcess(dto);
+            dto.AllowAccess = false;
+
+            var passportUse = new PassportUse();
+            passportUse = passportUse.Create(dto);
+
+            await _useRepository.InsertAsync(passportUse);
+
+            return new ResponseApi(true, "Acesso Recusado");
+        }
+
+        private async Task<PassportUseCreateDto> ValidPassportToAcess(PassportUseCreateDto dto)
+        {
+            var passport = await _repository.FindByPassportDetailsValid(dto.PassportDetailsId);
+
+            if (passport == null)
+                throw new BusinessException("Passport não encontrado ou expirado");
+            
+            var agentUserDetails = await _userDetailsRepository.FindWithUser(_accessor.GetCurrentUserId());
+
+            if (agentUserDetails == null)
+                throw new BusinessException("Agente não encontrado");
+
+            dto.CitizenId = passport.UserDetailsId;
+            dto.AgentId = agentUserDetails.Id;
+
+            return dto;
         }
     }
 }

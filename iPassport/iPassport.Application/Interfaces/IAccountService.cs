@@ -8,5 +8,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> BasicLogin(string username, string password);
         Task<ResponseApi> EmailLogin(string email, string password);
         ResponseApi SendPin(string phone, string doctype, string doc);
+        Task<ResponseApi> MobileLogin(string pin, int documentType, string document);
     }
 }
