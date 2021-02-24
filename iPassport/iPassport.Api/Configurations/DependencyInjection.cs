@@ -54,6 +54,8 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IPassportRepository, PassportRepository>();
 
+            services.AddScoped<IPassportUseRepository, PassportUseRepository>();
+
             #endregion
 
             #region DI Settings

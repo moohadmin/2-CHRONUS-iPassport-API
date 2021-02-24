@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
-using System;
 
 namespace iPassport.Api.Models.Validators.Plans
 {

@@ -16,10 +16,11 @@ namespace iPassport.Api.Models.Validators
 
     public class GuidValidator : AbstractValidator<Guid>
     {
+        public GuidValidator(){}
         public GuidValidator(string fieldName)
         {
             RuleFor(x => x)
-                .SetValidator(new RequiredFieldValidator<Guid>(string.IsNullOrWhiteSpace(fieldName) ? "Id" : fieldName))
+                .SetValidator(new RequiredFieldValidator<Guid>(fieldName))
                 .Must(g => Guid.TryParse(g.ToString(), out g)).WithMessage("Identificador inválido");
         }
     }
