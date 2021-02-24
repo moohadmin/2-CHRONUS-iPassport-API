@@ -9,6 +9,6 @@ namespace iPassport.Domain.Repositories
     {
         Task<Passport> FindByUser(System.Guid userId);
 
-        Task<Passport> FindByPassportDetails(System.Guid passportDetailsId);
+        Task<Passport> FindByPassportDetailsValid(System.Guid passportDetailsId);
     }
 }

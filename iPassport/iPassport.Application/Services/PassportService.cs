@@ -57,8 +57,6 @@ namespace iPassport.Application.Services
                 {
                     var passportDetails = passport.NewPassportDetails(null);
                     await _passportDetailsRepository.InsertAsync(passportDetails);
-
-                    //passport = await _repository.Find(userDetails.Id);
                 }
             }
 
@@ -91,18 +89,15 @@ namespace iPassport.Application.Services
 
         private async Task<PassportUseCreateDto> ValidPassportToAcess(PassportUseCreateDto dto)
         {
-            var passport = await _repository.FindByPassportDetails(dto.PassportDetailsId);
+            var passport = await _repository.FindByPassportDetailsValid(dto.PassportDetailsId);
 
             if (passport == null)
-                throw new BusinessException("Passport Não Encontrado");
-
-            if (passport.ListPassportDetails.First(x => x.Id == dto.PassportDetailsId).IsExpired())
-                throw new BusinessException("Passport Expirado");
+                throw new BusinessException("Passport não encontrado ou expirado");
             
             var agentUserDetails = await _userDetailsRepository.FindWithUser(_accessor.GetCurrentUserId());
 
             if (agentUserDetails == null)
-                throw new BusinessException("Agente Não Encontrado");
+                throw new BusinessException("Agente não encontrado");
 
             dto.CitizenId = passport.UserDetailsId;
             dto.AgentId = agentUserDetails.Id;
