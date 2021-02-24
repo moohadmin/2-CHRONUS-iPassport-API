@@ -98,22 +98,10 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
         }
-
-        private Guid GetCurrentUserId()
-        {
-            var userId = _accessor.HttpContext.User.FindFirst("UserId");
-            
-            if (userId == null)
-                throw new BusinessException("Usuário não encontrado");
-
-            return Guid.Parse(userId.Value);
-        }
-
-                
   
         public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)
         {
-            userImageDto.UserId = GetCurrentUserId();
+            userImageDto.UserId = _accessor.GetCurrentUserId();
             var userDetails = await _detailsRepository.FindWithUser(userImageDto.UserId);
 
             if(userDetails == null)
@@ -129,10 +117,5 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, "Imagem Adicionada", userDetails.Photo);
         }
-    
-
-
-
-        
     }
 }
