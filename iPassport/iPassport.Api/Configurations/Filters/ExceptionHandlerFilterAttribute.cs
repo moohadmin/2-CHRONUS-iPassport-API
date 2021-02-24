@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using NLog;
 using NLog.Web;
 using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace iPassport.Api.Configurations.Filters
@@ -28,11 +29,11 @@ namespace iPassport.Api.Configurations.Filters
                 context.HttpContext.Response.StatusCode = statusCode;
                 context.Result = new JsonResult(new BussinessExceptionResponse
                 (
-                    context.Exception.Message
+                    new List<string>() { context.Exception.Message }
                 ));
 
                 LogError(context.Exception);
-                return;
+                return; 
             }
 
             if (context.Exception is NotFoundException)
