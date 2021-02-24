@@ -29,7 +29,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [HttpPost("BasicLogin")]
+        [HttpPost("LoginByAgent")]
         public async Task<ActionResult> BasicLogin([FromBody]BasicLoginRequest request)
         {
             var res = await _service.BasicLogin(request.Username, request.Password);
@@ -37,11 +37,10 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is LoginWithEmail
+        /// This API is LoginByEmail
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Server returns Ok/response>
-        /// <response code="204">Server returns no data.</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
         /// <response code="500">Due to server problems, it is not possible to get your data now</response>
@@ -57,6 +56,24 @@ namespace iPassport.Api.Controllers
 
         /// <summary>
         /// This API is LoginMobile
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Server returns Ok/response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPost("LoginByCitizen")]
+        public async Task<ActionResult> MobileLogin([FromBody]LoginMobileRequest request)
+        {
+            var res = await _service.MobileLogin(request.Pin, request.DocumentType, request.Document);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is request PIN verification
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Server returns Ok/response>

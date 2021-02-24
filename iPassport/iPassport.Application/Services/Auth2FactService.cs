@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using iPassport.Domain.Dtos;
+using iPassport.Application.Exceptions;
 
 namespace iPassport.Application.Services
 {
@@ -67,6 +68,16 @@ namespace iPassport.Application.Services
             _auth2FactRepository.InsertAsync(twoFactCreated);
 
             return twoFactCreated;
+        }
+
+        public Auth2FactMobile ValidPin(Guid userId, string pin)
+        {
+            var pinvalid = _auth2FactRepository.FindByUserAndPin(userId, pin);
+
+            if(pinvalid == null)
+                throw new BusinessException("PIN inválido!");
+
+            return pinvalid.Result;
         }
 
         private string PinGenerate()

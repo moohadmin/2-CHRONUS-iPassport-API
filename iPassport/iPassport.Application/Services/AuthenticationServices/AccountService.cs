@@ -95,6 +95,29 @@ namespace iPassport.Application.Services.AuthenticationServices
             throw new BusinessException("Usuário ou Senha Inválido!");
         }
 
+        public async Task<ResponseApi> MobileLogin(string pin, int documentType, string document)
+        {
+            var userDetails = await _userDetailsRepository.FindByDocument(documentType, document);
+            if(userDetails == null)
+                throw new BusinessException("Usuário não cadastrado!");
+
+            var pinvalid =  _auth2FactService.ValidPin(userDetails.Id, pin);
+
+            var user = _userRepository.FindById(userDetails.Id);
+
+            var token = _tokenService.GenerateBasic(user.Result, userDetails);
+
+            if(token != null)
+            {
+                userDetails.UpdateLastLogin();
+                _userDetailsRepository.Update(userDetails);
+
+                return new ResponseApi(true, "Usuário Autenticado!", token);
+            }
+
+            return new ResponseApi(false, "Ops, ocorreu um erro no login, tente novamente!", null);
+        }
+
         public ResponseApi SendPin(string phone, string doctype, string doc)
         {
             var user = _userRepository.FindByPhone(phone).Result;

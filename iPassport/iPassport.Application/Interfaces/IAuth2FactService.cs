@@ -13,5 +13,6 @@ namespace iPassport.Application.Interfaces
         void FindPinSent(string idMessage);
 
         Auth2FactMobile SendPin(Guid userId, string phone);
+        Auth2FactMobile ValidPin(Guid userId, string pin);
     }
 }
