@@ -30,12 +30,6 @@ namespace iPassport.Infra.Repositories
                 return await _DbSet.Where(x => x.RG == document).FirstOrDefaultAsync();
 
             return null;
-
-            //await _DbSet.Where(x => x.UserId == id).FirstOrDefaultAsync();
         }
-
-        //public async Task<UserDetails> FindByPhone(string phone) =>
-        //    await _DbSet.Where(x => x.)
-
     }
 }
