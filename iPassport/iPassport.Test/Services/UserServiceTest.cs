@@ -123,6 +123,5 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result.Result.Data, typeof(string));
            
         }
-
     }
 }

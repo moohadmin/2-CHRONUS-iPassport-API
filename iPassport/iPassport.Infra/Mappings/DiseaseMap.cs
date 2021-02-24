@@ -4,28 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace iPassport.Infra.Mappings
 {
-    /// <summary>
-    /// Mapping dos campos da Entidade
-    /// </summary>
-    public class PlanMap : IEntityTypeConfiguration<Plan>
+    public class DiseaseMap : IEntityTypeConfiguration<Disease>
     {
-        public void Configure(EntityTypeBuilder<Plan> builder)
+        public void Configure(EntityTypeBuilder<Disease> builder)
         {
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Type)
-                .HasColumnType("nvarchar(50)")
+            builder.Property(p => p.Name)
+                .HasColumnType("nvarchar(80)")
                 .IsRequired();
 
             builder.Property(p => p.Description)
                 .HasColumnType("nvarchar(300)")
                 .IsRequired();
-
-            builder.Property(p => p.Price)
-                .HasColumnType("decimal");
-
-            builder.Property(p => p.Observation)
-                .HasColumnType("nvarchar(100)");
 
             builder.Property(c => c.CreateDate)
                 .HasColumnType("DateTime")
