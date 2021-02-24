@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
@@ -61,7 +62,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetCurrentUser()
         {
-            var userId = GetCurrentUserId();
+            var userId = _accessor.GetCurrentUserId();
             var userDetails = await _detailsRepository.FindWithUser(userId);
 
             return new ResponseApi(true, "Usuario Logado", _mapper.Map<UserDetailsViewModel>(userDetails));
@@ -69,7 +70,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AssociatePlan(Guid planId)
         {
-            var userId = GetCurrentUserId();
+            var userId = _accessor.GetCurrentUserId();
 
             var userDetails = await _detailsRepository.FindWithUser(userId);
             var plan = await _planRepository.Find(planId);
@@ -87,7 +88,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetUserPlan()
         {
-            var userId = GetCurrentUserId();
+            var userId = _accessor.GetCurrentUserId();
 
             var userDetails = await _detailsRepository.FindWithUser(userId);
             var plan = await _planRepository.Find((Guid)userDetails.PlanId);

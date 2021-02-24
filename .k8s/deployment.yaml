@@ -36,6 +36,11 @@ spec:
         image: ${IMAGE_TAG}
         imagePullPolicy: Always
         env:
+        - name: CONNECTION_STRING
+          valueFrom:
+            configMapKeyRef:
+              key: CONNECTION_STRING
+              name: ${APP_NAME}-${APP_GROUP}
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:

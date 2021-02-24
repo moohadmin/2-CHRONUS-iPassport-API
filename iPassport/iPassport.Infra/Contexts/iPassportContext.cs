@@ -18,6 +18,9 @@ namespace iPassport.Infra.Contexts
         public DbSet<Auth2FactMobile> Auth2FactMobile { get; set; }
         public DbSet<Passport> Passports { get; set; }
         public DbSet<PassportDetails> PassportDetails { get; set; }
+        public DbSet<Disease> Diseases { get; set; }
+        public DbSet<Vaccine> Vaccines { get; set; }
+        public DbSet<UserVaccine> UserVaccines { get; set; }
         public DbSet<PassportUse> PassportUses { get; set; }
 
         /// <summary>
@@ -30,6 +33,9 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new PlanMap());
             modelBuilder.ApplyConfiguration(new PassportMap());
             modelBuilder.ApplyConfiguration(new PassportDetailsMap());
+            modelBuilder.ApplyConfiguration(new DiseaseMap());
+            modelBuilder.ApplyConfiguration(new VaccineMap());
+            modelBuilder.ApplyConfiguration(new UserVaccineMap());
             modelBuilder.ApplyConfiguration(new PassportUseMap());
 
             base.OnModelCreating(modelBuilder);

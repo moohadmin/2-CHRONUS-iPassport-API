@@ -23,6 +23,17 @@ namespace iPassport.Infra.Mappings
 
             builder.Property(p => p.Price)
                 .HasColumnType("decimal");
+
+            builder.Property(p => p.Observation)
+                .HasColumnType("nvarchar(100)");
+
+            builder.Property(c => c.CreateDate)
+                .HasColumnType("DateTime")
+                .IsRequired();
+
+            builder.Property(c => c.UpdateDate)
+                .HasColumnType("DateTime")
+                .IsRequired();
         }
     }
 }
