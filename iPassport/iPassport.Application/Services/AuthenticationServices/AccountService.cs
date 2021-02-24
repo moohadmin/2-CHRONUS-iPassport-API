@@ -128,7 +128,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             var pinresp =  _auth2FactService.SendPin(user.Id, phone);
 
-            return new ResponseApi(true, "PIN Enviado com sucesso!", pinresp);
+            return new ResponseApi(true, "PIN Enviado com sucesso!", pinresp.UserId);
         }
     }
 }
