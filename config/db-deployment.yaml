@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}-${APP_GROUP}-db
+  labels:
+    app: ${APP_NAME}-${APP_GROUP}-db
+    role: backend
+    env: dev
+  annotations:
+    downscaler/uptime: Mon-Fri 07:30-23:30 America/Bahia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APP_NAME}-${APP_GROUP}-db
+      role: backend
+      env: dev
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME}-${APP_GROUP}-db
+        role: backend
+        env: dev
+    spec:
+      nodeSelector:
+        preemptible: "true"
+      tolerations:
+      - effect: NoSchedule
+        key: type
+        operator: Equal
+        value: preemptible
+      containers:
+      - name: ${APP_NAME}-${APP_GROUP}-db
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PASSWORD
+              name: ${APP_NAME}-${APP_GROUP}
+        volumeMounts:
+        - mountPath: "/var/opt/mssql"
+          name: ${APP_NAME}-${APP_GROUP}-storage
+        ports:
+        - containerPort: 1433
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "100m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+      volumes:
+        - name: ${APP_NAME}-${APP_GROUP}-storage
+          persistentVolumeClaim:
+            claimName: ${APP_NAME}-${APP_GROUP}-pvc

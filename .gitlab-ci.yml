@@ -21,27 +21,22 @@ include:
 
 
 .deploy:
-  stage: deploy  
-  image: "registry.solutis.digital/devops/build-docker-templates/google-cloud-sdk-envsubst:1.1.0"
+  stage: deploy
+  image: registry.solutis.digital/devops/build-docker-templates/google-cloud-sdk-envsubst:1.1.0
   script:
     - echo $SERVICE_ACCOUNT_KEY >> key.json
     - gcloud auth activate-service-account --key-file=key.json
     - gcloud config set project $PROJECT
     - gcloud config set compute/zone $ZONE
     - gcloud container clusters get-credentials $CLUSTER --zone $ZONE
-    - for YAML in $(ls .k8s/*.yaml);do cat $YAML | envsubst | kubectl apply -n $ENVIRONMENT -f -;done
-  retry:
-    max: 2
-    when:
-      - runner_system_failure
-      - stuck_or_timeout_failure
-      - unknown_failure
+    - for YAML in $(ls $CONFIG_DIR);do cat $CONFIG_DIR/$YAML | envsubst | kubectl apply -n ${ENVIRONMENT} -f -;done
 
 deploy:develop:
   extends: .deploy
   variables:   
     ENVIRONMENT: dev 
     IMAGE_TAG: ${CI_REGISTRY_IMAGE}:develop
+    CONFIG_DIR: config
   only:
     - develop  
 
@@ -50,6 +45,7 @@ deploy:release:
   variables:    
     ENVIRONMENT: test 
     IMAGE_TAG: ${CI_REGISTRY_IMAGE}:release
+    CONFIG_DIR: config
   only:
     - /^release\/[0-9.]+$/
 
@@ -58,5 +54,6 @@ deploy:tags:
   variables:    
     ENVIRONMENT: test
     IMAGE_TAG:  ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
+    CONFIG_DIR: config
   only:
     - tags
