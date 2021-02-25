@@ -46,22 +46,12 @@ namespace iPassport.Test.Services
         public void SendPin_MustReturnOk()
         {
             // Arrange
-            SendPinRequestDto _sendPinRequestDto = new SendPinRequestDto()
-            {
-                Messages = new MessageDto()
-                {
-                    Text = "Cod Validation 1234",
-                    Destinations = new List<DestinationDto>(){
-                        new DestinationDto()
-                        {
-                            To = "12345678"
-                        }
-                    }
-                 }
-            };
+            var text = "Cod Validation 1234";
+            var to = "12345678";
+
 
             // Act
-            var result = _service.SendPin(_sendPinRequestDto);
+            var result = _service.SendPin(text,to);
 
             // Assert            
             Assert.IsInstanceOfType(result, typeof(Task<SendPinResponseDto>));

@@ -98,8 +98,11 @@ namespace iPassport.Infra.ExternalServices
                 Timeout = -1
             };
 
+            var token = GetToken();
+
             var request = new RestRequest(method);
-            request.AddHeader("Authorization", GetAuthorizationKey());
+            //request.AddHeader("Authorization", GetAuthorizationKey());
+            request.AddHeader("Authorization", $"Bearer {token}");
             request.AddHeader("Content-Type", "application/json");
             request.AddHeader("Accept", "application/json");
 
@@ -127,6 +130,38 @@ namespace iPassport.Infra.ExternalServices
                 throw new Exception(response.Content);
 
             return response;
+        }
+
+        private string GetToken()
+        {
+            var baseurl = _config.GetSection("SmsIntegration").GetSection("BaseUrl").Value;
+            var model = new SmsTokenModel
+            {
+                clientId = _config.GetSection("SmsIntegration").GetSection("client_id").Value,
+                clientSecret = _config.GetSection("SmsIntegration").GetSection("client_secret").Value,
+                grantType = _config.GetSection("SmsIntegration").GetSection("grant_type").Value
+            };
+
+            var client = new RestClient($"{baseurl}/auth/1/oauth2/token") { Timeout = -1 };
+            var request = new RestRequest(Method.POST);
+
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddParameter("client_id", model.clientId);
+            request.AddParameter("client_secret", model.clientSecret);
+            request.AddParameter("grant_type", model.grantType);
+
+            IRestResponse response = client.Execute(request);
+
+            if ((int)response.StatusCode >= 400 && (int)response.StatusCode < 600)
+                throw new Exception(response.Content);
+
+            var ResponseContent = JsonSerializer.Deserialize<SmsTokenResponseModel>(response.Content,new JsonSerializerOptions() 
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            return ResponseContent.access_token;
         }
 
         /// <summary>
