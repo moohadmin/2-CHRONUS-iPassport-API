@@ -135,10 +135,6 @@ namespace iPassport.Application.Services.AuthenticationServices
             var pinresp =  await _auth2FactService.SendPin(user.Id, phone);
 
 
-            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
-            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
-                return new ResponseApi(true, "PIN Enviado Em ambiente simulado! Objeto completo no modo não simulado somente retorna o UserId", pinresp);
-
             return new ResponseApi(true, "PIN Enviado com sucesso!", pinresp.UserId);
         }
     }

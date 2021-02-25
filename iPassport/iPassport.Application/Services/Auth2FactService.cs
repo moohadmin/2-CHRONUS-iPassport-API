@@ -54,6 +54,10 @@ namespace iPassport.Application.Services
 
             var message = resultPin.Messages.FirstOrDefault();
 
+            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
+            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
+                pin = "1111";
+            
             var twoFactDto = new Auth2FactMobileDto 
             {
                 UserId = userId,
@@ -74,7 +78,7 @@ namespace iPassport.Application.Services
         {
             var pinvalid = await _auth2FactRepository.FindByUserAndPin(userId, pin);
 
-            if(pinvalid == null || pinvalid.CanUseToValidate())
+            if(pinvalid == null || !pinvalid.CanUseToValidate())
                 throw new BusinessException("PIN inválido!");           
 
             return pinvalid;
