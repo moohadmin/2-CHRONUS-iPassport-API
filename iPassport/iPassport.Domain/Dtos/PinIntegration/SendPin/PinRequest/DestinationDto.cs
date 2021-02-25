@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest
+﻿namespace iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest
 {
     public class DestinationDto
     {
@@ -8,7 +6,6 @@ namespace iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest
         /// required
         /// Message destination address. Addresses must be in international format (Example: 41793026727).
         /// </summary>
-        [JsonProperty("to")]
         public string To { get; set; }        
     }
 }
