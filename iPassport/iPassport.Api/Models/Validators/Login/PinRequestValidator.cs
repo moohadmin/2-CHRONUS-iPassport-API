@@ -11,7 +11,7 @@ namespace iPassport.Api.Models.Validators.Plans
                 .SetValidator(new RequiredFieldValidator<string>("document"));
 
             RuleFor(s => s.Phone)
-                .SetValidator(new RequiredFieldValidator<string>("Phone"));
+                .SetValidator(new PhoneNumberBrazilianValidator());
 
             RuleFor(x => x.Doctype)
                 .IsInEnum().WithMessage("O campo doctype está inválido");

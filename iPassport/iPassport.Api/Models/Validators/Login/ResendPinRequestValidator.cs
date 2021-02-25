@@ -8,7 +8,7 @@ namespace iPassport.Api.Models.Validators.Plans
         public ResendPinRequestValidator()
         {
             RuleFor(s => s.Phone)
-                .SetValidator(new RequiredFieldValidator<string>("Phone"));
+                .SetValidator(new PhoneNumberBrazilianValidator());
 
             RuleFor(s => s.UserId)
                 .SetValidator(new GuidValidator("UserId"));

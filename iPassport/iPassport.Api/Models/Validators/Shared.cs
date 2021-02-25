@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators
 {
@@ -45,6 +46,24 @@ namespace iPassport.Api.Models.Validators
             RuleFor(x => x.ContentType).NotNull().Must(x => x.Equals("image/jpeg") || x.Equals("image/jpg") || x.Equals("image/png"))
                 .WithMessage("Formato do arquivo de imagem não suportado. Formatos aceitos: jpeg, jpg, png");
 
+        }
+    }
+
+    public class PhoneNumberBrazilianValidator : AbstractValidator<string>
+    {
+        public PhoneNumberBrazilianValidator()
+        {
+            RuleFor(x => x).Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                    .WithMessage("O número de telefone informado não é válido. Por favor, verifique")
+                .Length(13)
+                    .WithMessage("O número de telefone informado não é válido. Por favor, verifique")                
+                .Must(y => y.Substring(4, 1).Equals("9"))
+                    .WithMessage("A informação inserida para o nono dígito não é válida.");
+
+            RuleFor(x => x).Must(y => { double number;
+                                        return Double.TryParse(y, out number);
+                }).WithMessage("O número de telefone informado não é válido. Por favor, verifique");
         }
     }
 
