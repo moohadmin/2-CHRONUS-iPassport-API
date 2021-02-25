@@ -1,5 +1,4 @@
-﻿using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
-using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Entities;
 using System;
 using System.Threading.Tasks;
 

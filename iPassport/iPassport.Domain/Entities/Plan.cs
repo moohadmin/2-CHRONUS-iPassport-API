@@ -13,7 +13,7 @@ namespace iPassport.Domain.Entities
             Id = Guid.NewGuid();
             Type = type;
             Description = description;
-            
+
             if (price.HasValue)
                 Price = price.Value;
 

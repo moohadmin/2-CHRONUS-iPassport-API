@@ -6,6 +6,6 @@
         /// required
         /// Message destination address. Addresses must be in international format (Example: 41793026727).
         /// </summary>
-        public string To { get; set; }        
+        public string To { get; set; }
     }
 }

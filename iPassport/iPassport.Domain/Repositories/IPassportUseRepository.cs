@@ -5,6 +5,6 @@ namespace iPassport.Domain.Repositories
 
     public interface IPassportUseRepository : IRepository<PassportUse>
     {
-        
+
     }
 }

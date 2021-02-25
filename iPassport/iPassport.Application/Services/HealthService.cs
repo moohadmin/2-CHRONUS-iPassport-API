@@ -38,5 +38,5 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, "List of HealthChecks Test! 01", System.Environment.GetEnvironmentVariables());
         }
-    } 
+    }
 }

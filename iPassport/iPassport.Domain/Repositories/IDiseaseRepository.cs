@@ -4,6 +4,6 @@ namespace iPassport.Domain.Repositories
 {
     public interface IDiseaseRepository : IRepository<Disease>
     {
-        
+
     }
 }

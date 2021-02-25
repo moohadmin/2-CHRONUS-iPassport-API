@@ -2,7 +2,7 @@
 
 namespace iPassport.Domain.Entities
 {
-    public class PagedData<T> where T : class 
+    public class PagedData<T> where T : class
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }

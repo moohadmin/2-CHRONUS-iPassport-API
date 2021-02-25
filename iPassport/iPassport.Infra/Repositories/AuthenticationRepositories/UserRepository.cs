@@ -12,7 +12,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
     {
         private readonly PassportIdentityContext _context;
 
-        public UserRepository(PassportIdentityContext context) =>_context = context;
+        public UserRepository(PassportIdentityContext context) => _context = context;
 
 
         public async Task<Users> FindByPhone(string phone) =>
@@ -21,5 +21,5 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         public async Task<Users> FindById(Guid id) =>
             await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
     }
-      
+
 }

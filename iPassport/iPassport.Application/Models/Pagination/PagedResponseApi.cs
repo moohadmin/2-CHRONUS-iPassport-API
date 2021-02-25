@@ -3,7 +3,7 @@
     public class PagedResponseApi : ResponseApi
     {
         public PagedResponseApi(bool success, string message, int pageNumber, int pageSize, int totalPages, int totalRecords, object data = null)
-            :base(success,message, data)
+            : base(success, message, data)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;

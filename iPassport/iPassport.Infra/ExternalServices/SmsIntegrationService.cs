@@ -61,8 +61,9 @@ namespace iPassport.Infra.ExternalServices
                 return Task.FromResult(simulatedSentResponse);
 
             sendPinRequestDto.Messages.From = GetSmsFromNumber();
-            var requestBody = JsonSerializer.Serialize(sendPinRequestDto, new JsonSerializerOptions( ) {
-                IgnoreNullValues = true ,
+            var requestBody = JsonSerializer.Serialize(sendPinRequestDto, new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             }
             );
@@ -73,7 +74,7 @@ namespace iPassport.Infra.ExternalServices
             };
 
             var response = RunIntegration(Method.POST, GetSendMessageUrl(), ParameterType.RequestBody, integrationParams);
-            var ResponseContent = JsonSerializer.Deserialize<SendPinResponseDto>(response.Content,new JsonSerializerOptions() 
+            var ResponseContent = JsonSerializer.Deserialize<SendPinResponseDto>(response.Content, new JsonSerializerOptions()
             {
                 IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase

@@ -25,7 +25,7 @@ namespace iPassport.Application.Services
         private readonly UserManager<Users> _userManager;
         private readonly IExternalStorageService _externalStorageService;
 
-        public UserService(IUserDetailsRepository detailsRepository, IPlanRepository planRepository,IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService)
+        public UserService(IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService)
         {
             _detailsRepository = detailsRepository;
             _planRepository = planRepository;
@@ -46,7 +46,7 @@ namespace iPassport.Application.Services
 
             /// Add User in iPassportIdentityContext
             var result = await _userManager.CreateAsync(user, dto.Password);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
                 return new ResponseApi(result.Succeeded, "Usuário não pode ser criado!", result.Errors);
 
             /// Re-Hidrated UserId to UserDetails
@@ -74,7 +74,7 @@ namespace iPassport.Application.Services
 
             var userDetails = await _detailsRepository.FindWithUser(userId);
             var plan = await _planRepository.Find(planId);
-            
+
             if (plan == null)
                 throw new BusinessException("Plano não encontrado");
 
@@ -98,17 +98,17 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
         }
-  
+
         public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)
         {
             userImageDto.UserId = _accessor.GetCurrentUserId();
             var userDetails = await _detailsRepository.FindWithUser(userImageDto.UserId);
 
-            if(userDetails == null)
+            if (userDetails == null)
                 throw new BusinessException("Usuário não cadastrado");
-            
+
             if (userDetails.UserHavePhoto())
-                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
+                throw new BusinessException("Usuário já Tem Foto Cadastrada");
 
             userDetails.PhotoNameGenerator(userImageDto);
             var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);

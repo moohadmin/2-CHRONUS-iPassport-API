@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
 using iPassport.Application.Models;
 using iPassport.Domain.Enums;
+using System.Threading.Tasks;
 
 namespace iPassport.Application.Interfaces
 {

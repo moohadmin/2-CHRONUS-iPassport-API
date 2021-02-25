@@ -8,12 +8,12 @@ namespace iPassport.Domain.Dtos.PinIntegration.FindPin
         /// The number of parts the sent SMS was split into.
         /// </summary>
         public int? SmsCount { get; set; }
-        
+
         /// <summary>
         /// Mobile country and network codes.
         /// </summary>
         public string MccMnc { get; set; }
-        
+
         /// <summary>
         /// Bulk ID.
         /// </summary>
@@ -23,7 +23,7 @@ namespace iPassport.Domain.Dtos.PinIntegration.FindPin
         /// Indicates whether the error occurred during the query execution.
         /// </summary>
         public ErrorDto Error { get; set; }
-        
+
         /// <summary>
         /// Destination address.
         /// </summary>
@@ -48,8 +48,8 @@ namespace iPassport.Domain.Dtos.PinIntegration.FindPin
         /// <summary>
         /// Sender ID that can be alphanumeric or numeric.
         /// </summary>
-        public string From { get; set; }        
-        
+        public string From { get; set; }
+
     }
 
 }

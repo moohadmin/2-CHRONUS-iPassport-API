@@ -15,8 +15,8 @@ namespace iPassport.Test.Seeds
                 new Vaccine("vacina-teste2", Guid.NewGuid(), 3, 460, 30),
                 new Vaccine("vacina-teste3", Guid.NewGuid(), 1, 660, 10),
             };
-           
-            return new PagedData<Vaccine>() { Data = vac};
+
+            return new PagedData<Vaccine>() { Data = vac };
         }
     }
 }

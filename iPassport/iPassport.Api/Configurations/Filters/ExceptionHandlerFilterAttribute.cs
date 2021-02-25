@@ -33,7 +33,7 @@ namespace iPassport.Api.Configurations.Filters
                 ));
 
                 LogError(context.Exception);
-                return; 
+                return;
             }
 
             if (context.Exception is NotFoundException)
@@ -101,7 +101,7 @@ namespace iPassport.Api.Configurations.Filters
             if (exception.InnerException != null)
             {
                 logger.Error(exception, exception.InnerException.ToString());
-            }            
+            }
             logger.Error(exception, exception.StackTrace);
         }
     }

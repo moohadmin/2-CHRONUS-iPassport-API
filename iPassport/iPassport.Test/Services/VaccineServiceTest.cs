@@ -19,8 +19,8 @@ namespace iPassport.Test.Services
     [TestClass]
     public class VaccineServiceTest
     {
-        Mock<IVaccineRepository> _mockRepository;
-        IVaccineService _service;
+        Mock<IUserVaccineRepository> _mockRepository;
+        IUserVaccineService _service;
         IHttpContextAccessor _accessor;
         IMapper _mapper;
 
@@ -29,8 +29,8 @@ namespace iPassport.Test.Services
         {
             _mapper = AutoMapperFactory.Create();
             _accessor = HttpContextAccessorFactory.Create();
-            _mockRepository = new Mock<IVaccineRepository>();
-            _service = new VaccineService(_mapper, _mockRepository.Object, _accessor);
+            _mockRepository = new Mock<IUserVaccineRepository>();
+            _service = new UserVaccineService(_mapper, _mockRepository.Object, _accessor);
         }
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace iPassport.Test.Services
             _mockRepository.Verify(a => a.GetPagedUserVaccines(It.IsAny<Guid>(), It.IsAny<PageFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
-            Assert.IsInstanceOfType(result.Result.Data, typeof(IList<VaccineViewModel>));
+            Assert.IsInstanceOfType(result.Result.Data, typeof(IList<UserVaccineViewModel>));
         }
     }
 }

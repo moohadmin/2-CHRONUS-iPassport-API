@@ -17,6 +17,6 @@ namespace iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest
         /// <summary>
         /// Text of the message that will be sent.
         /// </summary>
-        public string Text{get; set;}
+        public string Text { get; set; }
     }
 }

@@ -13,15 +13,15 @@ using System.Threading.Tasks;
 namespace iPassport.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]    
-    
+    [ApiController]
+
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IUserService _service;
-        private readonly IVaccineService _vaccineService;
+        private readonly IUserVaccineService _vaccineService;
 
-        public UserController(IMapper mapper, IUserService userService, IVaccineService vaccineService)
+        public UserController(IMapper mapper, IUserService userService, IUserVaccineService vaccineService)
         {
             _mapper = mapper;
             _service = userService;
