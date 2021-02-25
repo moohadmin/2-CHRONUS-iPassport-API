@@ -37,5 +37,28 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             return tokenHandler.WriteToken(token);
         }
+
+        public string GenerateByEmail(Users user, UserDetails userDetails)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(("UserId"), user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(("FullName"), userDetails.FullName),
+                    new Claim(("FirstLogin"), (userDetails.LastLogin == null).ToString())
+                }),
+                Expires = DateTime.UtcNow.AddHours(2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
     }
 }
