@@ -10,5 +10,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> EmailLogin(string email, string password);
         Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc);
         Task<ResponseApi> MobileLogin(int pin, System.Guid userId);
+        Task<ResponseApi> ResetPassword(string password, string passwordConfirm);
     }
 }
