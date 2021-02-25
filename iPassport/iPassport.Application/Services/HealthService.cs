@@ -27,7 +27,7 @@ namespace iPassport.Application.Services
 
             await _repository.InsertAsync(health);
 
-            return new ResponseApi(true, "iPassport Api is Healthy!", health.Id);
+            return new ResponseApi(true, "iPassport Api is Healthy! 01", health.Id);
         }
 
         public async Task<ResponseApi> GetAll()
@@ -36,7 +36,7 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<IList<HealthViewModel>>(res);
 
-            return new ResponseApi(true, "List of HealthChecks Test!", result);
+            return new ResponseApi(true, "List of HealthChecks Test! 01", System.Environment.GetEnvironmentVariables());
         }
     } 
 }

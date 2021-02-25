@@ -1,9 +1,11 @@
 kind: Service
 apiVersion: v1
 metadata:
+  annotations:
+    cloud.google.com/load-balancer-type: Internal
   name: ${APP_NAME}-${APP_GROUP}-db
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
   - name: tcp
     port: 1433

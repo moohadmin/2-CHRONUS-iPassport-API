@@ -4,10 +4,10 @@ using iPassport.Domain.Dtos.PinIntegration.FindPin;
 using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
 using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace iPassport.Infra.ExternalServices
@@ -38,7 +38,11 @@ namespace iPassport.Infra.ExternalServices
             };
 
             var response = RunIntegration(Method.GET, GetFindMessageUrl(), ParameterType.QueryString, queryParams);
-            var ResponseContent = JsonConvert.DeserializeObject<PinReportResponseDto>(response.Content);
+            var ResponseContent = JsonSerializer.Deserialize<PinReportResponseDto>(response.Content, new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
 
             return Task.FromResult(ResponseContent);
         }
@@ -57,12 +61,11 @@ namespace iPassport.Infra.ExternalServices
                 return Task.FromResult(simulatedSentResponse);
 
             sendPinRequestDto.Messages.From = GetSmsFromNumber();
-            var requestBody = JsonConvert.SerializeObject(sendPinRequestDto, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                PreserveReferencesHandling = PreserveReferencesHandling.None,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+            var requestBody = JsonSerializer.Serialize(sendPinRequestDto, new JsonSerializerOptions( ) {
+                IgnoreNullValues = true ,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            }
+            );
 
             Dictionary<string, string> integrationParams = new Dictionary<string, string>
             {
@@ -70,7 +73,11 @@ namespace iPassport.Infra.ExternalServices
             };
 
             var response = RunIntegration(Method.POST, GetSendMessageUrl(), ParameterType.RequestBody, integrationParams);
-            var ResponseContent = JsonConvert.DeserializeObject<SendPinResponseDto>(response.Content);
+            var ResponseContent = JsonSerializer.Deserialize<SendPinResponseDto>(response.Content,new JsonSerializerOptions() 
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
 
             return Task.FromResult(ResponseContent);
         }

@@ -1,0 +1,17 @@
+﻿using FluentValidation;
+using iPassport.Api.Models.Requests;
+
+namespace iPassport.Api.Models.Validators.Plans
+{
+    public class EmailLoginRequestValidator : AbstractValidator<EmailLoginRequest>
+    {
+        public EmailLoginRequestValidator()
+        {
+            RuleFor(s => s.Email)
+               .SetValidator(new EmailValidator());
+
+            RuleFor(s => s.Password)
+                .SetValidator(new RequiredFieldValidator<string>("Password"));
+        }
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -15,21 +16,16 @@ namespace iPassport.Infra.Repositories
         public async Task<UserDetails> FindWithUser(Guid id) =>
             await _DbSet.Where(x => x.UserId == id).FirstOrDefaultAsync();
 
-        public async Task<UserDetails> FindByDocument(int documentType, string document)
+        public async Task<UserDetails> FindByDocument(EDocumentType documentType, string document)
         {
-            if(documentType == 1)
-                return await _DbSet.Where(x => x.CNS == document).FirstOrDefaultAsync();
-            
-            if(documentType == 2)
-                return await _DbSet.Where(x => x.CPF == document).FirstOrDefaultAsync();
-            
-            if(documentType == 3)
-                return await _DbSet.Where(x => x.PassportDoc == document).FirstOrDefaultAsync();
-            
-            if(documentType == 4)
-                return await _DbSet.Where(x => x.RG == document).FirstOrDefaultAsync();
-
-            return null;
+            return documentType switch
+            {
+                EDocumentType.CPF => await _DbSet.Where(x => x.CPF == document).FirstOrDefaultAsync(),
+                EDocumentType.RG => await _DbSet.Where(x => x.RG == document).FirstOrDefaultAsync(),
+                EDocumentType.Passport => await _DbSet.Where(x => x.PassportDoc == document).FirstOrDefaultAsync(),
+                EDocumentType.CNS => await _DbSet.Where(x => x.CNS == document).FirstOrDefaultAsync(),
+                _ => null,
+            };
         }
     }
 }

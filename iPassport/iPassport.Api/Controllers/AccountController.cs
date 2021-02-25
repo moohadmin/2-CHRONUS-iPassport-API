@@ -3,6 +3,7 @@ using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace iPassport.Api.Controllers
@@ -68,7 +69,7 @@ namespace iPassport.Api.Controllers
         [HttpPost("LoginByCitizen")]
         public async Task<ActionResult> MobileLogin([FromBody]LoginMobileRequest request)
         {
-            var res = await _service.MobileLogin(request.Pin, request.DocumentType, request.Document);
+            var res = await _service.MobileLogin(request.Pin, request.UserId);
             return Ok(res);
         }
 
@@ -84,9 +85,28 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost("Pin")]
-        public ActionResult SendPin([FromBody] PinRequest request)
+        public async Task<ActionResult> SendPin([FromBody] PinRequest request)
         {
-            var res = _service.SendPin(request.Phone, request.doctype, request.document);
+            var res = await _service.SendPin(request.Phone, request.Doctype, request.Document);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is reset the user password
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Server returns Ok/response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [Authorize]
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPost("PasswordReset")]
+        public async Task<ActionResult> PasswordReset([FromBody] ResetPasswordRequest request)
+        {
+            var res = await _service.ResetPassword(request.Password, request.PasswordConfirm);
             return Ok(res);
         }
     }

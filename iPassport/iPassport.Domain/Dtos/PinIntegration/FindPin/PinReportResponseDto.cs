@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace iPassport.Domain.Dtos.PinIntegration.FindPin
 {
@@ -8,7 +7,6 @@ namespace iPassport.Domain.Dtos.PinIntegration.FindPin
         /// <summary>
         /// Array Of Objects retorned
         /// </summary>
-        [JsonProperty("results")]
         public IList<PinReportResponseDetailsDto> Results { get; set; }
     }
 }
