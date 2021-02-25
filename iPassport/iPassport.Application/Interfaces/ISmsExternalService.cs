@@ -13,11 +13,7 @@ namespace iPassport.Application.Interfaces
         /// <param name="idMessage">Message id to search</param>
         /// <returns></returns>
         Task<PinReportResponseDto> FindPinSent(string idMessage);
-        /// <summary>
-        /// Envia mensagem SMS
-        /// </summary>
-        /// <param name="smsAdvancedTextualRequest">Dto with the data for sending the SMS message</param>
-        /// <returns></returns>
-        Task<SendPinResponseDto> SendPin(SendPinRequestDto sendPinRequestDto);        
+        
+        Task<SendPinResponseDto> SendPin(string text, string phone);
     }
 }

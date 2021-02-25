@@ -22,7 +22,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         private readonly UserManager<Users> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IAuth2FactService _auth2FactService;
-        IHttpContextAccessor _acessor;
+        private readonly IHttpContextAccessor _acessor;
 
         public AccountService(IUserDetailsRepository userDetailsRepository, ITokenService tokenService,
             UserManager<Users> userManager, IUserRepository userRepository, IAuth2FactService auth2FactService, IHttpContextAccessor acessor)
@@ -152,6 +152,13 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException("A senha inserida não se encontra no padrão pré-estabelecido (8 caracteres: deve conter 1 letra, 1 número e 1 caractere especial). Por favor, verifique");
 
             return new ResponseApi(true, "Senha alterada!", null);
+        }
+
+        public async Task<ResponseApi> ResendPin(string phone, Guid userId)
+        {
+            var pinresp = await _auth2FactService.ResendPin(userId, phone);
+
+            return new ResponseApi(true, "Novo pin enviado", null);
         }
     }
 }

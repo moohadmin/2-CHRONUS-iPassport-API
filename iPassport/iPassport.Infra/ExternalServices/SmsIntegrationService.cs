@@ -47,22 +47,23 @@ namespace iPassport.Infra.ExternalServices
             return Task.FromResult(ResponseContent);
         }
 
-
-
         /// <summary>
-        /// Envia mensagem SMS
+        /// Send Sms
         /// </summary>
-        /// <param name="sendPinRequestDto">Dto with the data for sending the SMS message</param>
+        /// <param name="text"> Text of SMS</param>
+        /// <param name="phone"> Destination phone</param>
         /// <returns></returns>
-        public Task<SendPinResponseDto> SendPin(SendPinRequestDto sendPinRequestDto)
+        public Task<SendPinResponseDto> SendPin(string text, string phone)
         {
             SendPinResponseDto simulatedSentResponse = PinIntegrationSimulatedSent();
             if (simulatedSentResponse != null)
                 return Task.FromResult(simulatedSentResponse);
 
-            sendPinRequestDto.Messages.From = GetSmsFromNumber();
-            var requestBody = JsonSerializer.Serialize(sendPinRequestDto, new JsonSerializerOptions( ) {
-                IgnoreNullValues = true ,
+            var sendPinRequestDto = GenerateSendRequestDto(text, phone);
+
+            var requestBody = JsonSerializer.Serialize(sendPinRequestDto, new JsonSerializerOptions()
+            {
+                IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             }
             );
@@ -73,7 +74,7 @@ namespace iPassport.Infra.ExternalServices
             };
 
             var response = RunIntegration(Method.POST, GetSendMessageUrl(), ParameterType.RequestBody, integrationParams);
-            var ResponseContent = JsonSerializer.Deserialize<SendPinResponseDto>(response.Content,new JsonSerializerOptions() 
+            var ResponseContent = JsonSerializer.Deserialize<SendPinResponseDto>(response.Content, new JsonSerializerOptions()
             {
                 IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -81,7 +82,7 @@ namespace iPassport.Infra.ExternalServices
 
             return Task.FromResult(ResponseContent);
         }
-
+        
         /// <summary>
         /// Run Integration with external service and return response
         /// </summary>
@@ -217,6 +218,9 @@ namespace iPassport.Infra.ExternalServices
             return null;
         }
 
-
+        private SendPinRequestDto GenerateSendRequestDto(string text, string phone)
+        {
+            return new SendPinRequestDto() { Messages = new MessageDto() { Text = text, From = GetSmsFromNumber(), Destinations = new List<DestinationDto>() { new DestinationDto() { To = phone } } } };
+        }
     }
 }

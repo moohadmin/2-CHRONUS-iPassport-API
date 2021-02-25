@@ -25,12 +25,8 @@ namespace iPassport.Domain.Entities
 
         public Auth2FactMobile Create(Auth2FactMobileDto dto) => new Auth2FactMobile(dto.UserId, dto.Phone, dto.Pin, dto.IsUsed, dto.MessageId);
 
-        public bool CanUseToValidate()
-        {
-            if (IsUsed || CreateDate.AddHours(12) < DateTime.Now)
-                return false;
+        public bool CanUseToValidate() => !(IsUsed || CreateDate.AddHours(12) < DateTime.Now);
 
-            return true;
-        }
+        public bool PreventsResendingPIN() => (!IsUsed && CreateDate.AddMinutes(2) > DateTime.Now && CreateDate.AddHours(12) > DateTime.Now);
     }
 }
