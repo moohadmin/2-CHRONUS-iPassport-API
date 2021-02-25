@@ -1,4 +1,6 @@
-﻿namespace iPassport.Api.Models.Requests
+﻿using iPassport.Domain.Enums;
+
+namespace iPassport.Api.Models.Requests
 {
     /// <summary>
     /// Send Pin model
@@ -12,10 +14,10 @@
         /// <summary>
         /// Types documents (CPF, CNS, RG, Passport)
         /// </summary>
-        public string doctype { get; set; }
+        public EDocumentType Doctype { get; set; }
         /// <summary>
         /// Document Number
         /// </summary>
-        public string document { get; set; }
+        public string Document { get; set; }
     }
 }
