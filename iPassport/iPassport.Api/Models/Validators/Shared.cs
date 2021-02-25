@@ -30,9 +30,8 @@ namespace iPassport.Api.Models.Validators
         public RequiredFieldValidator(string fieldName)
         {
             RuleFor(x => x)
-                .NotNull()
-                .NotEmpty()
-                .WithMessage($"O campo {fieldName} é obrigatório");
+                .NotNull().WithMessage($"O campo {fieldName} é obrigatório")
+                .NotEmpty().WithMessage($"O campo {fieldName} é obrigatório");
         }
     }
 
