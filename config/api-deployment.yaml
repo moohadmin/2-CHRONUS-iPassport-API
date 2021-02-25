@@ -63,6 +63,11 @@ spec:
             configMapKeyRef:
               key: DB_PASSWORD
               name: ${APP_NAME}-${APP_GROUP}
+        - name: PIN_INTEGRATION_SIMULADO
+          valueFrom:
+            configMapKeyRef:
+              key: PIN_INTEGRATION_SIMULADO
+              name: ${APP_NAME}-${APP_GROUP}
         ports:
         - containerPort: 80
         readinessProbe:
