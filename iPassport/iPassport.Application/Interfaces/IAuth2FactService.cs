@@ -1,6 +1,7 @@
 ﻿using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
 using iPassport.Domain.Entities;
 using System;
+using System.Threading.Tasks;
 
 namespace iPassport.Application.Interfaces
 {
@@ -12,7 +13,7 @@ namespace iPassport.Application.Interfaces
         /// <param name="idMessage">idMessage sent to client</param>
         void FindPinSent(string idMessage);
 
-        Auth2FactMobile SendPin(Guid userId, string phone);
-        Auth2FactMobile ValidPin(Guid userId, string pin);
+        Task<Auth2FactMobile> SendPin(Guid userId, string phone);
+        Task<Auth2FactMobile> ValidPin(Guid userId, string pin);
     }
 }

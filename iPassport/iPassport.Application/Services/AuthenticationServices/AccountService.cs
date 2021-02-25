@@ -1,13 +1,12 @@
 using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
-using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services.AuthenticationServices
@@ -35,7 +34,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
-                return new ResponseApi(false, "Usuário não cadastrado!", null);
+                throw new BusinessException("Usuário não cadastrado!");
 
             var userDetails = await _userDetailsRepository.FindWithUser(user.Id);
 
@@ -44,7 +43,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (userDetails == null)
             {
                 await _userManager.DeleteAsync(user);
-                return new ResponseApi(false, "Usuário não cadastrado!", null);
+                throw new BusinessException("Usuário não cadastrado!");
             }
 
             if (await _userManager.CheckPasswordAsync(user, password))
@@ -52,7 +51,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 var token = _tokenService.GenerateBasic(user, userDetails);
 
                 if (token == null)
-                    return new ResponseApi(false, "Usuário ou Senha inválidos!", null);
+                    throw new BusinessException("Usuário ou Senha inválidos!");
 
                 userDetails.UpdateLastLogin();
                 _userDetailsRepository.Update(userDetails);
@@ -60,7 +59,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
 
-            return new ResponseApi(false, "Usuário ou Senha Inválido!", null);
+            throw new BusinessException("Usuário ou Senha Inválido!");
         }
 
         public async Task<ResponseApi> EmailLogin(string email, string password)
@@ -95,17 +94,18 @@ namespace iPassport.Application.Services.AuthenticationServices
             throw new BusinessException("Usuário ou Senha Inválido!");
         }
 
-        public async Task<ResponseApi> MobileLogin(string pin, int documentType, string document)
+        public async Task<ResponseApi> MobileLogin(int pin, Guid userId)
         {
-            var userDetails = await _userDetailsRepository.FindByDocument(documentType, document);
+            var userDetails = await _userDetailsRepository.FindWithUser(userId);
+
             if(userDetails == null)
                 throw new BusinessException("Usuário não cadastrado!");
 
-            var pinvalid =  _auth2FactService.ValidPin(userDetails.UserId, pin);
+            var pinvalid =  await _auth2FactService.ValidPin(userDetails.UserId, pin.ToString("0000"));
 
-            var user = _userRepository.FindById(userDetails.UserId);
+            var user = await _userRepository.FindById(userDetails.UserId);
 
-            var token = _tokenService.GenerateBasic(user.Result, userDetails);
+            var token = _tokenService.GenerateBasic(user, userDetails);
 
             if(token != null)
             {
@@ -115,18 +115,29 @@ namespace iPassport.Application.Services.AuthenticationServices
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
 
-            return new ResponseApi(false, "Ops, ocorreu um erro no login, tente novamente!", null);
+            throw new BusinessException("Ops, ocorreu um erro no login, tente novamente!");
         }
 
-        public ResponseApi SendPin(string phone, string doctype, string doc)
+        public async Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc)
         {
-            var user = _userRepository.FindByPhone(phone).Result;
-            //var userDetails = _userDetailsRepository.FindWithUser((user.Id);
+            var userDetails = await _userDetailsRepository.FindByDocument(doctype, doc);            
+            if(userDetails == null)
+                throw new BusinessException("Usuário não cadastrado!");
 
+            var user = await  _userRepository.FindById(userDetails.UserId);
             if (user == null)
                 throw new BusinessException("Usuário não cadastrado!");
 
-            var pinresp =  _auth2FactService.SendPin(user.Id, phone);
+            if (!String.IsNullOrWhiteSpace(user.PhoneNumber) && user.PhoneNumber != phone)
+                throw new BusinessException("Usuário com dados de acesso invalidos!");
+
+
+            var pinresp =  await _auth2FactService.SendPin(user.Id, phone);
+
+
+            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
+            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
+                return new ResponseApi(true, "PIN Enviado Em ambiente simulado! Objeto completo no modo não simulado somente retorna o UserId", pinresp);
 
             return new ResponseApi(true, "PIN Enviado com sucesso!", pinresp.UserId);
         }

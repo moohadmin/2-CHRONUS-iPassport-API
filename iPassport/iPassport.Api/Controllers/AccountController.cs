@@ -68,7 +68,7 @@ namespace iPassport.Api.Controllers
         [HttpPost("LoginByCitizen")]
         public async Task<ActionResult> MobileLogin([FromBody]LoginMobileRequest request)
         {
-            var res = await _service.MobileLogin(request.Pin, request.DocumentType, request.Document);
+            var res = await _service.MobileLogin(request.Pin, request.UserId);
             return Ok(res);
         }
 
@@ -84,9 +84,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost("Pin")]
-        public ActionResult SendPin([FromBody] PinRequest request)
+        public async Task<ActionResult> SendPin([FromBody] PinRequest request)
         {
-            var res = _service.SendPin(request.Phone, request.doctype, request.document);
+            var res = await _service.SendPin(request.Phone, request.Doctype, request.Document);
             return Ok(res);
         }
     }

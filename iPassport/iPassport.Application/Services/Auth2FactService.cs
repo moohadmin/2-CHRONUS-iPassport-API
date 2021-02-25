@@ -1,13 +1,13 @@
-﻿using iPassport.Application.Interfaces;
+﻿using iPassport.Application.Exceptions;
+using iPassport.Application.Interfaces;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
-using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using iPassport.Domain.Dtos;
-using iPassport.Application.Exceptions;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
 {
@@ -31,7 +31,7 @@ namespace iPassport.Application.Services
             var result = _smsExternalServices.FindPinSent(idMessage);
         }
 
-        public Auth2FactMobile SendPin(Guid userId, string phone)
+        public async Task<Auth2FactMobile> SendPin(Guid userId, string phone)
         {
             var pin = PinGenerate();
 
@@ -50,9 +50,9 @@ namespace iPassport.Application.Services
                 Messages = messageDto
             };
             
-            var resultPin = _smsExternalServices.SendPin(sendPinRequestDto);
+            var resultPin = await _smsExternalServices.SendPin(sendPinRequestDto);
 
-            var message = resultPin.Result.Messages.FirstOrDefault();
+            var message = resultPin.Messages.FirstOrDefault();
 
             var twoFactDto = new Auth2FactMobileDto 
             {
@@ -65,19 +65,19 @@ namespace iPassport.Application.Services
 
             var twoFact = new Auth2FactMobile();
             var twoFactCreated = twoFact.Create(twoFactDto);
-            _auth2FactRepository.InsertAsync(twoFactCreated);
+            await _auth2FactRepository.InsertAsync(twoFactCreated);
 
             return twoFactCreated;
         }
 
-        public Auth2FactMobile ValidPin(Guid userId, string pin)
+        public async Task<Auth2FactMobile> ValidPin(Guid userId, string pin)
         {
-            var pinvalid = _auth2FactRepository.FindByUserAndPin(userId, pin);
+            var pinvalid = await _auth2FactRepository.FindByUserAndPin(userId, pin);
 
-            if(pinvalid.Result == null)
-                throw new BusinessException("PIN inválido!");
+            if(pinvalid == null || pinvalid.CanUseToValidate())
+                throw new BusinessException("PIN inválido!");           
 
-            return pinvalid.Result;
+            return pinvalid;
         }
 
         private string PinGenerate()
