@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${APP_NAME}-${APP_GROUP}
+  name: ${APP_NAME}-${APP_SUBGROUP}
   labels:
-    app: ${APP_NAME}-${APP_GROUP}
+    app: ${APP_NAME}-${APP_SUBGROUP}
     role: backend
     env: dev
   annotations:
@@ -14,13 +14,13 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: ${APP_NAME}-${APP_GROUP}
+      app: ${APP_NAME}-${APP_SUBGROUP}
       role: backend
       env: dev
   template:
     metadata:
       labels:
-        app: ${APP_NAME}-${APP_GROUP}
+        app: ${APP_NAME}-${APP_SUBGROUP}
         role: backend
         env: dev
     spec:
@@ -34,7 +34,7 @@ spec:
       imagePullSecrets:
       - name: gitlab-auth
       containers:
-      - name: ${APP_NAME}-${APP_GROUP}
+      - name: ${APP_NAME}-${APP_SUBGROUP}
         image: ${IMAGE_TAG}
         imagePullPolicy: Always
         env:
@@ -42,32 +42,32 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: CONNECTION_STRING
-              name: ${APP_NAME}-${APP_GROUP}
+              name: ${APP_NAME}-${APP_SUBGROUP}
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
               key: DB_HOST
-              name: ${APP_NAME}-${APP_GROUP}
+              name: ${APP_NAME}-${APP_SUBGROUP}
         - name: DB_NAME
           valueFrom:
             configMapKeyRef:
               key: DB_NAME
-              name: ${APP_NAME}-${APP_GROUP}
+              name: ${APP_NAME}-${APP_SUBGROUP}
         - name: DB_USER
           valueFrom:
             configMapKeyRef:
               key: DB_USER
-              name: ${APP_NAME}-${APP_GROUP}
+              name: ${APP_NAME}-${APP_SUBGROUP}
         - name: DB_PASSWORD
           valueFrom:
             configMapKeyRef:
               key: DB_PASSWORD
-              name: ${APP_NAME}-${APP_GROUP}
+              name: ${APP_NAME}-${APP_SUBGROUP}
         - name: PIN_INTEGRATION_SIMULADO
           valueFrom:
             configMapKeyRef:
               key: PIN_INTEGRATION_SIMULADO
-              name: ${APP_NAME}-${APP_GROUP}
+              name: ${APP_NAME}-${APP_SUBGROUP}
         ports:
         - containerPort: 80
         readinessProbe:

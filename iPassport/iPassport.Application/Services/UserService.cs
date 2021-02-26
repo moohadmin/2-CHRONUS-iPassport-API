@@ -43,7 +43,7 @@ namespace iPassport.Application.Services
                 Email = dto.Email,
                 PhoneNumber = dto.Mobile
             };
-
+            user.SetUpdateDate();
             /// Add User in iPassportIdentityContext
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)

@@ -5,6 +5,7 @@
         CPF = 1,
         RG = 2,
         Passport = 3,
-        CNS = 4
+        CNS = 4,
+        InternationalDocument = 5
     }
 }

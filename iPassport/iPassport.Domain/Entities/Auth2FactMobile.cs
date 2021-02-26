@@ -7,30 +7,28 @@ namespace iPassport.Domain.Entities
     {
         public Auth2FactMobile() { }
 
-        public Auth2FactMobile(Guid userId, string phone, string pin, bool isUsed, string messageId)
+        public Auth2FactMobile(Guid userId, string phone, string pin, bool isValid, string messageId)
         {
             Id = Guid.NewGuid();
             UserId = userId;
             Phone = phone;
             Pin = pin;
-            IsUsed = isUsed;
+            IsValid = isValid;
             MessageId = messageId;
         }
 
         public Guid UserId { get; private set; }
         public string Phone { get; private set; }
         public string Pin { get; private set; }
-        public bool IsUsed { get; private set; }
+        public bool IsValid { get; private set; }
         public string MessageId { get; private set; }
 
-        public Auth2FactMobile Create(Auth2FactMobileDto dto) => new Auth2FactMobile(dto.UserId, dto.Phone, dto.Pin, dto.IsUsed, dto.MessageId);
+        public Auth2FactMobile Create(Auth2FactMobileDto dto) => new Auth2FactMobile(dto.UserId, dto.Phone, dto.Pin, dto.IsValid, dto.MessageId);
 
-        public bool CanUseToValidate()
-        {
-            if (IsUsed || CreateDate.AddHours(12) < DateTime.Now)
-                return false;
+        public bool CanUseToValidate() => (IsValid && CreateDate.AddHours(12) > DateTime.Now);
 
-            return true;
-        }
+        public bool PreventsResendingPIN() => (IsValid && CreateDate.AddMinutes(2) > DateTime.Now);
+
+        public void SetInvalid() => IsValid = false;
     }
 }

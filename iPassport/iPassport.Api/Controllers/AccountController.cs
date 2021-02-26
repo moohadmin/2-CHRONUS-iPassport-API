@@ -69,7 +69,7 @@ namespace iPassport.Api.Controllers
         [HttpPost("LoginByCitizen")]
         public async Task<ActionResult> MobileLogin([FromBody] LoginMobileRequest request)
         {
-            var res = await _service.MobileLogin(request.Pin, request.UserId);
+            var res = await _service.MobileLogin(request.Pin, request.UserId, request.AcceptTerms);
             return Ok(res);
         }
 
@@ -107,6 +107,24 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> PasswordReset([FromBody] ResetPasswordRequest request)
         {
             var res = await _service.ResetPassword(request.Password, request.PasswordConfirm);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is to Resend  PIN verification
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Server returns Ok/response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPost("ResendPin")]
+        public async Task<ActionResult> ResendPin([FromBody] ResendPinRequest request)
+        {
+            var res = await _service.ResendPin(request.Phone, request.UserId);
             return Ok(res);
         }
     }

@@ -61,6 +61,9 @@ namespace iPassport.Infra.Mappings
                 .HasColumnType("DateTime")
                 .IsRequired();
 
+            builder.Property(c => c.InternationalDocument)
+                .HasColumnType("nvarchar(max)");
+
             builder.HasOne(c => c.Plan)
                 .WithMany(p => p.Users);
         }

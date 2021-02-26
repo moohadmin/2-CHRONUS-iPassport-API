@@ -24,6 +24,7 @@ namespace iPassport.Infra.Repositories
                 EDocumentType.RG => await _DbSet.Where(x => x.RG == document).FirstOrDefaultAsync(),
                 EDocumentType.Passport => await _DbSet.Where(x => x.PassportDoc == document).FirstOrDefaultAsync(),
                 EDocumentType.CNS => await _DbSet.Where(x => x.CNS == document).FirstOrDefaultAsync(),
+                EDocumentType.InternationalDocument => await _DbSet.Where(x => x.InternationalDocument == document).FirstOrDefaultAsync(),
                 _ => null,
             };
         }

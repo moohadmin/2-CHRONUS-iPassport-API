@@ -8,18 +8,18 @@ metadata:
     kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.allow-http: "false"
   labels:
-    app: ${APP_NAME}-${APP_GROUP}
-  name: ${APP_NAME}-${APP_GROUP}
+    app: ${APP_NAME}-${APP_SUBGROUP}
+  name: ${APP_NAME}-${APP_SUBGROUP}
 spec:
   rules:
-  - host: ${APP_NAME}.${APP_GROUP}.${ENVIRONMENT}.solutis.xyz
+  - host: ${APP_NAME}.${APP_SUBGROUP}.${ENVIRONMENT}.solutis.xyz
     http:
       paths:
       - backend:
-          serviceName: ${APP_NAME}-${APP_GROUP}
+          serviceName: ${APP_NAME}-${APP_SUBGROUP}
           servicePort: 80
         path: /
   tls:
   - hosts:
-    - ${APP_NAME}.${APP_GROUP}.${ENVIRONMENT}.solutis.xyz
-    secretName: crt-ship-${APP_NAME}-${APP_GROUP}
+    - ${APP_NAME}.${APP_SUBGROUP}.${ENVIRONMENT}.solutis.xyz
+    secretName: crt-ship-${APP_NAME}-${APP_SUBGROUP}

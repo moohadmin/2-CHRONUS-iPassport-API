@@ -100,19 +100,22 @@ namespace iPassport.Application.Services.AuthenticationServices
             throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
         }
 
-        public async Task<ResponseApi> MobileLogin(int pin, Guid userId)
+        public async Task<ResponseApi> MobileLogin(int pin, Guid userId, bool acceptTerms)
         {
-            var userDetails = await _userDetailsRepository.FindWithUser(userId);
+            if(!acceptTerms)
+                throw new BusinessException("Necessário Aceitar os Termos para continuar");
 
+            var userDetails = await _userDetailsRepository.FindWithUser(userId);
             if (userDetails == null)
                 throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
             await _auth2FactService.ValidPin(userDetails.UserId, pin.ToString("0000"));
 
             var user = await _userRepository.FindById(userDetails.UserId);
+            user.SetAcceptTerms(acceptTerms);
+            _userRepository.Update(user);
 
             var token = _tokenService.GenerateBasic(user, userDetails);
-
             if (token != null)
             {
                 userDetails.UpdateLastLogin();
@@ -120,21 +123,22 @@ namespace iPassport.Application.Services.AuthenticationServices
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
+
             throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
         }
 
         public async Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc)
         {
-            var userDetails = await _userDetailsRepository.FindByDocument(doctype, doc);
-            if (userDetails == null)
-                throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
+            var userDetails = await _userDetailsRepository.FindByDocument(doctype, doc.Trim());            
+            if(userDetails == null)
+                throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
             var user = await _userRepository.FindById(userDetails.UserId);
             if (user == null)
-                throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
+                throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
             if (!String.IsNullOrWhiteSpace(user.PhoneNumber) && user.PhoneNumber != phone)
-                throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
+                throw new BusinessException("Usuário não cadastrado.");
 
             var pinresp = await _auth2FactService.SendPin(user.Id, phone);
 
@@ -155,6 +159,17 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException("A senha inserida não se encontra no padrão pré-estabelecido (8 caracteres: deve conter 1 letra, 1 número e 1 caractere especial). Por favor, verifique");
 
             return new ResponseApi(true, "Senha alterada!", null);
+        }
+
+        public async Task<ResponseApi> ResendPin(string phone, Guid userId)
+        {
+            var user = await _userRepository.FindById(userId);
+            if (user == null)
+                throw new BusinessException("Usuário não cadastrado.");
+
+            await _auth2FactService.ResendPin(userId, phone);
+
+            return new ResponseApi(true, "Novo pin enviado", null);
         }
     }
 }
