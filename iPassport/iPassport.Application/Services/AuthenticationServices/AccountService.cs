@@ -96,19 +96,22 @@ namespace iPassport.Application.Services.AuthenticationServices
             throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
         }
 
-        public async Task<ResponseApi> MobileLogin(int pin, Guid userId)
+        public async Task<ResponseApi> MobileLogin(int pin, Guid userId, bool acceptTerms)
         {
-            var userDetails = await _userDetailsRepository.FindWithUser(userId);
+            if(!acceptTerms)
+                throw new BusinessException("Necessário Aceitar os Termos para continuar");
 
+            var userDetails = await _userDetailsRepository.FindWithUser(userId);
             if (userDetails == null)
                 throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
             await _auth2FactService.ValidPin(userDetails.UserId, pin.ToString("0000"));
 
             var user = await _userRepository.FindById(userDetails.UserId);
+            user.SetAcceptTerms(acceptTerms);
+            _userRepository.Update(user);
 
             var token = _tokenService.GenerateBasic(user, userDetails);
-
             if (token != null)
             {
                 userDetails.UpdateLastLogin();
@@ -116,6 +119,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
+
             throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
         }
 
@@ -159,7 +163,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException("Usuário não cadastrado.");
 
-            var pinresp = await _auth2FactService.ResendPin(userId, phone);
+            await _auth2FactService.ResendPin(userId, phone);
 
             return new ResponseApi(true, "Novo pin enviado", null);
         }

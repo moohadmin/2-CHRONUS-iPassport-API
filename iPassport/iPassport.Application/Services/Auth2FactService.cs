@@ -50,7 +50,7 @@ namespace iPassport.Application.Services
             if(!pinValid.CanUseToValidate())
                 throw new BusinessException("PIN expirado!");
 
-            pinValid.SetUsed();
+            pinValid.SetInvalid();
 
             _auth2FactRepository.Update(pinValid);
 
@@ -69,6 +69,11 @@ namespace iPassport.Application.Services
             var userPinList = await _auth2FactRepository.FindByUser(userId);
             if (userPinList != null && userPinList.Any(x => x.PreventsResendingPIN()))
                 throw new BusinessException("Favor aguardar antes de solicitar novo pin");
+
+            userPinList?.Where(x => x.IsValid)?.ToList()?.ForEach(x => 
+                { x.SetInvalid();
+                  _auth2FactRepository.Update(x);
+                });
 
             var pin = PinGenerate();
             var text = $"{pin} - Is your iPassport verification PIN.";
@@ -89,7 +94,7 @@ namespace iPassport.Application.Services
                 UserId = userId,
                 Phone = phone,
                 Pin = pin,
-                IsUsed = false,
+                IsValid = true,
                 MessageId = MessageId
             };
 

@@ -13,6 +13,9 @@ namespace iPassport.Api.Models.Validators.Plans
 
             RuleFor(s => s.UserId)
                 .SetValidator(new GuidValidator("UserId"));
+
+            RuleFor(s => s.AcceptTerms)
+                .SetValidator(new RequiredFieldValidator<bool>("AcceptTerms"));
         }
     }
 }
