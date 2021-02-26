@@ -21,7 +21,6 @@ namespace iPassport.Application.Services
         private readonly IPlanRepository _planRepository;
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
-
         private readonly UserManager<Users> _userManager;
         private readonly IExternalStorageService _externalStorageService;
 
@@ -118,6 +117,13 @@ namespace iPassport.Application.Services
             _detailsRepository.Update(userDetails);
 
             return new ResponseApi(true, "Imagem Adicionada", userDetails.Photo);
+        }
+
+        public async Task<ResponseApi> GetLoggedCitzenCount()
+        {
+            var res = await _detailsRepository.GetLoggedCitzenCount();
+
+            return new ResponseApi(true, "Total de cidadãos logados", res);
         }
     }
 }
