@@ -4,6 +4,7 @@ using iPassport.Domain.Entities.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -29,7 +30,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(("FullName"), userDetails.FullName)
                 }),
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.AddYears(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -38,7 +39,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             return tokenHandler.WriteToken(token);
         }
 
-        public string GenerateByEmail(Users user, UserDetails userDetails)
+        public string GenerateByEmail(Users user, UserDetails userDetails, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
@@ -50,7 +51,8 @@ namespace iPassport.Application.Services.AuthenticationServices
                     new Claim(("UserId"), user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(("FullName"), userDetails.FullName),
-                    new Claim(("FirstLogin"), (userDetails.LastLogin == null).ToString())
+                    new Claim(("FirstLogin"), (userDetails.LastLogin == null).ToString()),
+                    new Claim(ClaimTypes.Role, role)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

@@ -61,7 +61,6 @@ namespace iPassport.Api.Controllers
         {
             var res = await _service.AddUserImage(_mapper.Map<UserImageDto>(request));
             return Ok(res);
-
         }
 
         /// <summary>

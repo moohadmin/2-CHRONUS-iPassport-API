@@ -44,6 +44,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IIndicatorService, IndicatorService>();
 
             services.AddScoped<IVaccineManufacturerService, VaccineManufacturerService>();
+
+            services.AddScoped<IRoleService, RoleService>();
             #endregion
 
             #region DI Repositories

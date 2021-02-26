@@ -49,6 +49,8 @@ namespace iPassport.Application.Services
             if (!result.Succeeded)
                 return new ResponseApi(result.Succeeded, "Usuário não pode ser criado!", result.Errors);
 
+            await _userManager.AddToRoleAsync(user, "admin");
+
             /// Re-Hidrated UserId to UserDetails
             dto.UserId = user.Id;
 
