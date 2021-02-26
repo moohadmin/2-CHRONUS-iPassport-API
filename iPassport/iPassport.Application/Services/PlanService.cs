@@ -6,6 +6,7 @@ using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -37,7 +38,7 @@ namespace iPassport.Application.Services
         {
             var res = await _repository.FindAll();
 
-            var result = _mapper.Map<IList<PlanViewModel>>(res);
+            var result = _mapper.Map<IList<PlanViewModel>>(res).OrderBy(r => r.CreateDate);
 
             return new ResponseApi(true, "Lista de Planos", result);
         }
