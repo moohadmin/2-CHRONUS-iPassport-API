@@ -110,7 +110,7 @@ namespace iPassport.Api.Models.Validators
             RuleFor(x => x).Cascade(CascadeMode.Stop)
                .Length(11).WithMessage($"O campo {fieldName} não é um CPF Valido")
                .Must(x => Regex.IsMatch(x, "^[0-9]+$")).WithMessage($"O campo {fieldName} não é um CPF Valido")
-               .Must(x => CpfVerification.Validar(x)).WithMessage($"O campo {fieldName} não é um CPF Valido");
+               .Must(x => CpfUtils.Valid(x)).WithMessage($"O campo {fieldName} não é um CPF Valido");
         }
     }
 
