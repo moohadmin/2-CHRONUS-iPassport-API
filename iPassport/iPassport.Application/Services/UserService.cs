@@ -41,15 +41,21 @@ namespace iPassport.Application.Services
             {
                 UserName = dto.Username,
                 Email = dto.Email,
-                PhoneNumber = dto.Mobile
+                PhoneNumber = dto.Mobile,
+                UpdateDate = DateTime.Now
             };
-            user.SetUpdateDate();
+
             /// Add User in iPassportIdentityContext
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
-                return new ResponseApi(result.Succeeded, "Usuário não pode ser criado!", result.Errors);
+                throw new BusinessException("Usuário não pode ser criado!");
 
-            await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+            var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+            if (!_role.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
+                throw new BusinessException("Usuário não pode ser criado!");
+            }
 
             /// Re-Hidrated UserId to UserDetails
             dto.UserId = user.Id;
