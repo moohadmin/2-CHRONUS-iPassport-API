@@ -18,12 +18,10 @@ namespace iPassport.Test.Services
     {
         Mock<IUserVaccineRepository> _userVaccineRepository;
         IIndicatorService _service;
-        IMapper _mapper;
 
         [TestInitialize]
         public void Setup()
         {
-            _mapper = AutoMapperFactory.Create();
             _userVaccineRepository = new Mock<IUserVaccineRepository>();
             _service = new IndicatorService(_userVaccineRepository.Object);
         }
