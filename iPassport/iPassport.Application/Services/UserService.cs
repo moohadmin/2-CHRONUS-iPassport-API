@@ -7,6 +7,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -130,6 +131,13 @@ namespace iPassport.Application.Services
             var res = await _detailsRepository.GetLoggedCitzenCount();
 
             return new ResponseApi(true, "Total de cidadãos logados", res);
+        }
+        
+        public async Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)
+        {
+            var res = await _detailsRepository.GetRegisteredUserCount(filter);
+
+            return new ResponseApi(true, "Total de Usuários Registrados", res);
         }
     }
 }
