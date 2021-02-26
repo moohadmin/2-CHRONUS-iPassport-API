@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -56,6 +57,7 @@ namespace iPassport.Domain.Entities
         /// </summary>
         public virtual Passport Passport { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
+        public int Profile { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument);
 
