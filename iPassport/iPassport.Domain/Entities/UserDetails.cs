@@ -51,7 +51,6 @@ namespace iPassport.Domain.Entities
         public string Photo { get; private set; }
         public Guid? PlanId { get; private set; }
         public string InternationalDocument { get; private set; }
-        public int Profile { get; set; }
 
         public virtual Plan Plan { get; set; }
         /// <summary>
