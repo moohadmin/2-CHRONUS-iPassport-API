@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Filters;
 using System;
 using System.Threading.Tasks;
 
@@ -18,5 +19,6 @@ namespace iPassport.Application.Interfaces
         /// <param name="userImageDto"></param>
         /// <returns></returns>
         Task<ResponseApi> AddUserImage(UserImageDto userImageDto);
+        public Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
     }
 }

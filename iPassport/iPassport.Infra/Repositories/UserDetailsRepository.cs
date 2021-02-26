@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Entities;
 using iPassport.Domain.Enums;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,17 @@ namespace iPassport.Infra.Repositories
                 EDocumentType.InternationalDocument => await _DbSet.Where(x => x.InternationalDocument == document).FirstOrDefaultAsync(),
                 _ => null,
             };
+        }
+
+        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)
+        {
+            return filter.Profile switch
+            {
+                EProfileType.Citizen => await _DbSet.CountAsync(),
+                EProfileType.Agent => await _DbSet.CountAsync(),
+                _ => await _DbSet.CountAsync()
+            };
+            
         }
     }
 }

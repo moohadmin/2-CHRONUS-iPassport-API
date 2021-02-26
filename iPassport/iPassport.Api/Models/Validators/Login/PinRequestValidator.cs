@@ -67,7 +67,6 @@ namespace iPassport.Api.Models.Validators.Plans
             RuleFor(x => x.Phone).Must(y => Regex.IsMatch(y, "^[0-9]+$"))
                 .WithMessage("O número de telefone informado não é válido. Por favor, verifique");
 
-
             RuleFor(x => x.Doctype)
                 .IsInEnum().WithMessage("O campo doctype está inválido");
         }
