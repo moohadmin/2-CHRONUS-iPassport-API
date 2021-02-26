@@ -10,6 +10,7 @@ namespace iPassport.Domain.Repositories
     {
         Task<UserDetails> FindWithUser(Guid id);
         Task<UserDetails> FindByDocument(EDocumentType documentType, string document);
+        Task<int> GetLoggedCitzenCount();
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
     }
 }

@@ -30,15 +30,8 @@ namespace iPassport.Infra.Repositories
             };
         }
 
-        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)
-        {
-            return filter.Profile switch
-            {
-                EProfileType.Citizen => await _DbSet.CountAsync(),
-                EProfileType.Agent => await _DbSet.CountAsync(),
-                _ => await _DbSet.CountAsync()
-            };
-            
-        }
+        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _DbSet.Where(x => (int)filter.Profile == 0 || x.Profile == (int)filter.Profile).CountAsync();
+
+        public async Task<int> GetLoggedCitzenCount() => await _DbSet.Where(u => u.Profile == (int)EProfileType.Citizen).CountAsync();
     }
 }

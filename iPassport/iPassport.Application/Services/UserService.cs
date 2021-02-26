@@ -22,7 +22,6 @@ namespace iPassport.Application.Services
         private readonly IPlanRepository _planRepository;
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
-
         private readonly UserManager<Users> _userManager;
         private readonly IExternalStorageService _externalStorageService;
 
@@ -50,13 +49,15 @@ namespace iPassport.Application.Services
             if (!result.Succeeded)
                 return new ResponseApi(result.Succeeded, "Usuário não pode ser criado!", result.Errors);
 
+            await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+
             /// Re-Hidrated UserId to UserDetails
             dto.UserId = user.Id;
 
             /// Add Details to User in iPassportContext
-            var userDetails = new UserDetails();
-            var userDetailsCreated = userDetails.Create(dto);
-            await _detailsRepository.InsertAsync(userDetailsCreated);
+            var _userDetails = new UserDetails();
+            var userDetails = _userDetails.Create(dto);
+            await _detailsRepository.InsertAsync(userDetails);
 
             return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
         }
@@ -117,6 +118,13 @@ namespace iPassport.Application.Services
             _detailsRepository.Update(userDetails);
 
             return new ResponseApi(true, "Imagem Adicionada", userDetails.Photo);
+        }
+
+        public async Task<ResponseApi> GetLoggedCitzenCount()
+        {
+            var res = await _detailsRepository.GetLoggedCitzenCount();
+
+            return new ResponseApi(true, "Total de cidadãos logados", res);
         }
         
         public async Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)

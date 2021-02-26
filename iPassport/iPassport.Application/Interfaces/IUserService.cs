@@ -19,6 +19,7 @@ namespace iPassport.Application.Interfaces
         /// <param name="userImageDto"></param>
         /// <returns></returns>
         Task<ResponseApi> AddUserImage(UserImageDto userImageDto);
+        Task<ResponseApi> GetLoggedCitzenCount();
         public Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
     }
 }

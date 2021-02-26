@@ -7,8 +7,7 @@
         public bool PasswordIsValid { get; set; }
         public string Email { get; set; }
         public string Mobile { get; set; }
-        public string Profile { get; set; }
-        public string Role { get; set; }
+        public int Profile { get; set; }
         public System.Guid UserId { get; set; }
         public string FullName { get; set; }
         public string CPF { get; set; }

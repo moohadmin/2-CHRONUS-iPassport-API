@@ -61,7 +61,6 @@ namespace iPassport.Api.Controllers
         {
             var res = await _service.AddUserImage(_mapper.Map<UserImageDto>(request));
             return Ok(res);
-
         }
 
         /// <summary>
@@ -157,7 +156,24 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Get the User registered
+        /// This API is get the get logged User count
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Ok.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("LoggedCitzenCount")]
+        public async Task<ActionResult> GetLoggedCitzenCount()
+        {
+            var res = await _service.GetLoggedCitzenCount();
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API Get the User registered count
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Ok.</response>

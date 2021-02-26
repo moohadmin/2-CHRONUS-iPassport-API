@@ -14,7 +14,6 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public UserRepository(PassportIdentityContext context) => _context = context;
 
-
         public async Task<Users> FindByPhone(string phone) =>
             await _context.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
 
@@ -26,7 +25,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             user.SetUpdateDate();
 
             _context.Entry(user).State = EntityState.Modified;
-           await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 

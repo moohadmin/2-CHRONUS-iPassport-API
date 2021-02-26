@@ -5,6 +5,5 @@
         NoProfile = 0,
         Citizen = 1,
         Agent = 2,
-        
     }
 }

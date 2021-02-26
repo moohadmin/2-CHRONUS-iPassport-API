@@ -29,7 +29,7 @@ namespace iPassport.Api
     {
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
-        public IConfiguration Configuration;
+        private readonly IConfiguration Configuration;
 
         public void ConfigureServices(IServiceCollection services)
         {

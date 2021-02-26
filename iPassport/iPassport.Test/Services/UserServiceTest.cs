@@ -126,6 +126,25 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
+        public void GetLoggedCitzenCount()
+        {
+            var seed = new Random().Next(99999);
+
+            // Arrange
+            _mockRepository.Setup(r => r.GetLoggedCitzenCount().Result).Returns(seed);
+
+            // Act
+            var result = _service.GetLoggedCitzenCount();
+
+            // Assert
+            _mockRepository.Verify(a => a.GetLoggedCitzenCount(), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(int));
+            Assert.AreEqual(seed, result.Result.Data);
+        }
+
+        [TestMethod]
         public void GetRegisteredUserCount()
         {
             // Arrange

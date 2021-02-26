@@ -8,10 +8,11 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, string internationalDocument, Guid? planId = null) : base()
+        public UserDetails(Guid userId, string fullName, int profile, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, string internationalDocument, Guid? planId = null) : base()
         {
             UserId = userId;
             FullName = fullName;
+            Profile = profile;
             CPF = cpf;
             RG = rg;
             CNS = cns;
@@ -32,6 +33,7 @@ namespace iPassport.Domain.Entities
 
         public Guid UserId { get; private set; }
         public string FullName { get; private set; }
+        public int Profile { get; private set; }
         public string CPF { get; private set; }
         public string RG { get; private set; }
         public string CNS { get; private set; }
@@ -57,7 +59,7 @@ namespace iPassport.Domain.Entities
         public virtual Passport Passport { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
-        public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument);
+        public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.Profile, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument);
 
         public void AddPhoto(string imageUrl)
         {
