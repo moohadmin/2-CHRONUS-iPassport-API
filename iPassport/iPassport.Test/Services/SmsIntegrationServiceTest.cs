@@ -17,7 +17,7 @@ namespace iPassport.Test.Services
     {
 
         ISmsExternalService _service;
-        IConfiguration _config;        
+        IConfiguration _config;
 
         [TestInitialize]
         public void Setup()
@@ -27,12 +27,12 @@ namespace iPassport.Test.Services
             EnvVariablesFactory.Create();
         }
 
-        
+
         [TestMethod]
         public void FindPinSent_MustReturnOk()
         {
             // Arrange
-            
+
 
             // Act
             var result = _service.FindPinSent("12345678");
@@ -41,7 +41,7 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<PinReportResponseDto>));
         }
 
-        
+
         [TestMethod]
         public void SendPin_MustReturnOk()
         {
@@ -57,7 +57,7 @@ namespace iPassport.Test.Services
                             To = "12345678"
                         }
                     }
-                 }
+                }
             };
 
             // Act

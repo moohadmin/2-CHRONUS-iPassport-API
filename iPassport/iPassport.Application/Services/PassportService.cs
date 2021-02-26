@@ -9,7 +9,6 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -93,7 +92,7 @@ namespace iPassport.Application.Services
 
             if (passport == null)
                 throw new BusinessException("Passport não encontrado ou expirado");
-            
+
             var agentUserDetails = await _userDetailsRepository.FindWithUser(_accessor.GetCurrentUserId());
 
             if (agentUserDetails == null)

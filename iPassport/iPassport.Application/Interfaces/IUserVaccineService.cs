@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace iPassport.Application.Interfaces
 {
-    public interface IVaccineService
+    public interface IUserVaccineService
     {
         Task<PagedResponseApi> GetUserVaccines(PageFilter pageFilter);
     }

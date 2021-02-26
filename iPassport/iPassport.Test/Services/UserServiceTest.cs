@@ -50,7 +50,7 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(r => r.Update(It.IsAny<UserDetails>()));
             _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(userSeed);
             _planMockRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(planSeed);
-            
+
             // Act
             var result = _service.AssociatePlan(mockRequest);
 
@@ -67,7 +67,7 @@ namespace iPassport.Test.Services
         {
             var userSeed = UserSeed.GetUserDetails();
             var planSeed = PlanSeed.GetPlans().FirstOrDefault();
-            
+
             // Arrange
             _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(userSeed);
             _planMockRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(planSeed);
@@ -121,7 +121,7 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(string));
-           
+
         }
     }
 }

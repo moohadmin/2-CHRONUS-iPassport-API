@@ -1,7 +1,6 @@
 ﻿using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 

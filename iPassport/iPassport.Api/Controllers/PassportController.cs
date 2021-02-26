@@ -6,7 +6,6 @@ using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
@@ -18,11 +17,11 @@ namespace iPassport.Api.Controllers
     {
         private readonly IPassportService _service;
         private readonly IMapper _mapper;
-        public PassportController(IPassportService service, IMapper mapper) 
+        public PassportController(IPassportService service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
-        } 
+        }
 
         /// <summary>
         /// Get user Passport

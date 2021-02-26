@@ -1,7 +1,6 @@
 ﻿using iPassport.Application.Interfaces;
 using iPassport.Domain.Dtos;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace iPassport.Infra.ExternalServices
         }
 
         public async Task<string> UploadFileAsync(UserImageDto userImageDto)
-        {            
+        {
             using (FileStream filestream = File.Create(InitDirectoryStorage() + userImageDto.FileName + (Path.GetExtension(userImageDto.ImageFile.FileName))))
             {
                 await userImageDto.ImageFile.CopyToAsync(filestream);

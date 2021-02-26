@@ -8,25 +8,26 @@ namespace iPassport.Domain.Entities
     {
         public Vaccine() { }
 
-        public Vaccine(string description, string laboratory, int requiredDoses, int expirationTime, int imunizationTime) : base()
+        public Vaccine(string name, Guid manufacturerId, int requiredDoses, int expirationTime, int imunizationTime) : base()
         {
             Id = Guid.NewGuid();
-            Description = description;
-            Laboratory = laboratory;
+            Name = name;
+            ManufacturerId = manufacturerId;
             RequiredDoses = requiredDoses;
             ExpirationTime = expirationTime;
             ImunizationTime = imunizationTime;
         }
 
-        public string Description { get; private set; }
-        public string Laboratory { get; private set; }
+        public string Name { get; private set; }
         public int RequiredDoses { get; private set; }
         public int ExpirationTime { get; private set; }
         public int ImunizationTime { get; private set; }
+        public Guid ManufacturerId { get; private set; }
 
+        public virtual VaccineManufacturer Manufacturer { get; set; }
         public virtual IEnumerable<Disease> Diseases { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
-        public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Description, dto.Laboratory, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime);
+        public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Name, dto.ManufacturerId, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime);
     }
 }

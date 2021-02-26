@@ -1,12 +1,17 @@
 ﻿using iPassport.Domain.Entities;
 using iPassport.Infra.Mappings;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace iPassport.Infra.Contexts
 {
     public class iPassportContext : DbContext
     {
-        public iPassportContext(DbContextOptions<iPassportContext> options) : base(options) { }
+        public iPassportContext(DbContextOptions<iPassportContext> options) : base(options)
+        {
+            ChangeTracker.LazyLoadingEnabled = false;
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        }
         public iPassportContext() { }
 
         /// <summary>
@@ -22,6 +27,7 @@ namespace iPassport.Infra.Contexts
         public DbSet<Vaccine> Vaccines { get; set; }
         public DbSet<UserVaccine> UserVaccines { get; set; }
         public DbSet<PassportUse> PassportUses { get; set; }
+        public DbSet<VaccineManufacturer> VaccineManufacturers { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
@@ -37,8 +43,23 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new VaccineMap());
             modelBuilder.ApplyConfiguration(new UserVaccineMap());
             modelBuilder.ApplyConfiguration(new PassportUseMap());
+            modelBuilder.ApplyConfiguration(new VaccineManufacterMap());
+
+            //To avoid delete cascade.
+            foreach (var relationship in modelBuilder.Model
+                                                     .GetEntityTypes()
+                                                     .SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
+            }
 
             base.OnModelCreating(modelBuilder);
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies(false);
+
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace iPassport.Api.AutoMapper
             PassportMapper.Map(this);
             VaccineMapper.Map(this);
             PaginationMapper.Map(this);
+            IndicatorMapper.Map(this);
         }
     }
 }

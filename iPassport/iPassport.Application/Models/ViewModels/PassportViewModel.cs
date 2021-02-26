@@ -1,5 +1,4 @@
-﻿using iPassport.Domain.Entities;
-using System;
+﻿using System;
 
 namespace iPassport.Application.Models.ViewModels
 {
@@ -24,6 +23,6 @@ namespace iPassport.Application.Models.ViewModels
         /// ExpirationDate
         /// </summary>
         public DateTime ExpirationDate { get; set; }
-        
+
     }
 }

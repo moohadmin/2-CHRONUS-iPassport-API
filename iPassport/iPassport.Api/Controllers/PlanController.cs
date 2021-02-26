@@ -4,6 +4,7 @@ using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ namespace iPassport.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PlanController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -40,7 +42,7 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// his API is list all Plans
+        /// This API is list all Plans
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Ok.</response>

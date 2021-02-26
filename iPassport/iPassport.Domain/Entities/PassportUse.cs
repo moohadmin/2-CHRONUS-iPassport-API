@@ -28,8 +28,8 @@ namespace iPassport.Domain.Entities
         public UserDetails Citizen { get; set; }
         public PassportDetails PassportDetails { get; set; }
 
-        public PassportUse Create(PassportUseCreateDto dto) 
-            => new PassportUse(dto.AgentId,dto.CitizenId,dto.PassportDetailsId,dto.AllowAccess,dto.Latitude,dto.Longitude);
+        public PassportUse Create(PassportUseCreateDto dto)
+            => new PassportUse(dto.AgentId, dto.CitizenId, dto.PassportDetailsId, dto.AllowAccess, dto.Latitude, dto.Longitude);
     }
 }
 

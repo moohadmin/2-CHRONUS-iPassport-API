@@ -65,7 +65,7 @@ namespace iPassport.Api.Models.Validators
         public LongitudeValidator() { }
         public LongitudeValidator(string fieldName)
         {
-            RuleFor(x => x)                
+            RuleFor(x => x)
                 .NotNull().WithMessage($"O campo {fieldName} é obrigatório")
                 .LessThanOrEqualTo(180).WithMessage($"O campo {fieldName} deve está entre -180 a 180")
                 .GreaterThanOrEqualTo(-180).WithMessage($"O campo {fieldName}  deve está entre -180 a 180");

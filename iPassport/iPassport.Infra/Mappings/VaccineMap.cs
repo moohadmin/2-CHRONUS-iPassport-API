@@ -10,11 +10,7 @@ namespace iPassport.Infra.Mappings
         {
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Laboratory)
-                .HasColumnType("nvarchar(80)")
-                .IsRequired();
-
-            builder.Property(p => p.Description)
+            builder.Property(p => p.Name)
                 .HasColumnType("nvarchar(300)")
                 .IsRequired();
 
@@ -41,6 +37,9 @@ namespace iPassport.Infra.Mappings
             builder.HasMany(c => c.Diseases)
                 .WithMany(c => c.Vaccines);
 
+            builder.HasOne(c => c.Manufacturer)
+                .WithMany(c => c.Vaccines)
+                .HasForeignKey(c => c.ManufacturerId);
         }
     }
 }

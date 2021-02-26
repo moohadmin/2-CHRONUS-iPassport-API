@@ -27,7 +27,7 @@ namespace iPassport.Application.Services
         /// </summary>
         /// <param name="idMessage">idMessage sent to client</param>
         public void FindPinSent(string idMessage)
-        {           
+        {
             var result = _smsExternalServices.FindPinSent(idMessage);
         }
 
@@ -49,7 +49,7 @@ namespace iPassport.Application.Services
             {
                 Messages = messageDto
             };
-            
+
             var resultPin = await _smsExternalServices.SendPin(sendPinRequestDto);
 
             var message = resultPin.Messages.FirstOrDefault();
@@ -57,8 +57,8 @@ namespace iPassport.Application.Services
             var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
             if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
                 pin = "1111";
-            
-            var twoFactDto = new Auth2FactMobileDto 
+
+            var twoFactDto = new Auth2FactMobileDto
             {
                 UserId = userId,
                 Phone = phone,
@@ -78,8 +78,8 @@ namespace iPassport.Application.Services
         {
             var pinvalid = await _auth2FactRepository.FindByUserAndPin(userId, pin);
 
-            if(pinvalid == null || !pinvalid.CanUseToValidate())
-                throw new BusinessException("PIN inválido!");           
+            if (pinvalid == null || !pinvalid.CanUseToValidate())
+                throw new BusinessException("PIN inválido!");
 
             return pinvalid;
         }

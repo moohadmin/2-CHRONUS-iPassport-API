@@ -1,0 +1,49 @@
+﻿using AutoMapper;
+using iPassport.Api.Controllers;
+using iPassport.Api.Models.Requests;
+using iPassport.Application.Interfaces;
+using iPassport.Application.Models.Pagination;
+using iPassport.Domain.Filters;
+using iPassport.Test.Seeds;
+using iPassport.Test.Settings.Factories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System.Threading.Tasks;
+
+namespace iPassport.Test.Controllers
+{
+    [TestClass]
+    public class DiseaseControllerTest
+    {
+        Mock<IDiseaseService> _mockService;
+        IMapper _mapper;
+        DiseaseController _controller;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _mockService = new Mock<IDiseaseService>();
+            _mapper = AutoMapperFactory.Create();
+            _controller = new DiseaseController(_mapper, _mockService.Object) { };
+        }
+
+        [TestMethod]
+        public void GetByNameInitals_MustReturnOk()
+        {
+            var seed = DiseaseSeed.GetPagedDisease();
+            var mockRequest = Mock.Of<GetByNameInitalsRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.GetByNameInitals(It.IsAny<GetByNameInitalsFilter>()).Result).Returns(new PagedResponseApi(true, "Test Success!", 1, 3, 10, 300, seed));
+
+            // Act
+            var result = _controller.GetByNameInitals(mockRequest);
+
+            // Assert
+            _mockService.Verify(a => a.GetByNameInitals(It.IsAny<GetByNameInitalsFilter>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+    }
+}

@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using iPassport.Api.AutoMapper;
 using iPassport.Api.Configurations;
 using iPassport.Api.Configurations.Filters;
@@ -6,6 +7,7 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Infra.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -17,10 +19,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using FluentValidation.AspNetCore;
 using System.Reflection;
-using Microsoft.AspNetCore.Authorization;
+using System.Text;
 
 namespace iPassport.Api
 {
@@ -33,14 +33,14 @@ namespace iPassport.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-                
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ExceptionHandlerFilterAttribute));
                 options.Filters.Add(typeof(ValidateModelStateFilterAttribute));
             })
             .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssembly(Assembly.Load("iPassport.Api")))
-            .ConfigureApiBehaviorOptions(options => 
+            .ConfigureApiBehaviorOptions(options =>
             {
                 options.InvalidModelStateResponseFactory = c =>
                 {
@@ -160,7 +160,7 @@ namespace iPassport.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
-                       
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/api/health").WithMetadata(new AllowAnonymousAttribute());

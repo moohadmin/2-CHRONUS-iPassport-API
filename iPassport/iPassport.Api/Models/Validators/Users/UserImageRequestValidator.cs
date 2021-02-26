@@ -8,7 +8,7 @@ namespace iPassport.Api.Models.Validators.Users
         public UserImageRequestValidator()
         {
             RuleFor(x => x.ImageFile)
-                .SetValidator(new ImageFileValidator());            
+                .SetValidator(new ImageFileValidator());
         }
     }
 }

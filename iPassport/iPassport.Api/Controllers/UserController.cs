@@ -13,15 +13,15 @@ using System.Threading.Tasks;
 namespace iPassport.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]    
-    
+    [ApiController]
+
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IUserService _service;
-        private readonly IVaccineService _vaccineService;
+        private readonly IUserVaccineService _vaccineService;
 
-        public UserController(IMapper mapper, IUserService userService, IVaccineService vaccineService)
+        public UserController(IMapper mapper, IUserService userService, IUserVaccineService vaccineService)
         {
             _mapper = mapper;
             _service = userService;
@@ -147,6 +147,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpGet("Vaccine")]
         public async Task<ActionResult> GetPagedUserVaccines([FromQuery] PageFilterRequest request)
         {

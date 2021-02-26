@@ -11,7 +11,7 @@ namespace iPassport.Infra.Mappings
             builder.HasKey(k => k.Id);
 
             builder.Property(x => x.AllowAccess)
-                .HasColumnType("bit")                
+                .HasColumnType("bit")
                 .IsRequired();
 
             builder.Property(x => x.Latitude)
@@ -35,7 +35,7 @@ namespace iPassport.Infra.Mappings
 
             builder.HasOne(x => x.Citizen)
                 .WithMany()
-                .HasForeignKey(x => x.CitizenId)                
+                .HasForeignKey(x => x.CitizenId)
                 .OnDelete(DeleteBehavior.ClientNoAction)
                 .IsRequired();
         }
