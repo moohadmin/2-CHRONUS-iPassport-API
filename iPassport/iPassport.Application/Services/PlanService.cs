@@ -38,7 +38,7 @@ namespace iPassport.Application.Services
         {
             var res = await _repository.FindAll();
 
-            var result = _mapper.Map<IList<PlanViewModel>>(res).OrderBy(r => r.CreateDate);
+            var result = _mapper.Map<IList<PlanViewModel>>(res).OrderBy(r => r.CreateDate).ToList();
 
             return new ResponseApi(true, "Lista de Planos", result);
         }
