@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace iPassport.Application.Interfaces
 {
-    public interface IIndicatorService
+    public interface IVaccineService
     {
         Task<ResponseApi> GetVaccinatedCount(GetVaccinatedCountFilter filter);
     }
