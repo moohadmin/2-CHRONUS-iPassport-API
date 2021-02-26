@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using iPassport.Application.Interfaces;
+﻿using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
-using iPassport.Test.Settings.Factories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
@@ -14,16 +12,16 @@ using System.Threading.Tasks;
 namespace iPassport.Test.Services
 {
     [TestClass]
-    public class IndicatorServiceTest
+    public class VaccineServiceTest
     {
         Mock<IUserVaccineRepository> _userVaccineRepository;
-        IIndicatorService _service;
+        IVaccineService _service;
 
         [TestInitialize]
         public void Setup()
         {
             _userVaccineRepository = new Mock<IUserVaccineRepository>();
-            _service = new IndicatorService(_userVaccineRepository.Object);
+            _service = new VaccineService(_userVaccineRepository.Object);
         }
 
         [TestMethod]
