@@ -22,5 +22,6 @@
         public string Occupation { get; set; }
         public string Address { get; set; }
         public string Photo { get; set; }
+        public string InternationalDocument { get; set; }
     }
 }

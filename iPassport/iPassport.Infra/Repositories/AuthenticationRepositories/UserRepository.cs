@@ -20,6 +20,14 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<Users> FindById(Guid id) =>
             await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async void Update(Users user)
+        {
+            user.SetUpdateDate();
+
+            _context.Entry(user).State = EntityState.Modified;
+           await _context.SaveChangesAsync();
+        }
     }
 
 }

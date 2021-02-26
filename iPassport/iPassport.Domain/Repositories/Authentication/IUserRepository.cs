@@ -8,5 +8,6 @@ namespace iPassport.Domain.Repositories.Authentication
     {
         Task<Users> FindByPhone(string phone);
         Task<Users> FindById(Guid id);
+        void Update(Users user);
     }
 }

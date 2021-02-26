@@ -5,5 +5,6 @@ namespace iPassport.Api.Models.Requests
     {
         public int Pin { get; set; }
         public System.Guid UserId { get; set; }
+        public bool AcceptTerms { get; set; }
     }
 }

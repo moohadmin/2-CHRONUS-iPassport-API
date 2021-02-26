@@ -14,5 +14,6 @@ namespace iPassport.Application.Interfaces
 
         Task<Auth2FactMobile> SendPin(Guid userId, string phone);
         Task<Auth2FactMobile> ValidPin(Guid userId, string pin);
+        Task<Auth2FactMobile> ResendPin(Guid userId, string phone);
     }
 }
