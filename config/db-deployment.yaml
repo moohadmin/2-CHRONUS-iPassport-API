@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${APP_NAME}-${APP_GROUP}-db
+  name: ${APP_NAME}-${APP_SUBGROUP}-db
   labels:
-    app: ${APP_NAME}-${APP_GROUP}-db
+    app: ${APP_NAME}-${APP_SUBGROUP}-db
     role: backend
     env: dev
   annotations:
@@ -12,13 +12,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ${APP_NAME}-${APP_GROUP}-db
+      app: ${APP_NAME}-${APP_SUBGROUP}-db
       role: backend
       env: dev
   template:
     metadata:
       labels:
-        app: ${APP_NAME}-${APP_GROUP}-db
+        app: ${APP_NAME}-${APP_SUBGROUP}-db
         role: backend
         env: dev
     spec:
@@ -30,7 +30,7 @@ spec:
         operator: Equal
         value: preemptible
       containers:
-      - name: ${APP_NAME}-${APP_GROUP}-db
+      - name: ${APP_NAME}-${APP_SUBGROUP}-db
         image: mcr.microsoft.com/mssql/server:2017-latest
         imagePullPolicy: IfNotPresent
         env:
@@ -40,10 +40,10 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: DB_PASSWORD
-              name: ${APP_NAME}-${APP_GROUP}
+              name: ${APP_NAME}-${APP_SUBGROUP}
         volumeMounts:
         - mountPath: "/var/opt/mssql"
-          name: ${APP_NAME}-${APP_GROUP}-storage
+          name: ${APP_NAME}-${APP_SUBGROUP}-storage
         ports:
         - containerPort: 1433
         resources:
@@ -54,6 +54,6 @@ spec:
             memory: "1024Mi"
             cpu: "1000m"
       volumes:
-        - name: ${APP_NAME}-${APP_GROUP}-storage
+        - name: ${APP_NAME}-${APP_SUBGROUP}-storage
           persistentVolumeClaim:
-            claimName: ${APP_NAME}-${APP_GROUP}-pvc
+            claimName: ${APP_NAME}-${APP_SUBGROUP}-pvc

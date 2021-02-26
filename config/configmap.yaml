@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ${APP_NAME}-${APP_GROUP}
+  name: ${APP_NAME}-${APP_SUBGROUP}
 data:
   CONNECTION_STRING: ${CONNECTION_STRING}
   DB_HOST: ${DB_HOST}
