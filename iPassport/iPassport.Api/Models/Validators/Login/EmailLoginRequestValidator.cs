@@ -8,7 +8,8 @@ namespace iPassport.Api.Models.Validators.Plans
         public EmailLoginRequestValidator()
         {
             RuleFor(s => s.Email)
-               .SetValidator(new EmailValidator());
+                .SetValidator(new RequiredFieldValidator<string>("E-mail"))
+                .EmailAddress().WithMessage("E-mail inválido");               
 
             RuleFor(s => s.Password)
                 .SetValidator(new RequiredFieldValidator<string>("Password"));
