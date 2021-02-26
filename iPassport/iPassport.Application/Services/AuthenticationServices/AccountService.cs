@@ -145,6 +145,17 @@ namespace iPassport.Application.Services.AuthenticationServices
             return new ResponseApi(true, "PIN Enviado com sucesso!", pinresp.UserId);
         }
 
+        public async Task<ResponseApi> ResendPin(string phone, Guid userId)
+        {
+            var user = await _userRepository.FindById(userId);
+            if (user == null)
+                throw new BusinessException("Usuário não cadastrado.");
+
+            await _auth2FactService.ResendPin(userId, phone);
+
+            return new ResponseApi(true, "Novo pin enviado", null);
+        }
+
         public async Task<ResponseApi> ResetPassword(string password, string passwordConfirm)
         {
             if (password != passwordConfirm)
@@ -159,17 +170,6 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException("A senha inserida não se encontra no padrão pré-estabelecido (8 caracteres: deve conter 1 letra, 1 número e 1 caractere especial). Por favor, verifique");
 
             return new ResponseApi(true, "Senha alterada!", null);
-        }
-
-        public async Task<ResponseApi> ResendPin(string phone, Guid userId)
-        {
-            var user = await _userRepository.FindById(userId);
-            if (user == null)
-                throw new BusinessException("Usuário não cadastrado.");
-
-            await _auth2FactService.ResendPin(userId, phone);
-
-            return new ResponseApi(true, "Novo pin enviado", null);
         }
     }
 }

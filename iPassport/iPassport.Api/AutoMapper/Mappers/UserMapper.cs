@@ -17,7 +17,6 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 .ForMember(des => des.Mobile, act => act.MapFrom(src => src.Mobile))
                 .ForMember(des => des.Profile, act => act.MapFrom(src => src.Profile))
-                .ForMember(des => des.Role, act => act.MapFrom(src => src.Role))
                 .ForMember(des => des.FullName, act => act.MapFrom(src => src.FullName))
                 .ForMember(des => des.CPF, act => act.MapFrom(src => src.CPF))
                 .ForMember(des => des.RG, act => act.MapFrom(src => src.RG))

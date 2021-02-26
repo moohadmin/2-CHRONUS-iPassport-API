@@ -49,15 +49,15 @@ namespace iPassport.Application.Services
             if (!result.Succeeded)
                 return new ResponseApi(result.Succeeded, "Usuário não pode ser criado!", result.Errors);
 
-            await _userManager.AddToRoleAsync(user, "admin");
+            await _userManager.AddToRoleAsync(user, "chronus:web:admin");
 
             /// Re-Hidrated UserId to UserDetails
             dto.UserId = user.Id;
 
             /// Add Details to User in iPassportContext
-            var userDetails = new UserDetails();
-            var userDetailsCreated = userDetails.Create(dto);
-            await _detailsRepository.InsertAsync(userDetailsCreated);
+            var _userDetails = new UserDetails();
+            var userDetails = _userDetails.Create(dto);
+            await _detailsRepository.InsertAsync(userDetails);
 
             return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
         }

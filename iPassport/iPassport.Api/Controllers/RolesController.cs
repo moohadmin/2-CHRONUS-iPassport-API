@@ -1,6 +1,7 @@
 ﻿using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -28,9 +29,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        public async Task<ActionResult> Add(string role)
+        public async Task<ActionResult> Add(string urn)
         {
-            var res = await _service.Add(role);
+            var res = await _service.Add(urn);
             return Ok(res);
         }
     }

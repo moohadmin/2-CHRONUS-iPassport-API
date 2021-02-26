@@ -5,6 +5,6 @@ namespace iPassport.Application.Interfaces
 {
     public interface IRoleService
     {
-        Task<ResponseApi> Add(string role);
+        Task<ResponseApi> Add(string urn);
     }
 }

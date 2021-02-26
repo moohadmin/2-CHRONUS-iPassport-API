@@ -17,12 +17,12 @@ namespace iPassport.Application.Services.AuthenticationServices
             _roleManager = roleManager;
         }
 
-        public async Task<ResponseApi> Add(string role)
+        public async Task<ResponseApi> Add(string urn)
         {
             var roles = new Roles
             {
                 Id = Guid.NewGuid(),
-                Name = role
+                Name = urn
             };
 
             var _role = await _roleManager.CreateAsync(roles);

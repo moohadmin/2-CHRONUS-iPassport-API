@@ -12,7 +12,7 @@ namespace iPassport.Api.Configurations.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                List<string> errors = new List<string>();
+                List<string> errors;
 
                 errors = context.ModelState.Values.Where(v => v.Errors.Count > 0)
                         .SelectMany(v => v.Errors)
