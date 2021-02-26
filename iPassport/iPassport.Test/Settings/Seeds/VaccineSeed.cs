@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace iPassport.Test.Seeds
 {
-    public static class IndicatorSeed
+    public static class VaccineSeed
     {
         public static IList<VaccineIndicatorDto> GetVaccineIndicatorDtos()
         {

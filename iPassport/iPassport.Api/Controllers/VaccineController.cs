@@ -13,12 +13,12 @@ namespace iPassport.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class IndicatorController : ControllerBase
+    public class VaccineController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IIndicatorService _service;
+        private readonly IVaccineService _service;
 
-        public IndicatorController(IMapper mapper, IIndicatorService service)
+        public VaccineController(IMapper mapper, IVaccineService service)
         {
             _mapper = mapper;
             _service = service;
