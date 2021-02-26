@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace iPassport.Test.Services
 {
     [TestClass]
-    public class VaccineServiceTest
+    public class UserVaccineServiceTest
     {
         Mock<IUserVaccineRepository> _mockRepository;
         IUserVaccineService _service;

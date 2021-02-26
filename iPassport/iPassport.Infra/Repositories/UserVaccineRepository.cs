@@ -42,7 +42,7 @@ namespace iPassport.Infra.Repositories
                 .Select(v => new VaccineIndicatorDto()
                 {
                     VaccnineId = v.Key.VaccineId,
-                    VaccineId = v.FirstOrDefault().Vaccine.Name,
+                    VaccineName = v.FirstOrDefault().Vaccine.Name,
                     Disease = v.FirstOrDefault().Vaccine.Diseases.FirstOrDefault(d => d.Id == filter.DiseaseId).Name,
                     ManufacturerId = v.Key.ManufacturerId,
                     ManufacturerName = v.FirstOrDefault().Vaccine.Manufacturer.Name,
