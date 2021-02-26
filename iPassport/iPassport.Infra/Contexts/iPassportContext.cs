@@ -34,21 +34,19 @@ namespace iPassport.Infra.Contexts
         /// </summary>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new HealthMap());
-            modelBuilder.ApplyConfiguration(new UserDetailsMap());
-            modelBuilder.ApplyConfiguration(new PlanMap());
-            modelBuilder.ApplyConfiguration(new PassportMap());
-            modelBuilder.ApplyConfiguration(new PassportDetailsMap());
-            modelBuilder.ApplyConfiguration(new DiseaseMap());
-            modelBuilder.ApplyConfiguration(new VaccineMap());
-            modelBuilder.ApplyConfiguration(new UserVaccineMap());
-            modelBuilder.ApplyConfiguration(new PassportUseMap());
-            modelBuilder.ApplyConfiguration(new VaccineManufacterMap());
+            //modelBuilder.ApplyConfiguration(new HealthMap());
+            //modelBuilder.ApplyConfiguration(new UserDetailsMap());
+            //modelBuilder.ApplyConfiguration(new PlanMap());
+            //modelBuilder.ApplyConfiguration(new PassportMap());
+            //modelBuilder.ApplyConfiguration(new PassportDetailsMap());
+            //modelBuilder.ApplyConfiguration(new DiseaseMap());
+            //modelBuilder.ApplyConfiguration(new VaccineMap());
+            //modelBuilder.ApplyConfiguration(new UserVaccineMap());
+            //modelBuilder.ApplyConfiguration(new PassportUseMap());
+            //modelBuilder.ApplyConfiguration(new VaccineManufacterMap());
 
             //To avoid delete cascade.
-            foreach (var relationship in modelBuilder.Model
-                                                     .GetEntityTypes()
-                                                     .SelectMany(e => e.GetForeignKeys()))
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
             }

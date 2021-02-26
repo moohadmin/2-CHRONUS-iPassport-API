@@ -18,11 +18,12 @@ namespace iPassport.Api.Configurations
         public static IServiceCollection AddIdentityDataContext(this IServiceCollection services, IConfiguration configuration)
         {
             string connection = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            //string connection = configuration.GetConnectionString("DefaultConnection");
 
             services.AddScoped((provider) =>
             {
                 return new DbContextOptionsBuilder<PassportIdentityContext>()
-                .UseSqlServer(connection)
+                .UseNpgsql(connection)
                 .Options;
             });
 #if (DEBUG)
@@ -31,7 +32,10 @@ namespace iPassport.Api.Configurations
                 .EnableSensitiveDataLogging(true)
                 .EnableDetailedErrors());
 #else
-            services.AddDbContext<PassportIdentityContext>();
+            services.AddDbContext<PassportIdentityContext>(opt => opt
+                .UseLoggerFactory(MyLoggerFactory)
+                .EnableSensitiveDataLogging(true)
+                .EnableDetailedErrors());
 #endif
 
             services.Configure<IdentityOptions>(options =>
