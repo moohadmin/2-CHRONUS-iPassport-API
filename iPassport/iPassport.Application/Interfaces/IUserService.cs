@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Filters;
 using System;
 using System.Threading.Tasks;
 
@@ -19,5 +20,6 @@ namespace iPassport.Application.Interfaces
         /// <returns></returns>
         Task<ResponseApi> AddUserImage(UserImageDto userImageDto);
         Task<ResponseApi> GetLoggedCitzenCount();
+        public Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
     }
 }
