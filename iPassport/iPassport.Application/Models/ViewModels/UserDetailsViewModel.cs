@@ -17,6 +17,7 @@ namespace iPassport.Application.Models.ViewModels
         public string Occupation { get; set; }
         public string Address { get; set; }
         public string Photo { get; set; }
+        public string InternationalDocument { get; set; }
         public DateTime? LastLogin { get; set; }
 
         public Guid? PlanId { get; set; }

@@ -29,7 +29,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.BloodType, act => act.MapFrom(src => src.BloodType))
                 .ForMember(des => des.Occupation, act => act.MapFrom(src => src.Occupation))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
-                .ForMember(des => des.Photo, act => act.MapFrom(src => src.Photo));
+                .ForMember(des => des.Photo, act => act.MapFrom(src => src.Photo))
+                .ForMember(des => des.InternationalDocument, act => act.MapFrom(src => src.InternationalDocument));
 
             profile.CreateMap<UserDetails, UserDetailsViewModel>()
                 .ReverseMap();

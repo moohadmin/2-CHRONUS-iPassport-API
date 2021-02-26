@@ -28,5 +28,7 @@ namespace iPassport.Domain.Entities
         public bool CanUseToValidate() => !(IsUsed || CreateDate.AddHours(12) < DateTime.Now);
 
         public bool PreventsResendingPIN() => (!IsUsed && CreateDate.AddMinutes(2) > DateTime.Now && CreateDate.AddHours(12) > DateTime.Now);
+
+        public void SetUsed() => IsUsed = true;
     }
 }

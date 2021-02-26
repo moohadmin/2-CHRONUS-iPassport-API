@@ -104,7 +104,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if(userDetails == null)
                 throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
-            var pinvalid =  await _auth2FactService.ValidPin(userDetails.UserId, pin.ToString("0000"));
+            await _auth2FactService.ValidPin(userDetails.UserId, pin.ToString("0000"));
 
             var user = await _userRepository.FindById(userDetails.UserId);
 
@@ -122,13 +122,13 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc)
         {
-            var userDetails = await _userDetailsRepository.FindByDocument(doctype, doc);            
+            var userDetails = await _userDetailsRepository.FindByDocument(doctype, doc.Trim());            
             if(userDetails == null)
-                throw new BusinessException("Usuário não cadastrado.");
+                throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
             var user = await  _userRepository.FindById(userDetails.UserId);
             if (user == null)
-                throw new BusinessException("Usuário não cadastrado.");
+                throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
             if (!String.IsNullOrWhiteSpace(user.PhoneNumber) && user.PhoneNumber != phone)
                 throw new BusinessException("Usuário não cadastrado.");

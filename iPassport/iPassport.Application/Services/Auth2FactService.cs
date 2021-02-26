@@ -43,14 +43,18 @@ namespace iPassport.Application.Services
 
         public async Task<Auth2FactMobile> ValidPin(Guid userId, string pin)
         {
-            var pinvalid = await _auth2FactRepository.FindByUserAndPin(userId, pin);
+            var pinValid = await _auth2FactRepository.FindByUserAndPin(userId, pin);
 
-            if (pinvalid == null)
+            if (pinValid == null)
                 throw new BusinessException("Código de autenticação inválido. Favor conferir código enviado.");
-            if(!pinvalid.CanUseToValidate())
+            if(!pinValid.CanUseToValidate())
                 throw new BusinessException("PIN expirado!");
 
-            return pinvalid;
+            pinValid.SetUsed();
+
+            _auth2FactRepository.Update(pinValid);
+
+            return pinValid;
         }
 
         private string PinGenerate()

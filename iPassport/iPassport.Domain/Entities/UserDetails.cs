@@ -8,7 +8,7 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, Guid? planId = null) : base()
+        public UserDetails(Guid userId, string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, string internationalDocument, Guid? planId = null) : base()
         {
             UserId = userId;
             FullName = fullName;
@@ -23,6 +23,7 @@ namespace iPassport.Domain.Entities
             Occupation = occupation;
             Address = address;
             Photo = photo;
+            InternationalDocument = internationalDocument;
             
             if (planId.HasValue)
                 PlanId = planId.Value;
@@ -47,6 +48,7 @@ namespace iPassport.Domain.Entities
         public string Address { get; private set; }
         public string Photo { get; private set; }
         public Guid? PlanId { get; private set; }
+        public string InternationalDocument { get; private set; }
 
         public virtual Plan Plan { get; set; }
         /// <summary>
@@ -55,7 +57,7 @@ namespace iPassport.Domain.Entities
         public virtual Passport Passport { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
-        public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo);
+        public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId, dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument);
 
         public void AddPhoto(string imageUrl) {
             if (String.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
