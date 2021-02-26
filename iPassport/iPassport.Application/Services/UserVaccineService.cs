@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
-using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Filters;
@@ -33,13 +32,6 @@ namespace iPassport.Application.Services
             var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data).GroupBy(r => r.Manufacturer);
 
             return new PagedResponseApi(true, "vacinas do usuário", res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
-        }
-
-        public async Task<ResponseApi> GetVaccinatedCount(VaccinatedCountFilter filter)
-        {
-            var res = await _repository.GetVaccinatedCount(filter);
-
-            return new ResponseApi(true, "Total de vacinados", res);
         }
     }
 }

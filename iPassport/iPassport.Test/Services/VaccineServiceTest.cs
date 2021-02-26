@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models.Pagination;
-using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Services;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -36,7 +34,7 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void GetAll()
         {
-            var seed = VaccineSeed.GetPagedVaccines();
+            var seed = UserVaccineSeed.GetPagedUserVaccines();
             var mockFilter = Mock.Of<PageFilter>();
             // Arrange
             _mockRepository.Setup(r => r.GetPagedUserVaccines(It.IsAny<Guid>(), It.IsAny<PageFilter>()).Result).Returns(seed);
@@ -48,7 +46,6 @@ namespace iPassport.Test.Services
             _mockRepository.Verify(a => a.GetPagedUserVaccines(It.IsAny<Guid>(), It.IsAny<PageFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
-            Assert.IsInstanceOfType(result.Result.Data, typeof(IList<UserVaccineViewModel>));
         }
     }
 }
