@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace iPassport.Application.Interfaces
 {
-    public interface ISmsExternalService 
+    public interface ISmsExternalService
     {
         /// <summary>
         /// Finds data from the sent message

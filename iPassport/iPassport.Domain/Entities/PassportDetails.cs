@@ -10,20 +10,20 @@ namespace iPassport.Domain.Entities
         public PassportDetails(DateTime expirationDate, Guid passportId) : base()
         {
             Id = Guid.NewGuid();
-            ExpirationDate = expirationDate;            
+            ExpirationDate = expirationDate;
             PassportId = passportId;
         }
 
         /// <summary>
         /// Passport Id
         /// </summary>
-        public Guid PassportId { get; private set; }        
-        
+        public Guid PassportId { get; private set; }
+
         /// <summary>
         /// Expiration Data
         /// </summary>
         public DateTime ExpirationDate { get; private set; }
-        
+
         /// <summary>
         /// Passport
         /// </summary>

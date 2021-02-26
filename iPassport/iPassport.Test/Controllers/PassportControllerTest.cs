@@ -6,7 +6,6 @@ using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -38,7 +37,7 @@ namespace iPassport.Test.Controllers
             };
         }
 
-        
+
         [TestMethod]
         public void Get_MustReturnOk()
         {

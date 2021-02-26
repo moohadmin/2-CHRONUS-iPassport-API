@@ -19,7 +19,7 @@ namespace iPassport.Domain.Dtos.PinIntegration.FindPin
         /// <summary>
         /// Error ID.
         /// </summary>
-        
+
         public int? Id { get; set; }
 
         /// <summary>

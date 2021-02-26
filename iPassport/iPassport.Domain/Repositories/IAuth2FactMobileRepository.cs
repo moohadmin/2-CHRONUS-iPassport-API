@@ -1,7 +1,7 @@
-﻿using System;
+﻿using iPassport.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using iPassport.Domain.Entities;
 
 namespace iPassport.Domain.Repositories
 {

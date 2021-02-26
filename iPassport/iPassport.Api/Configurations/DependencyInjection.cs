@@ -22,7 +22,7 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IHealthService, HealthService>();
 
             services.AddScoped<ITokenService, TokenService>();
-            
+
             services.AddScoped<IAccountService, AccountService>();
 
             services.AddScoped<IUserService, UserService>();
@@ -37,8 +37,13 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IPassportService, PassportService>();
 
-            services.AddScoped<IVaccineService, VaccineService>();
+            services.AddScoped<IUserVaccineService, UserVaccineService>();
 
+            services.AddScoped<IDiseaseService, DiseaseService>();
+
+            services.AddScoped<IIndicatorService, IndicatorService>();
+
+            services.AddScoped<IVaccineManufacturerService, VaccineManufacturerService>();
             #endregion
 
             #region DI Repositories
@@ -56,19 +61,22 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IPassportRepository, PassportRepository>();
 
-            services.AddScoped<IVaccineRepository, VaccineRepository>();
+            services.AddScoped<IUserVaccineRepository, UserVaccineRepository>();
 
             services.AddScoped<IPassportUseRepository, PassportUseRepository>();
 
             services.AddScoped<IPassportDetailsRepository, PassportDetailsRepository>();
 
+            services.AddScoped<IDiseaseRepository, DiseaseRepository>();
+
+            services.AddScoped<IVaccineManufacturerRepository, VaccineManufacturerRepository>();
             #endregion
 
             #region DI Settings
 
             // ASP.NET HttpContext dependency
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
+
             #endregion
 
             return services;

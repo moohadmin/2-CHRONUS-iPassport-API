@@ -6,6 +6,6 @@
         /// List of messages
         /// </summary>
         public MessageDto Messages { get; set; }
-        
+
     }
 }

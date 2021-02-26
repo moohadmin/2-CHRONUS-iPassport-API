@@ -1,7 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using iPassport.Application.Models;
 using iPassport.Domain.Enums;
+using System.Threading.Tasks;
 
 namespace iPassport.Application.Interfaces
 {
@@ -12,6 +11,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc);
         Task<ResponseApi> MobileLogin(int pin, System.Guid userId);
         Task<ResponseApi> ResetPassword(string password, string passwordConfirm);
-        Task<ResponseApi> ResendPin(string phone, Guid userId);
+        Task<ResponseApi> ResendPin(string phone, System.Guid userId);
     }
 }

@@ -20,12 +20,12 @@ namespace iPassport.Api
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
-            {                
+            {
                 logger.Error(ex, "IPassportAPI - Stopped program because of exception");
                 throw;
             }
             finally
-            {                
+            {
                 NLog.LogManager.Shutdown();
             }
         }

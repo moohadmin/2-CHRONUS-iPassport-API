@@ -1,5 +1,4 @@
-﻿using iPassport.Domain.Dtos;
-using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;

@@ -2,7 +2,6 @@ using iPassport.Application.Exceptions;
 using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
-using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
@@ -18,7 +17,7 @@ namespace iPassport.Application.Services.AuthenticationServices
     {
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IUserRepository _userRepository;
-        
+
         private readonly UserManager<Users> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IAuth2FactService _auth2FactService;
@@ -101,7 +100,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var userDetails = await _userDetailsRepository.FindWithUser(userId);
 
-            if(userDetails == null)
+            if (userDetails == null)
                 throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
             await _auth2FactService.ValidPin(userDetails.UserId, pin.ToString("0000"));
@@ -110,7 +109,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             var token = _tokenService.GenerateBasic(user, userDetails);
 
-            if(token != null)
+            if (token != null)
             {
                 userDetails.UpdateLastLogin();
                 _userDetailsRepository.Update(userDetails);
@@ -126,14 +125,14 @@ namespace iPassport.Application.Services.AuthenticationServices
             if(userDetails == null)
                 throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
-            var user = await  _userRepository.FindById(userDetails.UserId);
+            var user = await _userRepository.FindById(userDetails.UserId);
             if (user == null)
                 throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
             if (!String.IsNullOrWhiteSpace(user.PhoneNumber) && user.PhoneNumber != phone)
                 throw new BusinessException("Usuário não cadastrado.");
 
-            var pinresp =  await _auth2FactService.SendPin(user.Id, phone);
+            var pinresp = await _auth2FactService.SendPin(user.Id, phone);
 
             return new ResponseApi(true, "PIN Enviado com sucesso!", pinresp.UserId);
         }

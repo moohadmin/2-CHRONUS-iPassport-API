@@ -15,7 +15,7 @@ namespace iPassport.Application.Extensions
 
             if (!Guid.TryParse(userId.Value, out Guid result))
                 throw new BusinessException("Identificador inválido");
-            
+
             return result;
         }
     }

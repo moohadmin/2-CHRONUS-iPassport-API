@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -81,7 +80,7 @@ namespace iPassport.Test.Services
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.AreEqual("Acesso Aprovado", result.Result.Message);
-            
+
         }
 
         [TestMethod]

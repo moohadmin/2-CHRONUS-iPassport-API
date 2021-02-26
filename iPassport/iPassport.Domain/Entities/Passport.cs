@@ -9,19 +9,19 @@ namespace iPassport.Domain.Entities
     {
         public Passport() { }
 
-        public Passport(UserDetails userDetails )
+        public Passport(UserDetails userDetails)
         {
             Id = Guid.NewGuid();
             ListPassportDetails = CreateFirstPassportDetails();
             UserDetails = userDetails;
-            
+
         }
 
         /// <summary>
         /// Passport Id
         /// </summary>
         public int PassId { get; private set; }
-        
+
         /// <summary>
         /// UserDetails Id
         /// </summary>
@@ -69,7 +69,7 @@ namespace iPassport.Domain.Entities
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        public DateTime GetExpirationDate(int? days) =>  days.HasValue ? DateTime.Today.AddDays(days.Value) : DateTime.Today.AddMonths(6);
+        public DateTime GetExpirationDate(int? days) => days.HasValue ? DateTime.Today.AddDays(days.Value) : DateTime.Today.AddMonths(6);
 
         public bool IsAllDetailsExpired() => ListPassportDetails.All(x => x.IsExpired());
 

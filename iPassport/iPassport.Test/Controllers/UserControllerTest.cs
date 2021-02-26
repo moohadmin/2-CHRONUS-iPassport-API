@@ -2,9 +2,8 @@
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
 using iPassport.Application.Interfaces;
-using iPassport.Domain.Filters;
-using iPassport.Test.Seeds;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Filters;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,7 +17,7 @@ namespace iPassport.Test.Controllers
     public class UserControllerTest
     {
         Mock<IUserService> _mockService;
-        Mock<IVaccineService> _mockVaccineService;
+        Mock<IUserVaccineService> _mockVaccineService;
         IMapper _mapper;
         UserController _controller;
 
@@ -26,7 +25,7 @@ namespace iPassport.Test.Controllers
         public void Setup()
         {
             _mockService = new Mock<IUserService>();
-            _mockVaccineService = new Mock<IVaccineService>();
+            _mockVaccineService = new Mock<IUserVaccineService>();
             _mapper = AutoMapperFactory.Create();
             _controller = new UserController(_mapper, _mockService.Object, _mockVaccineService.Object);
         }

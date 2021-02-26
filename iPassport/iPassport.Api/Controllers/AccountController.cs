@@ -1,10 +1,10 @@
-using System.Threading.Tasks;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
@@ -31,7 +31,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost("LoginByAgent")]
-        public async Task<ActionResult> BasicLogin([FromBody]BasicLoginRequest request)
+        public async Task<ActionResult> BasicLogin([FromBody] BasicLoginRequest request)
         {
             var res = await _service.BasicLogin(request.Username, request.Password);
             return Ok(res);
@@ -49,7 +49,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost("LoginByEmail")]
-        public async Task<ActionResult> LoginByEmail([FromBody]EmailLoginRequest request)
+        public async Task<ActionResult> LoginByEmail([FromBody] EmailLoginRequest request)
         {
             var res = await _service.EmailLogin(request.Email, request.Password);
             return Ok(res);
@@ -67,7 +67,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost("LoginByCitizen")]
-        public async Task<ActionResult> MobileLogin([FromBody]LoginMobileRequest request)
+        public async Task<ActionResult> MobileLogin([FromBody] LoginMobileRequest request)
         {
             var res = await _service.MobileLogin(request.Pin, request.UserId);
             return Ok(res);

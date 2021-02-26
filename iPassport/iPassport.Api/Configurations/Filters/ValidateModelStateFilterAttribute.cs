@@ -1,5 +1,4 @@
 ﻿using iPassport.Api.Models.Responses;
-using iPassport.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace iPassport.Api.Configurations.Filters
                         .SelectMany(v => v.Errors)
                         .Select(v => v.ErrorMessage)
                         .ToList();
-                
+
                 var responseObj = new BussinessExceptionResponse(errors);
 
                 context.Result = new JsonResult(responseObj)

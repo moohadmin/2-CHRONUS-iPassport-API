@@ -1,5 +1,5 @@
-﻿using System;
-using iPassport.Domain.Dtos;
+﻿using iPassport.Domain.Dtos;
+using System;
 
 namespace iPassport.Domain.Entities
 {

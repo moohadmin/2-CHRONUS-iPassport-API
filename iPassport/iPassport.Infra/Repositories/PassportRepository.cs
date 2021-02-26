@@ -16,13 +16,14 @@ namespace iPassport.Infra.Repositories
             await _DbSet.Where(x => x.UserDetails.UserId == userId)
                     .Include(x => x.ListPassportDetails).FirstOrDefaultAsync();
 
-        public async Task<Passport> FindByPassportDetailsValid(Guid passportDetailsId){
+        public async Task<Passport> FindByPassportDetailsValid(Guid passportDetailsId)
+        {
 
             var today = DateTime.Now.Date;
             return await _DbSet.Where(x => x.ListPassportDetails.Any(z => z.Id == passportDetailsId && z.ExpirationDate.Date > today))
                         .Include(x => x.ListPassportDetails)
                         .Include(x => x.UserDetails).FirstOrDefaultAsync();
         }
-            
+
     }
 }
