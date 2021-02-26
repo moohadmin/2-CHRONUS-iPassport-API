@@ -41,7 +41,7 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IDiseaseService, DiseaseService>();
 
-            services.AddScoped<IIndicatorService, IndicatorService>();
+            services.AddScoped<IVaccineService, VaccineService>();
 
             services.AddScoped<IVaccineManufacturerService, VaccineManufacturerService>();
             #endregion

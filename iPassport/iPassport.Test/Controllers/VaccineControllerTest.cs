@@ -15,24 +15,24 @@ namespace iPassport.Test.Controllers
 {
 
     [TestClass]
-    public class IndicatorControllerTest
+    public class VaccineControllerTest
     {
-        Mock<IIndicatorService> _mockService;
+        Mock<IVaccineService> _mockService;
         IMapper _mapper;
-        IndicatorController _controller;
+        VaccineController _controller;
 
         [TestInitialize]
         public void Setup()
         {
-            _mockService = new Mock<IIndicatorService>();
+            _mockService = new Mock<IVaccineService>();
             _mapper = AutoMapperFactory.Create();
-            _controller = new IndicatorController(_mapper, _mockService.Object) { };
+            _controller = new VaccineController(_mapper, _mockService.Object) { };
         }
 
         [TestMethod]
         public void GetVaccinatedCount_MustReturnOk()
         {
-            var seed = IndicatorSeed.GetVaccineIndicatorDtos();
+            var seed = VaccineSeed.GetVaccineIndicatorDtos();
             var mockRequest = Mock.Of<GetVaccinatedCountRequest>();
 
             // Arrange

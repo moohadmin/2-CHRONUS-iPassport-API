@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
 {
-    public class IndicatorService : IIndicatorService
+    public class VaccineService : IVaccineService
     {
         private readonly IUserVaccineRepository _userVaccineRepository;
 
-        public IndicatorService(IUserVaccineRepository userVaccineRepository)
+        public VaccineService(IUserVaccineRepository userVaccineRepository)
         {
             _userVaccineRepository = userVaccineRepository;
         }
