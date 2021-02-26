@@ -2,6 +2,7 @@
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
 using iPassport.Application.Interfaces;
+using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Test.Settings.Factories;
@@ -124,6 +125,23 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockVaccineService.Verify(a => a.GetUserVaccines(It.IsAny<PageFilter>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetLoggedCitzenCount_MustReturnOk()
+        {
+            var seed = new Random().Next(99999);
+
+            // Arrange
+            _mockService.Setup(r => r.GetLoggedCitzenCount().Result).Returns(new ResponseApi(true, "Test Success!", seed));
+
+            // Act
+            var result = _controller.GetLoggedCitzenCount();
+
+            // Assert
+            _mockService.Verify(a => a.GetLoggedCitzenCount(), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

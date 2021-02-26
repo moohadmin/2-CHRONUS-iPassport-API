@@ -28,5 +28,7 @@ namespace iPassport.Infra.Repositories
                 _ => null,
             };
         }
+
+        public async Task<int> GetLoggedCitzenCount() => await _DbSet.Where(u => u.Profile == (int)EProfileType.Citizen).CountAsync();
     }
 }
