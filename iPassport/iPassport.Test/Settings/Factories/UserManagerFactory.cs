@@ -9,17 +9,10 @@ namespace iPassport.Test.Settings.Factories
 {
     public static class UserManagerFactory
     {
-        public static UserManager<Users> Create()
+        public static Mock<UserManager<Users>> CreateMock()
         {
             Mock<IUserStore<Users>> userStoreMock = new Mock<IUserStore<Users>>();
-
-            userStoreMock.Setup(x => x.FindByIdAsync(It.IsAny<string>(), CancellationToken.None))
-                .Returns(Task.FromResult(UserSeed.GetUsers()));
-
-            userStoreMock.Setup(x => x.UpdateAsync(It.IsAny<Users>(), CancellationToken.None))
-                .Returns(Task.FromResult(IdentityResult.Success));
-
-            return new UserManager<Users>(userStoreMock.Object, null, null, null, null, null, null, null, null);
+            return new Mock<UserManager<Users>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
         }
     }
 }

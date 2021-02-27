@@ -29,7 +29,7 @@ namespace iPassport.Test.Services
         Mock<IPlanRepository> _planMockRepository;
         IUserService _service;
         IMapper _mapper;
-        UserManager<Users> _mockUserManager;
+        Mock<UserManager<Users>> _mockUserManager;
         IHttpContextAccessor _accessor;
         Mock<IExternalStorageService> _externalStorageService;
 
@@ -42,9 +42,9 @@ namespace iPassport.Test.Services
             _mockUserRepository = new Mock<IUserRepository>();
             _planMockRepository = new Mock<IPlanRepository>();
             _externalStorageService = new Mock<IExternalStorageService>();
-            _mockUserManager = UserManagerFactory.Create();
+            _mockUserManager = UserManagerFactory.CreateMock();
 
-            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager, _externalStorageService.Object);
+            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object);
         }
 
         [TestMethod]
@@ -95,6 +95,7 @@ namespace iPassport.Test.Services
             
             // Arrange
             _mockRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(detailsSeed);
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
 
             // Act
             var result = _service.GetCurrentUser();
@@ -112,16 +113,16 @@ namespace iPassport.Test.Services
             var authSeed = UserSeed.GetUsers();
             var mockRequest = Mock.Of<UserImageDto>();
             var SaveUrl = "./Content/Image/Teste.jpg";
-            
+
             // Arrange
             _externalStorageService.Setup(x => x.UploadFileAsync(mockRequest).Result).Returns(SaveUrl);
-            
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
+
             // Act
             var result = _service.AddUserImage(mockRequest);
 
             // Assert
-            _externalStorageService.Verify(a => a.UploadFileAsync(mockRequest), Times.Once);
-            
+            _externalStorageService.Verify(a => a.UploadFileAsync(mockRequest), Times.Once);          
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(string));
@@ -163,5 +164,6 @@ namespace iPassport.Test.Services
             Assert.AreEqual(5, result.Result.Data);
 
         }
+
     }
 }
