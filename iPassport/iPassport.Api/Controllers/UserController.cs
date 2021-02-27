@@ -38,6 +38,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] UserCreateRequest request)
         {
@@ -128,6 +129,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpGet("Current")]
         public async Task<ActionResult> GetCurrentUser()
         {
@@ -165,6 +167,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpGet("LoggedCitzenCount")]
         public async Task<ActionResult> GetLoggedCitzenCount()
         {
