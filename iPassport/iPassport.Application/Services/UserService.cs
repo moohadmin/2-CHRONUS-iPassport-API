@@ -39,14 +39,9 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(UserCreateDto dto)
         {
-            var user = new Users
-            {
-                UserName = dto.Username,
-                Email = dto.Email,
-                PhoneNumber = dto.Mobile,
-                UpdateDate = DateTime.Now
-            };
-
+            var user = new Users().Create(dto);
+            user.SetUpdateDate();
+            
             /// Add User in iPassportIdentityContext
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
@@ -73,16 +68,22 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> GetCurrentUser()
         {
             var userId = _accessor.GetCurrentUserId();
-            var userDetails = await _detailsRepository.FindWithUser(userId);
+            var authUser = await _userManager.FindByIdAsync(userId.ToString());
+            
+            var details = await _detailsRepository.GetByUserId(userId);
+            var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
 
-            return new ResponseApi(true, "Usuario Logado", _mapper.Map<UserDetailsViewModel>(userDetails));
+            userDetailsViewModel.profile = details.Profile;
+            userDetailsViewModel.Plan = _mapper.Map<PlanViewModel>(details.Plan);
+
+            return new ResponseApi(true, "Usuario Logado", userDetailsViewModel);
         }
 
         public async Task<ResponseApi> AssociatePlan(Guid planId)
         {
             var userId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _detailsRepository.FindWithUser(userId);
+            var userDetails = await _detailsRepository.GetByUserId(userId);
             var plan = await _planRepository.Find(planId);
 
             if (plan == null)
@@ -93,41 +94,39 @@ namespace iPassport.Application.Services
 
             _detailsRepository.Update(userDetails);
 
-            return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<UserDetailsViewModel>(userDetails));
+            return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<PlanViewModel>(plan));
         }
 
         public async Task<ResponseApi> GetUserPlan()
         {
             var userId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _detailsRepository.FindWithUser(userId);
-            var plan = await _planRepository.Find((Guid)userDetails.PlanId);
+            var userDetails = await _detailsRepository.GetByUserId(userId);
 
-            if (plan == null)
+            if (userDetails.Plan == null)
                 throw new BusinessException("Plano não encontrado");
 
-            return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(plan));
+            return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(userDetails.Plan));
         }
 
         public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)
         {
             userImageDto.UserId = _accessor.GetCurrentUserId();
-            var userDetails = await _detailsRepository.FindWithUser(userImageDto.UserId);
+            var user = await _userManager.FindByIdAsync(userImageDto.UserId.ToString());
 
-            if (userDetails == null)
+            if (user == null)
                 throw new BusinessException("Usuário não cadastrado");
 
-            if (userDetails.UserHavePhoto())
+            if (user.UserHavePhoto())
                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
 
-            userDetails.PhotoNameGenerator(userImageDto);
-            //var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
-            //userDetails.AddPhoto(imageUrl);
-            //_detailsRepository.Update(userDetails);
+            user.PhotoNameGenerator(userImageDto);
+            var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
+            user.AddPhoto(imageUrl);
+            
+            await _userManager.UpdateAsync(user);
 
-            var result = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);
-
-            return new ResponseApi(true, "Imagem Adicionada", result);
+            return new ResponseApi(true, "Imagem Adicionada", user.Photo);
         }
 
         public async Task<ResponseApi> GetLoggedCitzenCount()

@@ -236,56 +236,14 @@ namespace iPassport.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("BloodType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Breed")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CNS")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CPF")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("text");
-
-                    b.Property<string>("InternationalDocument")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Occupation")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PassportDoc")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Photo")
-                        .HasColumnType("text");
 
                     b.Property<Guid?>("PlanId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Profile")
                         .HasColumnType("integer");
-
-                    b.Property<string>("RG")
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("timestamp without time zone");

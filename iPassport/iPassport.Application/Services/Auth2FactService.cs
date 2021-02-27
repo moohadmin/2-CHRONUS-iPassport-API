@@ -1,11 +1,9 @@
 ﻿using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Domain.Dtos;
-using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 

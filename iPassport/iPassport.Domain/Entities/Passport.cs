@@ -13,8 +13,7 @@ namespace iPassport.Domain.Entities
         {
             Id = Guid.NewGuid();
             ListPassportDetails = CreateFirstPassportDetails();
-            UserDetails = userDetails;
-
+            UserDetailsId = userDetails.Id;
         }
 
         /// <summary>

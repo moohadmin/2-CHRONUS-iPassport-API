@@ -7,6 +7,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
@@ -18,25 +19,27 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
         private readonly IPassportRepository _repository;
         private readonly IPassportDetailsRepository _passportDetailsRepository;
-        private readonly IPassportUseRepository _useRepository;
+        private readonly IPassportUseRepository _passportUseRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IHttpContextAccessor _accessor;
 
-        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository)
+        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository, IUserRepository userRepository)
         {
             _mapper = mapper;
             _repository = repository;
             _userDetailsRepository = userDetailsRepository;
-            _useRepository = useRepository;
+            _passportUseRepository = useRepository;
             _accessor = accessor;
             _passportDetailsRepository = passportDetailsRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ResponseApi> Get()
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _userDetailsRepository.FindWithUser(UserId);
+            var userDetails = await _userDetailsRepository.GetByUserId(UserId);
 
             if (userDetails == null)
                 throw new BusinessException("Usuário não encontrado.");
@@ -59,8 +62,13 @@ namespace iPassport.Application.Services
                 }
             }
 
-            return new ResponseApi(true, "Passport do Usuário", _mapper.Map<PassportViewModel>(passport));
+            var viewModel = _mapper.Map<PassportViewModel>(passport);
+            var authUser = await _userRepository.FindById(UserId);
+            viewModel.UserFullname = authUser.FullName;
+
+            return new ResponseApi(true, "Passport do Usuário", viewModel);
         }
+
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
         {
             dto = await ValidPassportToAcess(dto);
@@ -69,10 +77,11 @@ namespace iPassport.Application.Services
             var passportUse = new PassportUse();
             passportUse = passportUse.Create(dto);
 
-            await _useRepository.InsertAsync(passportUse);
+            await _passportUseRepository.InsertAsync(passportUse);
 
             return new ResponseApi(true, "Acesso Aprovado");
         }
+
         public async Task<ResponseApi> AddAccessDenied(PassportUseCreateDto dto)
         {
             dto = await ValidPassportToAcess(dto);
@@ -81,7 +90,7 @@ namespace iPassport.Application.Services
             var passportUse = new PassportUse();
             passportUse = passportUse.Create(dto);
 
-            await _useRepository.InsertAsync(passportUse);
+            await _passportUseRepository.InsertAsync(passportUse);
 
             return new ResponseApi(true, "Acesso Recusado");
         }
@@ -93,7 +102,7 @@ namespace iPassport.Application.Services
             if (passport == null)
                 throw new BusinessException("Passport não encontrado ou expirado");
 
-            var agentUserDetails = await _userDetailsRepository.FindWithUser(_accessor.GetCurrentUserId());
+            var agentUserDetails = await _userDetailsRepository.GetByUserId(_accessor.GetCurrentUserId());
 
             if (agentUserDetails == null)
                 throw new BusinessException("Agente não encontrado");

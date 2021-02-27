@@ -4,6 +4,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
+using iPassport.Domain.Entities.Authentication;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -40,6 +41,10 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<GetRegisteredUsersCountRequest, GetRegisteredUserCountFilter>()
                 .ForMember(des => des.Profile, act => act.MapFrom(src => src.ProfileType));
+
+            profile.CreateMap<Users, UserDetailsViewModel>()
+                .ForMember(des => des.UserId, act => act.MapFrom(src => src.Id));
+
         }
     }
 }
