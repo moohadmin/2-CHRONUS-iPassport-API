@@ -28,22 +28,22 @@ namespace iPassport.Domain.Entities.Authentication
             PhoneNumber = mobile;
         }
 
-        public bool AcceptTerms { get; private set; }
-        public DateTime UpdateDate { get; protected set; }
-        public string FullName { get; private set; }
-        public string CPF { get; private set; }
-        public string RG { get; private set; }
-        public string CNS { get; private set; }
-        public string PassportDoc { get; private set; }
-        public DateTime Birthday { get; private set; }
+        public bool AcceptTerms { get; set; }
+        public DateTime UpdateDate { get; set; }
+        public string FullName { get; set; }
+        public string CPF { get; set; }
+        public string RG { get; set; }
+        public string CNS { get; set; }
+        public string PassportDoc { get; set; }
+        public DateTime Birthday { get; set; }
         public DateTime? LastLogin { get; set; }
-        public string Gender { get; private set; }
-        public string Breed { get; private set; }
-        public string BloodType { get; private set; }
-        public string Occupation { get; private set; }
-        public string Address { get; private set; }
-        public string Photo { get; private set; }
-        public string InternationalDocument { get; private set; }
+        public string Gender { get; set; }
+        public string Breed { get; set; }
+        public string BloodType { get; set; }
+        public string Occupation { get; set; }
+        public string Address { get; set; }
+        public string Photo { get; set; }
+        public string InternationalDocument { get; set; }
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.Now;

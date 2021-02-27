@@ -106,6 +106,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException("Necessário Aceitar os Termos para continuar");
 
             var userDetails = await _userDetailsRepository.GetByUserId(userId);
+            
             if (userDetails == null)
                 throw new BusinessException("Usuário não cadastrado.");
 
@@ -116,6 +117,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             _userRepository.Update(user);
 
             var token = _tokenService.GenerateBasic(user, userDetails);
+            
             if (token != null)
             {
                 user.UpdateLastLogin();
