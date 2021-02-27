@@ -5,6 +5,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
@@ -141,6 +142,23 @@ namespace iPassport.Test.Services
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(int));
             Assert.AreEqual(seed, result.Result.Data);
+        }
+
+        [TestMethod]
+        public void GetRegisteredUserCount()
+        {
+            // Arrange
+            _mockRepository.Setup(r => r.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>()).Result).Returns(5);
+
+            // Act
+            var result = _service.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>());
+
+            // Assert
+            _mockRepository.Verify(a => a.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.AreEqual(5, result.Result.Data);
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Entities;
 using iPassport.Domain.Enums;
+using iPassport.Domain.Filters;
 using System;
 using System.Threading.Tasks;
 
@@ -9,5 +10,6 @@ namespace iPassport.Domain.Repositories
     {
         Task<UserDetails> GetByUserId(Guid id);
         Task<int> GetLoggedCitzenCount();
+        Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
     }
 }

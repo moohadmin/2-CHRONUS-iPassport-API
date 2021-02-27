@@ -7,6 +7,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -42,9 +43,14 @@ namespace iPassport.Application.Services
             /// Add User in iPassportIdentityContext
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
-                return new ResponseApi(result.Succeeded, "Usuário não pode ser criado!", result.Errors);
+                throw new BusinessException("Usuário não pode ser criado!");
 
-            await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+            var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+            if (!_role.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
+                throw new BusinessException("Usuário não pode ser criado!");
+            }
 
             /// Re-Hidrated UserId to UserDetails
             dto.UserId = user.Id;
@@ -126,6 +132,13 @@ namespace iPassport.Application.Services
             var res = await _detailsRepository.GetLoggedCitzenCount();
 
             return new ResponseApi(true, "Total de cidadãos logados", res);
+        }
+        
+        public async Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)
+        {
+            var res = await _detailsRepository.GetRegisteredUserCount(filter);
+
+            return new ResponseApi(true, "Total de Usuários Registrados", res);
         }
     }
 }

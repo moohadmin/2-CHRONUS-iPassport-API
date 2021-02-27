@@ -3,6 +3,7 @@ using iPassport.Api.Models.Requests;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Entities.Authentication;
 
 namespace iPassport.Api.AutoMapper.Mappers
@@ -37,6 +38,9 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<UserImageRequest, UserImageDto>()
                 .ForMember(des => des.ImageFile, act => act.MapFrom(src => src.ImageFile));
+
+            profile.CreateMap<GetRegisteredUsersCountRequest, GetRegisteredUserCountFilter>()
+                .ForMember(des => des.Profile, act => act.MapFrom(src => src.ProfileType));
 
             profile.CreateMap<Users, UserDetailsViewModel>()
                 .ForMember(des => des.UserId, act => act.MapFrom(src => src.Id));

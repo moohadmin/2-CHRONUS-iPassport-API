@@ -7,7 +7,7 @@ metadata:
     role: backend
     env: dev
   annotations:
-    downscaler/uptime: Mon-Fri 07:30-23:30 America/Bahia
+    downscaler/uptime: Always
 spec:
   replicas: 1
   strategy:
@@ -42,21 +42,6 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: CONNECTION_STRING
-              name: ${APP_NAME}-${APP_SUBGROUP}
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: DB_HOST
-              name: ${APP_NAME}-${APP_SUBGROUP}
-        - name: DB_NAME
-          valueFrom:
-            configMapKeyRef:
-              key: DB_NAME
-              name: ${APP_NAME}-${APP_SUBGROUP}
-        - name: DB_USER
-          valueFrom:
-            configMapKeyRef:
-              key: DB_USER
               name: ${APP_NAME}-${APP_SUBGROUP}
         - name: DB_PASSWORD
           valueFrom:
