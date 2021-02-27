@@ -92,7 +92,7 @@ namespace iPassport.Application.Services
 
             _detailsRepository.Update(userDetails);
 
-            return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<UserDetailsViewModel>(userDetails));
+            return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<PlanViewModel>(plan));
         }
 
         public async Task<ResponseApi> GetUserPlan()

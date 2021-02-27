@@ -134,7 +134,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
-            if (!String.IsNullOrWhiteSpace(user.PhoneNumber) && user.PhoneNumber != phone)
+            if (!string.IsNullOrWhiteSpace(user.PhoneNumber) && user.PhoneNumber != phone)
                 throw new BusinessException("Usuário não cadastrado.");
 
             var pinresp = await _auth2FactService.SendPin(user.Id, phone);
