@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
+using System.Text.Unicode;
 
 namespace iPassport.Api
 {
@@ -112,6 +113,10 @@ namespace iPassport.Api
                         }, new List<string>()
                     }
                 });
+            });
+
+            services.AddWebEncoders(o => {
+                o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
             });
 
             /// Update Migrations

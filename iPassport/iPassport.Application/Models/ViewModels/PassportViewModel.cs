@@ -8,7 +8,7 @@ namespace iPassport.Application.Models.ViewModels
     public class PassportViewModel
     {
         /// <summary>
-        /// PassportDetailsId
+        /// Passport Details Id
         /// </summary>
         public Guid PassportDetailsId { get; set; }
         /// <summary>
@@ -18,11 +18,18 @@ namespace iPassport.Application.Models.ViewModels
         /// <summary>
         /// User Fullname 
         /// </summary>
-        public string UserFullname { get; set; }
+        public string UserFullName { get; set; }
         /// <summary>
-        /// ExpirationDate
+        /// Expiration Date
         /// </summary>
         public DateTime ExpirationDate { get; set; }
-
+        /// <summary>
+        /// User Photo
+        /// </summary>
+        public string UserPhoto { get; set; }
+        /// <summary>
+        /// Plan Type
+        /// </summary>
+        public string UserPlan { get; set; }
     }
 }
