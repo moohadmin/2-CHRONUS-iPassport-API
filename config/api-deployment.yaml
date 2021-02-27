@@ -7,7 +7,7 @@ metadata:
     role: backend
     env: dev
   annotations:
-    downscaler/uptime: Mon-Fri 07:30-23:30 America/Bahia
+    downscaler/uptime: Always
 spec:
   replicas: 1
   strategy:
