@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,18 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-    }
 
+        public async Task<Users> FindByDocument(EDocumentType documentType, string document)
+        {
+            return documentType switch
+            {
+                EDocumentType.CPF => await _context.Users.Where(x => x.CPF == document).FirstOrDefaultAsync(),
+                EDocumentType.RG => await _context.Users.Where(x => x.RG == document).FirstOrDefaultAsync(),
+                EDocumentType.Passport => await _context.Users.Where(x => x.PassportDoc == document).FirstOrDefaultAsync(),
+                EDocumentType.CNS => await _context.Users.Where(x => x.CNS == document).FirstOrDefaultAsync(),
+                EDocumentType.InternationalDocument => await _context.Users.Where(x => x.InternationalDocument == document).FirstOrDefaultAsync(),
+                _ => null,
+            };
+        }
+    }
 }

@@ -5,10 +5,12 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -24,6 +26,7 @@ namespace iPassport.Test.Services
         Mock<IPlanRepository> _planMockRepository;
         IUserService _service;
         IMapper _mapper;
+        UserManager<Users> _mockUserManager;
         IHttpContextAccessor _accessor;
         Mock<IExternalStorageService> _externalStorageService;
 
@@ -35,8 +38,9 @@ namespace iPassport.Test.Services
             _mockRepository = new Mock<IUserDetailsRepository>();
             _planMockRepository = new Mock<IPlanRepository>();
             _externalStorageService = new Mock<IExternalStorageService>();
+            _mockUserManager = UserManagerFactory.Create();
 
-            _service = new UserService(_mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, null, _externalStorageService.Object);
+            _service = new UserService(_mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager, _externalStorageService.Object);
         }
 
         [TestMethod]
@@ -48,7 +52,7 @@ namespace iPassport.Test.Services
 
             // Arrange
             _mockRepository.Setup(r => r.Update(It.IsAny<UserDetails>()));
-            _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(userSeed);
+            _mockRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(userSeed);
             _planMockRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(planSeed);
 
             // Act
@@ -56,7 +60,7 @@ namespace iPassport.Test.Services
 
             // Assert
             _mockRepository.Verify(a => a.Update(It.IsAny<UserDetails>()), Times.Once);
-            _mockRepository.Verify(a => a.FindWithUser(It.IsAny<Guid>()), Times.Once);
+            _mockRepository.Verify(a => a.GetByUserId(It.IsAny<Guid>()), Times.Once);
             _planMockRepository.Verify(a => a.Find(It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
@@ -66,18 +70,15 @@ namespace iPassport.Test.Services
         public void GetUserPlan()
         {
             var userSeed = UserSeed.GetUserDetails();
-            var planSeed = PlanSeed.GetPlans().FirstOrDefault();
 
             // Arrange
-            _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(userSeed);
-            _planMockRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(planSeed);
+            _mockRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetUserPlan();
 
             // Assert
-            _mockRepository.Verify(a => a.FindWithUser(It.IsAny<Guid>()), Times.Once);
-            _planMockRepository.Verify(a => a.Find(It.IsAny<Guid>()), Times.Once);
+            _mockRepository.Verify(a => a.GetByUserId(It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(PlanViewModel));
@@ -86,16 +87,16 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void GetCurrentUser()
         {
-            var seed = UserSeed.GetUserDetails();
-
+            var detailsSeed = UserSeed.GetUserDetails();
+            
             // Arrange
-            _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(seed);
+            _mockRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(detailsSeed);
 
             // Act
             var result = _service.GetCurrentUser();
 
             // Assert
-            _mockRepository.Verify(a => a.FindWithUser(It.IsAny<Guid>()), Times.Once);
+            _mockRepository.Verify(a => a.GetByUserId(It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(UserDetailsViewModel));
@@ -104,20 +105,19 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void AddUserImage_SavesPhotoUrlIntoUserDetails()
         {
-            var userSeed = UserSeed.GetUserDetailsWithoutPhoto();
-            var mockRequest = new UserImageDto();
+            var authSeed = UserSeed.GetUsers();
+            var mockRequest = Mock.Of<UserImageDto>();
             var SaveUrl = "./Content/Image/Teste.jpg";
+            
             // Arrange
-            _mockRepository.Setup(r => r.FindWithUser(It.IsAny<Guid>()).Result).Returns(userSeed);
             _externalStorageService.Setup(x => x.UploadFileAsync(mockRequest).Result).Returns(SaveUrl);
-            _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()));
+            
             // Act
             var result = _service.AddUserImage(mockRequest);
 
             // Assert
-            _mockRepository.Verify(a => a.FindWithUser(It.IsAny<Guid>()), Times.Once);
             _externalStorageService.Verify(a => a.UploadFileAsync(mockRequest), Times.Once);
-            Assert.AreEqual(userSeed.Photo, SaveUrl);
+            
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(string));

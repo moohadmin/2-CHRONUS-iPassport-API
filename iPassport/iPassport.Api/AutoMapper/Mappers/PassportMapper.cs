@@ -12,7 +12,6 @@ namespace iPassport.Api.AutoMapper.Mappers
         {
             profile.CreateMap<Passport, PassportViewModel>()
                 .ForMember(des => des.PassId, act => act.MapFrom(src => src.GetPassId()))
-                .ForMember(des => des.UserFullname, act => act.MapFrom(src => src.UserDetails.FullName))
                 .ForMember(des => des.ExpirationDate, act => act.MapFrom(src => src.GetLastPassportDetails().ExpirationDate))
                 .ForMember(des => des.PassportDetailsId, act => act.MapFrom(src => src.GetLastPassportDetails().Id));
 

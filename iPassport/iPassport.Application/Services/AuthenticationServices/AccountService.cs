@@ -43,7 +43,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException("Usuário e / ou senha incorreta.Por favor, tente novamente.");
 
-            var userDetails = await _userDetailsRepository.FindWithUser(user.Id);
+            var userDetails = await _userDetailsRepository.GetByUserId(user.Id);
 
             /// Caso exista um user cadastrado, porém não tem o cadastro da userDetails, 
             /// será excluido o user pois não é permitido um user sem userDetails
@@ -60,8 +60,8 @@ namespace iPassport.Application.Services.AuthenticationServices
                 if (token == null)
                     throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
-                userDetails.UpdateLastLogin();
-                _userDetailsRepository.Update(userDetails);
+                user.UpdateLastLogin();
+                _userRepository.Update(user);
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
@@ -75,7 +75,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
             var roles = await _userManager.GetRolesAsync(user);
 
-            var userDetails = await _userDetailsRepository.FindWithUser(user.Id);
+            var userDetails = await _userDetailsRepository.GetByUserId(user.Id);
 
             /// Caso exista um user cadastrado, porém não tem o cadastro da userDetails, 
             /// será excluido o user pois não é permitido um user sem userDetails
@@ -92,8 +92,8 @@ namespace iPassport.Application.Services.AuthenticationServices
                 if (token == null)
                     throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
-                userDetails.UpdateLastLogin();
-                _userDetailsRepository.Update(userDetails);
+                user.UpdateLastLogin();
+                _userRepository.Update(user);
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
@@ -102,10 +102,10 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> MobileLogin(int pin, Guid userId, bool acceptTerms)
         {
-            if(!acceptTerms)
+            if (!acceptTerms)
                 throw new BusinessException("Necessário Aceitar os Termos para continuar");
 
-            var userDetails = await _userDetailsRepository.FindWithUser(userId);
+            var userDetails = await _userDetailsRepository.GetByUserId(userId);
             if (userDetails == null)
                 throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
@@ -118,8 +118,8 @@ namespace iPassport.Application.Services.AuthenticationServices
             var token = _tokenService.GenerateBasic(user, userDetails);
             if (token != null)
             {
-                userDetails.UpdateLastLogin();
-                _userDetailsRepository.Update(userDetails);
+                user.UpdateLastLogin();
+                _userRepository.Update(user);
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
@@ -129,11 +129,8 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc)
         {
-            var userDetails = await _userDetailsRepository.FindByDocument(doctype, doc.Trim());            
-            if(userDetails == null)
-                throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
-
-            var user = await _userRepository.FindById(userDetails.UserId);
+            var user = await _userRepository.FindByDocument(doctype, doc.Trim());
+            
             if (user == null)
                 throw new BusinessException("O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.");
 
