@@ -1,3 +1,4 @@
+using Amazon.S3;
 using FluentValidation.AspNetCore;
 using iPassport.Api.AutoMapper;
 using iPassport.Api.Configurations;
@@ -6,6 +7,7 @@ using iPassport.Api.Models.Responses;
 using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Infra.Contexts;
+using iPassport.Infra.ExternalServices.StorageExternalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -134,6 +136,11 @@ namespace iPassport.Api
 
             services.AddLocalization(o => o.ResourcesPath = "Resources");
             services.AddSingleton<Resource>();
+
+            ///Add AWS Services
+            services.AddAWSService<IAmazonS3>();
+            var appSettingsSection = Configuration.GetSection("StorageConfigurations");
+            services.Configure<StorageConfigurations>(appSettingsSection);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
