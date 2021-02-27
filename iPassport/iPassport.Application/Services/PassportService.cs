@@ -64,7 +64,10 @@ namespace iPassport.Application.Services
 
             var viewModel = _mapper.Map<PassportViewModel>(passport);
             var authUser = await _userRepository.FindById(UserId);
-            viewModel.UserFullname = authUser.FullName;
+            
+            viewModel.UserFullName = authUser.FullName;
+            viewModel.UserPhoto = authUser.Photo;
+            viewModel.UserPlan = userDetails.Plan?.Type;
 
             return new ResponseApi(true, "Passport do Usuário", viewModel);
         }
