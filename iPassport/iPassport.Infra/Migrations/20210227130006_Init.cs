@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace iPassport.Infra.Migrations
 {
-    public partial class Initial_iPassport : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -91,22 +91,8 @@ namespace iPassport.Infra.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FullName = table.Column<string>(type: "text", nullable: true),
-                    Profile = table.Column<int>(type: "integer", nullable: false),
-                    CPF = table.Column<string>(type: "text", nullable: true),
-                    RG = table.Column<string>(type: "text", nullable: true),
-                    CNS = table.Column<string>(type: "text", nullable: true),
-                    PassportDoc = table.Column<string>(type: "text", nullable: true),
-                    Birthday = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    LastLogin = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    Gender = table.Column<string>(type: "text", nullable: true),
-                    Breed = table.Column<string>(type: "text", nullable: true),
-                    BloodType = table.Column<string>(type: "text", nullable: true),
-                    Occupation = table.Column<string>(type: "text", nullable: true),
-                    Address = table.Column<string>(type: "text", nullable: true),
-                    Photo = table.Column<string>(type: "text", nullable: true),
                     PlanId = table.Column<Guid>(type: "uuid", nullable: true),
-                    InternationalDocument = table.Column<string>(type: "text", nullable: true),
+                    Profile = table.Column<int>(type: "integer", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
-    public partial class Initial_iPassportIdentity : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,6 +29,20 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AcceptTerms = table.Column<bool>(type: "boolean", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: true),
+                    CPF = table.Column<string>(type: "text", nullable: true),
+                    RG = table.Column<string>(type: "text", nullable: true),
+                    CNS = table.Column<string>(type: "text", nullable: true),
+                    PassportDoc = table.Column<string>(type: "text", nullable: true),
+                    Birthday = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LastLogin = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Gender = table.Column<string>(type: "text", nullable: true),
+                    Breed = table.Column<string>(type: "text", nullable: true),
+                    BloodType = table.Column<string>(type: "text", nullable: true),
+                    Occupation = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    Photo = table.Column<string>(type: "text", nullable: true),
+                    InternationalDocument = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

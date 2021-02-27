@@ -10,8 +10,8 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    [Migration("20210226214621_Initial_iPassportIdentity")]
-    partial class Initial_iPassportIdentity
+    [Migration("20210227130028_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -161,6 +161,24 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("BloodType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Breed")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CNS")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CPF")
+                        .HasColumnType("text");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -171,6 +189,18 @@ namespace iPassport.Infra.Migrations.PassportIdentity
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InternationalDocument")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -186,6 +216,12 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("Occupation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PassportDoc")
+                        .HasColumnType("text");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
@@ -194,6 +230,12 @@ namespace iPassport.Infra.Migrations.PassportIdentity
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RG")
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

@@ -14,21 +14,8 @@ namespace iPassport.Infra.Repositories
     {
         public UserDetailsRepository(iPassportContext context) : base(context) { }
 
-        public async Task<UserDetails> FindWithUser(Guid id) =>
-            await _DbSet.Where(x => x.UserId == id).FirstOrDefaultAsync();
-
-        public async Task<UserDetails> FindByDocument(EDocumentType documentType, string document)
-        {
-            return documentType switch
-            {
-                EDocumentType.CPF => await _DbSet.Where(x => x.CPF == document).FirstOrDefaultAsync(),
-                EDocumentType.RG => await _DbSet.Where(x => x.RG == document).FirstOrDefaultAsync(),
-                EDocumentType.Passport => await _DbSet.Where(x => x.PassportDoc == document).FirstOrDefaultAsync(),
-                EDocumentType.CNS => await _DbSet.Where(x => x.CNS == document).FirstOrDefaultAsync(),
-                EDocumentType.InternationalDocument => await _DbSet.Where(x => x.InternationalDocument == document).FirstOrDefaultAsync(),
-                _ => null,
-            };
-        }
+        public async Task<UserDetails> GetByUserId(Guid id) =>
+            await _DbSet.Include(u => u.Plan).Where(x => x.UserId == id).FirstOrDefaultAsync();
 
         public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _DbSet.Where(x => (int)filter.Profile == 0 || x.Profile == (int)filter.Profile).CountAsync();
 

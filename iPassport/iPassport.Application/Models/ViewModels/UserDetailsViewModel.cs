@@ -18,10 +18,8 @@ namespace iPassport.Application.Models.ViewModels
         public string Address { get; set; }
         public string Photo { get; set; }
         public string InternationalDocument { get; set; }
+        public int profile { get; set; }
         public DateTime? LastLogin { get; set; }
-
-        public Guid? PlanId { get; set; }
-
         public PlanViewModel Plan { get; set; }
     }
 }
