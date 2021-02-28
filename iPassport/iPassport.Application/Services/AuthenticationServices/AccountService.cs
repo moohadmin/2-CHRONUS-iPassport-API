@@ -39,21 +39,11 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
-                throw new BusinessException("Usuário e / ou senha incorreta.Por favor, tente novamente.");
-
-            var userDetails = await _userDetailsRepository.GetByUserId(user.Id);
-
-            /// Caso exista um user cadastrado, porém não tem o cadastro da userDetails, 
-            /// será excluido o user pois não é permitido um user sem userDetails
-            if (userDetails == null)
-            {
-                await _userManager.DeleteAsync(user);
-                throw new BusinessException("Usuário e / ou senha incorreta.Por favor, tente novamente.");
-            }
+                throw new BusinessException("Usuário e/ou senha incorreta.Por favor, tente novamente.");
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = _tokenService.GenerateBasic(user, userDetails);
+                var token = _tokenService.GenerateBasic(user);
 
                 if (token == null)
                     throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
@@ -73,19 +63,9 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
             var roles = await _userManager.GetRolesAsync(user);
 
-            var userDetails = await _userDetailsRepository.GetByUserId(user.Id);
-
-            /// Caso exista um user cadastrado, porém não tem o cadastro da userDetails, 
-            /// será excluido o user pois não é permitido um user sem userDetails
-            if (userDetails == null)
-            {
-                await _userManager.DeleteAsync(user);
-                throw new BusinessException("Usuário não cadastrado!");
-            }
-
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = _tokenService.GenerateByEmail(user, userDetails, roles.FirstOrDefault());
+                var token = _tokenService.GenerateByEmail(user, roles.FirstOrDefault());
 
                 if (token == null)
                     throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
@@ -103,21 +83,19 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (!acceptTerms)
                 throw new BusinessException("Necessário Aceitar os Termos para continuar");
 
-            var userDetails = await _userDetailsRepository.GetByUserId(userId);
-            
-            if (userDetails == null)
+            var user = await _userRepository.FindById(userId);
+            if (user == null)
                 throw new BusinessException("Usuário não cadastrado.");
 
-            await _auth2FactService.ValidPin(userDetails.UserId, pin.ToString("0000"));
+            await _auth2FactService.ValidPin(user.Id, pin.ToString("0000"));
 
-            var user = await _userRepository.FindById(userDetails.UserId);
-            user.SetAcceptTerms(acceptTerms);
-            _userRepository.Update(user);
-
-            var token = _tokenService.GenerateBasic(user, userDetails);
+            var token = _tokenService.GenerateBasic(user);
             
             if (token != null)
             {
+                if (!user.AcceptTerms)
+                    user.SetAcceptTerms(acceptTerms);
+
                 user.UpdateLastLogin();
                 _userRepository.Update(user);
 

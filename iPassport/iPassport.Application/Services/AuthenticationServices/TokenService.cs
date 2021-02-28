@@ -17,7 +17,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public TokenService(IConfiguration configuration) => _configuration = configuration;
 
-        public string GenerateBasic(Users user, UserDetails userDetails)
+        public string GenerateBasic(Users user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
@@ -26,9 +26,10 @@ namespace iPassport.Application.Services.AuthenticationServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(("UserId"), user.Id.ToString()),
+                    new Claim("UserId", user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(("FullName"), user.FullName)
+                    new Claim("FullName", user.FullName),
+                    new Claim("Profile", user.Profile.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddYears(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -39,7 +40,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             return tokenHandler.WriteToken(token);
         }
 
-        public string GenerateByEmail(Users user, UserDetails userDetails, string role)
+        public string GenerateByEmail(Users user, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
@@ -48,10 +49,10 @@ namespace iPassport.Application.Services.AuthenticationServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(("UserId"), user.Id.ToString()),
+                    new Claim("UserId", user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(("FullName"), user.FullName),
-                    new Claim(("FirstLogin"), (user.LastLogin == null).ToString()),
+                    new Claim("FullName", user.FullName),
+                    new Claim("FirstLogin", (user.LastLogin == null).ToString()),
                     new Claim(ClaimTypes.Role, role)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),

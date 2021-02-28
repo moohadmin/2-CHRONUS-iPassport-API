@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Entities.Authentication;
+using iPassport.Infra.Mappings.IdentityMaps;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,9 @@ namespace iPassport.Infra.Contexts
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Users>().ToTable("Users");
+            builder.ApplyConfiguration(new UsersMap());
+
+            //builder.Entity<Users>().ToTable("Users");
 
             builder.Entity<Roles>().ToTable("Roles");
 

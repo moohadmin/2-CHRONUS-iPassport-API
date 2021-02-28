@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace iPassport.Infra.Repositories.AuthenticationRepositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : IUserRepository, IDisposable
     {
         private readonly PassportIdentityContext _context;
 
@@ -46,5 +46,10 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => (int)filter.Profile == 0 || x.Profile == (int)filter.Profile).CountAsync();
 
         public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Citizen && u.LastLogin != null).CountAsync();
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
     }
 }

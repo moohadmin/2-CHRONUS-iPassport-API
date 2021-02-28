@@ -60,7 +60,7 @@ namespace iPassport.Test.Services
 
             // Arrange
             _mockUserDetailsRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
-            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>(), It.IsAny<UserDetails>())).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>())).Returns(token);
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
             _mockUserManager.Setup(x => x.FindByNameAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
@@ -70,7 +70,7 @@ namespace iPassport.Test.Services
 
             // Assert
             _mockUserDetailsRepository.Verify(a => a.GetByUserId(It.IsAny<Guid>()), Times.Once);
-            _mockTokenService.Verify(a => a.GenerateBasic(It.IsAny<Users>(), It.IsAny<UserDetails>()), Times.Once);
+            _mockTokenService.Verify(a => a.GenerateBasic(It.IsAny<Users>()), Times.Once);
             _mockUserRepository.Verify(a => a.Update(It.IsAny<Users>()), Times.Once);
             _mockUserManager.Verify(a => a.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()), Times.Once);
             _mockUserManager.Verify(a => a.FindByNameAsync(It.IsAny<string>()), Times.Once);
@@ -91,7 +91,7 @@ namespace iPassport.Test.Services
             _mockUserManager.Setup(x => x.GetRolesAsync(It.IsAny<Users>()).Result).Returns(Roles);
             _mockUserDetailsRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(userSeed);
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
-            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<UserDetails>(), It.IsAny<string>())).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>())).Returns(token);
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
             
             
@@ -103,7 +103,7 @@ namespace iPassport.Test.Services
             _mockUserManager.Verify(x => x.GetRolesAsync(It.IsAny<Users>()));
             _mockUserDetailsRepository.Verify(r => r.GetByUserId(It.IsAny<Guid>()));
             _mockUserManager.Verify(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()));
-            _mockTokenService.Verify(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<UserDetails>(), It.IsAny<string>()));
+            _mockTokenService.Verify(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>()));
             _mockUserRepository.Verify(x => x.Update(It.IsAny<Users>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
@@ -122,7 +122,7 @@ namespace iPassport.Test.Services
             _mockAuth2FactService.Setup(x => x.ValidPin(Guid.NewGuid(), It.IsAny<string>()).Result);
             _mockUserRepository.Setup(x => x.FindById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUsers());
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
-            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>(), It.IsAny<UserDetails>())).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>())).Returns(token);
 
             // Act
             var result = _service.MobileLogin(pin, userId, acceptTerms);
@@ -132,7 +132,7 @@ namespace iPassport.Test.Services
             _mockAuth2FactService.Verify(x => x.ValidPin(It.IsAny<Guid>(), It.IsAny<string>()));
             _mockUserRepository.Verify(x => x.FindById(It.IsAny<Guid>()));
             _mockUserRepository.Verify(x => x.Update(It.IsAny<Users>()));
-            _mockTokenService.Verify(x => x.GenerateBasic(It.IsAny<Users>(), It.IsAny<UserDetails>()));
+            _mockTokenService.Verify(x => x.GenerateBasic(It.IsAny<Users>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

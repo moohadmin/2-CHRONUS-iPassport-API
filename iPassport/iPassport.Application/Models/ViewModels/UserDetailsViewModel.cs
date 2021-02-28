@@ -6,6 +6,7 @@ namespace iPassport.Application.Models.ViewModels
     {
         public Guid UserId { get; set; }
         public string FullName { get; set; }
+        public string PhoneNumber { get; set; }
         public string CPF { get; set; }
         public string RG { get; set; }
         public string CNS { get; set; }
@@ -18,8 +19,7 @@ namespace iPassport.Application.Models.ViewModels
         public string Address { get; set; }
         public string Photo { get; set; }
         public string InternationalDocument { get; set; }
-        public int profile { get; set; }
+        public int Profile { get; set; }
         public DateTime? LastLogin { get; set; }
-        public PlanViewModel Plan { get; set; }
     }
 }

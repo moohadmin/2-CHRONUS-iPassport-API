@@ -23,7 +23,8 @@ namespace iPassport.Infra.ExternalServices
             {
                 await userImageDto.ImageFile.CopyToAsync(filestream);
                 filestream.Flush();
-                return _configuration.GetSection("ContentStorage").GetSection("Image").GetSection("Path").Value + userImageDto.FileName + (Path.GetExtension(userImageDto.ImageFile.FileName));
+                return "https://www.w3schools.com/howto/img_avatar.png";
+                //return _configuration.GetSection("ContentStorage").GetSection("Image").GetSection("Path").Value + userImageDto.FileName + (Path.GetExtension(userImageDto.ImageFile.FileName));
             }
         }
 
