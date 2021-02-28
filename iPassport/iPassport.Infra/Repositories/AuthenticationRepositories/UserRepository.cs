@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -41,5 +42,9 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                 _ => null,
             };
         }
+
+        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => (int)filter.Profile == 0 || x.Profile == (int)filter.Profile).CountAsync();
+
+        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Citizen && u.LastLogin != null).CountAsync();
     }
 }

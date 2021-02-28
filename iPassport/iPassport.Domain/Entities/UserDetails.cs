@@ -18,7 +18,6 @@ namespace iPassport.Domain.Entities
 
         public Guid UserId { get; private set; }
         public Guid? PlanId { get; private set; }
-        public int Profile { get; private set; }
 
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }

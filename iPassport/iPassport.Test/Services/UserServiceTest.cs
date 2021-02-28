@@ -17,6 +17,7 @@ using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using iPassport.Domain.Repositories.Authentication;
 
 namespace iPassport.Test.Services
 {
@@ -24,10 +25,11 @@ namespace iPassport.Test.Services
     public class UserServiceTest
     {
         Mock<IUserDetailsRepository> _mockRepository;
+        Mock<IUserRepository> _mockUserRepository;
         Mock<IPlanRepository> _planMockRepository;
         IUserService _service;
         IMapper _mapper;
-        UserManager<Users> _mockUserManager;
+        Mock<UserManager<Users>> _mockUserManager;
         IHttpContextAccessor _accessor;
         Mock<IExternalStorageService> _externalStorageService;
 
@@ -37,11 +39,12 @@ namespace iPassport.Test.Services
             _mapper = AutoMapperFactory.Create();
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepository = new Mock<IUserDetailsRepository>();
+            _mockUserRepository = new Mock<IUserRepository>();
             _planMockRepository = new Mock<IPlanRepository>();
             _externalStorageService = new Mock<IExternalStorageService>();
-            _mockUserManager = UserManagerFactory.Create();
+            _mockUserManager = UserManagerFactory.CreateMock();
 
-            _service = new UserService(_mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager, _externalStorageService.Object);
+            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object);
         }
 
         [TestMethod]
@@ -92,6 +95,7 @@ namespace iPassport.Test.Services
             
             // Arrange
             _mockRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(detailsSeed);
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
 
             // Act
             var result = _service.GetCurrentUser();
@@ -109,16 +113,16 @@ namespace iPassport.Test.Services
             var authSeed = UserSeed.GetUsers();
             var mockRequest = Mock.Of<UserImageDto>();
             var SaveUrl = "./Content/Image/Teste.jpg";
-            
+
             // Arrange
             _externalStorageService.Setup(x => x.UploadFileAsync(mockRequest).Result).Returns(SaveUrl);
-            
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
+
             // Act
             var result = _service.AddUserImage(mockRequest);
 
             // Assert
-            _externalStorageService.Verify(a => a.UploadFileAsync(mockRequest), Times.Once);
-            
+            _externalStorageService.Verify(a => a.UploadFileAsync(mockRequest), Times.Once);          
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(string));
@@ -131,13 +135,13 @@ namespace iPassport.Test.Services
             var seed = new Random().Next(99999);
 
             // Arrange
-            _mockRepository.Setup(r => r.GetLoggedCitzenCount().Result).Returns(seed);
+            _mockUserRepository.Setup(r => r.GetLoggedCitzenCount().Result).Returns(seed);
 
             // Act
             var result = _service.GetLoggedCitzenCount();
 
             // Assert
-            _mockRepository.Verify(a => a.GetLoggedCitzenCount(), Times.Once);
+            _mockUserRepository.Verify(a => a.GetLoggedCitzenCount(), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(int));
@@ -148,17 +152,18 @@ namespace iPassport.Test.Services
         public void GetRegisteredUserCount()
         {
             // Arrange
-            _mockRepository.Setup(r => r.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>()).Result).Returns(5);
+            _mockUserRepository.Setup(r => r.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>()).Result).Returns(5);
 
             // Act
             var result = _service.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>());
 
             // Assert
-            _mockRepository.Verify(a => a.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>()), Times.Once);
+            _mockUserRepository.Verify(a => a.GetRegisteredUserCount(It.IsAny<GetRegisteredUserCountFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.AreEqual(5, result.Result.Data);
 
         }
+
     }
 }

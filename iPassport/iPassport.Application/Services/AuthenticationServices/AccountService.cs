@@ -20,18 +20,16 @@ namespace iPassport.Application.Services.AuthenticationServices
         private readonly IUserRepository _userRepository;
 
         private readonly UserManager<Users> _userManager;
-        private readonly RoleManager<Roles> _roleManager;
         private readonly ITokenService _tokenService;
         private readonly IAuth2FactService _auth2FactService;
         private readonly IHttpContextAccessor _acessor;
 
         public AccountService(IUserDetailsRepository userDetailsRepository, ITokenService tokenService,
-            UserManager<Users> userManager, RoleManager<Roles> roleManager, IUserRepository userRepository, IAuth2FactService auth2FactService, IHttpContextAccessor acessor)
+            UserManager<Users> userManager, IUserRepository userRepository, IAuth2FactService auth2FactService, IHttpContextAccessor acessor)
         {
             _userDetailsRepository = userDetailsRepository;
             _tokenService = tokenService;
             _userManager = userManager;
-            _roleManager = roleManager;
             _userRepository = userRepository;
             _auth2FactService = auth2FactService;
             _acessor = acessor;

@@ -9,6 +9,7 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -19,6 +20,7 @@ namespace iPassport.Application.Services
     public class UserService : IUserService
     {
         private readonly IUserDetailsRepository _detailsRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IPlanRepository _planRepository;
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
@@ -26,8 +28,9 @@ namespace iPassport.Application.Services
         private readonly IExternalStorageService _externalStorageService;
         private readonly IStorageExternalService _storageExternalService;
 
-        public UserService(IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService, IStorageExternalService storageExternalService)
+        public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService)
         {
+            _userRepository = userRepository;
             _detailsRepository = detailsRepository;
             _planRepository = planRepository;
             _mapper = mapper;
@@ -73,7 +76,7 @@ namespace iPassport.Application.Services
             var details = await _detailsRepository.GetByUserId(userId);
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
 
-            userDetailsViewModel.profile = details.Profile;
+            userDetailsViewModel.profile = authUser.Profile;
             userDetailsViewModel.Plan = _mapper.Map<PlanViewModel>(details.Plan);
 
             return new ResponseApi(true, "Usuario Logado", userDetailsViewModel);
@@ -131,14 +134,14 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetLoggedCitzenCount()
         {
-            var res = await _detailsRepository.GetLoggedCitzenCount();
+            var res = await _userRepository.GetLoggedCitzenCount();
 
             return new ResponseApi(true, "Total de cidadãos logados", res);
         }
         
         public async Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)
         {
-            var res = await _detailsRepository.GetRegisteredUserCount(filter);
+            var res = await _userRepository.GetRegisteredUserCount(filter);
 
             return new ResponseApi(true, "Total de Usuários Registrados", res);
         }

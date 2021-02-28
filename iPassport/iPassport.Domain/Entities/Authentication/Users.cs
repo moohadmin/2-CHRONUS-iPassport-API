@@ -44,6 +44,7 @@ namespace iPassport.Domain.Entities.Authentication
         public string Address { get; set; }
         public string Photo { get; set; }
         public string InternationalDocument { get; set; }
+        public int Profile { get; set; }
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.Now;
