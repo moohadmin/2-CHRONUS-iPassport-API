@@ -1,11 +1,9 @@
 ﻿using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Amazon.S3.Transfer;
 using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
