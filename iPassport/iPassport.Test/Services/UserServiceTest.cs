@@ -94,14 +94,13 @@ namespace iPassport.Test.Services
             var detailsSeed = UserSeed.GetUserDetails();
             
             // Arrange
-            _mockRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(detailsSeed);
             _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
 
             // Act
             var result = _service.GetCurrentUser();
 
             // Assert
-            _mockRepository.Verify(a => a.GetByUserId(It.IsAny<Guid>()), Times.Once);
+            _mockUserManager.Verify(a => a.FindByIdAsync(It.IsAny<string>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(UserDetailsViewModel));
