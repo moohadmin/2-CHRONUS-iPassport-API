@@ -158,7 +158,7 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get logged User count
+        /// This API is get the get logged Citzen count
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Ok.</response>
@@ -192,6 +192,24 @@ namespace iPassport.Api.Controllers
         {
             var res = await _service.GetRegisteredUserCount(_mapper.Map<GetRegisteredUserCountFilter>(request));
 
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is get the get logged Agent count
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Ok.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpGet("LoggedAgentCount")]
+        public async Task<ActionResult> GetLoggedAgentCount()
+        {
+            var res = await _service.GetLoggedAgentCount();
             return Ok(res);
         }
     }

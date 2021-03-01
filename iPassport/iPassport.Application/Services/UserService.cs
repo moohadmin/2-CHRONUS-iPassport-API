@@ -166,5 +166,12 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, "Total de Usuários Registrados", res);
         }
+
+        public async Task<ResponseApi> GetLoggedAgentCount()
+        {
+            var res = await _userRepository.GetLoggedAgentCount();
+
+            return new ResponseApi(true, "Total de Agentes logados", res);
+        }
     }
 }

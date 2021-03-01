@@ -164,5 +164,24 @@ namespace iPassport.Test.Services
 
         }
 
+        [TestMethod]
+        public void GetLoggedAgentCount()
+        {
+            var seed = new Random().Next(99999);
+
+            // Arrange
+            _mockUserRepository.Setup(r => r.GetLoggedAgentCount().Result).Returns(seed);
+
+            // Act
+            var result = _service.GetLoggedAgentCount();
+
+            // Assert
+            _mockUserRepository.Verify(a => a.GetLoggedAgentCount(), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(int));
+            Assert.AreEqual(seed, result.Result.Data);
+        }
+
     }
 }

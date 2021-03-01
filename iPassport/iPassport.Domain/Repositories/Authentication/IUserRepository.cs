@@ -14,5 +14,6 @@ namespace iPassport.Domain.Repositories.Authentication
         Task<Users> FindByDocument(EDocumentType documentType, string document);
         Task<int> GetLoggedCitzenCount();
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
+        Task<int> GetLoggedAgentCount();
     }
 }

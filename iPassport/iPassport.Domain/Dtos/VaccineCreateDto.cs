@@ -9,5 +9,6 @@ namespace iPassport.Domain.Dtos
         public int RequiredDoses { get; set; }
         public int ExpirationTime { get; set; }
         public int ImunizationTime { get; set; }
+        public bool UniqueDose { get; set; }
     }
 }

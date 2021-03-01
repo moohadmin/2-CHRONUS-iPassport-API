@@ -161,5 +161,22 @@ namespace iPassport.Test.Controllers
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
+
+        [TestMethod]
+        public void GetLoggedAgentCount_MustReturnOk()
+        {
+            var seed = new Random().Next(99999);
+
+            // Arrange
+            _mockService.Setup(r => r.GetLoggedAgentCount().Result).Returns(new ResponseApi(true, "Test Success!", seed));
+
+            // Act
+            var result = _controller.GetLoggedAgentCount();
+
+            // Assert
+            _mockService.Verify(a => a.GetLoggedAgentCount(), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
     }
 }
