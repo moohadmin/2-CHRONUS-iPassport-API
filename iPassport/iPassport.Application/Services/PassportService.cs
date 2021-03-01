@@ -80,7 +80,10 @@ namespace iPassport.Application.Services
             var passportUse = new PassportUse();
             passportUse = passportUse.Create(dto);
 
-            await _passportUseRepository.InsertAsync(passportUse);
+            var result = await _passportUseRepository.InsertAsync(passportUse);
+            
+            if (!result)
+                throw new BusinessException("Não foi possivel Realizar a operação");
 
             return new ResponseApi(true, "Acesso Aprovado");
         }
@@ -93,7 +96,10 @@ namespace iPassport.Application.Services
             var passportUse = new PassportUse();
             passportUse = passportUse.Create(dto);
 
-            await _passportUseRepository.InsertAsync(passportUse);
+            var result = await _passportUseRepository.InsertAsync(passportUse);
+            
+            if (!result)
+                throw new BusinessException("Não foi possivel Realizar a operação");
 
             return new ResponseApi(true, "Acesso Recusado");
         }

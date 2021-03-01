@@ -114,7 +114,9 @@ namespace iPassport.Application.Services
             userDetails.AssociatePlan(plan.Id);
             userDetails.Plan = plan;
 
-            _detailsRepository.Update(userDetails);
+            var result = await _detailsRepository.Update(userDetails);
+            if (!result)
+                throw new BusinessException("Não foi possivel Realizar a operação");
 
             return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<PlanViewModel>(plan));
         }

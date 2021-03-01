@@ -55,7 +55,7 @@ namespace iPassport.Test.Services
             var mockRequest = Guid.NewGuid();
 
             // Arrange
-            _mockRepository.Setup(r => r.Update(It.IsAny<UserDetails>()));
+            _mockRepository.Setup(r => r.Update(It.IsAny<UserDetails>()).Result).Returns(true);
             _mockRepository.Setup(r => r.GetByUserId(It.IsAny<Guid>()).Result).Returns(userSeed);
             _planMockRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(planSeed);
 

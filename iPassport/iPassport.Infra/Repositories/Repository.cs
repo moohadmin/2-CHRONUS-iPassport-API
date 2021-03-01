@@ -25,24 +25,30 @@ namespace iPassport.Infra.Repositories
 
         public virtual async Task<T> Find(Guid id) => await _DbSet.FindAsync(id);
 
-        public virtual async Task InsertAsync(T obj)
+        public virtual async Task<bool> InsertAsync(T obj)
         {
             _DbSet.Add(obj);
-            await _context.SaveChangesAsync();
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
         }
 
-        public void Update(T obj)
+        public async Task<bool> Update(T obj)
         {
             obj.SetUpdateDate();
 
             _context.Entry(obj).State = EntityState.Modified;
-            _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
         }
 
-        public void Delete(T obj)
+        public async Task<bool> Delete(T obj)
         {
             _DbSet.Remove(obj);
-            _context.SaveChanges();
+            var result = await _context.SaveChangesAsync();
+            
+            return result > 0;
         }
 
         protected async Task<PagedData<T>> Paginate(IQueryable<T> dbSet, PageFilter filter)
@@ -60,6 +66,11 @@ namespace iPassport.Infra.Repositories
             int skip = (filter.PageNumber - 1) * filter.PageSize;
             int take = skip + filter.PageSize;
             return (take, skip);
+        }
+
+        public void Dispose()
+        {
+            _context?.Dispose();
         }
     }
 }

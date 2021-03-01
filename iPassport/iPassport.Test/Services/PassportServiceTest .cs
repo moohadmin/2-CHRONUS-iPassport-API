@@ -82,7 +82,7 @@ namespace iPassport.Test.Services
             // Arrange
             _mockUserDetailsRepository.Setup(r => r.GetByUserId(It.IsNotNull<Guid>()).Result).Returns(userSeed);
             _mockRepository.Setup(r => r.FindByPassportDetailsValid(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
-            _mockUseRepository.Setup(r => r.InsertAsync(It.IsAny<PassportUse>()));
+            _mockUseRepository.Setup(r => r.InsertAsync(It.IsAny<PassportUse>()).Result).Returns(true);
             
             // Act
             var result = _service.AddAccessApproved(_accessDto);
@@ -102,7 +102,7 @@ namespace iPassport.Test.Services
             // Arrange
             _mockUserDetailsRepository.Setup(r => r.GetByUserId(It.IsNotNull<Guid>()).Result).Returns(userSeed);
             _mockRepository.Setup(r => r.FindByPassportDetailsValid(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
-            _mockUseRepository.Setup(r => r.InsertAsync(It.IsAny<PassportUse>()));
+            _mockUseRepository.Setup(r => r.InsertAsync(It.IsAny<PassportUse>()).Result).Returns(true);
             
             // Act
             var result = _service.AddAccessDenied(_accessDto);

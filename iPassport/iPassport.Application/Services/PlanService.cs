@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
@@ -27,7 +28,9 @@ namespace iPassport.Application.Services
             var plan = new Plan();
             plan = plan.Create(dto);
 
-            await _repository.InsertAsync(plan);
+            var rst = await _repository.InsertAsync(plan);
+            if (!rst)
+                throw new BusinessException("Não foi possivel Realizar a operação");
 
             var result = _mapper.Map<PlanViewModel>(plan);
 
