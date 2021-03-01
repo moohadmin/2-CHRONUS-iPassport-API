@@ -23,8 +23,10 @@ namespace iPassport.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IHttpContextAccessor _accessor;
+        private readonly IStorageExternalService  _storageExternalService;
 
-        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository, IUserRepository userRepository)
+        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository, IUserRepository userRepository
+            , IStorageExternalService storageExternalService)
         {
             _mapper = mapper;
             _repository = repository;
@@ -33,6 +35,7 @@ namespace iPassport.Application.Services
             _accessor = accessor;
             _passportDetailsRepository = passportDetailsRepository;
             _userRepository = userRepository;
+            _storageExternalService = storageExternalService;
         }
 
         public async Task<ResponseApi> Get()
@@ -66,7 +69,7 @@ namespace iPassport.Application.Services
             var authUser = await _userRepository.FindById(UserId);
             
             viewModel.UserFullName = authUser.FullName;
-            viewModel.UserPhoto = authUser.Photo;
+            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
             viewModel.UserPlan = userDetails.Plan?.Type;
 
             return new ResponseApi(true, "Passport do Usuário", viewModel);

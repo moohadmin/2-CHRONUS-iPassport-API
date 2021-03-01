@@ -29,6 +29,7 @@ namespace iPassport.Test.Services
         IPassportService _service;
         IMapper _mapper;
         PassportUseCreateDto _accessDto;
+        Mock<IStorageExternalService> _externalStorageService;
 
         [TestInitialize]
         public void Setup()
@@ -40,8 +41,9 @@ namespace iPassport.Test.Services
             _mockUserRepository = new Mock<IUserRepository>();
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepositoryPassportDetails = new Mock<IPassportDetailsRepository>();
+            _externalStorageService = new Mock<IStorageExternalService>();
 
-            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object, _mockUserRepository.Object);
+            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object, _mockUserRepository.Object, _externalStorageService.Object);
 
             _accessDto = new PassportUseCreateDto()
             {

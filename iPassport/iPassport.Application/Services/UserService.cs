@@ -25,10 +25,10 @@ namespace iPassport.Application.Services
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
         private readonly UserManager<Users> _userManager;
-        private readonly IExternalStorageService _externalStorageService;
-        //private readonly IStorageExternalService _storageExternalService;
+        private readonly IStorageExternalService _storageExternalService;
 
-        public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService)
+        public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
+            IStorageExternalService storageExternalService)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -36,8 +36,7 @@ namespace iPassport.Application.Services
             _mapper = mapper;
             _accessor = accessor;
             _userManager = userManager;
-            _externalStorageService = externalStorageService;
-            //_storageExternalService = storageExternalService;
+            _storageExternalService = storageExternalService;
         }
 
         public async Task<ResponseApi> Add(UserCreateDto dto)
@@ -94,7 +93,9 @@ namespace iPassport.Application.Services
         {
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userManager.FindByIdAsync(userId.ToString());
-            
+
+            authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
 
             return new ResponseApi(true, "Usuario Logado", userDetailsViewModel);
@@ -143,10 +144,10 @@ namespace iPassport.Application.Services
             if (user.UserHavePhoto())
                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
 
-            user.PhotoNameGenerator(userImageDto);
-            var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
-            user.AddPhoto(imageUrl);
-            
+            user.PhotoNameGenerator(userImageDto);            
+            var imageUrl = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);           
+            user.AddPhoto(imageUrl);            
+
             await _userManager.UpdateAsync(user);
 
             return new ResponseApi(true, "Imagem Adicionada", user.Photo);
