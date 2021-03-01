@@ -11,6 +11,7 @@ namespace iPassport.Domain.Repositories
     {
         Task<PagedData<UserVaccine>> GetPagedUserVaccines(Guid userId, PageFilter pageFilter);
 
-        Task<IList<VaccineIndicatorDto>> GetVaccinatedCount(GetVaccinatedCountFilter filter);
+        Task<int> GetVaccinatedCount(GetVaccinatedCountFilter filter);
+        Task<IList<VaccineIndicatorDto>> GetVaccinatedCountByManufacturer(GetVaccinatedCountFilter filter);
     }
 }

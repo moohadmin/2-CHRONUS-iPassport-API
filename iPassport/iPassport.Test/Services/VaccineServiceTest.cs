@@ -30,7 +30,7 @@ namespace iPassport.Test.Services
             var mockFilter = Mock.Of<GetVaccinatedCountFilter>();
 
             // Arrange
-            _userVaccineRepository.Setup(r => r.GetVaccinatedCount(It.IsAny<GetVaccinatedCountFilter>()).Result).Returns(new List<VaccineIndicatorDto>());
+            _userVaccineRepository.Setup(r => r.GetVaccinatedCount(It.IsAny<GetVaccinatedCountFilter>()).Result).Returns(3);
 
             // Act
             var result = _service.GetVaccinatedCount(mockFilter);
