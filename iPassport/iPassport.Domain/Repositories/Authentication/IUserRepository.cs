@@ -10,7 +10,7 @@ namespace iPassport.Domain.Repositories.Authentication
     {
         Task<Users> FindByPhone(string phone);
         Task<Users> FindById(Guid id);
-        void Update(Users user);
+        Task Update(Users user);
         Task<Users> FindByDocument(EDocumentType documentType, string document);
         Task<int> GetLoggedCitzenCount();
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);

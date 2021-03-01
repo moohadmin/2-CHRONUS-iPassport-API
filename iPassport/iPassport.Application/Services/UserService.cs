@@ -13,7 +13,6 @@ using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services

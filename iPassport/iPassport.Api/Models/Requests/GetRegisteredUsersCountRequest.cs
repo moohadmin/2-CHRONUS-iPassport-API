@@ -7,10 +7,9 @@ namespace iPassport.Api.Models.Requests
     {
         /// <summary>
         /// Type of User to Get Count
-        /// 0 - All Types
         /// 1 - Citizen
         /// 2 - Agent
         /// </summary>
-        public EProfileType ProfileType { get; set; }
+        public int ProfileType { get; set; }
     }
 }

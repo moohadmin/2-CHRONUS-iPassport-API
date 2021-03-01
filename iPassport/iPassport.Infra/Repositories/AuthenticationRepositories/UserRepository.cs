@@ -22,7 +22,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         public async Task<Users> FindById(Guid id) =>
             await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
 
-        public async void Update(Users user)
+        public async Task Update(Users user)
         {
             user.SetUpdateDate();
 
@@ -43,7 +43,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             };
         }
 
-        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => (int)filter.Profile == 0 || x.Profile == (int)filter.Profile).CountAsync();
+        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.Profile == (int)filter.Profile).CountAsync();
 
         public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Citizen && u.LastLogin != null).CountAsync();
         public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Agent && u.LastLogin != null).CountAsync();

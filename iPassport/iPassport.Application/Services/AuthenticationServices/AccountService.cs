@@ -49,7 +49,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                     throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
                 user.UpdateLastLogin();
-                _userRepository.Update(user);
+                await _userRepository.Update(user);
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
@@ -71,7 +71,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                     throw new BusinessException("Usuário e/ou senha incorreta. Por favor, tente novamente.");
 
                 user.UpdateLastLogin();
-                _userRepository.Update(user);
+                await _userRepository.Update(user);
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
@@ -97,7 +97,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                     user.SetAcceptTerms(acceptTerms);
 
                 user.UpdateLastLogin();
-                _userRepository.Update(user);
+                await _userRepository.Update(user);
 
                 return new ResponseApi(true, "Usuário Autenticado!", token);
             }
