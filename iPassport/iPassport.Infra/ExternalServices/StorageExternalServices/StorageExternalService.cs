@@ -13,13 +13,13 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 {
     public class StorageExternalService : IStorageExternalService
     {
-        private IAmazonS3 _awsS3;
+        private readonly IAmazonS3 _awsS3;
         private readonly StorageConfigurations _settings;
 
-        public StorageExternalService(IAmazonS3 awsS3, IOptions<StorageConfigurations> settings)
+        public StorageExternalService(IOptions<StorageConfigurations> settings)
         {
-            _awsS3 = awsS3;
             _settings = settings.Value;
+            _awsS3 = new AmazonS3Client(_settings.awsAccesskey, _settings.awsSecret, RegionEndpoint.SAEast1);
         }
 
         public async Task<string> UploadFileAsync(IFormFile imageFile, string fileName)
@@ -28,17 +28,16 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             await imageFile.CopyToAsync(memoryStream);
 
             // Upload the file if less than 2 MB
-            if (memoryStream.Length > 2097152)
+            if (memoryStream.Length > 10000000)
                 throw new BusinessException("The file is too large... Max: (2Mb)");
 
-            await UpToS3Async(memoryStream, fileName);
+            if (!await UpToS3Async(memoryStream, fileName))
+                throw new BusinessException("Arquivo não pode ser gravado");
 
-            var uri = $"https://{_settings.BucketName}.s3.{RegionEndpoint.EUWest2}.amazonaws.com/{fileName}";
-
-            return uri;
+            return fileName;
         }
 
-        public async Task<ListVersionsResponse> FilesList()
+        public async Task<Amazon.S3.Model.ListVersionsResponse> FilesList()
         {
             return await _awsS3.ListVersionsAsync(_settings.BucketName);
         }
@@ -55,7 +54,6 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 
         private async Task<bool> UpToS3Async(Stream FileStream, string filename)
         {
-            _awsS3 = new AmazonS3Client(_settings.awsAccesskey, _settings.awsSecret, RegionEndpoint.SAEast1);
             try
             {
                 PutObjectRequest request = new PutObjectRequest()
@@ -73,6 +71,31 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             catch (Exception ex)
             {
                 throw new PersistenceException(ex);
+            }
+        }
+
+        public string GeneratePreSignedURL(string filename)
+        {
+            if (String.IsNullOrWhiteSpace(filename))
+                throw new BusinessException("O usuário não tem foto cadastrada");
+
+            try
+            {
+                GetPreSignedUrlRequest request1 = new GetPreSignedUrlRequest
+                {
+                    BucketName = _settings.BucketName,
+                    Key = filename,
+                    Expires = DateTime.UtcNow.AddHours(1)
+                };
+                return  _awsS3.GetPreSignedURL(request1);
+            }
+            catch (AmazonS3Exception e)
+            {
+                throw new PersistenceException("Error encountered on server. Message:'{0}' when writing an object", e);
+            }
+            catch (Exception e)
+            {
+                throw new PersistenceException("Unknown encountered on server. Message:'{0}' when writing an object", e);
             }
         }
     }

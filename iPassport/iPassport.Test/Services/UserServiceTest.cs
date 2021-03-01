@@ -5,9 +5,10 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
-using iPassport.Domain.Filters;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,6 @@ using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using iPassport.Domain.Repositories.Authentication;
 
 namespace iPassport.Test.Services
 {
@@ -31,7 +31,7 @@ namespace iPassport.Test.Services
         IMapper _mapper;
         Mock<UserManager<Users>> _mockUserManager;
         IHttpContextAccessor _accessor;
-        Mock<IExternalStorageService> _externalStorageService;
+        Mock<IStorageExternalService> _externalStorageService;
 
         [TestInitialize]
         public void Setup()
@@ -41,7 +41,7 @@ namespace iPassport.Test.Services
             _mockRepository = new Mock<IUserDetailsRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
             _planMockRepository = new Mock<IPlanRepository>();
-            _externalStorageService = new Mock<IExternalStorageService>();
+            _externalStorageService = new Mock<IStorageExternalService>();
             _mockUserManager = UserManagerFactory.CreateMock();
 
             _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object);
@@ -111,17 +111,18 @@ namespace iPassport.Test.Services
         {
             var authSeed = UserSeed.GetUsers();
             var mockRequest = Mock.Of<UserImageDto>();
+            mockRequest.ImageFile = Mock.Of<IFormFile>();
             var SaveUrl = "./Content/Image/Teste.jpg";
 
             // Arrange
-            _externalStorageService.Setup(x => x.UploadFileAsync(mockRequest).Result).Returns(SaveUrl);
+            _externalStorageService.Setup(x => x.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()).Result).Returns(SaveUrl);
             _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
 
             // Act
             var result = _service.AddUserImage(mockRequest);
 
             // Assert
-            _externalStorageService.Verify(a => a.UploadFileAsync(mockRequest), Times.Once);          
+            _externalStorageService.Verify(a => a.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()), Times.Once);          
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(string));

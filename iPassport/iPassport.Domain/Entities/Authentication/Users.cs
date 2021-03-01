@@ -1,6 +1,7 @@
 ﻿using iPassport.Domain.Dtos;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.IO;
 
 namespace iPassport.Domain.Entities.Authentication
 {
@@ -61,7 +62,8 @@ namespace iPassport.Domain.Entities.Authentication
  
         public void PhotoNameGenerator(UserImageDto dto)
         {
-            dto.FileName = "ProfileImageUser_" + Id;
+            var extension = Path.GetExtension(dto.ImageFile.FileName);
+            dto.FileName = $"{Id}{extension}";
         }
 
         public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile);
