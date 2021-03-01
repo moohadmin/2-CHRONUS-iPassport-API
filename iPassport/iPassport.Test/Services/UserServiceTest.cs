@@ -5,9 +5,10 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
-using iPassport.Domain.Filters;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
@@ -17,8 +18,6 @@ using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using iPassport.Domain.Repositories.Authentication;
-using AutoMapper.Configuration.Annotations;
 
 namespace iPassport.Test.Services
 {
@@ -107,12 +106,12 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result.Result.Data, typeof(UserDetailsViewModel));
         }
 
-        [Microsoft.VisualStudio.TestTools.UnitTesting.Ignore]
         [TestMethod]
         public void AddUserImage_SavesPhotoUrlIntoUserDetails()
         {
             var authSeed = UserSeed.GetUsers();
             var mockRequest = Mock.Of<UserImageDto>();
+            mockRequest.ImageFile = Mock.Of<IFormFile>();
             var SaveUrl = "./Content/Image/Teste.jpg";
 
             // Arrange
