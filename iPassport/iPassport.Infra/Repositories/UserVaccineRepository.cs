@@ -33,7 +33,7 @@ namespace iPassport.Infra.Repositories
                 .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
-                    && (filter.DosageCount == 0 ? v.Vaccine.UniqueDose == true : v.Dose == filter.DosageCount))
+                    && (filter.DosageCount == 0 ? v.Vaccine.UniqueDose == true : v.Dose == filter.DosageCount && v.Vaccine.UniqueDose == false))
                 .CountAsync();
         }
 
@@ -45,7 +45,7 @@ namespace iPassport.Infra.Repositories
                 .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
-                    && (filter.DosageCount == 0 ? v.Vaccine.UniqueDose == true : v.Dose == filter.DosageCount))
+                    && (filter.DosageCount == 0 ? v.Vaccine.UniqueDose == true : v.Dose == filter.DosageCount && v.Vaccine.UniqueDose == false))
                 .ToListAsync();
 
             var result = query.GroupBy(v => new { v.Dose, v.VaccineId, v.Vaccine.ManufacturerId })
