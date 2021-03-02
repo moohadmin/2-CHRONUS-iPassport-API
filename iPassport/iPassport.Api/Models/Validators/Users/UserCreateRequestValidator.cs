@@ -74,7 +74,8 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage("O campo PasswordIsValid não pode ser nulo");
 
             RuleFor(x => x.Profile)
-                .IsInEnum().WithMessage("O campo Profile não é valido");
+                .GreaterThanOrEqualTo(0).WithMessage("O campo Profile não é valido")
+                .LessThanOrEqualTo(2).WithMessage("O campo Profile não é valido");
 
             RuleFor(x => x.RG)
                 .Length(1, 15).WithMessage("O campo Document não é um RG Valido")
