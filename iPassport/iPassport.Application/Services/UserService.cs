@@ -25,9 +25,10 @@ namespace iPassport.Application.Services
         private readonly IHttpContextAccessor _accessor;
         private readonly IMapper _mapper;
         private readonly UserManager<Users> _userManager;
-        private readonly IExternalStorageService _externalStorageService;
+        private readonly IStorageExternalService _storageExternalService;
 
-        public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager, IExternalStorageService externalStorageService)
+        public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
+            IStorageExternalService storageExternalService)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -35,47 +36,67 @@ namespace iPassport.Application.Services
             _mapper = mapper;
             _accessor = accessor;
             _userManager = userManager;
-            _externalStorageService = externalStorageService;
+            _storageExternalService = storageExternalService;
         }
 
         public async Task<ResponseApi> Add(UserCreateDto dto)
         {
             var user = new Users().Create(dto);
             user.SetUpdateDate();
-            
-            /// Add User in iPassportIdentityContext
-            var result = await _userManager.CreateAsync(user, dto.Password);
-            if (!result.Succeeded)
-                throw new BusinessException("Usuário não pode ser criado!");
 
-            var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
-            if (!_role.Succeeded)
+            try
             {
-                await _userManager.DeleteAsync(user);
-                throw new BusinessException("Usuário não pode ser criado!");
+                /// Add User in iPassportIdentityContext
+                var result = await _userManager.CreateAsync(user, dto.Password);
+                if (!result.Succeeded)
+                    throw new BusinessException("Usuário não pode ser criado!");
+
+                var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+                if (!_role.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    throw new BusinessException("Usuário não pode ser criado!");
+                }
+
+                /// Re-Hidrated UserId to UserDetails
+                dto.UserId = user.Id;
+
+                /// Add Details to User in iPassportContext
+                var _userDetails = new UserDetails();
+                var userDetails = _userDetails.Create(dto);
+                await _detailsRepository.InsertAsync(userDetails);
+
+                return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
             }
+            catch (Exception ex)
+            {
+                if(ex.ToString().Contains("IX_Users_CNS"))
+                    throw new BusinessException("CNS já cadastrado!");
+                if (ex.ToString().Contains("IX_Users_CPF"))
+                    throw new BusinessException("CPF já cadastrado!");
+                if (ex.ToString().Contains("IX_Users_RG"))
+                    throw new BusinessException("RG já cadastrado!");
+                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                    throw new BusinessException("InternationalDocument já cadastrado!");
+                if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                    throw new BusinessException("Passaporte já cadastrado!");
+                if (ex.ToString().Contains("IX_Users_Email"))
+                    throw new BusinessException("Email já cadastrado!");
+                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                    throw new BusinessException("Telefone já cadastrado!");
 
-            /// Re-Hidrated UserId to UserDetails
-            dto.UserId = user.Id;
-
-            /// Add Details to User in iPassportContext
-            var _userDetails = new UserDetails();
-            var userDetails = _userDetails.Create(dto);
-            await _detailsRepository.InsertAsync(userDetails);
-
-            return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
+                throw;
+            }
         }
 
         public async Task<ResponseApi> GetCurrentUser()
         {
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userManager.FindByIdAsync(userId.ToString());
-            
-            var details = await _detailsRepository.GetByUserId(userId);
-            var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
 
-            userDetailsViewModel.profile = authUser.Profile;
-            userDetailsViewModel.Plan = _mapper.Map<PlanViewModel>(details.Plan);
+            authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+
+            var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
 
             return new ResponseApi(true, "Usuario Logado", userDetailsViewModel);
         }
@@ -93,7 +114,9 @@ namespace iPassport.Application.Services
             userDetails.AssociatePlan(plan.Id);
             userDetails.Plan = plan;
 
-            _detailsRepository.Update(userDetails);
+            var result = await _detailsRepository.Update(userDetails);
+            if (!result)
+                throw new BusinessException("Não foi possivel Realizar a operação");
 
             return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<PlanViewModel>(plan));
         }
@@ -121,10 +144,10 @@ namespace iPassport.Application.Services
             if (user.UserHavePhoto())
                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
 
-            user.PhotoNameGenerator(userImageDto);
-            var imageUrl = await _externalStorageService.UploadFileAsync(userImageDto);
-            user.AddPhoto(imageUrl);
-            
+            user.PhotoNameGenerator(userImageDto);            
+            var imageUrl = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);           
+            user.AddPhoto(imageUrl);            
+
             await _userManager.UpdateAsync(user);
 
             return new ResponseApi(true, "Imagem Adicionada", user.Photo);
@@ -142,6 +165,13 @@ namespace iPassport.Application.Services
             var res = await _userRepository.GetRegisteredUserCount(filter);
 
             return new ResponseApi(true, "Total de Usuários Registrados", res);
+        }
+
+        public async Task<ResponseApi> GetLoggedAgentCount()
+        {
+            var res = await _userRepository.GetLoggedAgentCount();
+
+            return new ResponseApi(true, "Total de Agentes logados", res);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace iPassport.Infra.Repositories
 
         public async Task<PagedData<VaccineManufacturer>> GetByNameInitals(GetByNameInitalsFilter filter)
         {
-            var query = _DbSet.Where(m => m.Name.StartsWith(filter.Initials)).OrderBy(m => m.Name);
+            var query = _DbSet.Where(m => m.Name.ToLower().StartsWith(filter.Initials.ToLower())).OrderBy(m => m.Name);
 
             return await Paginate(query, filter);
         }

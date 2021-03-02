@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace iPassport.Domain.Repositories
 {
-    public interface IRepository<T> where T : Entity
+    public interface IRepository<T>: IDisposable where T : Entity
     {
         Task<IList<T>> FindAll();
         Task<T> Find(Guid id);
-        Task InsertAsync(T obj);
-        void Update(T obj);
-        void Delete(T obj);
+        Task<bool> InsertAsync(T obj);
+        Task<bool> Update(T obj);
+        Task<bool> Delete(T obj);
     }
 }

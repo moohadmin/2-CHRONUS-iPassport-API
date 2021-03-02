@@ -44,12 +44,11 @@ namespace iPassport.Application.Services
             var pinValid = await _auth2FactRepository.FindByUserAndPin(userId, pin);
 
             if (pinValid == null)
-                throw new BusinessException("Código de autenticação inválido. Favor conferir código enviado.");
+                throw new BusinessException("PIN de autenticação inválido. Favor conferir PIN enviado.");
             if(!pinValid.CanUseToValidate())
                 throw new BusinessException("PIN expirado!");
 
             pinValid.SetInvalid();
-
             _auth2FactRepository.Update(pinValid);
 
             return pinValid;

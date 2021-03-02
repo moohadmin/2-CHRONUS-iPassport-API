@@ -36,7 +36,7 @@ namespace iPassport.Test.Services
             var mockRequest = Mock.Of<PlanCreateDto>();
 
             // Arrange
-            _mockRepository.Setup(r => r.InsertAsync(It.IsAny<Plan>()));
+            _mockRepository.Setup(r => r.InsertAsync(It.IsAny<Plan>()).Result).Returns(true);
 
             // Act
             var result = _service.Add(mockRequest);

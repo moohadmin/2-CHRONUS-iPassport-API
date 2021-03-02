@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
-using Microsoft.AspNetCore.Http;
 
 namespace iPassport.Api.Models.Validators.Users
 {
@@ -9,7 +8,7 @@ namespace iPassport.Api.Models.Validators.Users
         public GetRegisteredUsersCountRequestValidator()
         {
            RuleFor(x => x.ProfileType)
-                .IsInEnum().WithMessage("O campo ProfileType está inválido");
+                .SetValidator(new RequiredFieldValidator<int>("ProfileType"));
         }
     }
 }

@@ -5,6 +5,7 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Infra.ExternalServices;
+using iPassport.Infra.ExternalServices.StorageExternalServices;
 using iPassport.Infra.Repositories;
 using iPassport.Infra.Repositories.AuthenticationRepositories;
 using Microsoft.AspNetCore.Http;
@@ -27,8 +28,6 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IUserService, UserService>();
 
-            services.AddScoped<IExternalStorageService, ExternalStorageService>();
-
             services.AddScoped<ISmsExternalService, SmsIntegrationService>();
 
             services.AddScoped<IAuth2FactService, Auth2FactService>();
@@ -46,6 +45,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IVaccineManufacturerService, VaccineManufacturerService>();
 
             services.AddScoped<IRoleService, RoleService>();
+
+            services.AddScoped<IStorageExternalService, StorageExternalService>();
             #endregion
 
             #region DI Repositories
