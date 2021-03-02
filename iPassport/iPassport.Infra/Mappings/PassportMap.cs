@@ -11,8 +11,7 @@ namespace iPassport.Infra.Mappings
             builder.HasKey(k => k.Id);
 
             builder.Property(x => x.PassId)
-                .HasColumnType("int")
-                .HasIdentityOptions(1, 1)
+                .UseIdentityAlwaysColumn()
                 .IsRequired();
 
             builder.HasOne(x => x.UserDetails)

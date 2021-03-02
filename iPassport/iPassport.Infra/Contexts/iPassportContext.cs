@@ -37,7 +37,7 @@ namespace iPassport.Infra.Contexts
             //modelBuilder.ApplyConfiguration(new HealthMap());
             //modelBuilder.ApplyConfiguration(new UserDetailsMap());
             //modelBuilder.ApplyConfiguration(new PlanMap());
-            //modelBuilder.ApplyConfiguration(new PassportMap());
+            modelBuilder.ApplyConfiguration(new PassportMap());
             //modelBuilder.ApplyConfiguration(new PassportDetailsMap());
             //modelBuilder.ApplyConfiguration(new DiseaseMap());
             //modelBuilder.ApplyConfiguration(new VaccineMap());
