@@ -68,7 +68,7 @@ namespace iPassport.Domain.Entities
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        public DateTime GetExpirationDate(int? days) => days.HasValue ? DateTime.Today.AddDays(days.Value) : DateTime.Today.AddMonths(6);
+        public DateTime GetExpirationDate(int? days) => days.HasValue ? DateTime.UtcNow.Date.AddDays(days.Value) : DateTime.UtcNow.Date.AddMonths(6);
 
         public bool IsAllDetailsExpired() => ListPassportDetails.All(x => x.IsExpired());
 
