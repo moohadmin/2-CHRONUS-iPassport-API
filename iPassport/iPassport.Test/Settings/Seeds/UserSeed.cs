@@ -14,6 +14,9 @@ namespace iPassport.Test.Seeds
             };
 
         public static Users GetUsers() =>
-            new Users("test", "test", "test", "test", "test", DateTime.UtcNow, "test", "test", "test", "test", "test", null, "test", "test", "test", "test");
+            new Users("test", "test", "test", "test", "test", DateTime.UtcNow, "test", "test", "test", "test", "test", null, "test", "test", "test", "test",1);
+
+        public static Users GetUserAgent() =>
+            new Users("test", "test", "test", "test", "test", DateTime.UtcNow, "test", "test", "test", "test", "test", null, "test", "test", "test", "test",2);
     }
 }

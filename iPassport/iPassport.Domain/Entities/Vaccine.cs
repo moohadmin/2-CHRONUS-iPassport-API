@@ -8,7 +8,7 @@ namespace iPassport.Domain.Entities
     {
         public Vaccine() { }
 
-        public Vaccine(string name, Guid manufacturerId, int requiredDoses, int expirationTime, int imunizationTime, bool uniqueDose = false) : base()
+        public Vaccine(string name, Guid manufacturerId, int requiredDoses, int expirationTime, int imunizationTime,int maxTimeNextDose, int minTimeNextDose, bool uniqueDose = false) : base()
         {
             Id = Guid.NewGuid();
             Name = name;
@@ -22,6 +22,8 @@ namespace iPassport.Domain.Entities
             else
                 RequiredDoses = 1;
 
+            MaxTimeNextDose = maxTimeNextDose;
+            MinTimeNextDose = minTimeNextDose;
         }
         public string Name { get; private set; }
         public int RequiredDoses { get; private set; }
@@ -29,10 +31,13 @@ namespace iPassport.Domain.Entities
         public int ImunizationTime { get; private set; }
         public Guid ManufacturerId { get; private set; }
         public bool UniqueDose { get; private set; }
+        public int MaxTimeNextDose { get; private set; }
+        public int MinTimeNextDose { get; private set; }
+
         public virtual VaccineManufacturer Manufacturer { get; set; }
         public virtual IEnumerable<Disease> Diseases { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
-        public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Name, dto.ManufacturerId, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime, dto.UniqueDose);
+        public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Name, dto.ManufacturerId, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime, dto.MaxTimeNextDose, dto.MinTimeNextDose, dto.UniqueDose);
     }
 }

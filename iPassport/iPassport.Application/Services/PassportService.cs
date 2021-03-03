@@ -125,7 +125,7 @@ namespace iPassport.Application.Services
             return dto;
         }
 
-        public async Task<ResponseApi> GetPassportToValidate(Guid passportDetailsId)
+        public async Task<ResponseApi> GetPassportUserToValidate(Guid passportDetailsId)
         {
             var passport = await _repository.FindByPassportDetailsValid(passportDetailsId);
 

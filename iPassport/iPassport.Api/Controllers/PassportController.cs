@@ -90,9 +90,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("User")]
-        public async Task<ActionResult> GetPassportToValidate(System.Guid passportDetailsId)
+        public async Task<ActionResult> GetPassportUserToValidate(System.Guid passportDetailsId)
         {
-            var res = await _service.GetPassportToValidate(passportDetailsId);
+            var res = await _service.GetPassportUserToValidate(passportDetailsId);
             return Ok(res);
         }
     }

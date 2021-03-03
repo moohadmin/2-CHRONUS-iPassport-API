@@ -10,5 +10,7 @@ namespace iPassport.Domain.Dtos
         public int ExpirationTime { get; set; }
         public int ImunizationTime { get; set; }
         public bool UniqueDose { get; set; }
+        public int MaxTimeNextDose { get; private set; }
+        public int MinTimeNextDose { get; private set; }
     }
 }

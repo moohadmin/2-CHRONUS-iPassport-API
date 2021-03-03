@@ -9,7 +9,7 @@ namespace iPassport.Domain.Entities.Authentication
     public class Users : IdentityUser<Guid>
     {
         public Users() { }
-        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, string internationalDocument, string userName, string email, string mobile)
+        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, string internationalDocument, string userName, string email, string mobile, int profile)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
@@ -28,6 +28,7 @@ namespace iPassport.Domain.Entities.Authentication
             UserName = userName;
             Email = email;
             PhoneNumber = mobile;
+            Profile = profile;
         }
 
         public bool AcceptTerms { get; set; }
@@ -67,7 +68,7 @@ namespace iPassport.Domain.Entities.Authentication
             dto.FileName = $"{Id}{extension}";
         }
                 
-        public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile);
+        public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
 
         public bool IsAgent() => Profile == (int)EProfileType.Agent;
     }

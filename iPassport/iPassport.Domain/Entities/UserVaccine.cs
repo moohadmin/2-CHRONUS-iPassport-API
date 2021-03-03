@@ -29,9 +29,11 @@ namespace iPassport.Domain.Entities
         public bool IsImmunized()
         {
             var today = DateTime.UtcNow.Date;
+            if (Vaccine == null)
+                return false;
 
-            if (VaccinationDate.AddDays(Vaccine.ImunizationTime) >= today // Time for the vaccine to start taking effect
-                && VaccinationDate.AddDays(Vaccine.ExpirationTime) < today // Vaccine shelf life
+            if (VaccinationDate.Date.AddDays(Vaccine.ImunizationTime) >= today // Time for the vaccine to start taking effect
+                && VaccinationDate.Date.AddDays(Vaccine.ExpirationTime) < today // Vaccine shelf life
                 && Dose == Vaccine.RequiredDoses) // Amount of required dosage
                 return true;
 

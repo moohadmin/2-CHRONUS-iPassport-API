@@ -85,5 +85,20 @@ namespace iPassport.Test.Controllers
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
+
+        [TestMethod]
+        public void GetPassportUserToValidate_MustReturnOk()
+        {
+            // Arrange
+            var passportDetailsId = Guid.NewGuid();
+            _mockService.Setup(r => r.GetPassportUserToValidate(passportDetailsId)).Returns(Task.FromResult(new ResponseApi(true, "Passport para validação")));
+
+            // Act
+            var result = _controller.GetPassportUserToValidate(passportDetailsId);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
     }
 }
