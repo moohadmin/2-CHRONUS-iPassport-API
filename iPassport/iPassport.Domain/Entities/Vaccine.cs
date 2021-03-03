@@ -8,20 +8,14 @@ namespace iPassport.Domain.Entities
     {
         public Vaccine() { }
 
-        public Vaccine(string name, Guid manufacturerId, int requiredDoses, int expirationTime, int imunizationTime,int maxTimeNextDose, int minTimeNextDose, bool uniqueDose = false) : base()
+        public Vaccine(string name, Guid manufacturerId, int requiredDoses, int expirationTime, int imunizationTime,int maxTimeNextDose, int minTimeNextDose) : base()
         {
             Id = Guid.NewGuid();
             Name = name;
             ManufacturerId = manufacturerId;
             ExpirationTime = expirationTime;
             ImunizationTime = imunizationTime;
-            UniqueDose = uniqueDose;
-            
-            if(!uniqueDose)
-                RequiredDoses = requiredDoses;
-            else
-                RequiredDoses = 1;
-
+            RequiredDoses = requiredDoses;            
             MaxTimeNextDose = maxTimeNextDose;
             MinTimeNextDose = minTimeNextDose;
         }
@@ -30,7 +24,7 @@ namespace iPassport.Domain.Entities
         public int ExpirationTime { get; private set; }
         public int ImunizationTime { get; private set; }
         public Guid ManufacturerId { get; private set; }
-        public bool UniqueDose { get; private set; }
+        
         public int MaxTimeNextDose { get; private set; }
         public int MinTimeNextDose { get; private set; }
 
@@ -38,6 +32,8 @@ namespace iPassport.Domain.Entities
         public virtual IEnumerable<Disease> Diseases { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
-        public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Name, dto.ManufacturerId, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime, dto.MaxTimeNextDose, dto.MinTimeNextDose, dto.UniqueDose);
+        public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Name, dto.ManufacturerId, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime, dto.MaxTimeNextDose, dto.MinTimeNextDose);
+
+        public bool UniqueDose() => RequiredDoses == 1;
     }
 }
