@@ -28,6 +28,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.Unicode;
+using System.Threading.Tasks;
 
 namespace iPassport.Api
 {
@@ -121,7 +122,8 @@ namespace iPassport.Api
                 });
             });
 
-            services.AddWebEncoders(o => {
+            services.AddWebEncoders(o =>
+            {
                 o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
             });
 
@@ -142,21 +144,26 @@ namespace iPassport.Api
 
             ///Add AutoMapper
             services.AddAutoMapperSetup();
-            
+
             // Localization
-            services.AddLocalization(o => o.ResourcesPath = "Resources");
+            services.AddLocalization(o => o.ResourcesPath = "");
             services.Configure<RequestLocalizationOptions>(
-                options => {
-                    var cultures = new List<CultureInfo>()
+                options =>
+                {
+                    var cultures = new string[]
                     {
-                        new CultureInfo("pt-BR"),
-                        new CultureInfo("en-US"),
-                        new CultureInfo("fr-FR")
+                        "pt-BR",
+                        "en-US",
+                        "fr-FR"
                     };
-                    
-                    options.DefaultRequestCulture = new RequestCulture(culture: "pt-BR", uiCulture: "pt-BR");
-                    options.SupportedCultures = cultures;
-            });
+
+                    options.SetDefaultCulture("pt-BR");
+                    options.AddSupportedCultures(cultures);
+                    options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
+                     {
+                         return Task.FromResult(new ProviderCultureResult("pt-BR"));
+                     }));
+                });
 
             services.AddSingleton<Resource>();
 
@@ -188,7 +195,7 @@ namespace iPassport.Api
 
             var localizeOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(localizeOptions.Value);
-            
+
             app.UseRouting();
 
             app.UseAuthentication();
