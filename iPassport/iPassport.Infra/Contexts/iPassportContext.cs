@@ -40,7 +40,7 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new PassportMap());
             //modelBuilder.ApplyConfiguration(new PassportDetailsMap());
             //modelBuilder.ApplyConfiguration(new DiseaseMap());
-            //modelBuilder.ApplyConfiguration(new VaccineMap());
+            modelBuilder.ApplyConfiguration(new VaccineMap());
             modelBuilder.ApplyConfiguration(new UserVaccineMap());
             //modelBuilder.ApplyConfiguration(new PassportUseMap());
             //modelBuilder.ApplyConfiguration(new VaccineManufacterMap());

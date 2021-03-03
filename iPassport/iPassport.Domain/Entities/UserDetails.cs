@@ -1,6 +1,7 @@
 ﻿using iPassport.Domain.Dtos;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace iPassport.Domain.Entities
 {
@@ -23,5 +24,22 @@ namespace iPassport.Domain.Entities
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId);
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
+        public bool IsImunized()
+        {
+            if (UserVaccines == null || !UserVaccines.Any())
+                return false;
+
+            var Vacinnes = UserVaccines.Select(x => x.Vaccine).Distinct();
+
+            foreach (var vaccine in Vacinnes)
+            {
+                if(!UserVaccines.Any(x => x.Vaccine.Id == vaccine.Id && x.IsImmunized()))
+                    return false;
+            }
+
+            return true;
+        }
+
+
     }
 }

@@ -10,5 +10,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> Get();
         Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto);
         Task<ResponseApi> AddAccessDenied(PassportUseCreateDto dto);
+        Task<ResponseApi> GetPassportUserToValidate(System.Guid passportDetailsId);
     }
 }

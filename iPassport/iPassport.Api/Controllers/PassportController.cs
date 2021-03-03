@@ -77,5 +77,23 @@ namespace iPassport.Api.Controllers
             return Ok(res);
         }
 
+
+        /// <summary>
+        /// Gets User of passport Details Send
+        /// </summary>
+        /// <param name="passportDetailsId">Passport Details Id</param>
+        /// <response code="200">Server returns Ok/response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("User")]
+        public async Task<ActionResult> GetPassportUserToValidate(System.Guid passportDetailsId)
+        {
+            var res = await _service.GetPassportUserToValidate(passportDetailsId);
+            return Ok(res);
+        }
     }
 }

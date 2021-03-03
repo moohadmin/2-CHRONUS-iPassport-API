@@ -4,7 +4,11 @@ namespace iPassport.Test.Seeds
 {
     public static class PassportSeed
     {
-        public static Passport Get() =>
-           new Passport(new UserDetails());
+        public static Passport Get() 
+        {
+            return new Passport(new UserDetails());
+            
+        }
+           
     }
 }

@@ -124,5 +124,27 @@ namespace iPassport.Application.Services
 
             return dto;
         }
+
+        public async Task<ResponseApi> GetPassportUserToValidate(Guid passportDetailsId)
+        {
+            var passport = await _repository.FindByPassportDetailsValid(passportDetailsId);
+
+            if (passport == null)
+                throw new BusinessException("Passport não encontrado ou expirado");
+            
+            var authUser = await _userRepository.FindById(_accessor.GetCurrentUserId());
+            if(!authUser.IsAgent())
+                throw new BusinessException("O Usuário logado não é um agente");
+
+            var passportCitizen = await _userRepository.FindById(passport.UserDetails.UserId);
+
+            var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
+            viewModel.Cpf = passportCitizen.CPF;
+            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo);
+            viewModel.UserFullName = passportCitizen.FullName;
+            viewModel.Imunized = passport.UserDetails.IsImunized();
+
+            return new ResponseApi(true, "Passport para validação",viewModel);
+        }
     }
 }
