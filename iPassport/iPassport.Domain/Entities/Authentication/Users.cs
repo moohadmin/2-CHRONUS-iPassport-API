@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.IO;
@@ -65,7 +66,9 @@ namespace iPassport.Domain.Entities.Authentication
             var extension = Path.GetExtension(dto.ImageFile.FileName);
             dto.FileName = $"{Id}{extension}";
         }
-
+                
         public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile);
+
+        public bool IsAgent() => Profile == (int)EProfileType.Agent;
     }
 }
