@@ -15,8 +15,8 @@ namespace iPassport.Api.Models.Validators.Users
 
             RuleFor(x => x.Birthday)
                 .SetValidator(new RequiredFieldValidator<DateTime>("Birthday"))
-                .LessThanOrEqualTo(DateTime.Now).WithMessage("O campo Birthday não é valido")
-                .GreaterThanOrEqualTo(DateTime.Now.AddYears(-200)).WithMessage("O campo Birthday não é valido");
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("O campo Birthday não é valido")
+                .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage("O campo Birthday não é valido");
 
             RuleFor(x => x.BloodType)
                 .SetValidator(new RequiredFieldValidator<string>("BloodType"));
