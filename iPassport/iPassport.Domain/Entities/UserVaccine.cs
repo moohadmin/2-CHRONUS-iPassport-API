@@ -26,13 +26,15 @@ namespace iPassport.Domain.Entities
 
         public UserVaccine Create(UserVaccineCreateDto dto) => new UserVaccine(dto.VaccinationDate, dto.Dose, dto.VaccineId, dto.UserId);
         public DateTime GetExpirationDate(Vaccine vaccine) => VaccinationDate.AddDays(vaccine.ExpirationTime);
-        public bool IsImmunized(Vaccine vaccine)
+        public bool IsImmunized()
         {
             var today = DateTime.UtcNow.Date;
+            if (Vaccine == null)
+                return false;
 
-            if (VaccinationDate.AddDays(vaccine.ImunizationTime) >= today // Time for the vaccine to start taking effect
-                && VaccinationDate.AddDays(vaccine.ExpirationTime) < today // Vaccine shelf life
-                && Dose == vaccine.RequiredDoses) // Amount of required dosage
+            if (VaccinationDate.Date.AddDays(Vaccine.ImunizationTime) <= today // Time for the vaccine to start taking effect
+                && VaccinationDate.Date.AddDays(Vaccine.ExpirationTime) >= today // Vaccine shelf life
+                && Dose == Vaccine.RequiredDoses) // Amount of required dosage
                 return true;
 
             return false;

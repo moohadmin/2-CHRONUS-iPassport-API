@@ -113,6 +113,27 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.AreEqual("Acesso Recusado", result.Result.Message);
         }
+
+        [TestMethod]
+        public void GetPassportUserToValidate_MustReturnsOK()
+        {
+            // Arrange
+            var passportDetailsId = Guid.NewGuid();
+            var mockPassport =  Mock.Of<Passport>(x => x.UserDetails == UserSeed.GetUserDetails());
+            var urlPhoto = "https://teste.testes.com";
+
+            _mockRepository.Setup(r => r.FindByPassportDetailsValid(It.IsNotNull<Guid>()).Result).Returns(mockPassport);
+            _mockUserRepository.Setup(x => x.FindById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAgent());
+            _externalStorageService.Setup(x => x.GeneratePreSignedURL(It.IsAny<string>())).Returns(urlPhoto);
+
+            // Act
+            var result = _service.GetPassportUserToValidate(passportDetailsId);
+
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.AreEqual("Passport para validação", result.Result.Message);
+            Assert.IsNotNull(result.Result.Data);
+        }
     }
 }
 

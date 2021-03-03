@@ -33,7 +33,7 @@ namespace iPassport.Infra.Repositories
                 .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
-                    && (filter.DosageCount == 0 ? v.Vaccine.UniqueDose == true : v.Dose == filter.DosageCount && v.Vaccine.UniqueDose == false))
+                    && (filter.DosageCount == 0 ? v.Vaccine.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.RequiredDoses > 1))
                 .CountAsync();
         }
 
@@ -45,7 +45,7 @@ namespace iPassport.Infra.Repositories
                 .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
-                    && (filter.DosageCount == 0 ? v.Vaccine.UniqueDose == true : v.Dose == filter.DosageCount && v.Vaccine.UniqueDose == false))
+                    && (filter.DosageCount == 0 ? v.Vaccine.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.RequiredDoses > 1))
                 .ToListAsync();
 
             var result = query.GroupBy(v => new { v.Dose, v.VaccineId, v.Vaccine.ManufacturerId })
@@ -57,7 +57,7 @@ namespace iPassport.Infra.Repositories
                     ManufacturerId = v.Key.ManufacturerId,
                     ManufacturerName = v.FirstOrDefault().Vaccine.Manufacturer.Name,
                     Dose = v.Key.Dose,
-                    UniqueDose = v.FirstOrDefault().Vaccine.UniqueDose,
+                    UniqueDose = v.FirstOrDefault().Vaccine.RequiredDoses == 1,
                     Count = v.Count()
 
                 }).OrderBy(v => v.Disease).ToList();

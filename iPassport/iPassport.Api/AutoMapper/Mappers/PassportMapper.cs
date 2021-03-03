@@ -19,6 +19,11 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Longitude, act => act.MapFrom(src => src.Longitude.ToString()))
                 .ForMember(des => des.Latitude, act => act.MapFrom(src => src.Latitude.ToString()))
                 .ForMember(des => des.PassportDetailsId, act => act.MapFrom(src => src.PassportDetailsId));
+
+            profile.CreateMap<Passport, PassportToValidateViewModel>()
+                .ForMember(des => des.PassId, act => act.MapFrom(src => src.GetPassId()))
+                .ForMember(des => des.ExpirationDate, act => act.MapFrom(src => src.GetLastPassportDetails().ExpirationDate))
+                .ForMember(des => des.PassportDetailsId, act => act.MapFrom(src => src.GetLastPassportDetails().Id));
         }
     }
 }
