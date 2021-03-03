@@ -13,7 +13,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "CONNECTION_STRING": "Server=10.128.0.101;Port=5432;Database=iPassportDB;User Id=postgres;Password=abVB=rZ<8>x_2&<H;",
+        "CONNECTION_STRING": "Server=localhost;Port=5432;Database=iPassportDB;User Id=postgres;Password=P@ssw0rd!;",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "PIN_INTEGRATION_SIMULADO": "true"
       },
@@ -23,7 +23,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "CONNECTION_STRING": "Server=10.128.0.101;Port=5432;Database=iPassportDB;User Id=postgres;Password=abVB=rZ<8>x_2&<H;",
+        "CONNECTION_STRING": "Server=localhost;Port=5432;Database=iPassportDB;User Id=postgres;Password=P@ssw0rd!;",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "PIN_INTEGRATION_SIMULADO": "true"
       },
