@@ -34,6 +34,6 @@ namespace iPassport.Domain.Entities
         public PassportDetails Create(DateTime expirationDate, Passport passport) => new PassportDetails(expirationDate, passport.Id);
         public PassportDetails Create(DateTime expirationDate, Guid PassportId) => new PassportDetails(expirationDate, PassportId);
 
-        public bool IsExpired() => ExpirationDate < DateTime.Today;
+        public bool IsExpired() => ExpirationDate < DateTime.UtcNow.Date;
     }
 }
