@@ -3,7 +3,7 @@ using iPassport.Api.Models.Requests;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
-    public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNameInitalsRequest>
+    public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNameInitalsPagedRequest>
     {
         public GetManufacturerByNameInitalsRequestValidator()
         {

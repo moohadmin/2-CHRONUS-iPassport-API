@@ -10,13 +10,11 @@ namespace iPassport.Domain.Entities
 
         public UserDetails(Guid userId, Guid? planId = null) : base()
         {
-            UserId = userId;
-            
+            Id = userId;
+
             if (planId.HasValue)
                 PlanId = planId.Value;
         }
-
-        public Guid UserId { get; private set; }
         public Guid? PlanId { get; private set; }
 
         public virtual Plan Plan { get; set; }

@@ -11,7 +11,7 @@ namespace iPassport.Infra.Repositories
     {
         public VaccineManufacturerRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<VaccineManufacturer>> GetByNameInitals(GetByNameInitalsFilter filter)
+        public async Task<PagedData<VaccineManufacturer>> GetByNameInitals(GetByNameInitalsPagedFilter filter)
         {
             var query = _DbSet.Where(m => m.Name.ToLower().StartsWith(filter.Initials.ToLower())).OrderBy(m => m.Name);
 

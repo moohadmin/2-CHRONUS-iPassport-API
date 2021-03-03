@@ -25,9 +25,14 @@ namespace iPassport.Application.Services
             _accessor = accessor;
         }
 
-        public async Task<PagedResponseApi> GetUserVaccines(PageFilter pageFilter)
+        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter)
         {
-            var res = await _repository.GetPagedUserVaccines(_accessor.GetCurrentUserId(), pageFilter);
+            var res = await _repository.GetPagedUserVaccines(pageFilter);
+
+            //foreach (var d in res.Data)
+            //{
+            //    d.Status = 
+            //}
 
             var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data).GroupBy(r => r.Manufacturer);
 

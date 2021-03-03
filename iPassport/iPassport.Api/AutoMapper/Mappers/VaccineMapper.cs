@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using iPassport.Api.Models.Requests;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Entities;
-using iPassport.Domain.Filters;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {

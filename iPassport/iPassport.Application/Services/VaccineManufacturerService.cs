@@ -20,7 +20,7 @@ namespace iPassport.Application.Services
             _repository = repository;
         }
 
-        public async Task<PagedResponseApi> GetByNameInitals(GetByNameInitalsFilter filter)
+        public async Task<PagedResponseApi> GetByNameInitals(GetByNameInitalsPagedFilter filter)
         {
             var res = await _repository.GetByNameInitals(filter);
 
