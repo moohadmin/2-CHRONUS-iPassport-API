@@ -19,7 +19,7 @@ namespace iPassport.Infra.Repositories
         public async Task<Passport> FindByPassportDetailsValid(Guid passportDetailsId)
         {
 
-            var today = DateTime.Now.Date;
+            var today = DateTime.UtcNow.Date;
             return await _DbSet.Where(x => x.ListPassportDetails.Any(z => z.Id == passportDetailsId && z.ExpirationDate.Date > today))
                         .Include(x => x.ListPassportDetails)
                         .Include(x => x.UserDetails).ThenInclude(y => y.UserVaccines).ThenInclude(z => z.Vaccine)                        

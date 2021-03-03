@@ -6,8 +6,8 @@ namespace iPassport.Domain.Entities
     {
         protected Entity()
         {
-            CreateDate = DateTime.Now;
-            UpdateDate = DateTime.Now;
+            CreateDate = DateTime.UtcNow;
+            UpdateDate = DateTime.UtcNow;
         }
 
         public Guid Id { get; protected set; }
@@ -15,7 +15,7 @@ namespace iPassport.Domain.Entities
         public DateTime UpdateDate { get; protected set; }
 
 
-        public void SetUpdateDate() => UpdateDate = DateTime.Now;
+        public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
 
         public override bool Equals(object obj)
         {

@@ -49,9 +49,9 @@ namespace iPassport.Domain.Entities.Authentication
         public int Profile { get; set; }
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
-        public void SetUpdateDate() => UpdateDate = DateTime.Now;
+        public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
         public bool UserHavePhoto() => !string.IsNullOrWhiteSpace(Photo);
-        public void UpdateLastLogin() => LastLogin = DateTime.Now;
+        public void UpdateLastLogin() => LastLogin = DateTime.UtcNow;
         
         public void AddPhoto(string imageUrl)
         {
