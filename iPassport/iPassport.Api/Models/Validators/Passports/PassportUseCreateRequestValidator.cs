@@ -1,24 +1,26 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
+using iPassport.Application.Resources;
+using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Plans
 {
     public class PassportUseCreateRequestValidator : AbstractValidator<PassportUseCreateRequest>
     {
-        public PassportUseCreateRequestValidator()
+        public PassportUseCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Latitude)
-                .NotNull().WithMessage("O campo Latitude é obrigatório")
-                .LessThanOrEqualTo(90).WithMessage("O campo Latitude deve está entre -90 a 90")
-                .GreaterThanOrEqualTo(-90).WithMessage("O campo Latitude deve está entre -90 a 90");
+                .SetValidator(new RequiredFieldValidator<double>("Latitude", localizer))
+                .LessThanOrEqualTo(90).WithMessage(string.Format(localizer["RangeField"], "Latitude", "-90", "90"))
+                .GreaterThanOrEqualTo(-90).WithMessage(string.Format(localizer["RangeField"], "Latitude", "-90", "90"));
 
             RuleFor(x => x.Longitude)
-                .NotNull().WithMessage("O campo Longitude é obrigatório")
-                .LessThanOrEqualTo(180).WithMessage("O campo Longitude deve está entre -180 a 180")
-                .GreaterThanOrEqualTo(-180).WithMessage("O campo Longitude deve está entre -180 a 180");
+                .SetValidator(new RequiredFieldValidator<double>("Longitude", localizer))
+                .LessThanOrEqualTo(180).WithMessage(string.Format(localizer["RangeField"], "Longitude", "-180", "180"))
+                .GreaterThanOrEqualTo(-180).WithMessage(string.Format(localizer["RangeField"], "Longitude", "-180", "180"));
 
             RuleFor(s => s.PassportDetailsId)
-                .SetValidator(new GuidValidator("PassportDetailsId"));
+                .SetValidator(new GuidValidator("PassportDetailsId", localizer));
         }
     }
 }

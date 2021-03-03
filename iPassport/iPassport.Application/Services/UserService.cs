@@ -4,6 +4,7 @@ using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
@@ -12,6 +13,7 @@ using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Threading.Tasks;
 
@@ -26,9 +28,10 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
         private readonly UserManager<Users> _userManager;
         private readonly IStorageExternalService _storageExternalService;
+        private readonly IStringLocalizer<Resource> _localizer;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
-            IStorageExternalService storageExternalService)
+            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -37,6 +40,7 @@ namespace iPassport.Application.Services
             _accessor = accessor;
             _userManager = userManager;
             _storageExternalService = storageExternalService;
+            _localizer = localizer;
         }
 
         public async Task<ResponseApi> Add(UserCreateDto dto)
@@ -49,13 +53,13 @@ namespace iPassport.Application.Services
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user, dto.Password);
                 if (!result.Succeeded)
-                    throw new BusinessException("Usuário não pode ser criado!");
+                    throw new BusinessException(_localizer["UserNotCreated"]);
 
                 var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
                 if (!_role.Succeeded)
                 {
                     await _userManager.DeleteAsync(user);
-                    throw new BusinessException("Usuário não pode ser criado!");
+                    throw new BusinessException(_localizer["UserNotCreated"]);
                 }
 
                 /// Re-Hidrated UserId to UserDetails
@@ -66,24 +70,24 @@ namespace iPassport.Application.Services
                 var userDetails = _userDetails.Create(dto);
                 await _detailsRepository.InsertAsync(userDetails);
 
-                return new ResponseApi(result.Succeeded, "Usuário criado com sucesso!", user.Id);
+                return new ResponseApi(result.Succeeded, _localizer["UserCreated"], user.Id);
             }
             catch (Exception ex)
             {
                 if(ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException("CNS já cadastrado!");
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
                 if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException("CPF já cadastrado!");
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
                 if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException("RG já cadastrado!");
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException("InternationalDocument já cadastrado!");
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException("Passaporte já cadastrado!");
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException("Email já cadastrado!");
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException("Telefone já cadastrado!");
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
 
                 throw;
             }
@@ -98,7 +102,7 @@ namespace iPassport.Application.Services
 
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
 
-            return new ResponseApi(true, "Usuario Logado", userDetailsViewModel);
+            return new ResponseApi(true, "User Loged", userDetailsViewModel);
         }
 
         public async Task<ResponseApi> AssociatePlan(Guid planId)
@@ -109,16 +113,16 @@ namespace iPassport.Application.Services
             var plan = await _planRepository.Find(planId);
 
             if (plan == null)
-                throw new BusinessException("Plano não encontrado");
+                throw new BusinessException(_localizer["PlanNotFound"]);
 
             userDetails.AssociatePlan(plan.Id);
             userDetails.Plan = plan;
 
             var result = await _detailsRepository.Update(userDetails);
             if (!result)
-                throw new BusinessException("Não foi possivel Realizar a operação");
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-            return new ResponseApi(true, "Plano associado com sucesso", _mapper.Map<PlanViewModel>(plan));
+            return new ResponseApi(true, _localizer["PlanAssociated"], _mapper.Map<PlanViewModel>(plan));
         }
 
         public async Task<ResponseApi> GetUserPlan()
@@ -128,9 +132,9 @@ namespace iPassport.Application.Services
             var userDetails = await _detailsRepository.GetByUserId(userId);
 
             if (userDetails.Plan == null)
-                throw new BusinessException("Plano não encontrado");
+                throw new BusinessException(_localizer["PlanNotFound"]);
 
-            return new ResponseApi(true, "Plano do usuário", _mapper.Map<PlanViewModel>(userDetails.Plan));
+            return new ResponseApi(true, "User plan", _mapper.Map<PlanViewModel>(userDetails.Plan));
         }
 
         public async Task<ResponseApi> AddUserImage(UserImageDto userImageDto)
@@ -139,7 +143,7 @@ namespace iPassport.Application.Services
             var user = await _userManager.FindByIdAsync(userImageDto.UserId.ToString());
 
             if (user == null)
-                throw new BusinessException("Usuário não cadastrado");
+                throw new BusinessException(_localizer["UserNotFound"]);
 
             if (user.UserHavePhoto())
                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
@@ -150,28 +154,28 @@ namespace iPassport.Application.Services
 
             await _userManager.UpdateAsync(user);
 
-            return new ResponseApi(true, "Imagem Adicionada", user.Photo);
+            return new ResponseApi(true, _localizer["ImageAdded"], user.Photo);
         }
 
         public async Task<ResponseApi> GetLoggedCitzenCount()
         {
             var res = await _userRepository.GetLoggedCitzenCount();
 
-            return new ResponseApi(true, "Total de cidadãos logados", res);
+            return new ResponseApi(true, _localizer["CitzenCount"], res);
         }
         
         public async Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)
         {
             var res = await _userRepository.GetRegisteredUserCount(filter);
 
-            return new ResponseApi(true, "Total de Usuários Registrados", res);
+            return new ResponseApi(true, _localizer["UserCount"], res);
         }
 
         public async Task<ResponseApi> GetLoggedAgentCount()
         {
             var res = await _userRepository.GetLoggedAgentCount();
 
-            return new ResponseApi(true, "Total de Agentes logados", res);
+            return new ResponseApi(true, _localizer["AgentCount"], res);
         }
     }
 }

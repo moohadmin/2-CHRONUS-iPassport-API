@@ -13,14 +13,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.Unicode;
@@ -138,8 +142,22 @@ namespace iPassport.Api
 
             ///Add AutoMapper
             services.AddAutoMapperSetup();
-
+            
+            // Localization
             services.AddLocalization(o => o.ResourcesPath = "Resources");
+            services.Configure<RequestLocalizationOptions>(
+                options => {
+                    var cultures = new List<CultureInfo>()
+                    {
+                        new CultureInfo("pt-BR"),
+                        new CultureInfo("en-US"),
+                        new CultureInfo("fr-FR")
+                    };
+                    
+                    options.DefaultRequestCulture = new RequestCulture(culture: "pt-BR", uiCulture: "pt-BR");
+                    options.SupportedCultures = cultures;
+            });
+
             services.AddSingleton<Resource>();
 
             ///Add AWS Services
@@ -168,6 +186,9 @@ namespace iPassport.Api
 
             app.UseHttpsRedirection();
 
+            var localizeOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localizeOptions.Value);
+            
             app.UseRouting();
 
             app.UseAuthentication();

@@ -1,8 +1,10 @@
 ﻿using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
+using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +15,13 @@ namespace iPassport.Application.Services
     {
         private readonly ISmsExternalService _smsExternalServices;
         private readonly IAuth2FactMobileRepository _auth2FactRepository;
+        private readonly IStringLocalizer<Resource> _localizer;
 
-        public Auth2FactService(ISmsExternalService smsExternalServices, IAuth2FactMobileRepository auth2FactMobileRepository)
+        public Auth2FactService(ISmsExternalService smsExternalServices, IAuth2FactMobileRepository auth2FactMobileRepository, IStringLocalizer<Resource> localizer)
         {
             _smsExternalServices = smsExternalServices;
             _auth2FactRepository = auth2FactMobileRepository;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -32,7 +36,7 @@ namespace iPassport.Application.Services
         public async Task<Auth2FactMobile> SendPin(Guid userId, string phone)
         {
             var pin = PinGenerate();
-            var text = $"{pin} - Is your iPassport verification PIN.";
+            var text = string.Format(_localizer["PinGenerated"], pin);
 
             var resultPin = await _smsExternalServices.SendPin(text, phone);
 
@@ -44,12 +48,12 @@ namespace iPassport.Application.Services
             var pinValid = await _auth2FactRepository.FindByUserAndPin(userId, pin);
 
             if (pinValid == null)
-                throw new BusinessException("PIN de autenticação inválido. Favor conferir PIN enviado.");
+                throw new BusinessException(_localizer["PinInvalid"]);
             if(!pinValid.CanUseToValidate())
-                throw new BusinessException("PIN expirado!");
+                throw new BusinessException(_localizer["PinExpired"]);
 
             pinValid.SetInvalid();
-            _auth2FactRepository.Update(pinValid);
+            await _auth2FactRepository.Update(pinValid);
 
             return pinValid;
         }
@@ -65,7 +69,7 @@ namespace iPassport.Application.Services
         {
             var userPinList = await _auth2FactRepository.FindByUser(userId);
             if (userPinList != null && userPinList.Any(x => x.PreventsResendingPIN()))
-                throw new BusinessException("Favor aguardar antes de solicitar novo pin");
+                throw new BusinessException(_localizer["PinResendTime"]);
 
             userPinList?.Where(x => x.IsValid)?.ToList()?.ForEach(x => 
                 { x.SetInvalid();
@@ -73,7 +77,7 @@ namespace iPassport.Application.Services
                 });
 
             var pin = PinGenerate();
-            var text = $"{pin} - Is your iPassport verification PIN.";
+            var text = string.Format(_localizer["PinGenerated"], pin);
 
             var resultPin = await _smsExternalServices.SendPin(text, phone);
 
@@ -82,8 +86,8 @@ namespace iPassport.Application.Services
 
         public async Task<Auth2FactMobile> SaveAuth2FactMobile(Guid userId, string phone, string pin, string MessageId)
         {
-            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
-            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
+            var simulateAmbient = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
+            if (!string.IsNullOrWhiteSpace(simulateAmbient) && Convert.ToBoolean(simulateAmbient))
                 pin = "1111";
 
             var twoFactDto = new Auth2FactMobileDto
