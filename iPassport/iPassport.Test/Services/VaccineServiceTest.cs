@@ -1,12 +1,12 @@
 ﻿using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Application.Resources;
 using iPassport.Application.Services;
-using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -16,12 +16,15 @@ namespace iPassport.Test.Services
     {
         Mock<IUserVaccineRepository> _userVaccineRepository;
         IVaccineService _service;
+        Mock<IStringLocalizer<Resource>> _mockLocalizer;
 
         [TestInitialize]
         public void Setup()
         {
             _userVaccineRepository = new Mock<IUserVaccineRepository>();
-            _service = new VaccineService(_userVaccineRepository.Object);
+            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+
+            _service = new VaccineService(_userVaccineRepository.Object, _mockLocalizer.Object);
         }
 
         [TestMethod]

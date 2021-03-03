@@ -2,12 +2,14 @@
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
@@ -21,13 +23,16 @@ namespace iPassport.Test.Services
         Mock<IPlanRepository> _mockRepository;
         IPlanService _service;
         IMapper _mapper;
+        Mock<IStringLocalizer<Resource>> _mockLocalizer;
 
         [TestInitialize]
         public void Setup()
         {
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<IPlanRepository>();
-            _service = new PlanService(_mapper, _mockRepository.Object);
+            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+
+            _service = new PlanService(_mapper, _mockRepository.Object, _mockLocalizer.Object);
         }
 
         [TestMethod]

@@ -2,6 +2,7 @@
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
@@ -13,6 +14,7 @@ using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -32,6 +34,7 @@ namespace iPassport.Test.Services
         Mock<UserManager<Users>> _mockUserManager;
         IHttpContextAccessor _accessor;
         Mock<IStorageExternalService> _externalStorageService;
+        Mock<IStringLocalizer<Resource>> _mockLocalizer;
 
         [TestInitialize]
         public void Setup()
@@ -43,8 +46,9 @@ namespace iPassport.Test.Services
             _planMockRepository = new Mock<IPlanRepository>();
             _externalStorageService = new Mock<IStorageExternalService>();
             _mockUserManager = UserManagerFactory.CreateMock();
+            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
 
-            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object);
+            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object);
         }
 
         [TestMethod]
