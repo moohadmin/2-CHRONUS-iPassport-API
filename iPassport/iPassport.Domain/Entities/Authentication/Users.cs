@@ -71,5 +71,6 @@ namespace iPassport.Domain.Entities.Authentication
         public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
 
         public bool IsAgent() => Profile == (int)EProfileType.Agent;
+        public bool IsCitizen() => Profile == (int)EProfileType.Citizen;
     }
 }
