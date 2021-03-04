@@ -4,6 +4,7 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -29,9 +30,14 @@ namespace iPassport.Application.Services
             _localizer = localizer;
         }
 
-        public async Task<PagedResponseApi> GetUserVaccines(PageFilter pageFilter)
+        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter)
         {
-            var res = await _repository.GetPagedUserVaccines(_accessor.GetCurrentUserId(), pageFilter);
+            var res = await _repository.GetPagedUserVaccines(pageFilter);
+
+            //foreach (var d in res.Data)
+            //{
+            //    d.Status = 
+            //}
 
             var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data).GroupBy(r => r.Manufacturer);
 

@@ -35,13 +35,13 @@ namespace iPassport.Infra.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.ApplyConfiguration(new HealthMap());
-            //modelBuilder.ApplyConfiguration(new UserDetailsMap());
+            modelBuilder.ApplyConfiguration(new UserDetailsMap());
             //modelBuilder.ApplyConfiguration(new PlanMap());
             modelBuilder.ApplyConfiguration(new PassportMap());
             //modelBuilder.ApplyConfiguration(new PassportDetailsMap());
             //modelBuilder.ApplyConfiguration(new DiseaseMap());
             modelBuilder.ApplyConfiguration(new VaccineMap());
-            //modelBuilder.ApplyConfiguration(new UserVaccineMap());
+            modelBuilder.ApplyConfiguration(new UserVaccineMap());
             //modelBuilder.ApplyConfiguration(new PassportUseMap());
             //modelBuilder.ApplyConfiguration(new VaccineManufacterMap());
 

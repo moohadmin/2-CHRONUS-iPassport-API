@@ -15,7 +15,7 @@ namespace iPassport.Infra.Repositories
         public UserDetailsRepository(iPassportContext context) : base(context) { }
 
         public async Task<UserDetails> GetByUserId(Guid id) =>
-            await _DbSet.Include(u => u.Plan).Where(x => x.UserId == id).FirstOrDefaultAsync();
+            await _DbSet.Include(u => u.Plan).Where(x => x.Id == id).FirstOrDefaultAsync();
 
     }
 }

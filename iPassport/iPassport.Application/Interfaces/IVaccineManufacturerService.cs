@@ -6,6 +6,6 @@ namespace iPassport.Application.Interfaces
 {
     public interface IVaccineManufacturerService
     {
-        Task<PagedResponseApi> GetByNameInitals(GetByNameInitalsFilter filter);
+        Task<PagedResponseApi> GetByNameInitals(GetByNameInitalsPagedFilter filter);
     }
 }

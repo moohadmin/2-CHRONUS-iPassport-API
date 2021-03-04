@@ -6,6 +6,6 @@ namespace iPassport.Application.Interfaces
 {
     public interface IUserVaccineService
     {
-        Task<PagedResponseApi> GetUserVaccines(PageFilter pageFilter);
+        Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter);
     }
 }

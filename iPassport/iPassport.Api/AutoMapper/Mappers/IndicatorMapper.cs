@@ -9,7 +9,6 @@ namespace iPassport.Api.AutoMapper.Mappers
         public static void Map(Profile profile)
         {
             profile.CreateMap<GetVaccinatedCountRequest, GetVaccinatedCountFilter>();
-            profile.CreateMap<GetByNameInitalsRequest, GetByNameInitalsFilter>();
         }
     }
 }
