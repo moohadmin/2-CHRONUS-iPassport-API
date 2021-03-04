@@ -13,7 +13,7 @@ namespace iPassport.Infra.Repositories
 
         public async Task<PagedData<Disease>> GetByNameInitals(GetByNameInitalsFilter filter)
         {
-            var query = _DbSet.Where(m => m.Name.ToLower().StartsWith(filter.Initials.ToLower())).OrderBy(m => m.Name);
+            var query = _DbSet.Where(m => string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().StartsWith(filter.Initials.ToLower())).OrderBy(m => m.Name);
 
             return await Paginate(query, filter);
         }
