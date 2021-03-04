@@ -99,7 +99,7 @@ namespace iPassport.Application.Services
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userManager.FindByIdAsync(userId.ToString());
 
-            if(authUser.Profile == (int)EProfileType.Citizen)
+            if(authUser.IsCitizen())
                 authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
 
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
