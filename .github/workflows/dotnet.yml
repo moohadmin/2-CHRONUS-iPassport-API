@@ -22,4 +22,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./iPassport
     - name: Build
-      run: publish --no-restore ./iPassport -o artifacts
+      run: dotnet publish --no-restore ./iPassport -o artifacts
