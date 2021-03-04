@@ -26,7 +26,7 @@ jobs:
     - name: Build .NET project
       run: dotnet publish --no-restore ./iPassport -o artifacts
     - name: Build the Docker image
-      run: docker build . --file ./iPassport/iPassport.Api/Dockerfile -t ipassport
+      run: docker build . --file ./iPassport/iPassport.Api/Dockerfile -t ipassport:$IMAGE_TAG
     - name: Tag Docker image
       run: docker tag ipassport:$IMAGE_TAG 896477545676.dkr.ecr.sa-east-1.amazonaws.com/ipassport:$IMAGE_TAG
 
