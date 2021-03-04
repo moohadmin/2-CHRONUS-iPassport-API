@@ -25,9 +25,8 @@ namespace iPassport.Application.Services.AuthenticationServices
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim("UserId", user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim("FullName", user.FullName),
-                    new Claim("Profile", user.Profile.ToString())
+                    new Claim("Profile", user.Profile.ToString()),
+                    new Claim("HasPhoto", user.UserHavePhoto().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddYears(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -48,8 +47,6 @@ namespace iPassport.Application.Services.AuthenticationServices
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim("UserId", user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim("FullName", user.FullName),
                     new Claim("FirstLogin", (user.LastLogin == null).ToString()),
                     new Claim(ClaimTypes.Role, role)
                 }),
