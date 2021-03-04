@@ -27,11 +27,11 @@ namespace iPassport.Infra.Repositories
                     VaccineId = v.Key.VaccineId,
                     VaccineName = v.Key.Name,
                     RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
-                    ImunizationTime = v.FirstOrDefault().Vaccine.ImunizationTime,
+                    ImunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
                     Doses = v.Select(x => new VaccineDoseDto() {
                         Dose = x.Dose,
                         VaccinationDate = x.VaccinationDate,
-                        ValidDate = x.VaccinationDate.AddDays(x.Vaccine.ExpirationTime)
+                        ValidDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
                     })
                 });
 

@@ -37,9 +37,7 @@ namespace iPassport.Application.Services
             var user = await _userDetailsRepository.GetUserWithVaccine((Guid)res.Data?.FirstOrDefault().UserId);
 
             foreach (var d in res.Data)
-            {
                 d.Status = user.GetUserVaccineStatus(d.VaccineId);
-            }
 
             var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data).GroupBy(r => r.Manufacturer);
 
