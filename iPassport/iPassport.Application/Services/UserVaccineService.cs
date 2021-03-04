@@ -3,6 +3,7 @@ using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using Microsoft.AspNetCore.Http;

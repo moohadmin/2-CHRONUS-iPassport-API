@@ -5,6 +5,7 @@
         Vaccinated,
         Waiting,
         NotVaccinated,
+        Expired,
         Immunized,
     }
 }
