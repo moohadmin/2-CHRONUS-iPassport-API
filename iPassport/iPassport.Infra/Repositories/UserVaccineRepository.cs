@@ -16,31 +16,35 @@ namespace iPassport.Infra.Repositories
 
         public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccines(GetByIdPagedFilter pageFilter)
         {
-            var q = _DbSet
+            var q = await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
                 .Where(v => v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
-                .GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
-                .Select(v => new UserVaccineDetailsDto()
+                .ToListAsync();
+
+            var x = q.GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
+            .Select(v => new UserVaccineDetailsDto()
+            {
+                UserId = v.FirstOrDefault().UserId,
+                VaccineId = v.Key.VaccineId,
+                VaccineName = v.Key.Name,
+                RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
+                ImunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
+                Doses = v.Select(x => new VaccineDoseDto()
                 {
-                    UserId = v.FirstOrDefault().UserId,
-                    VaccineId = v.Key.VaccineId,
-                    VaccineName = v.Key.Name,
-                    RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
-                    ImunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
-                    Doses = v.Select(x => new VaccineDoseDto() {
-                        Dose = x.Dose,
-                        VaccinationDate = x.VaccinationDate,
-                        ValidDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
-                    })
-                });
+                    Dose = x.Dose,
+                    VaccinationDate = x.VaccinationDate,
+                    ValidDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
+                })
+            });
 
             (int take, int skip) = CalcPageOffset(pageFilter);
 
-            var data = await q.Take(take).Skip(skip).ToListAsync();
+            var data = x.Take(take).Skip(skip).ToList();
             var totalPages = data.Count / pageFilter.PageSize;
 
-            return new PagedData<UserVaccineDetailsDto>() { 
+            return new PagedData<UserVaccineDetailsDto>()
+            {
                 PageNumber = pageFilter.PageNumber,
                 PageSize = pageFilter.PageSize,
                 TotalPages = totalPages,

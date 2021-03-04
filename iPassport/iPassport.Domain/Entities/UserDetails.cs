@@ -30,11 +30,11 @@ namespace iPassport.Domain.Entities
             if (UserVaccines == null || !UserVaccines.Any())
                 return false;
 
-            var Vacinnes = UserVaccines.Select(x => x.Vaccine).Distinct();
-
-            foreach (var vaccine in Vacinnes)
+            var vacinnes = UserVaccines.Select(x => x.Vaccine).Distinct().ToList();
+            
+            foreach (var vaccine in vacinnes)
             {
-                if(!UserVaccines.Any(x => x.Vaccine.Id == vaccine.Id && x.IsImmunized()))
+                if(vaccine == null || !UserVaccines.Any(x => x.VaccineId == vaccine.Id && x.IsImmunized()))
                     return false;
             }
 
