@@ -2,6 +2,7 @@
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
@@ -10,6 +11,7 @@ using iPassport.Domain.Repositories.Authentication;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -30,6 +32,7 @@ namespace iPassport.Test.Services
         IMapper _mapper;
         PassportUseCreateDto _accessDto;
         Mock<IStorageExternalService> _externalStorageService;
+        Mock<IStringLocalizer<Resource>> _mockLocalizer;
 
         [TestInitialize]
         public void Setup()
@@ -42,8 +45,9 @@ namespace iPassport.Test.Services
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepositoryPassportDetails = new Mock<IPassportDetailsRepository>();
             _externalStorageService = new Mock<IStorageExternalService>();
+            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
 
-            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object, _mockUserRepository.Object, _externalStorageService.Object);
+            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object, _mockUserRepository.Object, _externalStorageService.Object, _mockLocalizer.Object);
 
             _accessDto = new PassportUseCreateDto()
             {
@@ -91,8 +95,6 @@ namespace iPassport.Test.Services
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
-            Assert.AreEqual("Acesso Aprovado", result.Result.Message);
-
         }
 
         [TestMethod]
@@ -111,7 +113,6 @@ namespace iPassport.Test.Services
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
-            Assert.AreEqual("Acesso Recusado", result.Result.Message);
         }
 
         [TestMethod]

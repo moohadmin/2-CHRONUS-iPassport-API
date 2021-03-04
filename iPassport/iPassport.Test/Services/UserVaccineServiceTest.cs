@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models.Pagination;
+using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -21,6 +23,7 @@ namespace iPassport.Test.Services
         IUserVaccineService _service;
         IHttpContextAccessor _accessor;
         IMapper _mapper;
+        Mock<IStringLocalizer<Resource>> _mockLocalizer;
 
         [TestInitialize]
         public void Setup()
@@ -28,7 +31,9 @@ namespace iPassport.Test.Services
             _mapper = AutoMapperFactory.Create();
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepository = new Mock<IUserVaccineRepository>();
-            _service = new UserVaccineService(_mapper, _mockRepository.Object, _accessor);
+            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+
+            _service = new UserVaccineService(_mapper, _mockRepository.Object, _accessor, _mockLocalizer.Object);
         }
 
         [TestMethod]

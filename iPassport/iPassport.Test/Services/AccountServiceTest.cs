@@ -15,34 +15,33 @@ using iPassport.Domain.Repositories.Authentication;
 using iPassport.Application.Services.AuthenticationServices;
 using System.Collections.Generic;
 using iPassport.Domain.Enums;
+using Microsoft.Extensions.Localization;
+using iPassport.Application.Resources;
 
 namespace iPassport.Test.Services
 {
     [TestClass]
     public class AccountServiceTest
     {
-        Mock<IUserDetailsRepository> _mockUserDetailsRepository;
         Mock<IUserRepository> _mockUserRepository;
         Mock<ITokenService> _mockTokenService;
         Mock<IAuth2FactService> _mockAuth2FactService;
         IHttpContextAccessor _accessor;
-        IMapper _mapper;
-        Mock<UserManager<Users>> _mockUserManager;     
-        
+        Mock<UserManager<Users>> _mockUserManager;
+        Mock<IStringLocalizer<Resource>> _mockLocalizer;
         IAccountService _service;
 
         [TestInitialize]
         public void Setup()
         {
-            _mapper = AutoMapperFactory.Create();
             _accessor = HttpContextAccessorFactory.Create();
-            _mockUserDetailsRepository = new Mock<IUserDetailsRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
             _mockUserManager = UserManagerFactory.CreateMock();
             _mockTokenService = new Mock<ITokenService>();
             _mockAuth2FactService = new Mock<IAuth2FactService>();
-            
-            _service = new AccountService(_mockUserDetailsRepository.Object, _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor);
+            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+
+            _service = new AccountService( _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _mockLocalizer.Object);
         }
 
         [TestMethod]
@@ -163,7 +162,6 @@ namespace iPassport.Test.Services
             _mockUserRepository.Verify(x => x.FindById(It.IsAny<Guid>()));
             _mockAuth2FactService.Verify(r => r.ResendPin(It.IsAny<Guid>(), phone));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
-            Assert.AreEqual("Novo pin enviado", result.Result.Message);
         }
 
         [TestMethod]

@@ -3,9 +3,11 @@ using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
+using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +18,13 @@ namespace iPassport.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IPlanRepository _repository;
+        private readonly IStringLocalizer<Resource> _localizer;
 
-        public PlanService(IMapper mapper, IPlanRepository repository)
+        public PlanService(IMapper mapper, IPlanRepository repository, IStringLocalizer<Resource> localizer)
         {
             _mapper = mapper;
             _repository = repository;
+            _localizer = localizer;
         }
 
         public async Task<ResponseApi> Add(PlanCreateDto dto)
@@ -30,11 +34,11 @@ namespace iPassport.Application.Services
 
             var rst = await _repository.InsertAsync(plan);
             if (!rst)
-                throw new BusinessException("Não foi possivel Realizar a operação");
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
 
             var result = _mapper.Map<PlanViewModel>(plan);
 
-            return new ResponseApi(true, "Plano criado com sucesso!", result);
+            return new ResponseApi(true, _localizer["PlanCreated"], result);
         }
 
         public async Task<ResponseApi> GetAll()
@@ -43,7 +47,7 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<IList<PlanViewModel>>(res).OrderBy(r => r.CreateDate).ToList();
 
-            return new ResponseApi(true, "Lista de Planos", result);
+            return new ResponseApi(true, _localizer["PlanList"], result);
         }
     }
 }

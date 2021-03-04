@@ -1,74 +1,75 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
+using iPassport.Application.Resources;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Utils;
+using Microsoft.Extensions.Localization;
 using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Plans
 {
     public class PinRequestValidator : AbstractValidator<PinRequest>
     {
-        public PinRequestValidator()
+        public PinRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.Document)
-                .SetValidator(new RequiredFieldValidator<string>("document"));
+                .SetValidator(new RequiredFieldValidator<string>("document", localizer));
 
             When(x => x.Doctype == EDocumentType.CNS, () =>
             {
                 RuleFor(x => x.Document)
-                    .Length(15).WithMessage("o campo Document não é um CNS Valido")
+                    .Length(15).WithMessage(string.Format(localizer["InvalidField"], "Document"))
                     .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
-                        .WithMessage("O campo Document não é um CNS Valido");
+                        .WithMessage(string.Format(localizer["InvalidField"], "Document"));
             });
 
             When(x => x.Doctype == EDocumentType.CPF, () =>
             {
                 RuleFor(x => x.Document).Cascade(CascadeMode.Stop)
-                    .Length(11).WithMessage($"O campo Document não é um CPF Valido")
-                    .Must(x => Regex.IsMatch(x, "^[0-9]+$")).WithMessage($"O campo Document não é um CPF Valido")
+                    .Length(11).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
+                    .Must(x => Regex.IsMatch(x, "^[0-9]+$")).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
                     .Must(x => CpfUtils.Valid(x))
-                        .WithMessage($"O campo Document não é um CPF Valido");
+                        .WithMessage(string.Format(localizer["InvalidField"], "CPF"));
             });
 
             When(x => x.Doctype == EDocumentType.Passport, () =>
             {
                 RuleFor(x => x.Document)
-                    .Length(3, 15).WithMessage("O campo Document não é um Passaporte Valido")
+                    .Length(3, 15).WithMessage(string.Format(localizer["InvalidField"], "Document"))
                     .Must(y => Regex.IsMatch(y, "^[a-zA-Z]{2}[0-9]+$"))
-                        .WithMessage("O campo Document não é um Passaporte Valido");
+                        .WithMessage(string.Format(localizer["InvalidField"], "Document"));
             });
 
             When(x => x.Doctype == EDocumentType.RG, () =>
             {
                 RuleFor(x => x.Document)
-                    .Length(1, 15).WithMessage("O campo Document não é um RG Valido")
+                    .Length(1, 15).WithMessage(string.Format(localizer["InvalidField"], "RG"))
                     .Must(y => Regex.IsMatch(y, "^[0-9a-zA-Z]+$"))
-                        .WithMessage($"O campo Document não é um RG Valido");
+                        .WithMessage(string.Format(localizer["InvalidField"], "RG"));
             });
 
             When(x => x.Doctype == EDocumentType.InternationalDocument, () =>
             {
                 RuleFor(x => x.Document)
-                     .Length(1, 15).WithMessage("O campo Document não é um Cod. de Identificação Valido")
+                     .Length(1, 15).WithMessage(string.Format(localizer["InvalidField"], "Document"))
                     .Must(y => Regex.IsMatch(y, "^[1-9a-zA-Z]+$"))
-                        .WithMessage("O campo Document não é um Cod. de Identificação Valido");
+                        .WithMessage(string.Format(localizer["InvalidField"], "Document"));
             });
-
 
             RuleFor(s => s.Phone)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                    .WithMessage("O número de telefone informado não é válido. Por favor, verifique")
+                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
                 .Length(13)
-                    .WithMessage("O número de telefone informado não é válido. Por favor, verifique")
+                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
                 .Must(y => y.Substring(4, 1).Equals("9"))
-                    .WithMessage("A informação inserida para o nono dígito não é válida.");
+                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
 
             RuleFor(x => x.Phone).Must(y => Regex.IsMatch(y, "^[0-9]+$"))
-                .WithMessage("O número de telefone informado não é válido. Por favor, verifique");
+                .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
 
             RuleFor(x => x.Doctype)
-                .IsInEnum().WithMessage("O campo doctype está inválido");
+                .IsInEnum().WithMessage(string.Format(localizer["InvalidField"], "Doctype"));
         }
     }
 }

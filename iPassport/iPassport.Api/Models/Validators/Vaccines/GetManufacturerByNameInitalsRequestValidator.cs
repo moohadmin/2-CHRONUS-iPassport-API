@@ -1,21 +1,23 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
+using iPassport.Application.Resources;
+using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
     public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNameInitalsRequest>
     {
-        public GetManufacturerByNameInitalsRequestValidator()
+        public GetManufacturerByNameInitalsRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Initials)
-                .MinimumLength(3).WithMessage("Necessário o minimo 3 de caracteres para realizar a pesquisa;")
-                .SetValidator(new RequiredFieldValidator<string>("Initials"));
+                .Must(x => string.IsNullOrWhiteSpace(x) || x.Length >= 3).WithMessage(string.Format(localizer["InitalsRequestMin"], "3"))
+                .SetValidator(new RequiredFieldValidator<string>("Initials", localizer));
 
             RuleFor(x => x.PageNumber)
-                .SetValidator(new RequiredFieldValidator<int>("PageNumber"));
+                .SetValidator(new RequiredFieldValidator<int>("PageNumber", localizer));
 
             RuleFor(x => x.PageSize)
-                .SetValidator(new RequiredFieldValidator<int>("PageSize"));
+                .SetValidator(new RequiredFieldValidator<int>("PageSize", localizer));
         }
     }
 }
