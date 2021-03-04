@@ -13,7 +13,7 @@ namespace iPassport.Infra.Repositories
         public PassportRepository(iPassportContext context) : base(context) { }
 
         public async Task<Passport> FindByUser(Guid userId) =>
-            await _DbSet.Where(x => x.UserDetails.UserId == userId)
+            await _DbSet.Where(x => x.UserDetails.Id == userId)
                     .Include(x => x.ListPassportDetails).FirstOrDefaultAsync();
 
         public async Task<Passport> FindByPassportDetailsValid(Guid passportDetailsId)

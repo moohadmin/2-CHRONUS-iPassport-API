@@ -20,6 +20,7 @@ namespace iPassport.Test.Services
     public class UserVaccineServiceTest
     {
         Mock<IUserVaccineRepository> _mockRepository;
+        Mock<IUserDetailsRepository> _mockUserRepository;
         IUserVaccineService _service;
         IHttpContextAccessor _accessor;
         IMapper _mapper;
@@ -32,23 +33,28 @@ namespace iPassport.Test.Services
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepository = new Mock<IUserVaccineRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _mockUserRepository = new Mock<IUserDetailsRepository>();
 
-            _service = new UserVaccineService(_mapper, _mockRepository.Object, _accessor, _mockLocalizer.Object);
+            _service = new UserVaccineService(_mapper, _mockRepository.Object, _mockUserRepository.Object, _mockLocalizer.Object);
         }
 
         [TestMethod]
-        public void GetAll()
+        public void GetPagedUserVaccines()
         {
             var seed = UserVaccineSeed.GetPagedUserVaccines();
-            var mockFilter = Mock.Of<PageFilter>();
+            var userSeed = UserSeed.GetUserDetails();
+
+            var mockFilter = Mock.Of<GetByIdPagedFilter>();
+            
             // Arrange
-            _mockRepository.Setup(r => r.GetPagedUserVaccines(It.IsAny<Guid>(), It.IsAny<PageFilter>()).Result).Returns(seed);
+            _mockRepository.Setup(r => r.GetPagedUserVaccines(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
+            _mockUserRepository.Setup(r => r.GetUserWithVaccine(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetUserVaccines(mockFilter);
 
             // Assert
-            _mockRepository.Verify(a => a.GetPagedUserVaccines(It.IsAny<Guid>(), It.IsAny<PageFilter>()), Times.Once);
+            _mockRepository.Verify(a => a.GetPagedUserVaccines(It.IsAny<GetByIdPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

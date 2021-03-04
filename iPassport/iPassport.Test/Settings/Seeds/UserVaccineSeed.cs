@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using System;
 using System.Collections.Generic;
 
@@ -6,16 +7,43 @@ namespace iPassport.Test.Seeds
 {
     public static class UserVaccineSeed
     {
-        public static PagedData<UserVaccine> GetPagedUserVaccines()
+        public static PagedData<UserVaccineDetailsDto> GetPagedUserVaccines()
         {
-            var vac = new List<UserVaccine>()
+            var vac = new List<UserVaccineDetailsDto>()
             {
-                new UserVaccine(DateTime.UtcNow, 1, Guid.NewGuid(), Guid.NewGuid()),
-                new UserVaccine(DateTime.UtcNow, 2, Guid.NewGuid(), Guid.NewGuid()),
-                new UserVaccine(DateTime.UtcNow, 3, Guid.NewGuid(), Guid.NewGuid()),
+                new UserVaccineDetailsDto()
+                { 
+                    VaccineId = Guid.NewGuid(),
+                    Doses = new List<VaccineDoseDto>()
+                        { 
+                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow}
+                    } 
+                },
+                new UserVaccineDetailsDto()
+                {
+                    VaccineId = Guid.NewGuid(),
+                    Doses = new List<VaccineDoseDto>()
+                        {
+                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow}
+                    }
+                },
+                new UserVaccineDetailsDto()
+                {
+                    VaccineId = Guid.NewGuid(),
+                    Doses = new List<VaccineDoseDto>()
+                        {
+                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ValidDate = DateTime.UtcNow}
+                    }
+                }
             };
 
-            return new PagedData<UserVaccine>() { Data = vac };
+            return new PagedData<UserVaccineDetailsDto>() { Data = vac };
         }
     }
 }

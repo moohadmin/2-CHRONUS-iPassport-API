@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;

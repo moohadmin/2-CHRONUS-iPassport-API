@@ -7,7 +7,6 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -39,7 +38,7 @@ namespace iPassport.Application.Services
             foreach (var d in res.Data)
                 d.Status = user.GetUserVaccineStatus(d.VaccineId);
 
-            var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data).GroupBy(r => r.Manufacturer);
+            var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data).GroupBy(r => r.VaccineId);
 
             return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
