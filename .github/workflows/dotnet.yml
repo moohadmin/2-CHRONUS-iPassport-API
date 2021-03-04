@@ -20,6 +20,6 @@ jobs:
     - name: Set NUGET_PACK
       run: export NUGET_PACKAGES=$(pwd)/packages/
     - name: Restore dependencies
-      run: dotnet restore ./
+      run: dotnet restore /iPassport
     - name: Build
       run: publish --no-restore ./ -o artifacts
