@@ -231,6 +231,9 @@
   <data name="UserCreated" xml:space="preserve">
     <value>Usuário criado com sucesso.</value>
   </data>
+  <data name="UserNotAgent" xml:space="preserve">
+    <value>O usuário logado não é um agente</value>
+  </data>
   <data name="UserNotCreated" xml:space="preserve">
     <value>Usuário não pode ser criado.</value>
   </data>

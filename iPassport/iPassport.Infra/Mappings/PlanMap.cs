@@ -14,25 +14,28 @@ namespace iPassport.Infra.Mappings
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Type)
-                .HasColumnType("nvarchar(50)")
                 .IsRequired();
 
             builder.Property(p => p.Description)
-                .HasColumnType("nvarchar(300)")
                 .IsRequired();
 
-            builder.Property(p => p.Price)
-                .HasColumnType("decimal");
+            builder.Property(p => p.Price);
 
-            builder.Property(p => p.Observation)
-                .HasColumnType("nvarchar(100)");
+            builder.Property(p => p.Observation);
+
+            builder.Property(p => p.ColorStart)
+                .IsRequired();
+            
+            builder.Property(p => p.ColorEnd)
+                .IsRequired();
+
+            builder.Property(p => p.Active)
+                .IsRequired();
 
             builder.Property(c => c.CreateDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
 
             builder.Property(c => c.UpdateDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
         }
     }
