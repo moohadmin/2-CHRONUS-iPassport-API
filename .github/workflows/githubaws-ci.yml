@@ -26,7 +26,9 @@ jobs:
     - name: Build .NET project
       run: dotnet publish --no-restore ./iPassport -o artifacts
     - name: Build the Docker image
-      run: docker build . --file ./iPassport/iPassport.Api/Dockerfile --tag $IMAGE_TAG
+      run: docker build . --file ./iPassport/iPassport.Api/Dockerfile -t ipassport
+    - name: Tag Docker image
+      run: docker tag ipassport:$IMAGE_TAG 896477545676.dkr.ecr.sa-east-1.amazonaws.com/ipassport:$IMAGE_TAG
 
 # This workflow will build and push a new container image to Amazon ECR,
 # and then will deploy a new task definition to Amazon ECS, when a release is created
