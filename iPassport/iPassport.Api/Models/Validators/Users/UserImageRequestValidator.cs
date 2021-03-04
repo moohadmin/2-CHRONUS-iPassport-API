@@ -1,21 +1,23 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
+using iPassport.Application.Resources;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Users
 {
     public class UserImageRequestValidator : AbstractValidator<UserImageRequest>
     {
-        public UserImageRequestValidator()
+        public UserImageRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.ImageFile)
-                .SetValidator(new RequiredFieldValidator<IFormFile>("ImageFile"));
+                .SetValidator(new RequiredFieldValidator<IFormFile>("ImageFile", localizer));
 
             RuleFor(x => x.ImageFile.Length).LessThanOrEqualTo(10000000)
-                .WithMessage("Tamanho do arquivo de imagem maior que o máximo permitido: 10mb");
+                .WithMessage(string.Format(localizer["ImageMaxSize"], 10));
 
             RuleFor(x => x.ImageFile.ContentType).NotNull().Must(x => x.Equals("image/jpeg") || x.Equals("image/jpg") || x.Equals("image/png"))
-                .WithMessage("Formato do arquivo de imagem não suportado. Formatos aceitos: jpeg, jpg, png");
+                .WithMessage(localizer["ImageValidTypes"]);
         }
     }
 }

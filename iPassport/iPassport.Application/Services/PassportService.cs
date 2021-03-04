@@ -4,11 +4,13 @@ using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Threading.Tasks;
 
@@ -24,9 +26,10 @@ namespace iPassport.Application.Services
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IHttpContextAccessor _accessor;
         private readonly IStorageExternalService  _storageExternalService;
+        private readonly IStringLocalizer<Resource> _localizer;
 
         public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository, IUserRepository userRepository
-            , IStorageExternalService storageExternalService)
+            , IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer)
         {
             _mapper = mapper;
             _repository = repository;
@@ -36,6 +39,7 @@ namespace iPassport.Application.Services
             _passportDetailsRepository = passportDetailsRepository;
             _userRepository = userRepository;
             _storageExternalService = storageExternalService;
+            _localizer = localizer;
         }
 
         public async Task<ResponseApi> Get()
@@ -45,7 +49,7 @@ namespace iPassport.Application.Services
             var userDetails = await _userDetailsRepository.GetByUserId(UserId);
 
             if (userDetails == null)
-                throw new BusinessException("Usuário não encontrado.");
+                throw new BusinessException(_localizer["UserNotFound"]);
 
             var passport = await _repository.FindByUser(userDetails.UserId);
 
@@ -72,7 +76,7 @@ namespace iPassport.Application.Services
             viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
             viewModel.UserPlan = userDetails.Plan?.Type;
 
-            return new ResponseApi(true, "Passport do Usuário", viewModel);
+            return new ResponseApi(true, "User Passport", viewModel);
         }
 
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
@@ -86,9 +90,9 @@ namespace iPassport.Application.Services
             var result = await _passportUseRepository.InsertAsync(passportUse);
             
             if (!result)
-                throw new BusinessException("Não foi possivel Realizar a operação");
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-            return new ResponseApi(true, "Acesso Aprovado");
+            return new ResponseApi(true, _localizer["AprovedAccess"]);
         }
 
         public async Task<ResponseApi> AddAccessDenied(PassportUseCreateDto dto)
@@ -102,9 +106,9 @@ namespace iPassport.Application.Services
             var result = await _passportUseRepository.InsertAsync(passportUse);
             
             if (!result)
-                throw new BusinessException("Não foi possivel Realizar a operação");
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-            return new ResponseApi(true, "Acesso Recusado");
+            return new ResponseApi(true, _localizer["DeniedAccess"]);
         }
 
         private async Task<PassportUseCreateDto> ValidPassportToAcess(PassportUseCreateDto dto)
@@ -112,12 +116,12 @@ namespace iPassport.Application.Services
             var passport = await _repository.FindByPassportDetailsValid(dto.PassportDetailsId);
 
             if (passport == null)
-                throw new BusinessException("Passport não encontrado ou expirado");
+                throw new BusinessException(_localizer["PassportNotFound"]);
 
             var agentUserDetails = await _userDetailsRepository.GetByUserId(_accessor.GetCurrentUserId());
 
             if (agentUserDetails == null)
-                throw new BusinessException("Agente não encontrado");
+                throw new BusinessException(_localizer["AgentNotFound"]);
 
             dto.CitizenId = passport.UserDetailsId;
             dto.AgentId = agentUserDetails.Id;

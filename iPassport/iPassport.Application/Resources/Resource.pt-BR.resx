@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AgentCount" xml:space="preserve">
+    <value>Total de Agentes logados.</value>
+  </data>
+  <data name="AgentNotFound" xml:space="preserve">
+    <value>Agente não encontrado.</value>
+  </data>
+  <data name="AprovedAccess" xml:space="preserve">
+    <value>Acesso aprovado.</value>
+  </data>
+  <data name="CitzenCount" xml:space="preserve">
+    <value>Total de Cidadãos logados.</value>
+  </data>
+  <data name="DataAlreadyRegistered" xml:space="preserve">
+    <value>{0} já cadastrado!</value>
+  </data>
+  <data name="DeniedAccess" xml:space="preserve">
+    <value>Acesso recusado.</value>
+  </data>
+  <data name="Diseases" xml:space="preserve">
+    <value>Doenças</value>
+  </data>
+  <data name="GenericError" xml:space="preserve">
+    <value>Houve um erro, tente novamente!</value>
+  </data>
+  <data name="ImageAdded" xml:space="preserve">
+    <value>Imagem adicionada.</value>
+  </data>
+  <data name="ImageMaxSize" xml:space="preserve">
+    <value>Tamanho do arquivo de imagem maior que o máximo permitido: {0} mb.</value>
+  </data>
+  <data name="ImageValidTypes" xml:space="preserve">
+    <value>Formato do arquivo de imagem não suportado. Formatos aceitos: jpeg, jpg, png.</value>
+  </data>
+  <data name="InitalsRequestMin" xml:space="preserve">
+    <value>Necessário o minimo {0} de caracteres para realizar a pesquisa.</value>
+  </data>
+  <data name="InvalidDocLogin" xml:space="preserve">
+    <value>O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.</value>
+  </data>
+  <data name="InvalidField" xml:space="preserve">
+    <value>{0} inválido. Por favor, verifique.</value>
+  </data>
+  <data name="InvalidId" xml:space="preserve">
+    <value>Identificador inválido. Por favor verifique.</value>
+  </data>
+  <data name="InvalidPin" xml:space="preserve">
+    <value>Código de autenticação inválido. Favor conferir código enviado.</value>
+  </data>
+  <data name="OperationNotPerformed" xml:space="preserve">
+    <value>Não foi possivel realizar a operação.</value>
+  </data>
+  <data name="PassportNotFound" xml:space="preserve">
+    <value>Passport não encontrado ou expirado;</value>
+  </data>
+  <data name="PasswordChanged" xml:space="preserve">
+    <value>Senha alterada com sucesso.</value>
+  </data>
+  <data name="PasswordDifference" xml:space="preserve">
+    <value>As senhas informadas não são iguais. Tente novamente.</value>
+  </data>
+  <data name="PasswordOutPattern" xml:space="preserve">
+    <value>A senha inserida não se encontra no padrão pré-estabelecido (8 caracteres: deve conter 1 letra, 1 número e 1 caractere especial). Por favor, verifique.</value>
+  </data>
+  <data name="PinExpired" xml:space="preserve">
+    <value>Código de autenticação expirado. Favor conferir código enviado.</value>
+  </data>
+  <data name="PinGenerated" xml:space="preserve">
+    <value>O {0} É o seu PIN de verificação do iPassport.</value>
+  </data>
+  <data name="PinInvalid" xml:space="preserve">
+    <value>Código de autenticação inválido. Favor conferir código enviado.</value>
+  </data>
+  <data name="PinResendTime" xml:space="preserve">
+    <value>Por favor aguarde o tempo minimo antes de solicitar um novo Código de autenticação.</value>
+  </data>
+  <data name="PinSent" xml:space="preserve">
+    <value>PIN enviado com sucesso.</value>
+  </data>
+  <data name="PlanAssociated" xml:space="preserve">
+    <value>Plano associado com sucesso!</value>
+  </data>
+  <data name="PlanCreated" xml:space="preserve">
+    <value>Plano criado com sucesso.</value>
+  </data>
+  <data name="PlanList" xml:space="preserve">
+    <value>Lista de Planos.</value>
+  </data>
+  <data name="PlanNotFound" xml:space="preserve">
+    <value>Plano não encontrado.</value>
+  </data>
+  <data name="RangeField" xml:space="preserve">
+    <value>O Campo {0} deve está entre o intervalo de {1} a {2}. Por favor verifique.</value>
+  </data>
+  <data name="RequiredField" xml:space="preserve">
+    <value>O campo {0} é obrigatório.</value>
+  </data>
+  <data name="RoleCreated" xml:space="preserve">
+    <value>Role criado com sucesso.</value>
+  </data>
+  <data name="TermsOfUseNotAccepted" xml:space="preserve">
+    <value>É Necessário aceitar os termos de uso para continuar.</value>
+  </data>
+  <data name="UserAlreadyPhoto" xml:space="preserve">
+    <value>O Usuário já possui foto cadastrada.</value>
+  </data>
+  <data name="UserAuthenticated" xml:space="preserve">
+    <value>Usuário autenticado</value>
+  </data>
+  <data name="UserCount" xml:space="preserve">
+    <value>Total de Usuários registrados.</value>
+  </data>
+  <data name="UserCreated" xml:space="preserve">
+    <value>Usuário criado com sucesso.</value>
+  </data>
+  <data name="UserNotCreated" xml:space="preserve">
+    <value>Usuário não pode ser criado.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Usuário não encontrado.</value>
+  </data>
+  <data name="UserOrPasswordInvalid" xml:space="preserve">
+    <value>Usuário e/ou senha incorreta.Por favor, tente novamente.</value>
+  </data>
+  <data name="UserVaccines" xml:space="preserve">
+    <value>Vacinas do usuário.</value>
+  </data>
+  <data name="VaccinatedCount" xml:space="preserve">
+    <value>Total de vacinados.</value>
+  </data>
+  <data name="VaccineManufaccturers" xml:space="preserve">
+    <value>Fabricantes de vacinas.</value>
+  </data>
+</root>
