@@ -7,5 +7,6 @@ namespace iPassport.Application.Interfaces
     public interface IVaccineService
     {
         Task<ResponseApi> GetVaccinatedCount(GetVaccinatedCountFilter filter);
+        Task<ResponseApi> GetByManufacturerId(GetByIdPagedFilter filter);
     }
 }

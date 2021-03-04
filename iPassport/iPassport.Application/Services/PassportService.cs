@@ -134,12 +134,12 @@ namespace iPassport.Application.Services
             var passport = await _repository.FindByPassportDetailsValid(passportDetailsId);
 
             if (passport == null)
-                throw new BusinessException("Passport não encontrado ou expirado");
+                throw new BusinessException(_localizer["PassportNotFound"]);
             
             var authUser = await _userRepository.FindById(_accessor.GetCurrentUserId());
             if(!authUser.IsAgent())
-                throw new BusinessException("O Usuário logado não é um agente");
-
+                throw new BusinessException(_localizer["UserNotAgent"]);
+            
             var passportCitizen = await _userRepository.FindById(passport.UserDetails.UserId);
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);

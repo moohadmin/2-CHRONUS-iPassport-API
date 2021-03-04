@@ -35,5 +35,17 @@ namespace iPassport.Application.Models.ViewModels
         /// Observation
         /// </summary>
         public string Observation { get; set; }
+        /// <summary>
+        /// Color starts in HexaDecimal without #
+        /// </summary>
+        public string ColorStart { get; set; }
+        /// <summary>
+        /// Color starts in HexaDecimal without #
+        /// </summary>
+        public string ColorEnd { get; set; }
+        /// <summary>
+        /// If Active
+        /// </summary>
+        public bool Active { get; set; }
     }
 }
