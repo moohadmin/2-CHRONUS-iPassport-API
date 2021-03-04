@@ -26,7 +26,7 @@ namespace iPassport.Domain.Entities
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId);
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
-        public bool IsImunized()
+        public bool IsImmunized()
         {
             if (UserVaccines == null || !UserVaccines.Any())
                 return false;

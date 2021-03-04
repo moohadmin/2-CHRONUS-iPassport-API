@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
 {
@@ -21,6 +22,8 @@ namespace iPassport.Domain.Entities
         public System.Guid CountryId { get; private set; }
 
         public Country Country { get; set; }
+
+        public virtual IEnumerable<City> Cities { get; set; }
 
         public State Create(StateCreateDto dto) => new State(dto.Name, dto.Acronym, dto.IbgeCode, dto.CountryId);
             
