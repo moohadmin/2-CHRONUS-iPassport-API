@@ -23,6 +23,3 @@ jobs:
       run: dotnet restore ./
     - name: Build
       run: publish --no-restore ./ -o artifacts
-    - name: Test
-      run: dotnet test --no-restore . -m:1 /p:CollectCoverage=true /p:CoverletOutput=../ /p:CoverletOutputFormat=\"opencover\" /p:MergeWith=../coverage.json
-
