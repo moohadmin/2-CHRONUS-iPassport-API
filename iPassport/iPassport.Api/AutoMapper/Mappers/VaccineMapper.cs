@@ -17,6 +17,9 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<Disease, DiseaseViewModel>()
                 .ReverseMap();
+
+            profile.CreateMap<Vaccine, VaccineViewModel>()
+                .ForMember(des => des.ManufacturerName, act => act.MapFrom(src => src.Manufacturer != null ? src.Manufacturer.Name : null));
         }
     }
 }
