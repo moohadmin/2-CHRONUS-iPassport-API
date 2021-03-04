@@ -32,7 +32,7 @@ namespace iPassport.Infra.Repositories
                 .Include(v => v.Vaccine).ThenInclude(v => v.Diseases)
                 .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
-                    && (v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
+                    && (filter.DiseaseId == null || v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
                     && (filter.DosageCount == 0 ? v.Vaccine.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.RequiredDoses > 1))
                 .CountAsync();
         }

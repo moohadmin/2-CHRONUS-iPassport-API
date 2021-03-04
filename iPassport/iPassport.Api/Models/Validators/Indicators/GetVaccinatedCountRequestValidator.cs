@@ -17,13 +17,9 @@ namespace iPassport.Api.Models.Validators.Indicators
             RuleFor(s => s.EndTime)
                 .SetValidator(new RequiredFieldValidator<DateTime>("EndTime"));
 
-            RuleFor(s => s.DiseaseId)
-                .SetValidator(new RequiredFieldValidator<Guid>("DiseaseId"));
-
             RuleFor(s => s.DosageCount)
                 .Must(s => s >= 0)
                 .WithMessage($"O campo DosageCount é obrigatório");
-                //.SetValidator(new RequiredFieldValidator<int>("DosageCount"));
         }
     }
 }
