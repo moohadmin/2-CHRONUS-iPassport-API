@@ -39,5 +39,7 @@ namespace iPassport.Domain.Entities
 
             return false;
         }
+
+        public bool IsFirstDose() => Dose == 1;
     }
 }

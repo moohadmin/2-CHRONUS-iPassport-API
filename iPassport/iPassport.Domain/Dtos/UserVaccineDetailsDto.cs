@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace iPassport.Domain.Dtos
@@ -10,5 +11,7 @@ namespace iPassport.Domain.Dtos
         public IEnumerable<VaccineDoseDto> Doses { get; set; }
         public int RequiredDoses { get; set; }
         public int ImunizationTime { get; set; }
+        public Guid UserId { get; set; }
+        public EUserVaccineStatus Status { get; set; }
     }
 }

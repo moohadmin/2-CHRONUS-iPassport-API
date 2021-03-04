@@ -22,12 +22,13 @@ namespace iPassport.Infra.Repositories
                 .Where(v => v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
                 .GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
                 .Select(v => new UserVaccineDetailsDto()
-                { 
+                {
+                    UserId = v.FirstOrDefault().UserId,
                     VaccineId = v.Key.VaccineId,
                     VaccineName = v.Key.Name,
                     RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
                     ImunizationTime = v.FirstOrDefault().Vaccine.ImunizationTime,
-                    Doses = v.Select(x => new VaccineDoseDto() { 
+                    Doses = v.Select(x => new VaccineDoseDto() {
                         Dose = x.Dose,
                         VaccinationDate = x.VaccinationDate,
                         ValidDate = x.VaccinationDate.AddDays(x.Vaccine.ExpirationTime)

@@ -4,8 +4,7 @@
     {
         Vaccinated,
         Waiting,
-        NotVaccinated,
-        Expired,
+        Unvaccinated,
         Immunized,
     }
 }
