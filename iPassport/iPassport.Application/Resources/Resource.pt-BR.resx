@@ -252,4 +252,7 @@
   <data name="VaccineManufaccturers" xml:space="preserve">
     <value>Fabricantes de vacinas.</value>
   </data>
+  <data name="Vaccines" xml:space="preserve">
+    <value>Vacinas</value>
+  </data>
 </root>
