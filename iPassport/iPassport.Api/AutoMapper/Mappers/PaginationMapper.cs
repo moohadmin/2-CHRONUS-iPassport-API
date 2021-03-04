@@ -10,7 +10,7 @@ namespace iPassport.Api.AutoMapper.Mappers
         {
             profile.CreateMap<PageFilterRequest, PageFilter>();
             profile.CreateMap<GetPagedVaccinesByManufacuterRequest, GetByIdPagedFilter>()
-                    .ForMember(des => des.Id, act => act.MapFrom(src => src.PassportId));
+                    .ForMember(des => des.Id, act => act.MapFrom(src => src.ManufacuterId));
         }
     }
 }

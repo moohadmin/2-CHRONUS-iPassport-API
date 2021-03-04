@@ -8,6 +8,7 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
@@ -98,7 +99,8 @@ namespace iPassport.Application.Services
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userManager.FindByIdAsync(userId.ToString());
 
-            authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+            if(authUser.Profile == (int)EProfileType.Citizen)
+                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
 
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
 

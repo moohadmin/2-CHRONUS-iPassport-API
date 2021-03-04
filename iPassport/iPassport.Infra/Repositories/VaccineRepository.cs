@@ -2,6 +2,7 @@
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,10 @@ namespace iPassport.Infra.Repositories
 
     public async Task<PagedData<Vaccine>> GetByManufacturerId(GetByIdPagedFilter filter)
     {
-            var query = _DbSet.Where(m => m.ManufacturerId == filter.Id).OrderBy(m => m.Name);
+            var query = _DbSet
+                .Include(x => x.Manufacturer)
+                .Where(m => m.ManufacturerId == filter.Id)
+                .OrderBy(m => m.Name);
 
         return await Paginate(query, filter);
     }
