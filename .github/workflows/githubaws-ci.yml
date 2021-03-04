@@ -98,5 +98,5 @@ jobs:
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ipassport-api-service
-        cluster: default
-        wait-for-service-stability: true
+        cluster: ipassport-cluster
+        wait-for-service-stability: false
