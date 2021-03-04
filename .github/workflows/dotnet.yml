@@ -17,9 +17,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Set NUGET_PACK
+      run: export NUGET_PACKAGES=$(pwd)/packages/
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./
     - name: Build
-      run: dotnet build --no-restore
+      run: publish --no-restore ./ -o artifacts
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-restore . -m:1 /p:CollectCoverage=true /p:CoverletOutput=../ /p:CoverletOutputFormat=\"opencover\" /p:MergeWith=../coverage.json
+
