@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using iPassport.Api.Models.Requests;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Entities;
-using iPassport.Domain.Filters;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -19,6 +17,9 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<Disease, DiseaseViewModel>()
                 .ReverseMap();
+
+            profile.CreateMap<Vaccine, VaccineViewModel>()
+                .ForMember(des => des.ManufacturerName, act => act.MapFrom(src => src.Manufacturer != null ? src.Manufacturer.Name : null));
         }
     }
 }

@@ -1,9 +1,13 @@
-﻿using iPassport.Application.Interfaces;
+﻿using AutoMapper;
+using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Resources;
 using iPassport.Application.Services;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using iPassport.Test.Seeds;
+using iPassport.Test.Settings.Factories;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,16 +19,20 @@ namespace iPassport.Test.Services
     public class VaccineServiceTest
     {
         Mock<IUserVaccineRepository> _userVaccineRepository;
+        Mock<IVaccineRepository> _vaccineRepository;
         IVaccineService _service;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
+        IMapper _mapper;
 
         [TestInitialize]
         public void Setup()
         {
             _userVaccineRepository = new Mock<IUserVaccineRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _vaccineRepository = new Mock<IVaccineRepository>();
+            _mapper = AutoMapperFactory.Create();
 
-            _service = new VaccineService(_userVaccineRepository.Object, _mockLocalizer.Object);
+            _service = new VaccineService(_vaccineRepository.Object, _userVaccineRepository.Object, _mockLocalizer.Object, _mapper);
         }
 
         [TestMethod]
@@ -40,6 +48,23 @@ namespace iPassport.Test.Services
 
             // Assert
             _userVaccineRepository.Verify(a => a.GetVaccinatedCount(It.IsAny<GetVaccinatedCountFilter>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void GetByManufacturerId()
+        {
+            var mockFilter = Mock.Of<GetByIdPagedFilter>();
+
+            // Arrange
+            _vaccineRepository.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(new PagedData<Vaccine>() { Data = VaccineSeed.GetVaccines() });
+
+            // Act
+            var result = _service.GetByManufacturerId(mockFilter);
+
+            // Assert
+            _vaccineRepository.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
