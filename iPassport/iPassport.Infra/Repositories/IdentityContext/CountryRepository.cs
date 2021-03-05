@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Entities;
+using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -9,21 +10,15 @@ using System.Threading.Tasks;
 
 namespace iPassport.Infra.Repositories.IdentityContext
 {
-    public class CountryRepository : ICountryRepository, IDisposable
+    public class CountryRepository : IdentityBaseRepository<Country>, ICountryRepository
     {
-        private readonly PassportIdentityContext _context;
+        public CountryRepository(PassportIdentityContext context) : base(context) { }
 
-        public CountryRepository(PassportIdentityContext context) => _context = context;
-
-        public async Task<Country> FindById(Guid id) =>
-            await _context.Country.Where(x => x.Id == id).FirstOrDefaultAsync();
-
-        public async Task<List<Country>> FindAll() =>
-            await _context.Country.ToListAsync();
-
-        public void Dispose()
+        public async Task<PagedData<Country>> GetByNameInitials(GetByNameInitialsPagedFilter filter)
         {
-            _context?.Dispose();
+            var query = _DbSet.Where(m => string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower())).OrderBy(m => m.Name);
+
+            return await Paginate(query, filter);            
         }
     }
 }

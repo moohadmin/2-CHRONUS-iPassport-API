@@ -35,16 +35,16 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void GetByNameInitals()
         {
-            var mockFilter = Mock.Of<GetByNameInitalsPagedFilter>();
+            var mockFilter = Mock.Of<GetByNameInitialsPagedFilter>();
 
             // Arrange
-            _mockRepository.Setup(r => r.GetByNameInitals(It.IsAny<GetByNameInitalsPagedFilter>()).Result).Returns(new PagedData<VaccineManufacturer>());
+            _mockRepository.Setup(r => r.GetByNameInitals(It.IsAny<GetByNameInitialsPagedFilter>()).Result).Returns(new PagedData<VaccineManufacturer>());
 
             // Act
             var result = _service.GetByNameInitals(mockFilter);
 
             // Assert
-            _mockRepository.Verify(a => a.GetByNameInitals(It.IsAny<GetByNameInitalsPagedFilter>()), Times.Once);
+            _mockRepository.Verify(a => a.GetByNameInitals(It.IsAny<GetByNameInitialsPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

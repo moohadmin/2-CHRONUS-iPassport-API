@@ -1,6 +1,6 @@
 ﻿namespace iPassport.Api.Models.Requests.Shared
 {
-    public class GetByNameInitalsPagedRequest : PageFilterRequest
+    public class GetByNameInitialsPagedRequest : PageFilterRequest
     {
         public string Initals { get; set; }
     }

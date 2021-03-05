@@ -1,13 +1,11 @@
 ﻿using iPassport.Domain.Entities;
-using System;
-using System.Collections.Generic;
+using iPassport.Domain.Filters;
 using System.Threading.Tasks;
 
 namespace iPassport.Domain.Repositories.PassportIdentityContext
 {
-    public interface ICountryRepository
+    public interface ICountryRepository : IIdentityBaseRepository<Country>
     {
-        Task<Country> FindById(Guid id);
-        Task<List<Country>> FindAll();
+        Task<PagedData<Country>> GetByNameInitials(GetByNameInitialsPagedFilter filter);
     }
 }
