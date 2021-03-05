@@ -61,7 +61,7 @@ namespace iPassport.Api.Controllers
         [HttpGet("ByName")]
         public async Task<ActionResult> GetByNameParts([FromQuery] GetByNamePartsPagedRequest request)
         {
-            var res = await _service.GetByNameParts(_mapper.Map<GetByNamePartsPagedFilter>(request));
+            var res = await _service.FindByNameParts(_mapper.Map<GetByNamePartsPagedFilter>(request));
 
             return Ok(res);
         }

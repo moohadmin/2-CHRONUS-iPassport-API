@@ -11,7 +11,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
     {
         public CountryRepository(PassportIdentityContext context) : base(context) { }
 
-        public async Task<PagedData<Country>> GetByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedData<Country>> FindByNameParts(GetByNamePartsPagedFilter filter)
         {
             var query = _DbSet.Where(m => string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower())).OrderBy(m => m.Name);
 

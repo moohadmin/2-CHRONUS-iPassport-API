@@ -50,9 +50,9 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["Country"], countryViewModel);
         }
 
-        public async Task<PagedResponseApi> GetByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedResponseApi> FindByNameParts(GetByNamePartsPagedFilter filter)
         {
-            var res = await _countryRepository.GetByNameParts(filter);
+            var res = await _countryRepository.FindByNameParts(filter);
 
             var result = _mapper.Map<IList<CountryViewModel>>(res.Data);
 

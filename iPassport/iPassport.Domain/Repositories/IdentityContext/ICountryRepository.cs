@@ -6,6 +6,6 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
 {
     public interface ICountryRepository : IIdentityBaseRepository<Country>
     {
-        Task<PagedData<Country>> GetByNameParts(GetByNamePartsPagedFilter filter);
+        Task<PagedData<Country>> FindByNameParts(GetByNamePartsPagedFilter filter);
     }
 }
