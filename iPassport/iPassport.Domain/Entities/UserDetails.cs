@@ -29,17 +29,17 @@ namespace iPassport.Domain.Entities
         {
             if (UserVaccines == null || !UserVaccines.Any())
                 return false;
-
+            
             var vacinnes = UserVaccines.Select(x => x.Vaccine).Distinct().ToList();
-            if(vacinnes == null || !vacinnes.Any())
+            
+            if (vacinnes == null || !vacinnes.Any())
                 return false;
-
+            
             foreach (var vaccine in vacinnes)
             {
-                if(GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
+                if (vaccine == null || GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
                     return false;
             }
-
             return true;
         }
 
