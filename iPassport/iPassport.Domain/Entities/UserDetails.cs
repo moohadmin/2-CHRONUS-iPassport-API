@@ -25,19 +25,21 @@ namespace iPassport.Domain.Entities
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId);
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
-        public bool IsImunized()
+        public bool IsImmunized()
         {
             if (UserVaccines == null || !UserVaccines.Any())
                 return false;
-
+            
             var vacinnes = UserVaccines.Select(x => x.Vaccine).Distinct().ToList();
+            
+            if (vacinnes == null || !vacinnes.Any())
+                return false;
             
             foreach (var vaccine in vacinnes)
             {
-                if(vaccine == null || !UserVaccines.Any(x => x.VaccineId == vaccine.Id && x.IsImmunized()))
+                if (vaccine == null || GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
                     return false;
             }
-
             return true;
         }
 

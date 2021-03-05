@@ -56,7 +56,7 @@ namespace iPassport.Infra.Repositories
             (int take, int skip) = CalcPageOffset(filter);
 
             var data = await dbSet.Take(take).Skip(skip).ToListAsync();
-            var totalPages = data.Count / filter.PageSize;
+            var totalPages = data.Count > filter.PageSize ? data.Count / filter.PageSize : 1;
 
             return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = data.Count, Data = data };
         }

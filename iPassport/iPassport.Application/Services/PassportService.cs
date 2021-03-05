@@ -146,7 +146,7 @@ namespace iPassport.Application.Services
             viewModel.Cpf = passportCitizen.CPF;
             viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo);
             viewModel.UserFullName = passportCitizen.FullName;
-            viewModel.Imunized = passport.UserDetails.IsImunized();
+            viewModel.Imunized = passport.UserDetails.IsImmunized();
 
             return new ResponseApi(true, "Passport para validação",viewModel);
         }
