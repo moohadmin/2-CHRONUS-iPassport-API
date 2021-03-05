@@ -2,7 +2,7 @@
 {
     public enum EUserVaccineStatus
     {
-        Vaccinated,
+        Vaccinated = 1,
         Waiting,
         Unvaccinated,
         Immunized,
