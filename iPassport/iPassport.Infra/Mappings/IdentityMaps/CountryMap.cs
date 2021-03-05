@@ -15,7 +15,7 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(x => x.Name)
                 .IsRequired();
 
-            builder.Property(x => x.IbgeCode)
+            builder.Property(x => x.ExternalCode)
                 .IsRequired();
 
             builder.Property(x => x.Acronym)

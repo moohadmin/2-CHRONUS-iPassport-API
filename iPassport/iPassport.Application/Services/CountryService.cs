@@ -6,6 +6,7 @@ using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using Microsoft.Extensions.Localization;
@@ -29,7 +30,13 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(CountryCreateDto dto)
         {
-            throw new System.NotImplementedException();
+            var country = new Country().Create(dto);
+
+            var result = await _countryRepository.InsertAsync(country);
+            if(!result)
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
+
+            return new ResponseApi(true, _localizer["CountryCreated"], country.Id);
         }
         public async Task<ResponseApi> FindById(System.Guid id)
         {
@@ -40,16 +47,16 @@ namespace iPassport.Application.Services
 
             var countryViewModel = _mapper.Map<CountryViewModel>(country);
 
-            return new ResponseApi(true, "País", countryViewModel);
+            return new ResponseApi(true, _localizer["Country"], countryViewModel);
         }
 
-        public async Task<PagedResponseApi> GetByNameInitials(GetByNameInitialsPagedFilter filter)
+        public async Task<PagedResponseApi> GetByNameParts(GetByNamePartsPagedFilter filter)
         {
-            var res = await _countryRepository.GetByNameInitials(filter);
+            var res = await _countryRepository.GetByNameParts(filter);
 
             var result = _mapper.Map<IList<CountryViewModel>>(res.Data);
 
-            return new PagedResponseApi(true, "Paises", res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+            return new PagedResponseApi(true, _localizer["Countries"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 
         }
     }

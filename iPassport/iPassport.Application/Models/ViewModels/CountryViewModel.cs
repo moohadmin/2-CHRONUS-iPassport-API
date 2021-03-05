@@ -20,9 +20,13 @@ namespace iPassport.Application.Models.ViewModels
         /// </summary>
         public string Acronym { get; set; }
         /// <summary>
-        /// Country's IBGE Code
+        /// Country External Code
         /// </summary>
-        public int IbgeCode { get; set; }
+        public string ExternalCode { get; set; }
+        /// <summary>
+        /// Country Population
+        /// </summary>
+        public long? Population { get; set; }
 
     }
 }

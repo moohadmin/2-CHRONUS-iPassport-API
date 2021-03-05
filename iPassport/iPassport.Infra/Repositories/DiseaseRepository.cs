@@ -11,7 +11,7 @@ namespace iPassport.Infra.Repositories
     {
         public DiseaseRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<Disease>> GetByNameInitals(GetByNameInitialsPagedFilter filter)
+        public async Task<PagedData<Disease>> GetByNameInitals(GetByNamePartsPagedFilter filter)
         {
             var query = _DbSet.Where(m => string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower())).OrderBy(m => m.Name);
 

@@ -6,6 +6,6 @@ namespace iPassport.Application.Interfaces
 {
     public interface IDiseaseService
     {
-        Task<PagedResponseApi> GetByNameInitals(GetByNameInitialsPagedFilter filter);
+        Task<PagedResponseApi> GetByNameInitals(GetByNamePartsPagedFilter filter);
     }
 }

@@ -43,8 +43,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Requests\Country\" />
-  </ItemGroup>
-
 </Project>

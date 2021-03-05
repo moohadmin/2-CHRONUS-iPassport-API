@@ -4,7 +4,7 @@
     {
         public string Name { get;  set; }
         public string Acronym { get;  set; }
-        public int IbgeCode { get;  set; }
-        public int? Population { get; set; }
+        public string ExternalCode { get;  set; }
+        public long? Population { get; set; }
     }
 }

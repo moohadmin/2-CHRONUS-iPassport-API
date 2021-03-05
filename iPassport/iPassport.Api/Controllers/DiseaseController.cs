@@ -37,9 +37,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> GetByNameInitals([FromQuery] GetByNameInitialsPagedRequest request)
+        public async Task<ActionResult> GetByNameInitals([FromQuery] GetByNamePartsPagedRequest request)
         {
-            var res = await _service.GetByNameInitals(_mapper.Map<GetByNameInitialsPagedFilter>(request));
+            var res = await _service.GetByNameInitals(_mapper.Map<GetByNamePartsPagedFilter>(request));
 
             return Ok(res);
         }

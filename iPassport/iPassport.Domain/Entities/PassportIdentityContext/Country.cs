@@ -7,22 +7,21 @@ namespace iPassport.Domain.Entities
     {
         public Country() { }
 
-        public Country(string name, string acronym, int ibgeCode, int? population)
+        public Country(string name, string acronym, string externalCode, long? population)
         {
             Id = System.Guid.NewGuid();
             Name = name;
             Acronym = acronym;
-            IbgeCode = ibgeCode;
+            ExternalCode = externalCode;
             Population = population;
         }
 
         public string Name { get; private set; }
         public string Acronym { get; private set; }
-        public int IbgeCode { get; private set; }
-        public int? Population { get; private set; }
+        public string ExternalCode { get; private set; }
+        public long? Population { get; private set; }
 
         public virtual IEnumerable<State> States { get; set; }
-
-        public Country Create(CountryCreateDto dto) => new Country(dto.Name, dto.Acronym, dto.IbgeCode, dto.Population);
+        public Country Create(CountryCreateDto dto) => new Country(dto.Name, dto.Acronym, dto.ExternalCode, dto.Population);
     }
 }

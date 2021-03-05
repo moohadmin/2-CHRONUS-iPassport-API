@@ -10,6 +10,7 @@ namespace iPassport.Domain.Entities
             Id = System.Guid.NewGuid();
             Description = description;
             Cep = cep;
+            CityId = cityId;
         }
 
         public string Description { get; private set; }

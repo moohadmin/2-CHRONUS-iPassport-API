@@ -1,6 +1,6 @@
 ﻿namespace iPassport.Domain.Filters
 {
-    public class GetByNameInitialsPagedFilter : PageFilter
+    public class GetByNamePartsPagedFilter : PageFilter
     {
         public string Initials { get; set; }
     }

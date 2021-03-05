@@ -10,6 +10,6 @@ namespace iPassport.Application.Interfaces
     {
         Task<ResponseApi> Add(CountryCreateDto dto);
         Task<ResponseApi> FindById(System.Guid id);
-        Task<PagedResponseApi> GetByNameInitials(GetByNameInitialsPagedFilter filter);
+        Task<PagedResponseApi> GetByNameParts(GetByNamePartsPagedFilter filter);
     }
 }
