@@ -4,7 +4,6 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,14 +14,43 @@ namespace iPassport.Infra.Repositories
     {
         public UserVaccineRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<UserVaccine>> GetPagedUserVaccines(Guid userId, PageFilter pageFilter)
+        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccines(GetByIdPagedFilter pageFilter)
         {
-            var query = _DbSet
+            var q = await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
-                .Where(v => v.UserId == userId)
-                .OrderBy(v => v.VaccinationDate);
+                .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
+                .Where(v => v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
+                .ToListAsync();
 
-            return await Paginate(query, pageFilter);
+            var x = q.GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
+            .Select(v => new UserVaccineDetailsDto()
+            {
+                UserId = v.FirstOrDefault().UserId,
+                VaccineId = v.Key.VaccineId,
+                VaccineName = v.Key.Name,
+                RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
+                ImmunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
+                Doses = v.Select(x => new VaccineDoseDto()
+                {
+                    Dose = x.Dose,
+                    VaccinationDate = x.VaccinationDate,
+                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
+                })
+            });
+
+            (int take, int skip) = CalcPageOffset(pageFilter);
+
+            var data = x.Take(take).Skip(skip).ToList();
+            var totalPages = data.Count / pageFilter.PageSize;
+
+            return new PagedData<UserVaccineDetailsDto>()
+            {
+                PageNumber = pageFilter.PageNumber,
+                PageSize = pageFilter.PageSize,
+                TotalPages = totalPages,
+                TotalRecords = data.Count,
+                Data = data
+            };
         }
 
         public async Task<int> GetVaccinatedCount(GetVaccinatedCountFilter filter)

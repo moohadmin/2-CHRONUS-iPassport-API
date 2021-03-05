@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
@@ -115,16 +116,16 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetPagedUserVaccines_MustReturnOk()
         {
-            var mockRequest = Mock.Of<PageFilterRequest>();
+            var mockRequest = Mock.Of<GetPagedUserVaccinesRequest>();
 
             // Arrange
-            _mockVaccineService.Setup(r => r.GetUserVaccines(It.IsAny<PageFilter>()).Result);
+            _mockVaccineService.Setup(r => r.GetUserVaccines(It.IsAny<GetByIdPagedFilter>()).Result);
 
             // Act
             var result = _controller.GetPagedUserVaccines(mockRequest);
 
             // Assert
-            _mockVaccineService.Verify(a => a.GetUserVaccines(It.IsAny<PageFilter>()), Times.Once);
+            _mockVaccineService.Verify(a => a.GetUserVaccines(It.IsAny<GetByIdPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
@@ -37,9 +37,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> GetByNameInitals([FromQuery] GetByNameInitalsRequest request)
+        public async Task<ActionResult> GetByNameInitals([FromQuery] GetByNameInitalsPagedRequest request)
         {
-            var res = await _service.GetByNameInitals(_mapper.Map<GetByNameInitalsFilter>(request));
+            var res = await _service.GetByNameInitals(_mapper.Map<GetByNameInitalsPagedFilter>(request));
 
             return Ok(res);
         }

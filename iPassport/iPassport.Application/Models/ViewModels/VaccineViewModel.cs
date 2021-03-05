@@ -6,8 +6,8 @@ namespace iPassport.Application.Models.ViewModels
     {
         public string Name { get; set; }
         public int RequiredDoses { get; set; }
-        public int ExpirationTime { get; set; }
-        public int ImunizationTime { get; set; }
+        public int ExpirationTimeInMonths { get; set; }
+        public int ImmunizationTimeInDays { get; set; }
         public Guid ManufacturerId { get; set; }
         public string ManufacturerName { get; set; }
         public int MaxTimeNextDose { get; set; }

@@ -51,7 +51,7 @@ namespace iPassport.Infra.Repositories
             return result > 0;
         }
 
-        protected async Task<PagedData<T>> Paginate(IQueryable<T> dbSet, PageFilter filter)
+        protected virtual async Task<PagedData<T>> Paginate(IQueryable<T> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);
 
@@ -61,7 +61,7 @@ namespace iPassport.Infra.Repositories
             return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = data.Count, Data = data };
         }
 
-        private static (int, int) CalcPageOffset(PageFilter filter)
+        protected (int, int) CalcPageOffset(PageFilter filter)
         {
             int skip = (filter.PageNumber - 1) * filter.PageSize;
             int take = skip + filter.PageSize;
