@@ -33,12 +33,15 @@ namespace iPassport.Application.Services
         public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter)
         {
             var res = await _repository.GetPagedUserVaccines(pageFilter);
-            var user = await _userDetailsRepository.GetUserWithVaccine((Guid)res.Data?.FirstOrDefault().UserId);
+            
+            if(res.Data.Any())
+            {
+                var user = await _userDetailsRepository.GetUserWithVaccine(res.Data.FirstOrDefault().UserId);
+                foreach (var d in res.Data)
+                    d.Status = user.GetUserVaccineStatus(d.VaccineId);
+            }
 
-            foreach (var d in res.Data)
-                d.Status = user.GetUserVaccineStatus(d.VaccineId);
-
-            var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data).GroupBy(r => r.VaccineId);
+            var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
