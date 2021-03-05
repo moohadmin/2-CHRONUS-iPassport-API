@@ -13,10 +13,10 @@ namespace iPassport.Infra.Mappings
             builder.Property(p => p.Name)
                 .IsRequired();
 
-            builder.Property(p => p.ExpirationTime)
+            builder.Property(p => p.ExpirationTimeInMonths)
                 .IsRequired();
 
-            builder.Property(p => p.ImunizationTime)
+            builder.Property(p => p.ImmunizationTimeInDays)
                 .IsRequired();
 
             builder.Property(p => p.RequiredDoses)

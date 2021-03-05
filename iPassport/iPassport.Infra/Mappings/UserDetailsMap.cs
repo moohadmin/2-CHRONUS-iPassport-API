@@ -10,16 +10,10 @@ namespace iPassport.Infra.Mappings
         {
             builder.HasKey(k => k.Id);
 
-            builder.Property(x => x.UserId)
-                .HasColumnType("uniqueidentifier")
-                .IsRequired();
-
             builder.Property(c => c.CreateDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
 
             builder.Property(c => c.UpdateDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
 
             builder.HasOne(c => c.Plan)

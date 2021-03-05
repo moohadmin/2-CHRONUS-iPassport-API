@@ -11,19 +11,15 @@ namespace iPassport.Infra.Mappings
             builder.HasKey(k => k.Id);
 
             builder.Property(c => c.Dose)
-                .HasColumnType("int")
                 .IsRequired();
 
             builder.Property(c => c.VaccinationDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
 
             builder.Property(c => c.CreateDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
 
             builder.Property(c => c.UpdateDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
 
             builder.HasOne(c => c.Vaccine)

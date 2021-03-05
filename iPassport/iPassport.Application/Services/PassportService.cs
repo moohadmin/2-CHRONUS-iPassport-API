@@ -51,7 +51,7 @@ namespace iPassport.Application.Services
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            var passport = await _repository.FindByUser(userDetails.UserId);
+            var passport = await _repository.FindByUser(userDetails.Id);
 
             if (passport == null)
             {
@@ -140,7 +140,7 @@ namespace iPassport.Application.Services
             if(!authUser.IsAgent())
                 throw new BusinessException(_localizer["UserNotAgent"]);
             
-            var passportCitizen = await _userRepository.FindById(passport.UserDetails.UserId);
+            var passportCitizen = await _userRepository.FindById(passport.UserDetails.Id);
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;

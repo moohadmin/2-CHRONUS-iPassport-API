@@ -13,16 +13,16 @@ namespace iPassport.Domain.Entities
             Id = Guid.NewGuid();
             Name = name;
             ManufacturerId = manufacturerId;
-            ExpirationTime = expirationTime;
-            ImunizationTime = imunizationTime;
+            ExpirationTimeInMonths = expirationTime;
+            ImmunizationTimeInDays = imunizationTime;
             RequiredDoses = requiredDoses;            
             MaxTimeNextDose = maxTimeNextDose;
             MinTimeNextDose = minTimeNextDose;
         }
         public string Name { get; private set; }
         public int RequiredDoses { get; private set; }
-        public int ExpirationTime { get; private set; }
-        public int ImunizationTime { get; private set; }
+        public int ExpirationTimeInMonths { get; private set; }
+        public int ImmunizationTimeInDays { get; private set; }
         public Guid ManufacturerId { get; private set; }
         
         public int MaxTimeNextDose { get; private set; }

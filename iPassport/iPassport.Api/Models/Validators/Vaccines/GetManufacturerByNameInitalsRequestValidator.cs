@@ -1,15 +1,15 @@
 ﻿using FluentValidation;
-using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Shared;
 using iPassport.Application.Resources;
 using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
-    public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNameInitalsRequest>
+    public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNameInitalsPagedRequest>
     {
         public GetManufacturerByNameInitalsRequestValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.Initials)
+            RuleFor(x => x.Initals)
                 .Must(x => string.IsNullOrWhiteSpace(x) || x.Length >= 3).WithMessage(string.Format(localizer["InitalsRequestMin"], "3"))
                 .SetValidator(new RequiredFieldValidator<string>("Initials", localizer));
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.User;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
@@ -150,9 +151,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet("Vaccine")]
-        public async Task<ActionResult> GetPagedUserVaccines([FromQuery] PageFilterRequest request)
+        public async Task<ActionResult> GetPagedUserVaccines([FromQuery] GetPagedUserVaccinesRequest request)
         {
-            var res = await _vaccineService.GetUserVaccines(_mapper.Map<PageFilter>(request));
+            var res = await _vaccineService.GetUserVaccines(_mapper.Map<GetByIdPagedFilter>(request));
 
             return Ok(res);
         }
