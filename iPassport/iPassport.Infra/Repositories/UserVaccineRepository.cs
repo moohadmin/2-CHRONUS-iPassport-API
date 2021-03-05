@@ -34,7 +34,7 @@ namespace iPassport.Infra.Repositories
                 {
                     Dose = x.Dose,
                     VaccinationDate = x.VaccinationDate,
-                    ValidDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
+                    ExpirationTime = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
                 })
             });
 
