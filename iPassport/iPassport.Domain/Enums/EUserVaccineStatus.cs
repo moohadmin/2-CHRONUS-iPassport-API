@@ -6,5 +6,6 @@
         Waiting,
         Unvaccinated,
         Immunized,
+        NotImmunized
     }
 }

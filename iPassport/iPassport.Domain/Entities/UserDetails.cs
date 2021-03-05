@@ -65,7 +65,7 @@ namespace iPassport.Domain.Entities
                         && userVaccine.VaccinationDate <= lastVaccineDate.AddDays(vaccine.MaxTimeNextDose))
                         validDoses += 1;
                     else
-                        return EUserVaccineStatus.Unvaccinated;
+                        return EUserVaccineStatus.NotImmunized;
                 }
                 else
                     validDoses += 1;
