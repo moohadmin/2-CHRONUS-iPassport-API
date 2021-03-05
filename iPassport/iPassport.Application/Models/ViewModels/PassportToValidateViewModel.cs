@@ -34,6 +34,6 @@ namespace iPassport.Application.Models.ViewModels
         /// <summary>
         /// if Imunized
         /// </summary>
-        public bool Imunized { get; set; }
+        public bool Immunized { get; set; }
     }
 }
