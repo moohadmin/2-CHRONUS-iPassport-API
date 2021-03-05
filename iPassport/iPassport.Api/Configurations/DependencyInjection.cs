@@ -49,6 +49,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IRoleService, RoleService>();
 
             services.AddScoped<IStorageExternalService, StorageExternalService>();
+
+            services.AddScoped<ICountryService, CountryService>();
             #endregion
 
             #region DI Repositories

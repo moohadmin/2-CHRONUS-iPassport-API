@@ -14,6 +14,7 @@ namespace iPassport.Api.AutoMapper
             VaccineMapper.Map(this);
             PaginationMapper.Map(this);
             IndicatorMapper.Map(this);
+            CountryMapper.Map(this);
         }
     }
 }

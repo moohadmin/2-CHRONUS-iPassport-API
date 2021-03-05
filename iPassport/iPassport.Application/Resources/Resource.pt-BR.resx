@@ -129,6 +129,9 @@
   <data name="CitzenCount" xml:space="preserve">
     <value>Total de Cidadãos logados.</value>
   </data>
+  <data name="CountryNotFound" xml:space="preserve">
+    <value>Pais não encontrado.</value>
+  </data>
   <data name="DataAlreadyRegistered" xml:space="preserve">
     <value>{0} já cadastrado!</value>
   </data>

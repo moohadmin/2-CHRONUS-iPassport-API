@@ -8,7 +8,7 @@ namespace iPassport.Infra.Mappings.IdentityMaps
     {
         public void Configure(EntityTypeBuilder<Country> builder)
         {
-            builder.ToTable("States");
+            builder.ToTable("Countries");
 
             builder.HasKey(x => x.Id);
 
