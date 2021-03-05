@@ -27,6 +27,8 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(x => x.CreateDate)
                 .IsRequired();
 
+            builder.Property(x => x.Population)
+                .IsRequired(false);
 
             builder.HasOne(x => x.State)
                 .WithMany(x => x.Cities)

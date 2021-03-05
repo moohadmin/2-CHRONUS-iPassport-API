@@ -2,9 +2,10 @@
 {
     public class CityCreateDto
     {
-        public string Name { get; private set; }
-        public string Acronym { get; private set; }
-        public int IbgeCode { get; private set; }
-        public System.Guid StateId { get; private set; }
+        public string Name { get;  set; }
+        public string Acronym { get;  set; }
+        public int IbgeCode { get;  set; }
+        public System.Guid StateId { get;  set; }
+        public int? Population { get;  set; }
     }
 }
