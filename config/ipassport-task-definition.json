@@ -27,10 +27,6 @@
       "cpu": 0,
       "environment": [
         {
-          "name": "CONNECTION_STRING",
-          "value": "Server=ipassportdb.cbv2ywqq5gub.sa-east-1.rds.amazonaws.com;Port=5432;Database=ipassportdb;User Id=postgres;"
-        },
-        {
           "name": "PIN_INTEGRATION_SIMULADO",
           "value": "false"
         }
@@ -42,8 +38,20 @@
       "workingDirectory": null,
       "secrets": [
         {
-          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassword/db-riAXEY",
-          "name": "DB_PASSWORD"
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/notifications-QPx8GI",
+          "name": "AWS_SECRET_NOTIFICATIONS"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/jwt_token-C1gUEb",
+          "name": "AWS_SECRET_JWT_TOKEN"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/s3-k1u0uT",
+          "name": "AWS_SECRET_S3"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/database-L2PBTt",
+          "name": "AWS_SECRET_DATABASE"
         }
       ],
       "dockerSecurityOptions": null,
