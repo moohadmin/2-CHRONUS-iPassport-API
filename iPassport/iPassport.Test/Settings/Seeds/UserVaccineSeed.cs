@@ -16,9 +16,9 @@ namespace iPassport.Test.Seeds
                     VaccineId = Guid.NewGuid(),
                     Doses = new List<VaccineDoseDto>()
                         { 
-                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow},
-                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow},
-                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow}
+                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow}
                     } 
                 },
                 new UserVaccineDetailsDto()
@@ -26,9 +26,9 @@ namespace iPassport.Test.Seeds
                     VaccineId = Guid.NewGuid(),
                     Doses = new List<VaccineDoseDto>()
                         {
-                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow},
-                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow},
-                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow}
+                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow}
                     }
                 },
                 new UserVaccineDetailsDto()
@@ -36,9 +36,9 @@ namespace iPassport.Test.Seeds
                     VaccineId = Guid.NewGuid(),
                     Doses = new List<VaccineDoseDto>()
                         {
-                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow},
-                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow},
-                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ExpirationTime = DateTime.UtcNow}
+                        new VaccineDoseDto(){ Dose = 1, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 2, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow},
+                        new VaccineDoseDto(){ Dose = 3, VaccinationDate = DateTime.UtcNow, ExpirationDate = DateTime.UtcNow}
                     }
                 }
             };
