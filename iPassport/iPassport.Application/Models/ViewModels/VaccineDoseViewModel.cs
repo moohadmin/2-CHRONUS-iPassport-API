@@ -6,6 +6,6 @@ namespace iPassport.Application.Models.ViewModels
     {
         public int Dose { get; set; }
         public DateTime VaccinationDate { get; set; }
-        public DateTime ValidDate { get; set; }
+        public DateTime ExpirationTime { get; set; }
     }
 }
