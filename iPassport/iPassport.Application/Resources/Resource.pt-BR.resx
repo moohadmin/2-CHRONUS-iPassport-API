@@ -228,6 +228,9 @@
   <data name="RoleCreated" xml:space="preserve">
     <value>Role criado com sucesso.</value>
   </data>
+	<data name="StateCreated" xml:space="preserve">
+    <value>Estado criado com sucesso.</value>
+  </data>
   <data name="TermsOfUseNotAccepted" xml:space="preserve">
     <value>É Necessário aceitar os termos de uso para continuar.</value>
   </data>
@@ -266,5 +269,8 @@
   </data>
   <data name="Vaccines" xml:space="preserve">
     <value>Vacinas</value>
+  </data>
+	<data name="States" xml:space="preserve">
+    <value>Estados.</value>
   </data>
 </root>
