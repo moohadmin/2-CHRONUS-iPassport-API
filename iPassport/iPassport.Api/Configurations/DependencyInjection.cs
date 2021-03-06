@@ -4,10 +4,12 @@ using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Infra.ExternalServices;
 using iPassport.Infra.ExternalServices.StorageExternalServices;
 using iPassport.Infra.Repositories;
 using iPassport.Infra.Repositories.AuthenticationRepositories;
+using iPassport.Infra.Repositories.IdentityContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -47,6 +49,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IRoleService, RoleService>();
 
             services.AddScoped<IStorageExternalService, StorageExternalService>();
+
+            services.AddScoped<ICountryService, CountryService>();
             #endregion
 
             #region DI Repositories
@@ -75,6 +79,14 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IVaccineManufacturerRepository, VaccineManufacturerRepository>();
 
             services.AddScoped<IVaccineRepository, VaccineRepository>();
+
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            
+            services.AddScoped<ICityRepository, CityRepository>();
+
+            services.AddScoped<IStateRepository, StateRepository>();
+
+            services.AddScoped<ICountryRepository, CountryRepository>();
             #endregion
 
             #region DI Settings

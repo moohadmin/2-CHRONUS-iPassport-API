@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210305132803_ADD_Address_City_State_Coutry")]
+    partial class ADD_Address_City_State_Coutry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -334,9 +336,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("Population")
-                        .HasColumnType("integer");
-
                     b.Property<Guid>("StateId")
                         .HasColumnType("uuid");
 
@@ -363,16 +362,12 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("ExternalCode")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("IbgeCode")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<long?>("Population")
-                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("timestamp without time zone");
@@ -404,9 +399,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("Population")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("timestamp without time zone");

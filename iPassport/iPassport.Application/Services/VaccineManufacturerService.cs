@@ -24,7 +24,7 @@ namespace iPassport.Application.Services
             _localizer = localizer;
         }
 
-        public async Task<PagedResponseApi> GetByNameInitals(GetByNameInitalsPagedFilter filter)
+        public async Task<PagedResponseApi> GetByNameInitals(GetByNamePartsPagedFilter filter)
         {
             var res = await _repository.GetByNameInitals(filter);
 

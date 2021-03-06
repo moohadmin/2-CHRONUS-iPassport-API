@@ -6,6 +6,6 @@ namespace iPassport.Domain.Repositories
 {
     public interface IDiseaseRepository : IRepository<Disease>
     {
-        Task<PagedData<Disease>> GetByNameInitals(GetByNameInitalsPagedFilter filter);
+        Task<PagedData<Disease>> GetByNameInitals(GetByNamePartsPagedFilter filter);
     }
 }

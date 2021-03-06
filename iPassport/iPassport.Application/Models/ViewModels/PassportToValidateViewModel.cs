@@ -32,7 +32,7 @@ namespace iPassport.Application.Models.ViewModels
         /// </summary>
         public string UserPhoto { get; set; }
         /// <summary>
-        /// if Imunized
+        /// if immunized
         /// </summary>
         public bool Immunized { get; set; }
     }
