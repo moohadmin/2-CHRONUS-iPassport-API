@@ -25,9 +25,10 @@ namespace iPassport.Application.Services.AuthenticationServices
         private readonly IAuth2FactService _auth2FactService;
         private readonly IHttpContextAccessor _acessor;
         private readonly IStringLocalizer<Resource> _localizer;
+        private readonly IUserDetailsRepository _userDetailsRepository;
 
         public AccountService(ITokenService tokenService,
-            UserManager<Users> userManager, IUserRepository userRepository, IAuth2FactService auth2FactService, IHttpContextAccessor acessor, IStringLocalizer<Resource> localizer)
+            UserManager<Users> userManager, IUserRepository userRepository, IAuth2FactService auth2FactService, IHttpContextAccessor acessor, IStringLocalizer<Resource> localizer, IUserDetailsRepository userDetailsRepository)
         {
             _tokenService = tokenService;
             _userManager = userManager;
@@ -35,6 +36,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             _auth2FactService = auth2FactService;
             _acessor = acessor;
             _localizer = localizer;
+            _userDetailsRepository = userDetailsRepository;
         }
 
         public async Task<ResponseApi> BasicLogin(string username, string password)
@@ -45,7 +47,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = _tokenService.GenerateBasic(user);
+                var token = _tokenService.GenerateBasic(user, false);
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
@@ -91,7 +93,12 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             await _auth2FactService.ValidPin(user.Id, pin.ToString("0000"));
 
-            var token = _tokenService.GenerateBasic(user);
+            var userDetails = await _userDetailsRepository.GetByUserId(userId);
+            if (userDetails == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+            var hasPlan = userDetails.PlanId.HasValue;
+
+            var token = _tokenService.GenerateBasic(user, hasPlan);
             
             if (token != null)
             {
