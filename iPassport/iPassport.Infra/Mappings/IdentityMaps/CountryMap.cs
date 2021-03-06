@@ -27,9 +27,7 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(x => x.CreateDate)
                 .IsRequired();
 
-            builder.Property(x => x.Population)
-                .IsRequired(false);
-
+            builder.Property(x => x.Population);
         }
     }
 }

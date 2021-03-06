@@ -80,8 +80,6 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IVaccineRepository, VaccineRepository>();
 
-            services.AddScoped<IIdentityBaseRepository<Entity>, IdentityBaseRepository<Entity>>();
-
             services.AddScoped<IAddressRepository, AddressRepository>();
             
             services.AddScoped<ICityRepository, CityRepository>();
