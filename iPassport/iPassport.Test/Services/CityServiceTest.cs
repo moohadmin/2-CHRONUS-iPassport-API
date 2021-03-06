@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models.Requests;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -19,11 +20,11 @@ using System.Threading.Tasks;
 namespace iPassport.Test.Services
 {
     [TestClass]
-    public class StateServiceTest
+    public class CityServiceTest
     {
-        Mock<IStateRepository> _mockRepository;
-        Mock<ICountryRepository> _mockCountryRepository;
-        IStateService _service;
+        Mock<ICityRepository> _mockRepository;
+        Mock<IStateRepository> _mockStateRepository;
+        ICityService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
 
@@ -31,25 +32,25 @@ namespace iPassport.Test.Services
         public void Setup()
         {
             _mapper = AutoMapperFactory.Create();
-            _mockRepository = new Mock<IStateRepository>();
+            _mockRepository = new Mock<ICityRepository>();
+            _mockStateRepository = new Mock<IStateRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
-            _mockCountryRepository = new Mock<ICountryRepository>();
 
-            _service = new StateService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCountryRepository.Object);
+            _service = new CityService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockStateRepository.Object);
         }
 
         [TestMethod]
-        public void FindByNameParts_MustReturnOk()
+        public void FindByStateAndNameParts_MustReturnOk()
         {
             // Arrange
-            var mockRequest = Mock.Of<GetByIdPagedFilter>();
-            _mockRepository.Setup(x => x.GetByCountryId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(StateSeed.GetPaged());
+            var mockRequest = Mock.Of<GetByIdAndNamePartsPagedFilter>();
+            _mockRepository.Setup(x => x.FindByStateAndNameParts(It.IsAny<GetByIdAndNamePartsPagedFilter>()).Result).Returns(CitySeed.GetPaged());
 
             // Act
-            var result = _service.GetByCountryId(mockRequest);
+            var result = _service.FindByStateAndNameParts(mockRequest);
 
             // Assert
-            _mockRepository.Verify(a => a.GetByCountryId(It.IsAny<GetByIdPagedFilter>()));
+            _mockRepository.Verify(a => a.FindByStateAndNameParts(It.IsAny<GetByIdAndNamePartsPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.AreEqual(true, result.Result.Success);
@@ -59,19 +60,19 @@ namespace iPassport.Test.Services
         public void Add_MustReturnOk()
         {
             // Arrange
-            var mockRequest = Mock.Of<StateCreateDto>();
-            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<State>()).Result).Returns(true);
-            _mockCountryRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CountrySeed.GetCountry());
-
+            var mockRequest = Mock.Of<CityCreateDto>();
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<City>()).Result).Returns(true);
+            _mockStateRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(StateSeed.GetState());
             // Act
             var result = _service.Add(mockRequest);
 
             // Assert
-            _mockRepository.Verify(a => a.InsertAsync(It.IsAny<State>()));
-            _mockCountryRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.InsertAsync(It.IsAny<City>()));
+            _mockStateRepository.Verify(x => x.Find(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
-            Assert.AreEqual(true,result.Result.Success);
+            Assert.AreEqual(true, result.Result.Success);
         }
+
     }
 }

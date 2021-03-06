@@ -14,19 +14,19 @@ namespace iPassport.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class StateController : ControllerBase
+    public class CityController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IStateService _service;
+        private readonly ICityService _service;
 
-        public StateController(IMapper mapper, IStateService service)
+        public CityController(IMapper mapper, ICityService service)
         {
             _mapper = mapper;
             _service = service;
         }
 
         /// <summary>
-        /// This API is get the get States by your Country
+        /// This API is get the get Cities by State
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Ok.</response>
@@ -35,15 +35,15 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [HttpGet("ByCountry")]
-        public async Task<ActionResult> GetByCountryId([FromQuery] GetPagedStatesByCountryRequest request)
+        [HttpGet("ByStateAndNameParts")]
+        public async Task<ActionResult> GetByStateAndNameParts([FromQuery] GetPagedCitiesByStateAndNamePartsRequest request)
         {
-            var res = await _service.GetByCountryId(_mapper.Map<GetByIdPagedFilter>(request));
+            var res = await _service.FindByStateAndNameParts(_mapper.Map<GetByIdAndNamePartsPagedFilter>(request));
             return Ok(res);
         }
 
         /// <summary>
-        /// This API is get the get States by your Country
+        /// This API Add City
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Ok.</response>
@@ -53,9 +53,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] StateCreateRequest request)
+        public async Task<ActionResult> Add([FromBody] CityCreateRequest request)
         {
-            var res = await _service.Add(_mapper.Map<StateCreateDto>(request));
+            var res = await _service.Add(_mapper.Map<CityCreateDto>(request));
             return Ok(res);
         }
     }

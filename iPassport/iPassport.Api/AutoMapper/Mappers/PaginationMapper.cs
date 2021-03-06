@@ -21,6 +21,9 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<GetPagedStatesByCountryRequest, GetByIdPagedFilter>()
                     .ForMember(des => des.Id, act => act.MapFrom(src => src.CountryId));
+
+            profile.CreateMap<GetPagedCitiesByStateAndNamePartsRequest, GetByIdAndNamePartsPagedFilter>()
+                    .ForMember(des => des.Id, act => act.MapFrom(src => src.StateId));
         }
     }
 }

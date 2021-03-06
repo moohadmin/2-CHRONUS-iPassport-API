@@ -18,14 +18,16 @@ namespace iPassport.Application.Services
     public class StateService : IStateService
     {
         private readonly IStateRepository  _stateRepository;
+        private readonly ICountryRepository _countryRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
         
-        public StateService(IStateRepository stateRepository, IStringLocalizer<Resource> localizer, IMapper mapper)
+        public StateService(IStateRepository stateRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICountryRepository countryRepository)
         {
             _stateRepository = stateRepository;
             _localizer = localizer;
             _mapper = mapper;
+            _countryRepository = countryRepository;
         }
 
         public async Task<PagedResponseApi> GetByCountryId(GetByIdPagedFilter filter)
@@ -38,6 +40,10 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(StateCreateDto dto)
         {
+            var country = await _countryRepository.Find(dto.CountryId);
+            if(country == null)
+                throw new BusinessException(_localizer["CountryNotFound"]);
+
             var state = new State().Create(dto);
             var res = await _stateRepository.InsertAsync(state);
 

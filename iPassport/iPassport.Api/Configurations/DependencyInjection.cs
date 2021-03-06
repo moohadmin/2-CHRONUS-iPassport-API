@@ -53,6 +53,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICountryService, CountryService>();
 
             services.AddScoped<IStateService, StateService>();
+            
+            services.AddScoped<ICityService, CityService>();
             #endregion
 
             #region DI Repositories
