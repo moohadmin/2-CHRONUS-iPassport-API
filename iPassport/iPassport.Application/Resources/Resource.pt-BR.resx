@@ -144,6 +144,9 @@
 	<data name="Countries" xml:space="preserve">
     <value>Países.</value>
   </data>
+	<data name="Companies" xml:space="preserve">
+    <value>Empresas.</value>
+  </data>
   <data name="DataAlreadyRegistered" xml:space="preserve">
     <value>{0} já cadastrado!</value>
   </data>
@@ -281,8 +284,5 @@
   </data>
 	<data name="StateNotFound" xml:space="preserve">
     <value>Estado não encontrado.</value>
-  </data>
-	<data name="CountryNotFound" xml:space="preserve">
-    <value>País não encontrado.</value>
   </data>
 </root>

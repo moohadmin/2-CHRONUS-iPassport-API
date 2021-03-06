@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210306210550_Add_Company")]
+    partial class Add_Company
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
