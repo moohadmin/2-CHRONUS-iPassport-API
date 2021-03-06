@@ -1,6 +1,6 @@
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Responses;
-using iPassport.Application.Interfaces;
+using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -111,7 +111,7 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is to Resend  PIN verification
+        /// This API is to Resend PIN verification
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Server returns Ok/response>
@@ -125,6 +125,24 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> ResendPin([FromBody] ResendPinRequest request)
         {
             var res = await _service.ResendPin(request.Phone, request.UserId);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is to Resend  PIN verification
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Server returns Ok/response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPost("Logout")]
+        public async Task<ActionResult> Logout()
+        {
+            var res = await _service.Logout();
             return Ok(res);
         }
     }

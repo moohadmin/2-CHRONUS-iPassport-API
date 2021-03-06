@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace iPassport.Application.Interfaces
+namespace iPassport.Application.Interfaces.Authentication
 {
     public interface IAuth2FactService
     {

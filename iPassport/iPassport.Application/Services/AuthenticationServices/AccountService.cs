@@ -1,11 +1,10 @@
 using iPassport.Application.Exceptions;
 using iPassport.Application.Extensions;
-using iPassport.Application.Interfaces;
+using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Models;
 using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
-using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -45,7 +44,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = _tokenService.GenerateBasic(user);
+                var token = await _tokenService.GenerateBasic(user);
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
@@ -67,7 +66,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = _tokenService.GenerateByEmail(user, roles.FirstOrDefault());
+                var token = await _tokenService.GenerateByEmail(user, roles.FirstOrDefault());
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
@@ -91,7 +90,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             await _auth2FactService.ValidPin(user.Id, pin.ToString("0000"));
 
-            var token = _tokenService.GenerateBasic(user);
+            var token = await _tokenService.GenerateBasic(user);
             
             if (token != null)
             {
@@ -147,6 +146,13 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException(_localizer["PasswordOutPattern"]);
 
             return new ResponseApi(true, _localizer["PasswordChanged"], null);
+        }
+
+        public async Task<ResponseApi> Logout()
+        {
+            await _tokenService.DeactivateCurrentAsync();
+
+            return new ResponseApi(true, _localizer["Loggedout"]);
         }
     }
 }

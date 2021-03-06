@@ -2,7 +2,7 @@ using iPassport.Application.Models;
 using iPassport.Domain.Enums;
 using System.Threading.Tasks;
 
-namespace iPassport.Application.Interfaces
+namespace iPassport.Application.Interfaces.Authentication
 {
     public interface IAccountService
     {
@@ -12,5 +12,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> MobileLogin(int pin, System.Guid userId, bool acceptTerms);
         Task<ResponseApi> ResetPassword(string password, string passwordConfirm);
         Task<ResponseApi> ResendPin(string phone, System.Guid userId);
+        Task<ResponseApi> Logout();
     }
 }

@@ -17,8 +17,6 @@ namespace iPassport.Infra.Contexts
 
             builder.ApplyConfiguration(new UsersMap());
 
-            //builder.Entity<Users>().ToTable("Users");
-
             builder.Entity<Roles>().ToTable("Roles");
 
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaim");
@@ -29,7 +27,7 @@ namespace iPassport.Infra.Contexts
 
             builder.Entity<IdentityRoleClaim<Guid>>().ToTable("RoleClaim");
 
-            builder.Entity<IdentityUserToken<Guid>>().ToTable("UserToken");
+            builder.Entity<UserToken>().ToTable("UserToken");
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210306212137_Update_UserToken")]
+    partial class Update_UserToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,12 +117,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<string>("Value")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.HasKey("UserId", "LoginProvider", "Value");
-
-                    b.ToTable("UserToken");
+                    b.ToTable("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Authentication.Roles", b =>
@@ -287,6 +286,16 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("iPassport.Domain.Entities.Authentication.UserToken", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.ToTable("UserToken");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.Authentication.Roles", null)
@@ -334,6 +343,15 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Authentication.Users", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("iPassport.Domain.Entities.Authentication.UserToken", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", null)
+                        .WithOne()
+                        .HasForeignKey("iPassport.Domain.Entities.Authentication.UserToken", "UserId", "LoginProvider", "Name")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

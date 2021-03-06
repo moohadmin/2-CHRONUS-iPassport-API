@@ -1,4 +1,5 @@
 ﻿using iPassport.Application.Interfaces;
+using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Services;
 using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities;
@@ -75,6 +76,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IVaccineManufacturerRepository, VaccineManufacturerRepository>();
 
             services.AddScoped<IVaccineRepository, VaccineRepository>();
+
+            services.AddScoped<IUserTokenRepository, UserTokenRepository>();
             #endregion
 
             #region DI Settings

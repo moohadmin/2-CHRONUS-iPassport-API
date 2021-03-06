@@ -1,22 +1,20 @@
-﻿using AutoMapper;
-using iPassport.Application.Interfaces;
+﻿using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Models;
+using iPassport.Application.Resources;
+using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities.Authentication;
-using iPassport.Domain.Repositories;
+using iPassport.Domain.Enums;
+using iPassport.Domain.Repositories.Authentication;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Threading.Tasks;
-using iPassport.Domain.Repositories.Authentication;
-using iPassport.Application.Services.AuthenticationServices;
 using System.Collections.Generic;
-using iPassport.Domain.Enums;
-using Microsoft.Extensions.Localization;
-using iPassport.Application.Resources;
+using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
 {
@@ -52,7 +50,7 @@ namespace iPassport.Test.Services
             var token = "6546548955123ugyfgyuyggyu446654654";
 
             // Arrange
-            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>())).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>()).Result).Returns(token);
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
             _mockUserManager.Setup(x => x.FindByNameAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
@@ -81,7 +79,7 @@ namespace iPassport.Test.Services
             _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
             _mockUserManager.Setup(x => x.GetRolesAsync(It.IsAny<Users>()).Result).Returns(Roles);
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
-            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>())).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(token);
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
             
             
@@ -110,7 +108,7 @@ namespace iPassport.Test.Services
             _mockAuth2FactService.Setup(x => x.ValidPin(Guid.NewGuid(), It.IsAny<string>()).Result);
             _mockUserRepository.Setup(x => x.FindById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUsers());
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
-            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>())).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>()).Result).Returns(token);
 
             // Act
             var result = _service.MobileLogin(pin, userId, acceptTerms);
