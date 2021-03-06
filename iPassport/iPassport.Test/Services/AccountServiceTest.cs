@@ -4,6 +4,7 @@ using iPassport.Application.Resources;
 using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
+using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;

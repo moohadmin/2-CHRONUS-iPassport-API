@@ -5,6 +5,7 @@ using iPassport.Application.Models;
 using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
+using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
