@@ -5,11 +5,11 @@ using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
-    public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNameInitalsPagedRequest>
+    public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNamePartsPagedRequest>
     {
         public GetManufacturerByNameInitalsRequestValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.Initals)
+            RuleFor(x => x.Initials)
                 .Must(x => string.IsNullOrWhiteSpace(x) || x.Length >= 3).WithMessage(string.Format(localizer["InitalsRequestMin"], "3"))
                 .SetValidator(new RequiredFieldValidator<string>("Initials", localizer));
 

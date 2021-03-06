@@ -34,7 +34,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             _localizer = localizer;
         } 
 
-        public async Task<string> GenerateBasic(Users user)
+        public async Task<string> GenerateBasic(Users user, bool hasPlan)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
@@ -45,7 +45,8 @@ namespace iPassport.Application.Services.AuthenticationServices
                 {
                     new Claim("UserId", user.Id.ToString()),
                     new Claim("Profile", user.Profile.ToString()),
-                    new Claim("HasPhoto", user.UserHavePhoto().ToString())
+                    new Claim("HasPhoto", user.UserHavePhoto().ToString()),
+                    new Claim("HasPlan", hasPlan.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddYears(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

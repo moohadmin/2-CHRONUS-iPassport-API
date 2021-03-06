@@ -126,8 +126,23 @@
   <data name="AprovedAccess" xml:space="preserve">
     <value>Acesso aprovado.</value>
   </data>
+	<data name="CityCreated" xml:space="preserve">
+    <value>Cidade criada com sucesso.</value>
+  </data>
   <data name="CitzenCount" xml:space="preserve">
     <value>Total de Cidadãos logados.</value>
+  </data>
+  <data name="CountryNotFound" xml:space="preserve">
+    <value>País não encontrado.</value>
+  </data>
+  <data name="CountryCreated" xml:space="preserve">
+    <value>País criado com sucesso.</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>País.</value>
+  </data>
+	<data name="Countries" xml:space="preserve">
+    <value>Países.</value>
   </data>
   <data name="DataAlreadyRegistered" xml:space="preserve">
     <value>{0} já cadastrado!</value>
@@ -219,6 +234,9 @@
   <data name="RoleCreated" xml:space="preserve">
     <value>Role criado com sucesso.</value>
   </data>
+	<data name="StateCreated" xml:space="preserve">
+    <value>Estado criado com sucesso.</value>
+  </data>
   <data name="TermsOfUseNotAccepted" xml:space="preserve">
     <value>É Necessário aceitar os termos de uso para continuar.</value>
   </data>
@@ -257,5 +275,17 @@
   </data>
   <data name="Vaccines" xml:space="preserve">
     <value>Vacinas</value>
+  </data>
+	<data name="States" xml:space="preserve">
+    <value>Estados.</value>
+  </data>
+	<data name="Cities" xml:space="preserve">
+    <value>Cidades.</value>
+  </data>
+	<data name="StateNotFound" xml:space="preserve">
+    <value>Estado não encontrado.</value>
+  </data>
+	<data name="CountryNotFound" xml:space="preserve">
+    <value>País não encontrado.</value>
   </data>
 </root>

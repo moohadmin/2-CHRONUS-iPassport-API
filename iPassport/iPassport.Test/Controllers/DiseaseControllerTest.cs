@@ -33,16 +33,16 @@ namespace iPassport.Test.Controllers
         public void GetByNameInitals_MustReturnOk()
         {
             var seed = DiseaseSeed.GetPagedDisease();
-            var mockRequest = Mock.Of<GetByNameInitalsPagedRequest>();
+            var mockRequest = Mock.Of<GetByNamePartsPagedRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.GetByNameInitals(It.IsAny<GetByNameInitalsPagedFilter>()).Result).Returns(new PagedResponseApi(true, "Test Success!", 1, 3, 10, 300, seed));
+            _mockService.Setup(r => r.GetByNameInitals(It.IsAny<GetByNamePartsPagedFilter>()).Result).Returns(new PagedResponseApi(true, "Test Success!", 1, 3, 10, 300, seed));
 
             // Act
             var result = _controller.GetByNameInitals(mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.GetByNameInitals(It.IsAny<GetByNameInitalsPagedFilter>()), Times.Once);
+            _mockService.Verify(a => a.GetByNameInitals(It.IsAny<GetByNamePartsPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

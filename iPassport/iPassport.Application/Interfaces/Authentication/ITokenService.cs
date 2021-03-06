@@ -5,7 +5,7 @@ namespace iPassport.Application.Interfaces.Authentication
 {
     public interface ITokenService
     {
-        Task<string> GenerateBasic(Users user);
+        Task<string> GenerateBasic(Users user, bool hasPlan);
         Task<string> GenerateByEmail(Users user, string role);
         Task<bool> IsCurrentActiveToken();
         Task DeactivateCurrentAsync();

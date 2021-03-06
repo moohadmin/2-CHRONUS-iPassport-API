@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities.Authentication;
+﻿using iPassport.Domain.Entities;
+using iPassport.Domain.Entities.Authentication;
 using iPassport.Infra.Mappings.IdentityMaps;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,6 +12,11 @@ namespace iPassport.Infra.Contexts
     {
 
         public PassportIdentityContext(DbContextOptions<PassportIdentityContext> options) : base(options) { }
+
+        public DbSet<Address> Address { get; set; }
+        public DbSet<City> City { get; set; }
+        public DbSet<State> State { get; set; }
+        public DbSet<Country> Country { get; set; }
 
         public DbSet<UserToken> AppUserTokens { get; set; }
 
@@ -33,6 +39,15 @@ namespace iPassport.Infra.Contexts
             builder.Entity<IdentityRoleClaim<Guid>>().ToTable("RoleClaim");
 
             builder.Entity<IdentityUserToken<Guid>>().ToTable("UserToken");
+
+            builder.ApplyConfiguration(new AddressMap());
+
+            builder.ApplyConfiguration(new CityMap());
+
+            builder.ApplyConfiguration(new StateMap());
+
+            builder.ApplyConfiguration(new CountryMap());
+
         }
     }
 }

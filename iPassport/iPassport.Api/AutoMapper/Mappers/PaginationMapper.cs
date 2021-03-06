@@ -14,10 +14,16 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<GetPagedVaccinesByManufacuterRequest, GetByIdPagedFilter>()
                     .ForMember(des => des.Id, act => act.MapFrom(src => src.ManufacuterId));
 
-            profile.CreateMap<GetByNameInitalsPagedRequest, GetByNameInitalsPagedFilter>();
+            profile.CreateMap<GetByNamePartsPagedRequest, GetByNamePartsPagedFilter>();
 
             profile.CreateMap<GetPagedUserVaccinesRequest, GetByIdPagedFilter>()
                     .ForMember(des => des.Id, act => act.MapFrom(src => src.PassportId));
+
+            profile.CreateMap<GetPagedStatesByCountryRequest, GetByIdPagedFilter>()
+                    .ForMember(des => des.Id, act => act.MapFrom(src => src.CountryId));
+
+            profile.CreateMap<GetPagedCitiesByStateAndNamePartsRequest, GetByIdAndNamePartsPagedFilter>()
+                    .ForMember(des => des.Id, act => act.MapFrom(src => src.StateId));
         }
     }
 }
