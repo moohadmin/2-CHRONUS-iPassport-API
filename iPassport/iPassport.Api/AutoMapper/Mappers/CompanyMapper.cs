@@ -16,11 +16,10 @@ namespace iPassport.Api.AutoMapper.Mappers
             .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
             .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj));
 
-            //profile.CreateMap<CityCreateRequest, CityCreateDto>()
-            //.ForMember(des => des.StateId, act => act.MapFrom(src => src.StateId))
-            //.ForMember(des => des.IbgeCode, act => act.MapFrom(src => src.IbgeCode))
-            //.ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
-            //.ForMember(des => des.Population, act => act.MapFrom(src => src.Population));
+            profile.CreateMap<CompanyCreateRequest, CompanyCreateDto>()
+            .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj))
+            .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
+            .ForMember(des => des.AddressDto, act => act.MapFrom(src => src.Address));
 
         }
     }

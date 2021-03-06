@@ -17,38 +17,33 @@ namespace iPassport.Application.Services
 {
     public class CompanyService : ICompanyService
     {
-        private readonly ICompanyRepository _companyRepository;        
+        private readonly ICompanyRepository _companyRepository;
+        private readonly ICityRepository _cityRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
 
-        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper)
+        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICityRepository cityRepository)
         {
             _companyRepository = companyRepository;
             _localizer = localizer;
             _mapper = mapper;
+            _cityRepository = cityRepository;
         }
 
-        //public async Task<ResponseApi> Add(CountryCreateDto dto)
-        //{
-        //    var country = new Country().Create(dto);
+        public async Task<ResponseApi> Add(CompanyCreateDto dto)
+        {
+            var city = await _cityRepository.Find(dto.AddressDto.CityId);
+            if(city == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
 
-        //    var result = await _countryRepository.InsertAsync(country);
-        //    if(!result)
-        //        throw new BusinessException(_localizer["OperationNotPerformed"]);
+            var company = new Company().Create(dto);
 
-        //    return new ResponseApi(true, _localizer["CountryCreated"], country.Id);
-        //}
-        //public async Task<ResponseApi> FindById(System.Guid id)
-        //{
-        //    var country = await _countryRepository.Find(id);
+            var result = await _companyRepository.InsertAsync(company);
+            if (!result)
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-        //    if(country == null)
-        //        throw new BusinessException(_localizer["CountryNotFound"]);
-
-        //    var countryViewModel = _mapper.Map<CountryViewModel>(country);
-
-        //    return new ResponseApi(true, _localizer["Country"], countryViewModel);
-        //}
+            return new ResponseApi(true, _localizer["CompanyCreated"], company.Id);
+        }
 
         public async Task<PagedResponseApi> FindByNameParts(GetByNamePartsPagedFilter filter)
         {
@@ -60,3 +55,4 @@ namespace iPassport.Application.Services
         }
     }
 }
+

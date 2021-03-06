@@ -18,6 +18,7 @@ namespace iPassport.Api.AutoMapper
             StateMapper.Map(this);
             CityMapper.Map(this);
             CompanyMapper.Map(this);
+            AddressMapper.Map(this);
         }
     }
 }

@@ -25,6 +25,7 @@ namespace iPassport.Test.Services
         ICompanyService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
+        Mock<ICityRepository> _mockCityRepository;
 
         [TestInitialize]
         public void Setup()
@@ -32,8 +33,9 @@ namespace iPassport.Test.Services
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<ICompanyRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _mockCityRepository = new Mock<ICityRepository>();
 
-            _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper);
+            _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCityRepository.Object);
         }
         
         [TestMethod]
@@ -49,6 +51,24 @@ namespace iPassport.Test.Services
             // Assert
             _mockRepository.Verify(a => a.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void Add_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.AddressDto == Mock.Of<AddressCreateDto>());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+
+            // Act
+            var result = _service.Add(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.InsertAsync(It.IsAny<Company>()));
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
 
