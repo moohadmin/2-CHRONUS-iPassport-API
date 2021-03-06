@@ -22,6 +22,7 @@ namespace iPassport.Test.Services
     public class StateServiceTest
     {
         Mock<IStateRepository> _mockRepository;
+        Mock<ICountryRepository> _mockCountryRepository;
         IStateService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
@@ -32,8 +33,9 @@ namespace iPassport.Test.Services
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<IStateRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _mockCountryRepository = new Mock<ICountryRepository>();
 
-            _service = new StateService(_mockRepository.Object, _mockLocalizer.Object, _mapper);
+            _service = new StateService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCountryRepository.Object);
         }
 
         [TestMethod]
@@ -59,12 +61,14 @@ namespace iPassport.Test.Services
             // Arrange
             var mockRequest = Mock.Of<StateCreateDto>();
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<State>()).Result).Returns(true);
+            _mockCountryRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CountrySeed.GetCountry());
 
             // Act
             var result = _service.Add(mockRequest);
 
             // Assert
             _mockRepository.Verify(a => a.InsertAsync(It.IsAny<State>()));
+            _mockCountryRepository.Verify(x => x.Find(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.AreEqual(true,result.Result.Success);

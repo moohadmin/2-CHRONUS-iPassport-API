@@ -9,6 +9,6 @@ namespace iPassport.Application.Interfaces
     public interface ICityService
     {
         Task<PagedResponseApi> FindByStateAndNameParts(GetByIdAndNamePartsPagedFilter filter);
-        //Task<ResponseApi> Add(StateCreateDto dto);
+        Task<ResponseApi> Add(CityCreateDto dto);
     }
 }

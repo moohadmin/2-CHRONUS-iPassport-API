@@ -18,14 +18,16 @@ namespace iPassport.Application.Services
     public class CityService : ICityService
     {
         private readonly ICityRepository  _cityRepository;
+        private readonly IStateRepository _stateRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
         
-        public CityService(ICityRepository cityRepository, IStringLocalizer<Resource> localizer, IMapper mapper)
+        public CityService(ICityRepository cityRepository, IStringLocalizer<Resource> localizer, IMapper mapper, IStateRepository stateRepository)
         {
             _cityRepository = cityRepository;
             _localizer = localizer;
             _mapper = mapper;
+            _stateRepository = stateRepository;
         }
 
         public async Task<PagedResponseApi> FindByStateAndNameParts(GetByIdAndNamePartsPagedFilter filter)
@@ -36,15 +38,19 @@ namespace iPassport.Application.Services
             return new PagedResponseApi(true, _localizer["Cities"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, data);
         }
 
-        //public async Task<ResponseApi> Add(StateCreateDto dto)
-        //{
-        //    var state = new State().Create(dto);
-        //    var res = await _stateRepository.InsertAsync(state);
+        public async Task<ResponseApi> Add(CityCreateDto dto)
+        {
+            var state = await _stateRepository.Find(dto.StateId);
+            if(state == null)
+                throw new BusinessException(_localizer["StateNotFound"]);
+            
+            var city = new City().Create(dto);
+            var res = await _cityRepository.InsertAsync(city);
 
-        //    if (!res)
-        //        throw new BusinessException(_localizer["OperationNotPerformed"]);
+            if (!res)
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-        //    return new ResponseApi(true, _localizer["StateCreated"], state.Id);
-        //}
+            return new ResponseApi(true, _localizer["CityCreated"], city.Id);
+        }
     }
 }

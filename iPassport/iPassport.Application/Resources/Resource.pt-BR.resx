@@ -126,6 +126,9 @@
   <data name="AprovedAccess" xml:space="preserve">
     <value>Acesso aprovado.</value>
   </data>
+	<data name="CityCreated" xml:space="preserve">
+    <value>Cidade criada com sucesso.</value>
+  </data>
   <data name="CitzenCount" xml:space="preserve">
     <value>Total de Cidadãos logados.</value>
   </data>
@@ -275,5 +278,11 @@
   </data>
 	<data name="Cities" xml:space="preserve">
     <value>Cidades.</value>
+  </data>
+	<data name="StateNotFound" xml:space="preserve">
+    <value>Estado não encontrado.</value>
+  </data>
+	<data name="CountryNotFound" xml:space="preserve">
+    <value>País não encontrado.</value>
   </data>
 </root>

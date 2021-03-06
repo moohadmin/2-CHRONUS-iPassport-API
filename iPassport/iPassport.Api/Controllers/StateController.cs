@@ -53,7 +53,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        public async Task<ActionResult> Add([FromForm] StateCreateRequest request)
+        public async Task<ActionResult> Add([FromBody] StateCreateRequest request)
         {
             var res = await _service.Add(_mapper.Map<StateCreateDto>(request));
             return Ok(res);
