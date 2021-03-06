@@ -18,6 +18,9 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<GetPagedUserVaccinesRequest, GetByIdPagedFilter>()
                     .ForMember(des => des.Id, act => act.MapFrom(src => src.PassportId));
+
+            profile.CreateMap<GetPagedStatesByCountryRequest, GetByIdPagedFilter>()
+                    .ForMember(des => des.Id, act => act.MapFrom(src => src.CountryId));
         }
     }
 }

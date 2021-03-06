@@ -15,6 +15,7 @@ namespace iPassport.Api.AutoMapper
             PaginationMapper.Map(this);
             IndicatorMapper.Map(this);
             CountryMapper.Map(this);
+            StateMapper.Map(this);
         }
     }
 }
