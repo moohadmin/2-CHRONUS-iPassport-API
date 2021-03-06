@@ -125,7 +125,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (activeTkn != null)
                 await DeactivateAsync(activeTkn);
             
-            var userTkn = new UserToken("ipassport", "jwt-auth", userId, token);
+            var userTkn = new UserToken("ipassport", userId, token);
 
             var res = await _userTokenRepository.Add(userTkn);
 

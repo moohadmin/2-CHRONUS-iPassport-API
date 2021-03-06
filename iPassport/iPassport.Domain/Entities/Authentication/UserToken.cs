@@ -3,21 +3,22 @@ using System;
 
 namespace iPassport.Domain.Entities.Authentication
 {
-    public class UserToken : IdentityUserToken<Guid>
+    public class UserToken
     {
         public UserToken() { }
 
-        public UserToken(string loginProvider, string name, Guid userId, string token)
+        public UserToken(string provider, Guid userId, string token)
         {
             IsActive = true;
             UserId = userId;
-            LoginProvider = loginProvider;
+            Provider = provider;
             Value = token;
-            Name = name;
         }
-
+        public virtual Guid UserId { get; set; }
         public bool IsActive { get; private set; }
-
+        public virtual string Provider { get; set; }
+        public virtual string Value { get; set; }
+        
         public void Deactivate() => IsActive = false;
     }
 }

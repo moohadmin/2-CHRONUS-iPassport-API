@@ -10,23 +10,21 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
     public class UserTokenRepository : IUserTokenRepository
     {
         private readonly PassportIdentityContext _context;
-        private readonly DbSet<UserToken> _dDset;
         
         public UserTokenRepository(PassportIdentityContext context)
         {
             _context = context;
-            _dDset = context.Set<UserToken>();
         }
 
         public async Task<UserToken> GetByToken(string token) => 
-           await _dDset.FirstOrDefaultAsync(x => x.Value == token);
+           await _context.AppUserTokens.FirstOrDefaultAsync(x => x.Value == token);
 
         public async Task<UserToken> GetActive(Guid userId) =>
-            await _dDset.FirstOrDefaultAsync(x => x.IsActive == true && x.UserId == userId);
+            await _context.AppUserTokens.FirstOrDefaultAsync(x => x.IsActive == true && x.UserId == userId);
 
         public async Task<bool> Add(UserToken userTkn)
         {
-            _dDset.Add(userTkn);
+            _context.AppUserTokens.Add(userTkn);
             
             var res = await _context.SaveChangesAsync();
             
@@ -35,7 +33,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<bool> Update(UserToken userTkn)
         {
-            _dDset.Update(userTkn);
+            _context.AppUserTokens.Update(userTkn);
 
             var res = await _context.SaveChangesAsync();
 

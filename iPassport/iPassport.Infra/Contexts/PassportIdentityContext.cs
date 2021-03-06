@@ -9,14 +9,19 @@ namespace iPassport.Infra.Contexts
 {
     public class PassportIdentityContext : IdentityDbContext<Users, Roles, Guid>
     {
+
         public PassportIdentityContext(DbContextOptions<PassportIdentityContext> options) : base(options) { }
+
+        public DbSet<UserToken> AppUserTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.ApplyConfiguration(new UsersMap());
-
+            
+            builder.Entity<UserToken>().ToTable("AppUserTokens").HasKey( x => new { x.UserId, x.Provider, x.Value});
+            
             builder.Entity<Roles>().ToTable("Roles");
 
             builder.Entity<IdentityUserClaim<Guid>>().ToTable("UserClaim");
@@ -27,7 +32,7 @@ namespace iPassport.Infra.Contexts
 
             builder.Entity<IdentityRoleClaim<Guid>>().ToTable("RoleClaim");
 
-            builder.Entity<UserToken>().ToTable("UserToken");
+            builder.Entity<IdentityUserToken<Guid>>().ToTable("UserToken");
         }
     }
 }

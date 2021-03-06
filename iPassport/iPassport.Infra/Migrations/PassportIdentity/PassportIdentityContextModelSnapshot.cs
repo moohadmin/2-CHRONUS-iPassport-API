@@ -115,10 +115,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<string>("Value")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("UserId", "LoginProvider", "Value");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserToken");
                 });
@@ -148,6 +145,25 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("iPassport.Domain.Entities.Authentication.UserToken", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Provider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("UserId", "Provider", "Value");
+
+                    b.ToTable("AppUserTokens");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Authentication.Users", b =>
