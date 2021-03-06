@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Interfaces;
 using iPassport.Application.Interfaces.Authentication;
+using iPassport.Application.Middlewares.Auth;
 using iPassport.Application.Services;
 using iPassport.Application.Services.AuthenticationServices;
 using iPassport.Domain.Entities;
@@ -24,6 +25,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IHealthService, HealthService>();
 
             services.AddScoped<ITokenService, TokenService>();
+
+            services.AddTransient<TokenManagerMiddleware>();
 
             services.AddScoped<IAccountService, AccountService>();
 

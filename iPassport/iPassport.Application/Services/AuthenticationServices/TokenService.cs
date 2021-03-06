@@ -93,6 +93,10 @@ namespace iPassport.Application.Services.AuthenticationServices
         public async Task DeactivateAsync(string token)
         {
             var userTkn = await GetUserTokenAsync(token);
+
+            if (userTkn == null)
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
+
             userTkn.Deactivate();
 
             var res = await _userTokenRepository.Update(userTkn);
@@ -105,16 +109,13 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var userTkn = await GetUserTokenAsync(token);
 
-            return userTkn.IsActive;
+            return userTkn != null ? userTkn.IsActive : false;
         }
 
         private async Task<UserToken> GetUserTokenAsync(string token)
         {
             var userTkn = await _userTokenRepository.GetByToken(token);
-
-            if (userTkn == null)
-                throw new BusinessException(_localizer["OperationNotPerformed"]);
-            
+                        
             return userTkn;
         }
 
