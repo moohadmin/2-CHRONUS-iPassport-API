@@ -5,7 +5,7 @@ namespace iPassport.Application.Interfaces
 {
     public interface ITokenService
     {
-        string GenerateBasic(Users user);
+        string GenerateBasic(Users user, bool hasPlan);
         string GenerateByEmail(Users user, string role);
     }
 }
