@@ -1,37 +1,37 @@
-﻿using System;
+﻿
 
 namespace iPassport.Application.Models.ViewModels
 {
     /// <summary>
-    /// State View Model
+    /// City View Model
     /// </summary>
-    public class StateViewModel
+    public class CityViewModel
     {
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public System.Guid Id { get; set; }
         /// <summary>
-        /// State's Names
+        /// City's Names
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// State's Acronym
+        /// City's Acronym
         /// </summary>
         public string Acronym { get; set; }
         /// <summary>
-        /// State Ibge COde
+        /// City Ibge Code
         /// </summary>
         public int IbgeCode { get; set; }
         /// <summary>
-        /// State Population
+        /// City Population
         /// </summary>
         public long? Population { get; set; }
 
         /// <summary>
         /// Country Id
         /// </summary>
-        public System.Guid CountryId { get; set; }
+        public System.Guid StateId { get; set; }
         
     }
 }

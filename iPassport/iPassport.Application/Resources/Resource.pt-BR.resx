@@ -273,4 +273,7 @@
 	<data name="States" xml:space="preserve">
     <value>Estados.</value>
   </data>
+	<data name="Cities" xml:space="preserve">
+    <value>Cidades.</value>
+  </data>
 </root>
