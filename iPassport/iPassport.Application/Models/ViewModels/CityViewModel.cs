@@ -16,10 +16,6 @@ namespace iPassport.Application.Models.ViewModels
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// City's Acronym
-        /// </summary>
-        public string Acronym { get; set; }
-        /// <summary>
         /// City Ibge Code
         /// </summary>
         public int IbgeCode { get; set; }

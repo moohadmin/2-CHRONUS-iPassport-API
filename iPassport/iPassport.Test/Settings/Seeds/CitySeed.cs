@@ -7,15 +7,15 @@ namespace iPassport.Test.Seeds
 {
     public static class CitySeed
     {
-        public static City GetState() => new City("Salvador", "SSA", 123, Guid.NewGuid(), 10);
+        public static City GetState() => new City("Salvador", 123, Guid.NewGuid(), 10);
 
 
         public static IList<City> GetCities()
         {
             return new List<City>()
             {
-                new City("Salvador", "ssa", 123, Guid.NewGuid(), 10),
-                new City("Rio de Janeiro", "RJ", 1234, Guid.NewGuid(), null),
+                new City("Salvador", 123, Guid.NewGuid(), 10),
+                new City("Rio de Janeiro", 1234, Guid.NewGuid(), null),
             };
         }
 

@@ -11,7 +11,6 @@ namespace iPassport.Api.AutoMapper.Mappers
         public static void Map(Profile profile)
         {
             profile.CreateMap<City, CityViewModel>()
-            .ForMember(des => des.Acronym, act => act.MapFrom(src => src.Acronym))
             .ForMember(des => des.StateId, act => act.MapFrom(src => src.StateId))
             .ForMember(des => des.IbgeCode, act => act.MapFrom(src => src.IbgeCode))
             .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
