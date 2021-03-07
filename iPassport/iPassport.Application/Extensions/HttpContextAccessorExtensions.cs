@@ -1,6 +1,8 @@
 ﻿using iPassport.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using System;
+using System.Linq;
 
 namespace iPassport.Application.Extensions
 {
@@ -17,6 +19,16 @@ namespace iPassport.Application.Extensions
                 throw new BusinessException("Identificador inválido");
 
             return result;
+        }
+
+        public static string GetCurrentToken(this IHttpContextAccessor accessor)
+        {
+            var authorizationHeader = accessor
+            .HttpContext.Request.Headers["authorization"];
+
+            return authorizationHeader == StringValues.Empty
+                ? string.Empty
+                : authorizationHeader.Single().Split(" ").Last();
         }
     }
 }

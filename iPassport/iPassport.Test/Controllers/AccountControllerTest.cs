@@ -1,6 +1,6 @@
 ﻿using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
-using iPassport.Application.Interfaces;
+using iPassport.Application.Interfaces.Authentication;
 using iPassport.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -4,6 +4,7 @@ using iPassport.Api.AutoMapper;
 using iPassport.Api.Configurations;
 using iPassport.Api.Configurations.Filters;
 using iPassport.Api.Models.Responses;
+using iPassport.Application.Middlewares.Auth;
 using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Infra.Contexts;
@@ -14,7 +15,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +24,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.Unicode;
@@ -200,6 +199,8 @@ namespace iPassport.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.UseMiddleware<TokenManagerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

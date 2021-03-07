@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210307135635_Update_AppUserToken")]
+    partial class Update_AppUserToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -382,36 +384,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.ToTable("Cities");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.Company", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AddressId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Cnpj")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
-
-                    b.ToTable("Companies");
-                });
-
             modelBuilder.Entity("iPassport.Domain.Entities.Country", b =>
                 {
                     b.Property<Guid>("Id")
@@ -551,17 +523,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .IsRequired();
 
                     b.Navigation("State");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.Company", b =>
-                {
-                    b.HasOne("iPassport.Domain.Entities.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.State", b =>
