@@ -1,4 +1,5 @@
 ﻿using iPassport.Application.Interfaces;
+using iPassport.Application.Services.Constants;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using Microsoft.Extensions.Configuration;
@@ -13,14 +14,10 @@ namespace iPassport.Application.Services.AuthenticationServices
 {
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration _configuration;
-
-        public TokenService(IConfiguration configuration) => _configuration = configuration;
-
         public string GenerateBasic(Users user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
+            var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -43,7 +40,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         public string GenerateByEmail(Users user, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
+            var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

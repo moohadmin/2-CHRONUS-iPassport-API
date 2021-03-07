@@ -3,6 +3,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
+using iPassport.Application.Services.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
@@ -14,12 +15,17 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
     public class StorageExternalService : IStorageExternalService
     {
         private readonly IAmazonS3 _awsS3;
-        private readonly StorageConfigurations _settings;
+        private readonly string bucketName;
 
-        public StorageExternalService(IOptions<StorageConfigurations> settings)
+        public StorageExternalService()
         {
-            _settings = settings.Value;
-            _awsS3 = new AmazonS3Client(_settings.awsAccesskey, _settings.awsSecret, RegionEndpoint.SAEast1);
+            string awsAccesskey = EnvConstants.AWS_ACCESS_KEY_ID;
+            string awsSecret = EnvConstants.AWS_SECRET_ACCESS_KEY;
+            RegionEndpoint region = RegionEndpoint.GetBySystemName(EnvConstants.AWS_DEFAULT_REGION);
+
+            this.bucketName = EnvConstants.STORAGE_S3_BUCKET_NAME;
+
+            _awsS3 = new AmazonS3Client(awsAccesskey, awsSecret, region);
         }
 
         public async Task<string> UploadFileAsync(IFormFile imageFile, string fileName)
@@ -39,12 +45,12 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 
         public async Task<Amazon.S3.Model.ListVersionsResponse> FilesList()
         {
-            return await _awsS3.ListVersionsAsync(_settings.BucketName);
+            return await _awsS3.ListVersionsAsync(this.bucketName);
         }
 
         public async Task<Stream> GetFile(string key)
         {
-            GetObjectResponse response = await _awsS3.GetObjectAsync(_settings.BucketName, key);
+            GetObjectResponse response = await _awsS3.GetObjectAsync(this.bucketName, key);
 
             if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
                 throw new BusinessException("File not found");
@@ -59,7 +65,7 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
                 PutObjectRequest request = new PutObjectRequest()
                 {
                     InputStream = FileStream,
-                    BucketName = _settings.BucketName,
+                    BucketName = this.bucketName,
                     Key = filename
                 };
                 PutObjectResponse response = await _awsS3.PutObjectAsync(request);
@@ -83,7 +89,7 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             {
                 GetPreSignedUrlRequest request1 = new GetPreSignedUrlRequest
                 {
-                    BucketName = _settings.BucketName,
+                    BucketName = this.bucketName,
                     Key = filename,
                     Expires = DateTime.UtcNow.AddHours(1)
                 };

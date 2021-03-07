@@ -17,13 +17,11 @@ namespace iPassport.Test.Services
     {
 
         ISmsExternalService _service;
-        IConfiguration _config;
 
         [TestInitialize]
         public void Setup()
         {
-            _config = Mock.Of<IConfiguration>();
-            _service = new SmsIntegrationService(_config);
+            _service = new SmsIntegrationService();
             EnvVariablesFactory.Create();
         }
 
