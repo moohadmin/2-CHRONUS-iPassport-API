@@ -29,23 +29,23 @@ namespace iPassport.Api.Controllers
             _vaccineService = vaccineService;
         }
 
-        /// <summary>
-        /// This API Create User
-        /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
-        [ProducesResponseType(typeof(ResponseApi), 200)]
-        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
-        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [Authorize]
-        [HttpPost]
-        public async Task<ActionResult> Add([FromBody] UserCreateRequest request)
-        {
-            var res = await _service.Add(_mapper.Map<UserCreateDto>(request));
-            return Ok(res);
-        }
+        ///// <summary>
+        ///// This API Create User
+        ///// </summary>
+        ///// <returns></returns>
+        ///// <response code="204">Server returns no data.</response>
+        ///// <response code="400">Bussiness Exception</response>
+        ///// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        //[ProducesResponseType(typeof(ResponseApi), 200)]
+        //[ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        //[ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<ActionResult> Add([FromBody] UserCreateRequest request)
+        //{
+        //    var res = await _service.Add(_mapper.Map<UserCreateDto>(request));
+        //    return Ok(res);
+        //}
 
         /// <summary>
         /// This Add User Image
@@ -211,6 +211,24 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> GetLoggedAgentCount()
         {
             var res = await _service.GetLoggedAgentCount();
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API Create User Agent
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="204">Server returns no data.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        //[Authorize]
+        [HttpPost("Agent")]
+        public async Task<ActionResult> AddAgent([FromBody] UserAgentCreateRequest request)
+        {
+            var res = await _service.AddAgent(_mapper.Map<UserAgentCreateDto>(request));
             return Ok(res);
         }
     }

@@ -16,6 +16,15 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.HasIndex(d => d.PassportDoc).IsUnique();
             builder.HasIndex(d => d.InternationalDocument).IsUnique();
             builder.HasIndex(t => t.PhoneNumber).IsUnique();
+
+            builder.HasOne(x => x.Address)
+                .WithMany()
+                .HasForeignKey(x => x.AddressId);
+            
+            builder.HasOne(x => x.Company)
+                .WithMany()
+                .HasForeignKey(x => x.CompanyId)
+                .IsRequired(false);
         }
     }
 }

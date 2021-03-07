@@ -44,55 +44,55 @@ namespace iPassport.Application.Services
             _localizer = localizer;
         }
 
-        public async Task<ResponseApi> Add(UserCreateDto dto)
-        {
-            var user = new Users().Create(dto);
-            user.SetUpdateDate();
+        //public async Task<ResponseApi> Add(UserCreateDto dto)
+        //{
+        //    var user = new Users().Create(dto);
+        //    user.SetUpdateDate();
 
-            try
-            {
-                /// Add User in iPassportIdentityContext
-                var result = await _userManager.CreateAsync(user, dto.Password);
-                if (!result.Succeeded)
-                    throw new BusinessException(_localizer["UserNotCreated"]);
+        //    try
+        //    {
+        //        /// Add User in iPassportIdentityContext
+        //        var result = await _userManager.CreateAsync(user, dto.Password);
+        //        if (!result.Succeeded)
+        //            throw new BusinessException(_localizer["UserNotCreated"]);
 
-                var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
-                if (!_role.Succeeded)
-                {
-                    await _userManager.DeleteAsync(user);
-                    throw new BusinessException(_localizer["UserNotCreated"]);
-                }
+        //        var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+        //        if (!_role.Succeeded)
+        //        {
+        //            await _userManager.DeleteAsync(user);
+        //            throw new BusinessException(_localizer["UserNotCreated"]);
+        //        }
 
-                /// Re-Hidrated UserId to UserDetails
-                dto.UserId = user.Id;
+        //        /// Re-Hidrated UserId to UserDetails
+        //        dto.UserId = user.Id;
 
-                /// Add Details to User in iPassportContext
-                var _userDetails = new UserDetails();
-                var userDetails = _userDetails.Create(dto);
-                await _detailsRepository.InsertAsync(userDetails);
+        //        /// Add Details to User in iPassportContext
+        //        var _userDetails = new UserDetails();
+        //        var userDetails = _userDetails.Create(dto);
+        //        await _detailsRepository.InsertAsync(userDetails);
 
-                return new ResponseApi(result.Succeeded, _localizer["UserCreated"], user.Id);
-            }
-            catch (Exception ex)
-            {
-                if(ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+        //        return new ResponseApi(result.Succeeded, _localizer["UserCreated"], user.Id);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if(ex.ToString().Contains("IX_Users_CNS"))
+        //            throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+        //        if (ex.ToString().Contains("IX_Users_CPF"))
+        //            throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+        //        if (ex.ToString().Contains("IX_Users_RG"))
+        //            throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+        //        if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+        //            throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+        //        if (ex.ToString().Contains("IX_Users_PassportDoc"))
+        //            throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+        //        if (ex.ToString().Contains("IX_Users_Email"))
+        //            throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+        //        if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+        //            throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
         public async Task<ResponseApi> GetCurrentUser()
         {
@@ -178,6 +178,58 @@ namespace iPassport.Application.Services
             var res = await _userRepository.GetLoggedAgentCount();
 
             return new ResponseApi(true, _localizer["AgentCount"], res);
+        }
+
+        public async Task<ResponseApi> AddAgent(UserAgentCreateDto dto)
+        {
+            dto.Profile = (int)EProfileType.Agent;
+
+            var user = new Users().CreateAgent(dto);
+            user.SetUpdateDate();
+
+            try
+            {
+                /// Add User in iPassportIdentityContext
+                var result = await _userManager.CreateAsync(user, dto.Password);
+                if (!result.Succeeded)
+                    throw new BusinessException(_localizer["UserNotCreated"]);
+
+                var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+                if (!_role.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    throw new BusinessException(_localizer["UserNotCreated"]);
+                }
+
+                /// Re-Hidrated UserId to UserDetails
+                dto.UserId = user.Id;
+
+                /// Add Details to User in iPassportContext
+                var _userDetails = new UserDetails();
+                var userDetails = _userDetails.Create(dto);
+                await _detailsRepository.InsertAsync(userDetails);
+
+                return new ResponseApi(result.Succeeded, _localizer["UserCreated"], user.Id);
+            }
+            catch (Exception ex)
+            {
+                if (ex.ToString().Contains("IX_Users_CNS"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+                if (ex.ToString().Contains("IX_Users_CPF"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+                if (ex.ToString().Contains("IX_Users_RG"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                if (ex.ToString().Contains("IX_Users_Email"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+
+                throw;
+            }
         }
     }
 }
