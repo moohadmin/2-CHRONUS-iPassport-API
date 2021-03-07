@@ -14,7 +14,6 @@ namespace iPassport.Domain.Entities
         public DateTime CreateDate { get; protected set; }
         public DateTime UpdateDate { get; protected set; }
 
-
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
 
         public override bool Equals(object obj)

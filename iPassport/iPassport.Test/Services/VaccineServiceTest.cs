@@ -55,16 +55,16 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void GetByManufacturerId()
         {
-            var mockFilter = Mock.Of<GetByIdPagedFilter>();
+            var mockFilter = Mock.Of<GetByIdAndNamePartsPagedFilter>();
 
             // Arrange
-            _vaccineRepository.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(new PagedData<Vaccine>() { Data = VaccineSeed.GetVaccines() });
+            _vaccineRepository.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()).Result).Returns(new PagedData<Vaccine>() { Data = VaccineSeed.GetVaccines() });
 
             // Act
             var result = _service.GetByManufacturerId(mockFilter);
 
             // Assert
-            _vaccineRepository.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            _vaccineRepository.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

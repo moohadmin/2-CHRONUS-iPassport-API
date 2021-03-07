@@ -54,7 +54,7 @@ namespace iPassport.Api.Controllers
         [HttpGet("Manufacturer")]
         public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesByManufacuterRequest request)
         {
-            var res = await _service.GetByManufacturerId(_mapper.Map<GetByIdPagedFilter>(request));
+            var res = await _service.GetByManufacturerId(_mapper.Map<GetByIdAndNamePartsPagedFilter>(request));
             return Ok(res);
         }
     }

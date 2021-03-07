@@ -6,6 +6,6 @@ namespace iPassport.Domain.Repositories
 {
     public interface IVaccineRepository : IRepository<Vaccine>
     {
-        Task<PagedData<Vaccine>> GetByManufacturerId(GetByIdPagedFilter filter);
+        Task<PagedData<Vaccine>> GetByManufacturerId(GetByIdAndNamePartsPagedFilter filter);
     }
 }

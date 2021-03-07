@@ -54,13 +54,13 @@ namespace iPassport.Test.Controllers
             var mockRequest = Mock.Of<GetPagedVaccinesByManufacuterRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(new ResponseApi(true, "Test Success!", seed));
+            _mockService.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()).Result).Returns(new ResponseApi(true, "Test Success!", seed));
 
             // Act
             var result = _controller.GetByManufacturerId(mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            _mockService.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
