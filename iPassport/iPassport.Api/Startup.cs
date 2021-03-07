@@ -7,7 +7,6 @@ using iPassport.Api.Models.Responses;
 using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Infra.Contexts;
-using iPassport.Infra.ExternalServices.StorageExternalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;

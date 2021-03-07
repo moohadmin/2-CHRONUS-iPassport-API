@@ -1,26 +1,24 @@
 using System;
 using System.Reflection;
+using System.Text.Json;
 using iPassport.Application.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace iPassport.Application.Services.Constants
 {
     public static class EnvConstants
     {
-        // private readonly static string AWS_SECRET_PREFIX = "AWS_SECRET";
         private readonly static string AWS_SECRET_DATABASE = "AWS_SECRET_DATABASE";
         private readonly static string AWS_SECRET_NOTIFICATIONS = "AWS_SECRET_NOTIFICATIONS";
         private readonly static string AWS_SECRET_JWT_TOKEN = "AWS_SECRET_JWT_TOKEN";
         private readonly static string AWS_SECRET_S3 = "AWS_SECRET_S3";
 
-        public static string GetEnvironmentVariable(string name, string secretPayloadName, Func<JObject, string> parser, bool errorIfEmpty = false)
+        public static string GetEnvironmentVariable(string name, string secretPayloadName, Func<JsonDocument, string> parser, bool errorIfEmpty = false)
         {
             var envValue = Environment.GetEnvironmentVariable(name);
 
             if (!string.IsNullOrWhiteSpace(envValue))
             {
                 return envValue;
-
             }
 
             string secret = Environment.GetEnvironmentVariable(secretPayloadName);
@@ -29,8 +27,8 @@ namespace iPassport.Application.Services.Constants
 
             if (!string.IsNullOrWhiteSpace(secret))
             {
-                JObject jObject = JObject.Parse(secret);
-                value = parser(jObject);
+                JsonDocument secretDocumment = JsonDocument.Parse(secret);
+                value = parser(secretDocumment);
             }
 
             if (string.IsNullOrWhiteSpace(value) && errorIfEmpty)
@@ -44,18 +42,18 @@ namespace iPassport.Application.Services.Constants
 
         public static string GetEnvironmentVariable(string name, string secretPayloadName, string payloadPath, bool errorIfEmpty = false)
         {
-            return GetEnvironmentVariable(name, secretPayloadName, (o) => {
+            return GetEnvironmentVariable(name, secretPayloadName, (jsonDocument) => {
 
-                JToken token = o.SelectToken(payloadPath, false);
+                var pathResult = jsonDocument.SelectElement(payloadPath, false);
 
                 string pathDescription = $"{secretPayloadName}[{payloadPath}]";
 
-                if (token == null)
+                if (pathResult == null)
                 {
                     throw new BusinessException($"There is no path {pathDescription}");
                 }
 
-                return token.Value<string>();
+                return pathResult.Value.GetString();
 
             }, errorIfEmpty);
 
@@ -88,13 +86,13 @@ namespace iPassport.Application.Services.Constants
         public static readonly string ENVIRONMENT_NAME = GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
         // Database
-        public static readonly string DATABASE_CONNECTION_STRING = GetEnvironmentVariable("DATABASE_CONNECTION_STRING", AWS_SECRET_DATABASE, (o) => {
-            string username = o.SelectToken(".username").Value<string>();
-            string password = o.SelectToken(".password").Value<string>();
-            //string engine = o.SelectToken("engine").Value<string>();
-            string host = o.SelectToken(".host").Value<string>();
-            string port = o.SelectToken(".port").Value<string>();
-            string db_name = o.SelectToken(".db_name").Value<string>();
+        public static readonly string DATABASE_CONNECTION_STRING = GetEnvironmentVariable("DATABASE_CONNECTION_STRING", AWS_SECRET_DATABASE, (jsonDocument) => {
+            string username = jsonDocument.SelectElement("$.username").Value.GetString();
+            string password = jsonDocument.SelectElement("$.password").Value.GetString();
+            // string engine = jsonDocument.SelectElement("$.engine").Value.GetString();
+            string host = jsonDocument.SelectElement("$.host").Value.GetString();
+            long port = jsonDocument.SelectElement("$.port").Value.GetInt64();
+            string db_name = jsonDocument.SelectElement("$.db_name").Value.GetString();
 
             return $"Host={host};Port={port};Database={db_name};Username={username};Password={password}";
         }, true);
