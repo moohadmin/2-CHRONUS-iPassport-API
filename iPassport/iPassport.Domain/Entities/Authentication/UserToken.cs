@@ -3,7 +3,7 @@ using System;
 
 namespace iPassport.Domain.Entities.Authentication
 {
-    public class UserToken
+    public class UserToken : Entity
     {
         public UserToken() { }
 

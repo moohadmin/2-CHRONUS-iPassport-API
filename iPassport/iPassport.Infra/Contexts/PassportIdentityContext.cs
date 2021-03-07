@@ -26,7 +26,7 @@ namespace iPassport.Infra.Contexts
 
             builder.ApplyConfiguration(new UsersMap());
             
-            builder.Entity<UserToken>().ToTable("AppUserTokens").HasKey( x => new { x.UserId, x.Provider, x.Value});
+            builder.ApplyConfiguration(new UserTokenMap());
             
             builder.Entity<Roles>().ToTable("Roles");
 

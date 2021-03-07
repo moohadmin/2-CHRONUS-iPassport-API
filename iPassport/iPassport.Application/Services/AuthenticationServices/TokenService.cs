@@ -129,7 +129,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             
             var userTkn = new UserToken("ipassport", userId, token);
 
-            var res = await _userTokenRepository.Add(userTkn);
+            var res = await _userTokenRepository.InsertAsync(userTkn);
 
             if (!res)
                 throw new BusinessException(_localizer["OperationNotPerformed"]);
