@@ -15,13 +15,13 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<Auth2FactMobile> FindByUserAndPin(Guid id, string pin)
         {
-            var res = await _DbSet.Where(x => x.UserId == id && x.Pin == pin && x.IsValid).FirstOrDefaultAsync();
+            var res = await _DbSet.Where(x => x.UserId == id && x.Pin == pin && x.IsValid).OrderBy(x => x.CreateDate).LastOrDefaultAsync();
             return res;
         }
 
-        public async Task<List<Auth2FactMobile>> FindByUser(Guid id)
+        public async Task<List<Auth2FactMobile>> FindActiveByUser(Guid id)
         {
-            var res = await _DbSet.Where(x => x.UserId == id).ToListAsync();
+            var res = await _DbSet.Where(x => x.UserId == id && x.IsValid).ToListAsync();
 
             return res;
         }
