@@ -1,6 +1,6 @@
 using iPassport.Application.Exceptions;
 using iPassport.Application.Extensions;
-using iPassport.Application.Interfaces;
+using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Models;
 using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
@@ -47,7 +47,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = _tokenService.GenerateBasic(user, false);
+                var token = await _tokenService.GenerateBasic(user, false);
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
@@ -69,7 +69,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = _tokenService.GenerateByEmail(user, roles.FirstOrDefault());
+                var token = await _tokenService.GenerateByEmail(user, roles.FirstOrDefault());
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
@@ -98,7 +98,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException(_localizer["UserNotFound"]);
             var hasPlan = userDetails.PlanId.HasValue;
 
-            var token = _tokenService.GenerateBasic(user, hasPlan);
+            var token = await _tokenService.GenerateBasic(user, hasPlan);
             
             if (token != null)
             {
@@ -154,6 +154,13 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException(_localizer["PasswordOutPattern"]);
 
             return new ResponseApi(true, _localizer["PasswordChanged"], null);
+        }
+
+        public async Task<ResponseApi> Logout()
+        {
+            await _tokenService.DeactivateCurrentAsync();
+
+            return new ResponseApi(true, _localizer["Loggedout"]);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using iPassport.Domain.Entities;
-using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iPassport.Infra.Repositories
+namespace iPassport.Infra.Repositories.AuthenticationRepositories
 {
     public class Auth2FactMobileRepository : Repository<Auth2FactMobile>, IAuth2FactMobileRepository
     {

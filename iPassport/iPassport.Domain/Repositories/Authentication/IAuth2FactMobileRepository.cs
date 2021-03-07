@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace iPassport.Domain.Repositories
+namespace iPassport.Domain.Repositories.Authentication
 {
     public interface IAuth2FactMobileRepository : IRepository<Auth2FactMobile>
     {

@@ -1,9 +1,10 @@
 ﻿using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
+using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
-using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Linq;
