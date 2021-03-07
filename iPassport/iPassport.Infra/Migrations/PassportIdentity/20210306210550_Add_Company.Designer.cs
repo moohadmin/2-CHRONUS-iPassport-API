@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210306210550_Add_Company")]
+    partial class Add_Company
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,42 +177,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.Authentication.UserToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Value");
-
-                    b.HasIndex("UserId", "Provider", "Value")
-                        .IsUnique();
-
-                    b.ToTable("AppUserTokens");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Authentication.Users", b =>

@@ -31,5 +31,13 @@ namespace iPassport.Application.Models.ViewModels
         /// Plan Type
         /// </summary>
         public string UserPlan { get; set; }
+        /// <summary>
+        /// Plan Start
+        /// </summary>
+        public string PlanColorStart { get; set; }
+        /// <summary>
+        /// Plan ColorEnd
+        /// </summary>
+        public string PlanColorEnd { get; set; }
     }
 }

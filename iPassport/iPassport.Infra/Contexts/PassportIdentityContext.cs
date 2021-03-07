@@ -17,6 +17,7 @@ namespace iPassport.Infra.Contexts
         public DbSet<City> City { get; set; }
         public DbSet<State> State { get; set; }
         public DbSet<Country> Country { get; set; }
+        public DbSet<Company> Company { get; set; }
 
         public DbSet<UserToken> AppUserTokens { get; set; }
 
@@ -47,6 +48,8 @@ namespace iPassport.Infra.Contexts
             builder.ApplyConfiguration(new StateMap());
 
             builder.ApplyConfiguration(new CountryMap());
+
+            builder.ApplyConfiguration(new CompanyMap());
 
         }
     }

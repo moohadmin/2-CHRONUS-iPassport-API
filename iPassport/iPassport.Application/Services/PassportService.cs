@@ -75,6 +75,8 @@ namespace iPassport.Application.Services
             viewModel.UserFullName = authUser.FullName;
             viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
             viewModel.UserPlan = userDetails.Plan?.Type;
+            viewModel.PlanColorStart = userDetails.Plan?.ColorStart;
+            viewModel.PlanColorEnd = userDetails.Plan?.ColorEnd;
 
             return new ResponseApi(true, "User Passport", viewModel);
         }

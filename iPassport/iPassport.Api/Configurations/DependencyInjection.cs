@@ -59,6 +59,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IStateService, StateService>();
             
             services.AddScoped<ICityService, CityService>();
+
+            services.AddScoped<ICompanyService, CompanyService>();
             #endregion
 
             #region DI Repositories
@@ -97,6 +99,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICountryRepository, CountryRepository>();
 
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
             #endregion
 
             #region DI Settings
