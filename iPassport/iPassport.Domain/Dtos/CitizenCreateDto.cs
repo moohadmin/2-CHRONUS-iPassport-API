@@ -5,6 +5,7 @@ namespace iPassport.Domain.Dtos
 {
     public class CitizenCreateDto
     {
+        public Guid Id { get; set; }
         public string FullName { get; set; }
         public string Gender { get; set; }
         public string Cpf { get; set; }
@@ -19,6 +20,7 @@ namespace iPassport.Domain.Dtos
         public string BloodType { get; set; }
         public string Breed { get; set; }
         public string Email { get; set; }
+        public string Password { get; set; }
         public bool WasCovidInfected { get; set; }
         public int NumberOfDoses { get; set; }
         public AddressCreateDto Address { get; set; }

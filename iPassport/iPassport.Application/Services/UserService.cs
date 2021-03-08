@@ -46,7 +46,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
         {
-            var user = new Users().Create(dto);
+            var user = new Users().CreateCitizen(dto);
             user.SetUpdateDate();
 
             try
@@ -64,11 +64,11 @@ namespace iPassport.Application.Services
                 }
 
                 /// Re-Hidrated UserId to UserDetails
-                dto.UserId = user.Id;
+                dto.Id = user.Id;
 
                 /// Add Details to User in iPassportContext
-                var _userDetails = new UserDetails();
-                var userDetails = _userDetails.Create(dto);
+                var userDetails = new UserDetails().Create(dto.Id);
+                
                 await _detailsRepository.InsertAsync(userDetails);
 
                 return new ResponseApi(result.Succeeded, _localizer["UserCreated"], user.Id);

@@ -19,6 +19,7 @@ namespace iPassport.Api.Models.Requests.User
         public string Email { get; set; }
         public bool WasCovidInfected { get; set; }
         public int NumberOfDoses { get; set; }
+        public string Password { get; set; }
         public AddressCreateRequest Address { get; set; }
         public IList<UserVaccineCreateRequest> Doses {get;set;}
     }
