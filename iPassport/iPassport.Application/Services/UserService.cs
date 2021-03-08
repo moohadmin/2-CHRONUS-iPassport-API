@@ -12,6 +12,7 @@ using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Repositories.PassportIdentityContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -30,9 +31,11 @@ namespace iPassport.Application.Services
         private readonly UserManager<Users> _userManager;
         private readonly IStorageExternalService _storageExternalService;
         private readonly IStringLocalizer<Resource> _localizer;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly ICityRepository  _cityRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
-            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer)
+            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -42,6 +45,8 @@ namespace iPassport.Application.Services
             _userManager = userManager;
             _storageExternalService = storageExternalService;
             _localizer = localizer;
+            _companyRepository = companyRepository;
+            _cityRepository = cityRepository;
         }
 
         //public async Task<ResponseApi> Add(UserCreateDto dto)
@@ -183,6 +188,14 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> AddAgent(UserAgentCreateDto dto)
         {
             dto.Profile = (int)EProfileType.Agent;
+            
+            var company = await _companyRepository.Find(dto.CompanyId);            
+            if(company==null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+            
+            var city = await _cityRepository.Find(dto.Address.CityId);
+            if (city == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
 
             var user = new Users().CreateAgent(dto);
             user.SetUpdateDate();

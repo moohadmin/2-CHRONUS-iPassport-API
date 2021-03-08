@@ -294,4 +294,7 @@
 	<data name="CityNotFound" xml:space="preserve">
     <value>Cidade não encontrada.</value>
   </data>
+    <data name="CompanyNotFound" xml:space="preserve">
+    <value>Empresa não encontrada.</value>
+  </data>
 </root>

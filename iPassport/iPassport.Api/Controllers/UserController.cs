@@ -224,7 +224,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        //[Authorize]
+        [Authorize]
         [HttpPost("Agent")]
         public async Task<ActionResult> AddAgent([FromBody] UserAgentCreateRequest request)
         {
