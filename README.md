@@ -110,4 +110,5 @@ Just put the following snippet on yout `<project-root>/.vscode/launch.json` file
 }
 ```
 
-> for convenience, the rest of the code are omitted.
+> for convenience, the rest of the code where omitted.
+
