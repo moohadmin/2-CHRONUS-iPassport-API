@@ -1,4 +1,5 @@
 ﻿using iPassport.Application.Interfaces;
+using iPassport.Application.Services.Constants;
 using iPassport.Domain.Dtos.PinIntegration;
 using iPassport.Domain.Dtos.PinIntegration.FindPin;
 using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
@@ -14,12 +15,6 @@ namespace iPassport.Infra.ExternalServices
 {
     public class SmsIntegrationService : ISmsExternalService
     {
-        private readonly IConfiguration _config;
-
-        public SmsIntegrationService(IConfiguration config)
-        {
-            _config = config;
-        }
 
         /// <summary>
         /// Finds data from the sent message
@@ -134,12 +129,12 @@ namespace iPassport.Infra.ExternalServices
 
         private string GetToken()
         {
-            var baseurl = _config.GetSection("SmsIntegration").GetSection("BaseUrl").Value;
+            var baseurl = EnvConstants.NOTIFICATIONS_BASE_URL;
             var model = new SmsTokenModel
             {
-                clientId = _config.GetSection("SmsIntegration").GetSection("client_id").Value,
-                clientSecret = _config.GetSection("SmsIntegration").GetSection("client_secret").Value,
-                grantType = _config.GetSection("SmsIntegration").GetSection("grant_type").Value
+                clientId = EnvConstants.NOTIFICATIONS_CLIENT_ID,
+                clientSecret = EnvConstants.NOTIFICATIONS_CLIENT_SECRET,
+                grantType = EnvConstants.NOTIFICATIONS_GRANT_TYPE
             };
 
             var client = new RestClient($"{baseurl}/auth/1/oauth2/token") { Timeout = -1 };
@@ -168,26 +163,25 @@ namespace iPassport.Infra.ExternalServices
         /// Get Authorization Key
         /// </summary>
         /// <returns></returns>
-        private string GetAuthorizationKey() => _config.GetSection("SmsIntegration").GetSection("AuthenticationKey").Value;
+        private string GetAuthorizationKey() => EnvConstants.NOTIFICATIONS_AUTHENTICATION_KEY;
 
         /// <summary>
         /// Get Send Url
         /// </summary>
         /// <returns></returns>
-        private string GetSendMessageUrl() => String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("SendApiUrl").Value);
+        private string GetSendMessageUrl() => String.Concat(EnvConstants.NOTIFICATIONS_BASE_URL, EnvConstants.NOTIFICATIONS_SEND_API_URL);
 
         /// <summary>
         /// Get sms result Url
         /// </summary>
         /// <returns></returns>
-        private string GetFindMessageUrl() => String.Concat(_config.GetSection("SmsIntegration").GetSection("BaseUrl").Value, _config.GetSection("SmsIntegration").GetSection("GetApiUrl").Value);
+        private string GetFindMessageUrl() => String.Concat(EnvConstants.NOTIFICATIONS_BASE_URL, EnvConstants.NOTIFICATIONS_GET_API_URL);
 
         /// <summary>
         /// Get From Number
         /// </summary>
         /// <returns></returns>
-        private string GetSmsFromNumber() => _config.GetSection("SmsIntegration").GetSection("FromNumber").Value;
-
+        private string GetSmsFromNumber() => EnvConstants.NOTIFICATIONS_FROM_NUMBER;
 
         /// <summary>
         /// Mock to Find Pin Response
@@ -195,7 +189,8 @@ namespace iPassport.Infra.ExternalServices
         /// <returns></returns>
         private PinReportResponseDto PinIntegrationSimulatedFind()
         {
-            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
+            var AmbienteSimulado = EnvConstants.NOTIFICATIONS_MOCK;
+
             if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
             {
                 return new PinReportResponseDto()
@@ -227,7 +222,8 @@ namespace iPassport.Infra.ExternalServices
         /// <returns></returns>
         private SendPinResponseDto PinIntegrationSimulatedSent()
         {
-            var AmbienteSimulado = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
+            var AmbienteSimulado = EnvConstants.NOTIFICATIONS_MOCK;
+
             if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
             {
                 return new SendPinResponseDto()

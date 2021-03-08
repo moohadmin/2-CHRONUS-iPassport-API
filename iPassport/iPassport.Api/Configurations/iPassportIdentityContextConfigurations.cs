@@ -1,4 +1,5 @@
-﻿using iPassport.Infra.Contexts;
+﻿using iPassport.Application.Services.Constants;
+using iPassport.Infra.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,10 +16,9 @@ namespace iPassport.Api.Configurations
         /// </summary>
         public static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
-        public static IServiceCollection AddIdentityDataContext(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddIdentityDataContext(this IServiceCollection services)
         {
-            string connection = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-            //string connection = configuration.GetConnectionString("DefaultConnection");
+            string connection = EnvConstants.DATABASE_CONNECTION_STRING;
 
             services.AddScoped((provider) =>
             {

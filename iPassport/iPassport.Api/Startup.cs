@@ -7,7 +7,6 @@ using iPassport.Api.Models.Responses;
 using iPassport.Application.Resources;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Infra.Contexts;
-using iPassport.Infra.ExternalServices.StorageExternalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -62,7 +61,7 @@ namespace iPassport.Api
 
             services.AddIdentity<Users, Roles>().AddEntityFrameworkStores<PassportIdentityContext>().AddDefaultTokenProviders();
 
-            var secret = SecretConfiguration.GetSecret(Configuration);
+            var secret = SecretConfiguration.GetSecret();
             var key = Encoding.ASCII.GetBytes(secret);
             services.AddAuthentication(x =>
             {
@@ -122,13 +121,13 @@ namespace iPassport.Api
             });
 
             /// Update Migrations
-            services.AddHostedService<MigrationsWork>();
+            // services.AddHostedService<MigrationsWork>();
 
             ///Add DB Context
-            services.AddCustomDataContext(Configuration);
+            services.AddCustomDataContext();
 
             ///Add Identity DB Context
-            services.AddIdentityDataContext(Configuration);
+            services.AddIdentityDataContext();
 
             ///Helth Checks
             services.AddHealthChecks();
@@ -144,8 +143,6 @@ namespace iPassport.Api
 
             ///Add AWS Services
             services.AddAWSService<IAmazonS3>();
-            var appSettingsSection = Configuration.GetSection("StorageConfigurations");
-            services.Configure<StorageConfigurations>(appSettingsSection);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
