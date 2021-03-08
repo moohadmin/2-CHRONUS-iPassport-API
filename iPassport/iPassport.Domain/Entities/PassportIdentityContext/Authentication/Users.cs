@@ -22,13 +22,25 @@ namespace iPassport.Domain.Entities.Authentication
             Breed = breed;
             BloodType = bloodType;
             Occupation = occupation;
-            Address = address;
+            //Address = address;
             Photo = photo;
             InternationalDocument = internationalDocument;
             UserName = userName;
             Email = email;
             PhoneNumber = mobile;
             Profile = profile;
+        }
+
+        public Users(string fullName, string cpf, AddressCreateDto address, string userName, string mobile, int profile, Guid companyId)
+        {
+            Id = Guid.NewGuid();
+            FullName = fullName;
+            CPF = cpf;           
+            Address = CreateUserAddress(address);            
+            UserName = userName;            
+            PhoneNumber = mobile;
+            Profile = profile;
+            CompanyId = companyId;
         }
 
         public bool AcceptTerms { get; set; }
@@ -44,10 +56,16 @@ namespace iPassport.Domain.Entities.Authentication
         public string Breed { get; set; }
         public string BloodType { get; set; }
         public string Occupation { get; set; }
-        public string Address { get; set; }
+        public Guid AddressId { get; private set; }
         public string Photo { get; set; }
         public string InternationalDocument { get; set; }
         public int Profile { get; set; }
+        public Guid? CompanyId { get; set; }
+
+
+        public Address Address { get; set; }
+        public Company Company { get; set; }
+
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
@@ -67,6 +85,10 @@ namespace iPassport.Domain.Entities.Authentication
             var extension = Path.GetExtension(dto.ImageFile.FileName);
             dto.FileName = $"{Id}{extension}";
         }
+                
+        //public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
+        public Users CreateAgent(UserAgentCreateDto dto) => new Users(dto.FullName,dto.CPF,dto.Address,dto.Username,dto.Mobile,dto.Profile,dto.CompanyId);
+        private Address CreateUserAddress(AddressCreateDto dto) => new Address().Create(dto);
 
         public bool IsAgent() => Profile == (int)EProfileType.Agent;
         public bool IsCitizen() => Profile == (int)EProfileType.Citizen;

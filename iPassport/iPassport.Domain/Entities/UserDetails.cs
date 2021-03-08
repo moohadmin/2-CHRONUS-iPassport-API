@@ -24,6 +24,7 @@ namespace iPassport.Domain.Entities
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId);
+        public UserDetails Create(UserAgentCreateDto dto) => new UserDetails(dto.UserId);
         public UserDetails Create(Guid id) => new UserDetails(id);
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
         public bool IsImmunized()
