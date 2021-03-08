@@ -2,6 +2,8 @@
 using iPassport.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace iPassport.Domain.Entities.Authentication
@@ -9,7 +11,7 @@ namespace iPassport.Domain.Entities.Authentication
     public class Users : IdentityUser<Guid>
     {
         public Users() { }
-        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, string address, string photo, string internationalDocument, string userName, string email, string mobile, int profile)
+        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid companyId, int profile)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
@@ -22,24 +24,26 @@ namespace iPassport.Domain.Entities.Authentication
             Breed = breed;
             BloodType = bloodType;
             Occupation = occupation;
-            //Address = address;
+            Address = address;
             Photo = photo;
             InternationalDocument = internationalDocument;
             UserName = userName;
             Email = email;
             PhoneNumber = mobile;
             Profile = profile;
+            CompanyId = companyId;
         }
 
-        public Users(string fullName, string cpf, AddressCreateDto address, string userName, string mobile, int profile, Guid companyId)
+        public Users(string fullName, string cpf, Address address, string userName, string mobile, int profile, Guid? companyId)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
             CPF = cpf;           
-            Address = CreateUserAddress(address);            
+            Address = address;            
             UserName = userName;            
             PhoneNumber = mobile;
             Profile = profile;
+
             CompanyId = companyId;
         }
 
@@ -86,19 +90,34 @@ namespace iPassport.Domain.Entities.Authentication
             dto.FileName = $"{Id}{extension}";
         }
                 
-        //public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
-        public Users CreateAgent(UserAgentCreateDto dto) => new Users(dto.FullName,dto.CPF,dto.Address,dto.Username,dto.Mobile,dto.Profile,dto.CompanyId);
-        private Address CreateUserAddress(AddressCreateDto dto) => new Address().Create(dto);
+        public Users CreateAgent(UserAgentCreateDto dto) =>
+            new Users(dto.FullName, dto.CPF, CreateUserAddress(dto.Address), dto.Username, dto.Mobile, dto.Profile, dto.CompanyId);
+        
+        private Address CreateUserAddress(AddressCreateDto dto) =>
+            new Address().Create(dto);
 
         public bool IsAgent() => Profile == (int)EProfileType.Agent;
         public bool IsCitizen() => Profile == (int)EProfileType.Citizen;
                 
-        public Users Create(UserCreateDto dto) => 
-            new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
-
         public Users CreateCitizen(CitizenCreateDto dto)
-        { 
-            var user = new Users(dto.FullName, dto.Cpf, dto.Rg, dto.Cns, dto.PassportDocument, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, null, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, (int)EProfileType.Agent);
-        }
+        => new Users(dto.FullName,
+                dto.Cpf,
+                dto.Rg,
+                dto.Cns,
+                null,
+                dto.Birthday,
+                dto.Gender,
+                dto.Breed,
+                dto.BloodType, 
+                dto.Occupation,
+                CreateUserAddress(dto.Address),
+                null,
+                null,
+                null,
+                dto.Email,
+                dto.Telephone,
+                dto.CompanyId,
+                (int)EProfileType.Citizen);
+        
     }
 }

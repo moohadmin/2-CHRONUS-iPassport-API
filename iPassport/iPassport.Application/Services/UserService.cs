@@ -57,16 +57,17 @@ namespace iPassport.Application.Services
             try
             {
                 /// Add User in iPassportIdentityContext
-                var result = await _userManager.CreateAsync(user, dto.Password);
+                var result = await _userManager.CreateAsync(user);
                 if (!result.Succeeded)
                     throw new BusinessException(_localizer["UserNotCreated"]);
 
-                var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
-                if (!_role.Succeeded)
-                {
-                    await _userManager.DeleteAsync(user);
-                    throw new BusinessException(_localizer["UserNotCreated"]);
-                }
+                ////var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+                
+                //if (!_role.Succeeded)
+                //{
+                //    await _userManager.DeleteAsync(user);
+                //    throw new BusinessException(_localizer["UserNotCreated"]);
+                //}
 
                 /// Re-Hidrated UserId to UserDetails
                 dto.Id = user.Id;
@@ -207,12 +208,12 @@ namespace iPassport.Application.Services
                 if (!result.Succeeded)
                     throw new BusinessException(_localizer["UserNotCreated"]);
 
-                var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
-                if (!_role.Succeeded)
-                {
-                    await _userManager.DeleteAsync(user);
-                    throw new BusinessException(_localizer["UserNotCreated"]);
-                }
+                //var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+                //if (!_role.Succeeded)
+                //{
+                //    await _userManager.DeleteAsync(user);
+                //    throw new BusinessException(_localizer["UserNotCreated"]);
+                //}
 
                 /// Re-Hidrated UserId to UserDetails
                 dto.UserId = user.Id;

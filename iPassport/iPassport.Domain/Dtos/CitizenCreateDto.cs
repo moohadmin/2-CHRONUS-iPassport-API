@@ -20,9 +20,9 @@ namespace iPassport.Domain.Dtos
         public string BloodType { get; set; }
         public string Breed { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
         public bool WasCovidInfected { get; set; }
         public int NumberOfDoses { get; set; }
+        public string Telephone { get; set; }
         public AddressCreateDto Address { get; set; }
         public IList<UserVaccineCreateDto> Doses { get; set; }
     }

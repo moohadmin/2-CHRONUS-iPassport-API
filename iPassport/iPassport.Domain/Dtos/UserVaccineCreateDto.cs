@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Enums;
+using System;
 
 namespace iPassport.Domain.Dtos
 {
@@ -8,5 +9,12 @@ namespace iPassport.Domain.Dtos
         public int Dose { get; set; }
         public Guid VaccineId { get; set; }
         public Guid UserId { get; set; }
+        public string UnitName { get; set; }
+        public string Batch { get; set; }
+        public string EmployeeName { get; set; }
+        public string EmployeeCpf { get; set; }
+        public string EmployeeCoren { get; set; }
+        public Guid City { get; set; }
+        public EHealthUnityType UnityType { get; set; }
     }
 }
