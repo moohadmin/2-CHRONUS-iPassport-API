@@ -115,7 +115,7 @@ namespace iPassport.Application.Services.Constants
         public static readonly string NOTIFICATIONS_GET_API_URL = GetEnvironmentVariable("NOTIFICATIONS_GET_API_URL", AWS_SECRET_NOTIFICATIONS, ".get_api_url");
 
         // JWT
-        public static readonly string SECRET_JWT_TOKEN = GetEnvironmentVariable("SECRET_JWT_TOKEN", AWS_SECRET_JWT_TOKEN, ".jwt_token");
+        public static readonly string SECRET_JWT_TOKEN = GetEnvironmentVariable("SECRET_JWT_TOKEN", AWS_SECRET_JWT_TOKEN, ".jwt_token", true);
 
     }
 }
