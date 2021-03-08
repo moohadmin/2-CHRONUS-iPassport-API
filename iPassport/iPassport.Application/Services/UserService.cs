@@ -12,6 +12,7 @@ using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Repositories.PassportIdentityContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -30,9 +31,12 @@ namespace iPassport.Application.Services
         private readonly UserManager<Users> _userManager;
         private readonly IStorageExternalService _storageExternalService;
         private readonly IStringLocalizer<Resource> _localizer;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly ICityRepository _cityRepository;
+        private readonly IVaccineRepository _vaccineRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
-            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer)
+            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -42,40 +46,54 @@ namespace iPassport.Application.Services
             _userManager = userManager;
             _storageExternalService = storageExternalService;
             _localizer = localizer;
+            _companyRepository = companyRepository;
+            _cityRepository = cityRepository;
+            _vaccineRepository = vaccineRepository;
         }
 
-        public async Task<ResponseApi> Add(UserCreateDto dto)
+        public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
         {
-            var user = new Users().Create(dto);
+            var user = new Users().CreateCitizen(dto);
             user.SetUpdateDate();
+            
+            if (dto.CompanyId.HasValue)
+            {
+                var company = await _companyRepository.Find(dto.CompanyId.Value);
+                if (company == null)
+                    throw new BusinessException(_localizer["CompanyNotFound"]);
+            }
+
+            var city = await _cityRepository.Find(dto.Address.CityId);
+            if (city == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            foreach (var d in dto.Doses)
+            {
+                var vaccine = await _vaccineRepository.Find(d.VaccineId);
+                if (vaccine == null)
+                    throw new BusinessException(_localizer["VaccineNotFound"]);
+            }
 
             try
             {
                 /// Add User in iPassportIdentityContext
-                var result = await _userManager.CreateAsync(user, dto.Password);
+                var result = await _userManager.CreateAsync(user);
                 if (!result.Succeeded)
                     throw new BusinessException(_localizer["UserNotCreated"]);
 
-                var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
-                if (!_role.Succeeded)
-                {
-                    await _userManager.DeleteAsync(user);
-                    throw new BusinessException(_localizer["UserNotCreated"]);
-                }
-
                 /// Re-Hidrated UserId to UserDetails
-                dto.UserId = user.Id;
+                dto.Id = user.Id;
 
                 /// Add Details to User in iPassportContext
-                var _userDetails = new UserDetails();
-                var userDetails = _userDetails.Create(dto);
+                var userDetails = new UserDetails().Create(dto);
+
                 await _detailsRepository.InsertAsync(userDetails);
 
                 return new ResponseApi(result.Succeeded, _localizer["UserCreated"], user.Id);
             }
             catch (Exception ex)
             {
-                if(ex.ToString().Contains("IX_Users_CNS"))
+                if (ex.ToString().Contains("IX_Users_CNS"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
                 if (ex.ToString().Contains("IX_Users_CPF"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
@@ -99,7 +117,7 @@ namespace iPassport.Application.Services
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userManager.FindByIdAsync(userId.ToString());
 
-            if(authUser.IsCitizen())
+            if (authUser.IsCitizen())
                 authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
 
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
@@ -150,9 +168,9 @@ namespace iPassport.Application.Services
             if (user.UserHavePhoto())
                 throw new BusinessException("Usuário já Tem Foto Cadastrada");
 
-            user.PhotoNameGenerator(userImageDto);            
-            var imageUrl = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);           
-            user.AddPhoto(imageUrl);            
+            user.PhotoNameGenerator(userImageDto);
+            var imageUrl = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);
+            user.AddPhoto(imageUrl);
 
             await _userManager.UpdateAsync(user);
 
@@ -165,7 +183,7 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, _localizer["CitzenCount"], res);
         }
-        
+
         public async Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter)
         {
             var res = await _userRepository.GetRegisteredUserCount(filter);
@@ -178,6 +196,66 @@ namespace iPassport.Application.Services
             var res = await _userRepository.GetLoggedAgentCount();
 
             return new ResponseApi(true, _localizer["AgentCount"], res);
+        }
+
+        public async Task<ResponseApi> AddAgent(UserAgentCreateDto dto)
+        {
+            dto.Profile = (int)EProfileType.Agent;
+
+            var company = await _companyRepository.Find(dto.CompanyId);
+            if (company == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            var city = await _cityRepository.Find(dto.Address.CityId);
+            if (city == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            var user = new Users().CreateAgent(dto);
+            user.SetUpdateDate();
+
+            try
+            {
+                /// Add User in iPassportIdentityContext
+                var result = await _userManager.CreateAsync(user, dto.Password);
+                if (!result.Succeeded)
+                    throw new BusinessException(_localizer["UserNotCreated"]);
+
+                //var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
+                //if (!_role.Succeeded)
+                //{
+                //    await _userManager.DeleteAsync(user);
+                //    throw new BusinessException(_localizer["UserNotCreated"]);
+                //}
+
+                /// Re-Hidrated UserId to UserDetails
+                dto.UserId = user.Id;
+
+                /// Add Details to User in iPassportContext
+                var _userDetails = new UserDetails();
+                var userDetails = _userDetails.Create(dto);
+                await _detailsRepository.InsertAsync(userDetails);
+
+                return new ResponseApi(result.Succeeded, _localizer["UserCreated"], user.Id);
+            }
+            catch (Exception ex)
+            {
+                if (ex.ToString().Contains("IX_Users_CNS"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+                if (ex.ToString().Contains("IX_Users_CPF"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+                if (ex.ToString().Contains("IX_Users_RG"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                if (ex.ToString().Contains("IX_Users_Email"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+
+                throw;
+            }
         }
     }
 }

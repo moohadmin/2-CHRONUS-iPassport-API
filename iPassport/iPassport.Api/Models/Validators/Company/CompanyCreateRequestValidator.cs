@@ -20,7 +20,7 @@ namespace iPassport.Api.Models.Validators.Plans
 
             RuleFor(s => s.Address)
                 .SetValidator(new RequiredFieldValidator<AddressCreateRequest>("Address", localizer))
-                .SetValidator(new AddressValidator(localizer));
+                .SetValidator(new AddressValidator(localizer, true));
         }
     }
 }

@@ -10,12 +10,16 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, Guid? planId = null) : base()
+        public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null) : base()
         {
             Id = userId;
 
             if (planId.HasValue)
                 PlanId = planId.Value;
+
+            if (userVaccines != null)
+                UserVaccines = userVaccines;
+
         }
         public Guid? PlanId { get; private set; }
 
@@ -24,7 +28,23 @@ namespace iPassport.Domain.Entities
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
         public UserDetails Create(UserCreateDto dto) => new UserDetails(dto.UserId);
+        
+        public UserDetails Create(UserAgentCreateDto dto) => new UserDetails(dto.UserId);
+        
+        public UserDetails Create(CitizenCreateDto dto) => new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses));
+
+        private IList<UserVaccine> CreateUservaccine(IList<UserVaccineCreateDto> dto)
+        {
+            var uservaccines = new List<UserVaccine>();
+
+            foreach (var d in dto)
+                uservaccines.Add(new UserVaccine().Create(d));
+
+            return uservaccines;
+        }
+
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
+        
         public bool IsImmunized()
         {
             if (UserVaccines == null || !UserVaccines.Any())
@@ -45,7 +65,6 @@ namespace iPassport.Domain.Entities
 
         public EUserVaccineStatus GetUserVaccineStatus(Guid vaccineId)
         {
-            // Não tomou nenhuma dose
             if (UserVaccines == null || !UserVaccines.Any(x => x.VaccineId == vaccineId))
                 return EUserVaccineStatus.Unvaccinated;
 

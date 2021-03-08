@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace iPassport.Infra.Contexts
 {
@@ -51,6 +52,11 @@ namespace iPassport.Infra.Contexts
 
             builder.ApplyConfiguration(new CompanyMap());
 
+            //To avoid delete cascade.
+            foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
+            }
         }
     }
 }

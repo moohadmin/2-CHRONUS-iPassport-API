@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210307224842_Update_Users")]
+    partial class Update_Users
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -492,6 +494,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Authentication.Roles", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -500,6 +503,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Authentication.Users", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -508,6 +512,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Authentication.Users", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -516,11 +521,13 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Authentication.Roles", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("iPassport.Domain.Entities.Authentication.Users", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -529,6 +536,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Authentication.Users", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -537,6 +545,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.City", "City")
                         .WithMany()
                         .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("City");
@@ -547,6 +556,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("iPassport.Domain.Entities.Company", "Company")
@@ -563,6 +573,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.State", "State")
                         .WithMany("Cities")
                         .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("State");
@@ -573,6 +584,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Address");
@@ -583,6 +595,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasOne("iPassport.Domain.Entities.Country", "Country")
                         .WithMany("States")
                         .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Country");

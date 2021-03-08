@@ -126,7 +126,7 @@
   <data name="AprovedAccess" xml:space="preserve">
     <value>Acesso aprovado.</value>
   </data>
-	<data name="CityCreated" xml:space="preserve">
+  <data name="CityCreated" xml:space="preserve">
     <value>Cidade criada com sucesso.</value>
   </data>
   <data name="CitzenCount" xml:space="preserve">
@@ -141,10 +141,10 @@
   <data name="Country" xml:space="preserve">
     <value>País.</value>
   </data>
-	<data name="Countries" xml:space="preserve">
+  <data name="Countries" xml:space="preserve">
     <value>Países.</value>
   </data>
-	<data name="Companies" xml:space="preserve">
+  <data name="Companies" xml:space="preserve">
     <value>Empresas.</value>
   </data>
   <data name="DataAlreadyRegistered" xml:space="preserve">
@@ -237,7 +237,7 @@
   <data name="RoleCreated" xml:space="preserve">
     <value>Role criado com sucesso.</value>
   </data>
-	<data name="StateCreated" xml:space="preserve">
+  <data name="StateCreated" xml:space="preserve">
     <value>Estado criado com sucesso.</value>
   </data>
   <data name="TermsOfUseNotAccepted" xml:space="preserve">
@@ -279,19 +279,25 @@
   <data name="Vaccines" xml:space="preserve">
     <value>Vacinas</value>
   </data>
-	<data name="States" xml:space="preserve">
+  <data name="States" xml:space="preserve">
     <value>Estados.</value>
   </data>
-	<data name="Cities" xml:space="preserve">
+  <data name="Cities" xml:space="preserve">
     <value>Cidades.</value>
   </data>
-	<data name="StateNotFound" xml:space="preserve">
+  <data name="StateNotFound" xml:space="preserve">
     <value>Estado não encontrado.</value>
   </data>
-	<data name="CompanyCreated" xml:space="preserve">
+  <data name="CompanyCreated" xml:space="preserve">
     <value>Empresa criada com sucesso.</value>
   </data>
-	<data name="CityNotFound" xml:space="preserve">
+  <data name="CityNotFound" xml:space="preserve">
     <value>Cidade não encontrada.</value>
+  </data>
+  <data name="CompanyNotFound" xml:space="preserve">
+    <value>Empresa não encontrada.</value>
+  </data>
+  <data name="VaccineNotFound" xml:space="preserve">
+    <value>Vacina não encontrada.</value>
   </data>
 </root>

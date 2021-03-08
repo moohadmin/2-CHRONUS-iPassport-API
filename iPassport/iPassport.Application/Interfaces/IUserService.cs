@@ -8,19 +8,15 @@ namespace iPassport.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<ResponseApi> Add(UserCreateDto dto);
+        Task<ResponseApi> AddCitizen(CitizenCreateDto dto);
         Task<ResponseApi> AssociatePlan(Guid planId);
         Task<ResponseApi> GetUserPlan();
         Task<ResponseApi> GetCurrentUser();
-
-        /// <summary>
-        /// ADD photo to user
-        /// </summary>
-        /// <param name="userImageDto"></param>
-        /// <returns></returns>
         Task<ResponseApi> AddUserImage(UserImageDto userImageDto);
         Task<ResponseApi> GetLoggedCitzenCount();
-        public Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
+        Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
         Task<ResponseApi> GetLoggedAgentCount();
+
+        Task<ResponseApi> AddAgent(UserAgentCreateDto dto);
     }
 }

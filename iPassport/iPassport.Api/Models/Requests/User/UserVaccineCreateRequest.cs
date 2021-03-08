@@ -1,14 +1,13 @@
 ﻿using iPassport.Domain.Enums;
 using System;
 
-namespace iPassport.Domain.Dtos
+namespace iPassport.Api.Models.Requests.User
 {
-    public class UserVaccineCreateDto
+    public class UserVaccineCreateRequest
     {
         public DateTime VaccinationDate { get; set; }
         public int Dose { get; set; }
-        public Guid VaccineId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid Vaccine { get; set; }
         public string UnitName { get; set; }
         public string Batch { get; set; }
         public string EmployeeName { get; set; }
