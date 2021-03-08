@@ -17,7 +17,7 @@ namespace iPassport.Api.Models.Requests.User
         public string BloodType { get; set; }
         public EBreedTypes Breed { get; set; }
         public string Email { get; set; }
-        public bool WasCovidInfected { get; set; }
+        public bool? WasCovidInfected { get; set; }
         public int NumberOfDoses { get; set; }
         public string Telephone { get; set; }
         public AddressCreateRequest Address { get; set; }

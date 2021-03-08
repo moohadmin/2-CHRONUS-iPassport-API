@@ -10,7 +10,7 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null) : base()
+        public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null, bool? wasCovidInfected = null) : base()
         {
             Id = userId;
 
@@ -20,7 +20,11 @@ namespace iPassport.Domain.Entities
             if (userVaccines != null)
                 UserVaccines = userVaccines;
 
+            if (wasCovidInfected != null)
+                 WasCovidInfected = wasCovidInfected.Value;
         }
+
+        public bool? WasCovidInfected { get; private set; }
         public Guid? PlanId { get; private set; }
 
         public virtual Plan Plan { get; set; }
@@ -31,7 +35,7 @@ namespace iPassport.Domain.Entities
         
         public UserDetails Create(UserAgentCreateDto dto) => new UserDetails(dto.UserId);
         
-        public UserDetails Create(CitizenCreateDto dto) => new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses));
+        public UserDetails Create(CitizenCreateDto dto) => new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected);
 
         private IList<UserVaccine> CreateUservaccine(IList<UserVaccineCreateDto> dto)
         {
