@@ -27,8 +27,16 @@
       "cpu": 0,
       "environment": [
         {
-          "name": "PIN_INTEGRATION_SIMULADO",
+          "name": "ASPNETCORE_ENVIRONMENT",
+          "value": "Production"
+        },
+        {
+          "name": "NOTIFICATIONS_MOCK",
           "value": "false"
+        },
+        {
+          "name": "AWS_DEFAULT_REGION",
+          "value": "sa-east-1"
         }
       ],
       "resourceRequirements": null,
