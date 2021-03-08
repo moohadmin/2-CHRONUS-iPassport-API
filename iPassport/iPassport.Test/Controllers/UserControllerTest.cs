@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
@@ -176,6 +177,40 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockService.Verify(a => a.GetLoggedAgentCount(), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void AddAgent_MustReturnOk()
+        {
+            var mockrequest = Mock.Of<UserAgentCreateRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.AddAgent(It.IsAny<UserAgentCreateDto>()));
+
+            // Act
+            var result = _controller.AddAgent(mockrequest);
+
+            // Assert
+            _mockService.Verify(r => r.AddAgent(It.IsAny<UserAgentCreateDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetByNameParts_MustReturnOk()
+        {
+            var mockrequest = Mock.Of<GetByNamePartsPagedRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+
+            // Act
+            var result = _controller.GetCitizenByNameParts(mockrequest);
+
+            // Assert
+            _mockService.Verify(r => r.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

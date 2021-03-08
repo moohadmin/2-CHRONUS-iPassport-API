@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities.Authentication;
+﻿using iPassport.Domain.Entities;
+using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using System;
@@ -15,5 +16,6 @@ namespace iPassport.Domain.Repositories.Authentication
         Task<int> GetLoggedCitzenCount();
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
         Task<int> GetLoggedAgentCount();
+        Task<PagedData<Users>> FindCitizensByNameParts(GetByNamePartsPagedFilter filter);
     }
 }

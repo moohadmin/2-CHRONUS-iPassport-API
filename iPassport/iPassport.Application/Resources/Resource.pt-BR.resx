@@ -172,7 +172,7 @@
     <value>Necessário o minimo {0} de caracteres para realizar a pesquisa.</value>
   </data>
   <data name="InvalidDocLogin" xml:space="preserve">
-    <value>O documento informado é inválido ou ainda não foi cadastrado. Por favor, verifique.</value>
+    <value>O documento informado é inválido ou ainda não foi cadastrado. Atualmente, o acesso ao aplicativo é limitado para convidados. Em breve o acesso será liberado!</value>
   </data>
   <data name="InvalidField" xml:space="preserve">
     <value>{0} inválido. Por favor, verifique.</value>
@@ -299,5 +299,8 @@
   </data>
   <data name="VaccineNotFound" xml:space="preserve">
     <value>Vacina não encontrada.</value>
+  </data>
+	<data name="Citizens" xml:space="preserve">
+    <value>Cidadãos.</value>
   </data>
 </root>

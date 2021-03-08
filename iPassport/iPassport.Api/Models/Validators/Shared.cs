@@ -37,7 +37,7 @@ namespace iPassport.Api.Models.Validators
         {
             if (validateCep)
             {
-                RuleFor(x => x.Cep)
+                RuleFor(x => x.Cep).Cascade(CascadeMode.Stop)
                     .SetValidator(new RequiredFieldValidator<string>("Cep", localizer))
                     .Must(x => Regex.IsMatch(x, "^[0-9]{8}$")).WithMessage(string.Format(localizer["InvalidField"], "Cep"));
 

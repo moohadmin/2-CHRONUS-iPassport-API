@@ -25,12 +25,15 @@ namespace iPassport.Api.Models.Validators.Users
                 .SetValidator(new RequiredFieldValidator<string>("FullName", localizer));
 
             RuleFor(x => x.Mobile)
-                .Cascade(CascadeMode.Stop)                
-                .Must(y => { return string.IsNullOrWhiteSpace(y) || y.Substring(4, 1).Equals("9"); })
-                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
-
-            RuleFor(x => x.Mobile).Must(y => {return string.IsNullOrWhiteSpace(y) || Regex.IsMatch(y, "^[0-9]{13}$"); })
-                .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
+                .Cascade(CascadeMode.Stop)
+               .NotEmpty()
+                   .WithMessage(string.Format(localizer["InvalidField"], "Mobile"))
+               .Must(y => {
+                   return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13);
+               })
+                    .WithMessage(string.Format(localizer["InvalidField"], "Mobile"))
+                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
+                    .WithMessage(string.Format(localizer["InvalidField"], "Mobile"));
 
             RuleFor(x => x.Password)
                 .SetValidator(new RequiredFieldValidator<string>("Password", localizer));

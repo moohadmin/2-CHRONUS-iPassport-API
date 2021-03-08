@@ -61,7 +61,7 @@ namespace iPassport.Test.Services
         public void Get_MustReturnsOK()
         {
             var detailsSeed = UserSeed.GetUserDetails();
-            var authSeed = UserSeed.GetUsers();
+            var authSeed = UserSeed.GetUser();
 
             var passportSeed = PassportSeed.Get();
             
