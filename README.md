@@ -89,7 +89,6 @@ Just put the following snippet on yout `<project-root>/.vscode/launch.json` file
 
 ```json
 {
-    // ......... omitted code
     "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "STORAGE_S3_BUCKET_NAME": "chronus-docs",
@@ -108,6 +107,7 @@ Just put the following snippet on yout `<project-root>/.vscode/launch.json` file
         "NOTIFICATIONS_GET_API_URL": "/sms/1/reports",
         "SECRET_JWT_TOKEN": "*****"
     }
-    // ......... omitted code
 }
 ```
+
+> for convenience, the rest of the code are omitted.
