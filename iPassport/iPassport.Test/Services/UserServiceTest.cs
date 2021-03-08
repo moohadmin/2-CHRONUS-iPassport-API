@@ -195,5 +195,28 @@ namespace iPassport.Test.Services
             Assert.AreEqual(seed, result.Result.Data);
         }
 
+        [TestMethod]
+        public void AddAgent()
+        {
+            var mockRequest = Mock.Of<UserAgentCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>());
+            var identyResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+            // Arrange
+            _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(identyResult);
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<UserDetails>()));
+            // Act
+            var result = _service.AddAgent(mockRequest);
+
+            // Assert
+            _mockCompanyRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockUserManager.Verify(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()));
+            _mockRepository.Verify(x => x.InsertAsync(It.IsAny<UserDetails>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(Guid));
+        }
+
     }
 }

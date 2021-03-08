@@ -56,13 +56,13 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.Telephone)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
-                .Length(13)
-                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
-                .Must(y => y.Substring(4, 1).Equals("9"))
-                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
+                    .WithMessage(string.Format(localizer["InvalidField"], "Telephone"))
+                .Must(y => {
+                    return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13);
+                    })
+                    .WithMessage(string.Format(localizer["InvalidField"], "Telephone"))
                 .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
-                .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
+                .WithMessage(string.Format(localizer["InvalidField"], "Telephone"));
 
             RuleFor(x => x.NumberOfDoses)
                 .Must(x => x >= 0).WithMessage(string.Format(localizer["RequiredField"], "NumberOfDoses"));

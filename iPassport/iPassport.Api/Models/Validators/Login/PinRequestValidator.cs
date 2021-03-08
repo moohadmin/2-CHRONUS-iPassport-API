@@ -17,7 +17,7 @@ namespace iPassport.Api.Models.Validators.Plans
 
             When(x => x.Doctype == EDocumentType.CNS, () =>
             {
-                RuleFor(x => x.Document)
+                RuleFor(x => x.Document).Cascade(CascadeMode.Stop)
                     .Length(15).WithMessage(string.Format(localizer["InvalidField"], "Document"))
                     .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
                         .WithMessage(string.Format(localizer["InvalidField"], "Document"));
@@ -34,7 +34,7 @@ namespace iPassport.Api.Models.Validators.Plans
 
             When(x => x.Doctype == EDocumentType.Passport, () =>
             {
-                RuleFor(x => x.Document)
+                RuleFor(x => x.Document).Cascade(CascadeMode.Stop)
                     .Length(3, 15).WithMessage(string.Format(localizer["InvalidField"], "Document"))
                     .Must(y => Regex.IsMatch(y, "^[a-zA-Z]{2}[0-9]+$"))
                         .WithMessage(string.Format(localizer["InvalidField"], "Document"));
@@ -42,7 +42,7 @@ namespace iPassport.Api.Models.Validators.Plans
 
             When(x => x.Doctype == EDocumentType.RG, () =>
             {
-                RuleFor(x => x.Document)
+                RuleFor(x => x.Document).Cascade(CascadeMode.Stop)
                     .Length(1, 15).WithMessage(string.Format(localizer["InvalidField"], "RG"))
                     .Must(y => Regex.IsMatch(y, "^[0-9a-zA-Z]+$"))
                         .WithMessage(string.Format(localizer["InvalidField"], "RG"));
@@ -50,9 +50,9 @@ namespace iPassport.Api.Models.Validators.Plans
 
             When(x => x.Doctype == EDocumentType.InternationalDocument, () =>
             {
-                RuleFor(x => x.Document)
+                RuleFor(x => x.Document).Cascade(CascadeMode.Stop)
                      .Length(1, 15).WithMessage(string.Format(localizer["InvalidField"], "Document"))
-                    .Must(y => Regex.IsMatch(y, "^[1-9a-zA-Z]+$"))
+                    .Must(y => Regex.IsMatch(y, "^[0-9a-zA-Z]+$"))
                         .WithMessage(string.Format(localizer["InvalidField"], "Document"));
             });
 
@@ -63,10 +63,9 @@ namespace iPassport.Api.Models.Validators.Plans
                 .Must(y => {
                         return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13); 
                         })
+                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
+                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
                     .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
-
-            RuleFor(x => x.Phone).Must(y => Regex.IsMatch(y, "^[0-9]+$"))
-                .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
 
             RuleFor(x => x.Doctype)
                 .IsInEnum().WithMessage(string.Format(localizer["InvalidField"], "Doctype"));
