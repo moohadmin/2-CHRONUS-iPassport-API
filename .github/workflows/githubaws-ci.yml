@@ -97,6 +97,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ipassport-api-service
+        service: ipassport-service
         cluster: ipassport-cluster
         wait-for-service-stability: false
