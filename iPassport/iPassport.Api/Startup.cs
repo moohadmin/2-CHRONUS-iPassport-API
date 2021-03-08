@@ -121,10 +121,10 @@ namespace iPassport.Api
             });
 
             /// Update Migrations
-            services.AddHostedService<MigrationsWork>();
+            // services.AddHostedService<MigrationsWork>();
 
             ///Add DB Context
-            // services.AddCustomDataContext();
+            services.AddCustomDataContext();
 
             ///Add Identity DB Context
             services.AddIdentityDataContext();

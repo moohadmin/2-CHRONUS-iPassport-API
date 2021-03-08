@@ -93,7 +93,6 @@ namespace iPassport.Application.Services.Constants
             string host = jsonDocument.SelectElement("$.host").Value.GetString();
             long port = jsonDocument.SelectElement("$.port").Value.GetInt64();
             string db_name = jsonDocument.SelectElement("$.db_name").Value.GetString();
-
             return $"Host={host};Port={port};Database={db_name};Username={username};Password={password}";
         }, true);
 
@@ -104,7 +103,7 @@ namespace iPassport.Application.Services.Constants
         public static readonly string AWS_DEFAULT_REGION = GetEnvironmentVariable("AWS_DEFAULT_REGION", "sa-east-1");
 
         // Notification
-        public static readonly string NOTIFICATIONS_MOCK = GetEnvironmentVariable("NOTIFICATIONS_MOCK");
+        public static readonly string NOTIFICATIONS_MOCK = GetEnvironmentVariable("NOTIFICATIONS_MOCK", "false");
         public static readonly string NOTIFICATIONS_BASE_URL = GetEnvironmentVariable("NOTIFICATIONS_BASE_URL", AWS_SECRET_NOTIFICATIONS, ".base_url");
         public static readonly string NOTIFICATIONS_CLIENT_ID = GetEnvironmentVariable("NOTIFICATIONS_CLIENT_ID", AWS_SECRET_NOTIFICATIONS, ".client_id");
         public static readonly string NOTIFICATIONS_CLIENT_SECRET = GetEnvironmentVariable("NOTIFICATIONS_CLIENT_SECRET", AWS_SECRET_NOTIFICATIONS, ".client_secret");
