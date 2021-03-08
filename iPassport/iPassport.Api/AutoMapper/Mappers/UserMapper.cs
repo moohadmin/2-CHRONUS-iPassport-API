@@ -5,6 +5,7 @@ using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Api.Models.Requests.User;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -53,6 +54,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.FullName, act => act.MapFrom(src => src.FullName))
                 .ForMember(des => des.CPF, act => act.MapFrom(src => src.CPF))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address));
+
+            profile.CreateMap<CitizenCreateRequest, CitizenCreateDto>();
         }
     }
 }

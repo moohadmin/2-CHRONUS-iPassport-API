@@ -5,9 +5,9 @@ namespace iPassport.Api.Models.Requests.User
 {
     public class UserVaccineCreateRequest
     {
-        public Guid Vaccine { get; set; }
         public DateTime VaccinationDate { get; set; }
         public int Dose { get; set; }
+        public Guid Vaccine { get; set; }
         public string UnitName { get; set; }
         public string Batch { get; set; }
         public string EmployeeName { get; set; }

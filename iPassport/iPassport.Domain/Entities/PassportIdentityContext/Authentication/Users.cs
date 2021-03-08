@@ -2,8 +2,6 @@
 using iPassport.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 
 namespace iPassport.Domain.Entities.Authentication
@@ -11,7 +9,7 @@ namespace iPassport.Domain.Entities.Authentication
     public class Users : IdentityUser<Guid>
     {
         public Users() { }
-        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid companyId, int profile)
+        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid? companyId, int profile)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
@@ -66,7 +64,6 @@ namespace iPassport.Domain.Entities.Authentication
         public int Profile { get; set; }
         public Guid? CompanyId { get; set; }
 
-
         public Address Address { get; set; }
         public Company Company { get; set; }
 
@@ -113,7 +110,7 @@ namespace iPassport.Domain.Entities.Authentication
                 CreateUserAddress(dto.Address),
                 null,
                 null,
-                null,
+                dto.Cpf,
                 dto.Email,
                 dto.Telephone,
                 dto.CompanyId,

@@ -21,6 +21,7 @@ namespace iPassport.Api.Models.Requests.User
         public int NumberOfDoses { get; set; }
         public string Telephone { get; set; }
         public AddressCreateRequest Address { get; set; }
-        public IList<UserVaccineCreateRequest> Doses {get;set;}
+        public IList<UserVaccineCreateRequest> Doses {get; set;}
+        public DateTime Birthday { get; set; }
     }
 }

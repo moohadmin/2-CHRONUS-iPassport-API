@@ -39,7 +39,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [Authorize]
+        //[Authorize]
         [HttpPost("Citizen")]
         public async Task<ActionResult> AddCitizen([FromBody] CitizenCreateRequest request)
         {

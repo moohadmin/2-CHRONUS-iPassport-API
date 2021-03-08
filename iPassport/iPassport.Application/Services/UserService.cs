@@ -33,9 +33,10 @@ namespace iPassport.Application.Services
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly ICompanyRepository _companyRepository;
         private readonly ICityRepository _cityRepository;
+        private readonly IVaccineRepository _vaccineRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
-            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository)
+            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -47,12 +48,31 @@ namespace iPassport.Application.Services
             _localizer = localizer;
             _companyRepository = companyRepository;
             _cityRepository = cityRepository;
+            _vaccineRepository = vaccineRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
         {
             var user = new Users().CreateCitizen(dto);
             user.SetUpdateDate();
+            
+            if (dto.CompanyId.HasValue)
+            {
+                var company = await _companyRepository.Find(dto.CompanyId.Value);
+                if (company == null)
+                    throw new BusinessException(_localizer["CompanyNotFound"]);
+            }
+
+            var city = await _cityRepository.Find(dto.Address.CityId);
+            if (city == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            foreach (var d in dto.Doses)
+            {
+                var vaccine = await _vaccineRepository.Find(d.VaccineId);
+                if (vaccine == null)
+                    throw new BusinessException(_localizer["VaccineNotFound"]);
+            }
 
             try
             {
@@ -61,19 +81,11 @@ namespace iPassport.Application.Services
                 if (!result.Succeeded)
                     throw new BusinessException(_localizer["UserNotCreated"]);
 
-                ////var _role = await _userManager.AddToRoleAsync(user, "chronus:web:admin");
-                
-                //if (!_role.Succeeded)
-                //{
-                //    await _userManager.DeleteAsync(user);
-                //    throw new BusinessException(_localizer["UserNotCreated"]);
-                //}
-
                 /// Re-Hidrated UserId to UserDetails
                 dto.Id = user.Id;
 
                 /// Add Details to User in iPassportContext
-                var userDetails = new UserDetails().Create(dto.Id);
+                var userDetails = new UserDetails().Create(dto);
 
                 await _detailsRepository.InsertAsync(userDetails);
 

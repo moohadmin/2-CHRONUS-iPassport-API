@@ -13,7 +13,7 @@ namespace iPassport.Domain.Dtos
         public string Rg { get; set; }
         public string PassportDocument { get; set; }
         public DateTime Birthday { get; set; }
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
         public string Occupation { get; set; }
         public string Bond { get; set; }
         public string PriorityGroup { get; set; }

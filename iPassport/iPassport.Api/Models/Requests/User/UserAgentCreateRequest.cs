@@ -1,4 +1,4 @@
-﻿namespace iPassport.Api.Models.Requests
+﻿namespace iPassport.Api.Models.Requests.User
 {
     /// <summary>
     /// Create User Agent Request

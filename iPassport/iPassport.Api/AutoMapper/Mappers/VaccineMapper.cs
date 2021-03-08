@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
@@ -21,6 +22,9 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<Vaccine, VaccineViewModel>()
                 .ForMember(des => des.ManufacturerName, act => act.MapFrom(src => src.Manufacturer != null ? src.Manufacturer.Name : null));
+
+            profile.CreateMap<UserVaccineCreateRequest, UserVaccineCreateDto>()
+                .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine));
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Resources;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
-using System;
 using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Users
@@ -14,7 +15,7 @@ namespace iPassport.Api.Models.Validators.Users
         {
             RuleFor(x => x.Address)
                 .SetValidator(new RequiredFieldValidator<AddressCreateRequest>("Address", localizer))
-                .SetValidator(new AddressValidator(localizer));
+                .SetValidator(new AddressValidator(localizer, true));
 
             RuleFor(x => x.CPF).Cascade(CascadeMode.Stop)
                  .Length(11).WithMessage(string.Format(localizer["InvalidField"], "CPF"))

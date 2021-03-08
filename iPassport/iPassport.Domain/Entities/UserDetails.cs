@@ -10,12 +10,16 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, Guid? planId = null) : base()
+        public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null) : base()
         {
             Id = userId;
 
             if (planId.HasValue)
                 PlanId = planId.Value;
+
+            if (userVaccines != null)
+                UserVaccines = userVaccines;
+
         }
         public Guid? PlanId { get; private set; }
 
@@ -27,8 +31,8 @@ namespace iPassport.Domain.Entities
         
         public UserDetails Create(UserAgentCreateDto dto) => new UserDetails(dto.UserId);
         
-        public UserDetails Create(Guid id) => new UserDetails(id);
-        
+        public UserDetails Create(CitizenCreateDto dto) => new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses));
+
         private IList<UserVaccine> CreateUservaccine(IList<UserVaccineCreateDto> dto)
         {
             var uservaccines = new List<UserVaccine>();
