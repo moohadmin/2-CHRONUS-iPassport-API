@@ -10,13 +10,13 @@ namespace iPassport.Api.Models.Validators.Plans
     {
         public ResendPinRequestValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.Phone).Cascade(CascadeMode.Stop)
+            RuleFor(s => s.Phone)
+               .Cascade(CascadeMode.Stop)
                .NotEmpty()
                    .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
-               .Length(13)
-                   .WithMessage(string.Format(localizer["InvalidField"], "Phone"))
-               .Must(y => y.Substring(4, 1).Equals("9"))
-                   .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
+               .Must(y => {
+                   return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13);
+               }).WithMessage(string.Format(localizer["InvalidField"], "Phone"));
 
             RuleFor(x => x.Phone).Must(y => Regex.IsMatch(y, "^[0-9]+$"))
                 .WithMessage(string.Format(localizer["InvalidField"], "Phone"));
