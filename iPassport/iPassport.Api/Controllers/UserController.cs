@@ -40,10 +40,10 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
-        [HttpPost]
-        public async Task<ActionResult> Add([FromBody] UserCreateRequest request)
+        [HttpPost("Citizen")]
+        public async Task<ActionResult> AddCitizen([FromBody] CitizenCreateRequest request)
         {
-            var res = await _service.Add(_mapper.Map<UserCreateDto>(request));
+            var res = await _service.AddCitizen(_mapper.Map<CitizenCreateDto>(request));
             return Ok(res);
         }
 

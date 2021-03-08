@@ -66,11 +66,16 @@ namespace iPassport.Domain.Entities.Authentication
         {
             var extension = Path.GetExtension(dto.ImageFile.FileName);
             dto.FileName = $"{Id}{extension}";
-        }
-                
-        public Users Create(UserCreateDto dto) => new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
 
+        }
         public bool IsAgent() => Profile == (int)EProfileType.Agent;
         public bool IsCitizen() => Profile == (int)EProfileType.Citizen;
+                
+        public Users Create(UserCreateDto dto) => 
+            new Users(dto.FullName, dto.CPF, dto.RG, dto.CNS, dto.Passport, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
+
+        public Users Create(CitizenCreateDto dto) =>
+            new Users(dto.FullName, dto.Cpf, dto.Rg , dto.Cns, dto.PassportDocument, dto.Birthday, dto.Gender, dto.Breed, dto.BloodType, dto.Occupation, dto.Address, dto.Photo, dto.InternationalDocument, dto.Username, dto.Email, dto.Mobile, dto.Profile);
+
     }
 }

@@ -44,7 +44,7 @@ namespace iPassport.Application.Services
             _localizer = localizer;
         }
 
-        public async Task<ResponseApi> Add(UserCreateDto dto)
+        public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
         {
             var user = new Users().Create(dto);
             user.SetUpdateDate();

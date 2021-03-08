@@ -1,4 +1,6 @@
-﻿namespace iPassport.Api.Models.Requests
+﻿using System;
+
+namespace iPassport.Api.Models.Requests
 {
     public class AddressCreateRequest
     {
@@ -13,7 +15,6 @@
         /// <summary>
         /// Address
         /// </summary>
-        public System.Guid CityId { get; set; }
-        
+        public Guid CityId { get; set; }
     }
 }
