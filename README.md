@@ -1,6 +1,8 @@
 # Mootech - IPassport API [ipassport-api]
 
+[![GitHub to AWS CI Pipeline](https://github.com/moohadmin/ipassport-api/actions/workflows/githubaws-ci.yml/badge.svg)](https://github.com/moohadmin/ipassport-api/actions/workflows/githubaws-ci.yml)
 
+# Environment Variables
 | Local name                        | AWS secret name (click to see exemple)                              | Required | Default value |
 | ---                               | ---                                                                 | ---      | ---           |
 | ASPNETCORE_ENVIRONMENT            |                                                                     |          | Development   |
@@ -75,6 +77,3 @@
   "jwt_token": "*****"
 }
 ```
-
-
-
