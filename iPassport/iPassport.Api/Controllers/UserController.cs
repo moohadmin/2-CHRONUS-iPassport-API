@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
@@ -231,5 +232,26 @@ namespace iPassport.Api.Controllers
             var res = await _service.AddAgent(_mapper.Map<UserAgentCreateDto>(request));
             return Ok(res);
         }
+
+        /// <summary>
+        /// Get countries by part of name
+        /// </summary>
+        /// <param name="countryId">Country Id</param>
+        /// <returns>Country</returns>
+        /// <response code="200">Ok.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="404">NotFound Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("CitizenByName")]
+        public async Task<ActionResult> GetCitizenByNameParts([FromQuery] GetByNamePartsPagedRequest request)
+        {
+            var res = await _service.FindCitizensByNameParts(_mapper.Map<GetByNamePartsPagedFilter>(request));
+
+            return Ok(res);
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Application.Services;
@@ -105,7 +106,7 @@ namespace iPassport.Test.Services
             var detailsSeed = UserSeed.GetUserDetails();
             
             // Arrange
-            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
 
             // Act
             var result = _service.GetCurrentUser();
@@ -120,14 +121,14 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void AddUserImage_SavesPhotoUrlIntoUserDetails()
         {
-            var authSeed = UserSeed.GetUsers();
+            var authSeed = UserSeed.GetUser();
             var mockRequest = Mock.Of<UserImageDto>();
             mockRequest.ImageFile = Mock.Of<IFormFile>();
             var SaveUrl = "./Content/Image/Teste.jpg";
 
             // Arrange
             _externalStorageService.Setup(x => x.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()).Result).Returns(SaveUrl);
-            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUsers());
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
 
             // Act
             var result = _service.AddUserImage(mockRequest);
@@ -216,6 +217,23 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(Guid));
+        }
+
+        [TestMethod]
+        public void FindCitizensByNameParts()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<GetByNamePartsPagedFilter>();
+            _mockUserRepository.Setup(x => x.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()).Result)
+                .Returns(UserSeed.GetPagedUsers());
+
+            // Act
+            var result = _service.FindCitizensByNameParts(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
         }
 
     }

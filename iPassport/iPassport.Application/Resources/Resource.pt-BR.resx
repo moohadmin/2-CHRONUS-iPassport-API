@@ -300,4 +300,7 @@
   <data name="VaccineNotFound" xml:space="preserve">
     <value>Vacina não encontrada.</value>
   </data>
+	<data name="Citizens" xml:space="preserve">
+    <value>Cidadãos.</value>
+  </data>
 </root>

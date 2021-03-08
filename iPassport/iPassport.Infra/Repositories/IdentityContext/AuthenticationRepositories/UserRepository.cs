@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities.Authentication;
+﻿using iPassport.Domain.Entities;
+using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.Authentication;
@@ -47,6 +48,32 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Citizen && u.LastLogin != null).CountAsync();
         public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Agent && u.LastLogin != null).CountAsync();
+
+        public async Task<PagedData<Users>> FindCitizensByNameParts(GetByNamePartsPagedFilter filter)
+        {
+            var query = _context.Users.Where(m => m.Profile == (int)EProfileType.Citizen 
+                            && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower())))
+            .OrderBy(m => m.FullName);
+
+            return await Paginate(query, filter);
+        }
+
+        protected virtual async Task<PagedData<Users>> Paginate(IQueryable<Users> dbSet, PageFilter filter)
+        {
+            (int take, int skip) = CalcPageOffset(filter);
+
+            var data = await dbSet.Take(take).Skip(skip).ToListAsync();
+            var totalPages = data.Count > filter.PageSize ? data.Count / filter.PageSize : 1;
+
+            return new PagedData<Users>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = data.Count, Data = data };
+        }
+
+        protected (int, int) CalcPageOffset(PageFilter filter)
+        {
+            int skip = (filter.PageNumber - 1) * filter.PageSize;
+            int take = skip + filter.PageSize;
+            return (take, skip);
+        }
 
         public void Dispose()
         {

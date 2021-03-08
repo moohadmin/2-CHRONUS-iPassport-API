@@ -1,4 +1,5 @@
 ﻿using iPassport.Application.Models;
+using iPassport.Application.Models.Pagination;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using System;
@@ -18,5 +19,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetLoggedAgentCount();
 
         Task<ResponseApi> AddAgent(UserAgentCreateDto dto);
+        Task<PagedResponseApi> FindCitizensByNameParts(GetByNamePartsPagedFilter filter);
     }
 }

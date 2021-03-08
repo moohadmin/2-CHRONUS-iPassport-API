@@ -3,6 +3,7 @@ using iPassport.Application.Exceptions;
 using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -256,6 +258,16 @@ namespace iPassport.Application.Services
 
                 throw;
             }
+        }
+
+        public async Task<PagedResponseApi> FindCitizensByNameParts(GetByNamePartsPagedFilter filter)
+        {
+            var res = await _userRepository.FindCitizensByNameParts(filter);
+
+            var result = _mapper.Map<IList<CitizenByNameViewModel>>(res.Data);
+
+            return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+
         }
     }
 }
