@@ -38,6 +38,7 @@ namespace iPassport.Test.Services
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
         Mock<ICompanyRepository> _mockCompanyRepository;
         Mock<ICityRepository> _mockCityRepository;
+        Mock<IVaccineRepository> _mockVaccineRepository;
 
         [TestInitialize]
         public void Setup()
@@ -52,8 +53,9 @@ namespace iPassport.Test.Services
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCompanyRepository = new Mock<ICompanyRepository>();
             _mockCityRepository = new Mock<ICityRepository>();
+            _mockVaccineRepository = new Mock<IVaccineRepository>();
 
-            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object);
+            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object);
         }
 
         [TestMethod]

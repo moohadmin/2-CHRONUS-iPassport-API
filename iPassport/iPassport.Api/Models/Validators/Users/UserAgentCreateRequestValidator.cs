@@ -2,7 +2,6 @@
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Resources;
-using iPassport.Domain.Enums;
 using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
 using System.Text.RegularExpressions;
