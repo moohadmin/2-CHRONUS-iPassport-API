@@ -36,6 +36,17 @@ namespace iPassport.Application.Services
 
         public async Task<Auth2FactMobile> SendPin(Guid userId, string phone)
         {
+            var userPinList = await _auth2FactRepository.FindActiveByUser(userId);
+            if(userPinList != null)
+            {
+                foreach (var item in userPinList)
+                {
+                    item.SetInvalid();
+                    await _auth2FactRepository.Update(item);
+                }
+            }
+            
+
             var pin = PinGenerate();
             var text = string.Format(_localizer["PinGenerated"], pin);
 
@@ -68,14 +79,18 @@ namespace iPassport.Application.Services
 
         public async Task<Auth2FactMobile> ResendPin(Guid userId, string phone)
         {
-            var userPinList = await _auth2FactRepository.FindByUser(userId);
+            var userPinList = await _auth2FactRepository.FindActiveByUser(userId);
             if (userPinList != null && userPinList.Any(x => x.PreventsResendingPIN()))
                 throw new BusinessException(_localizer["PinResendTime"]);
 
-            userPinList?.Where(x => x.IsValid)?.ToList()?.ForEach(x => 
-                { x.SetInvalid();
-                  _auth2FactRepository.Update(x);
-                });
+            if (userPinList != null)
+            {
+                foreach (var item in userPinList)
+                {
+                    item.SetInvalid();
+                    await _auth2FactRepository.Update(item);
+                }
+            }
 
             var pin = PinGenerate();
             var text = string.Format(_localizer["PinGenerated"], pin);

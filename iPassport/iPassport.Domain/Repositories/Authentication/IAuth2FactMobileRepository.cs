@@ -8,6 +8,6 @@ namespace iPassport.Domain.Repositories.Authentication
     public interface IAuth2FactMobileRepository : IRepository<Auth2FactMobile>
     {
         Task<Auth2FactMobile> FindByUserAndPin(Guid id, string pin);
-        Task<List<Auth2FactMobile>> FindByUser(Guid id);
+        Task<List<Auth2FactMobile>> FindActiveByUser(Guid id);
     }
 }
