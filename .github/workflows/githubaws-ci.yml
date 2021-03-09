@@ -89,7 +89,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ./config/ipassport-task-definition.json
+        task-definition: ./.github/config/ipassport-task-definition.json
         container-name: ipassport-api
         image: ${{ steps.build-image.outputs.image }}
 

@@ -1,0 +1,103 @@
+{
+  "ipcMode": null,
+  "executionRoleArn": "arn:aws:iam::896477545676:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "dnsSearchDomains": null,
+      "environmentFiles": null,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "secretOptions": null,
+        "options": {
+          "awslogs-group": "/ecs/ipassport-task-definition",
+          "awslogs-region": "sa-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "entryPoint": null,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "protocol": "tcp",
+          "containerPort": 80
+        }
+      ],
+      "command": null,
+      "linuxParameters": null,
+      "cpu": 0,
+      "environment": [
+        {
+          "name": "ASPNETCORE_ENVIRONMENT",
+          "value": "Production"
+        },
+        {
+          "name": "NOTIFICATIONS_MOCK",
+          "value": "false"
+        },
+        {
+          "name": "AWS_DEFAULT_REGION",
+          "value": "sa-east-1"
+        }
+      ],
+      "resourceRequirements": null,
+      "ulimits": null,
+      "dnsServers": null,
+      "mountPoints": [],
+      "workingDirectory": null,
+      "secrets": [
+        {
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/notifications-QPx8GI",
+          "name": "AWS_SECRET_NOTIFICATIONS"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/jwt_token-C1gUEb",
+          "name": "AWS_SECRET_JWT_TOKEN"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/s3-k1u0uT",
+          "name": "AWS_SECRET_S3"
+        },
+        {
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:896477545676:secret:prod/ipassport/aws/secret/database-L2PBTt",
+          "name": "AWS_SECRET_DATABASE"
+        }
+      ],
+      "dockerSecurityOptions": null,
+      "memory": null,
+      "memoryReservation": 512,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "image": "896477545676.dkr.ecr.sa-east-1.amazonaws.com/ipassport/ipassport-api",
+      "startTimeout": null,
+      "firelensConfiguration": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "essential": true,
+      "links": null,
+      "hostname": null,
+      "extraHosts": null,
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
+      "systemControls": null,
+      "privileged": null,
+      "name": "ipassport-api"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": "512",
+  "taskRoleArn": null,
+  "family": "ipassport-task-definition",
+  "pidMode": null,
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "inferenceAccelerators": null,
+  "proxyConfiguration": null,
+  "volumes": []
+}
