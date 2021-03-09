@@ -34,29 +34,23 @@ namespace iPassport.Api.Models.Validators.Users
 
             RuleFor(x => x.Cpf)
                 .Cascade(CascadeMode.Stop)
-                .Length(11).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
-                .Must(x => Regex.IsMatch(x, "^[0-9]+$")).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
-                .Must(x => CpfUtils.Valid(x)).WithMessage(string.Format(localizer["InvalidField"], "CPF"));
+                .SetValidator(new RequiredFieldValidator<string>("Cpf", localizer)).When(x => string.IsNullOrWhiteSpace(x.Cns))
+                .Length(11).When(x => !string.IsNullOrWhiteSpace(x.Cpf)).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
+                .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Cpf)).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
+                .Must(x => CpfUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cpf)).WithMessage(string.Format(localizer["InvalidField"], "CPF"));
 
             RuleFor(x => x.Cns)
                 .Cascade(CascadeMode.Stop)
-                .Length(15).WithMessage(string.Format(localizer["InvalidField"], "CNS"))
-                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
-                .WithMessage(string.Format(localizer["InvalidField"], "CNS"));
+                .SetValidator(new RequiredFieldValidator<string>("Cns", localizer)).When(x => string.IsNullOrWhiteSpace(x.Cpf))
+                .Length(15).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"))
+                .Must(y => Regex.IsMatch(y, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"));
 
-            RuleFor(x => x.CompanyId)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "CompanyId"));
+            RuleFor(x => new { x.Cns, x.Cpf })
+                .Must(x => !string.IsNullOrWhiteSpace(x.Cpf) || !string.IsNullOrWhiteSpace(x.Cns))
+                .WithMessage(localizer["CnsAndCpfRequired"]);
 
             RuleFor(x => x.PriorityGroup)
                 .SetValidator(new RequiredFieldValidator<string>("PriorityGroup", localizer));
-
-            RuleFor(x => x.Breed)
-                .Cascade(CascadeMode.Stop)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Breed"))
-                .SetValidator(new RequiredFieldValidator<EBreedTypes?>("Breed", localizer));
-
-            RuleFor(x => x.BloodType)
-                .SetValidator(new RequiredFieldValidator<string>("BloodType", localizer));
 
             RuleFor(x => x.Telephone)
                 .Cascade(CascadeMode.Stop)
