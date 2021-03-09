@@ -245,6 +245,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpGet("CitizenByName")]
         public async Task<ActionResult> GetCitizenByNameParts([FromQuery] GetByNamePartsPagedRequest request)
         {
