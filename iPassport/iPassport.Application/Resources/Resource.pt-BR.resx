@@ -303,4 +303,7 @@
 	<data name="Citizens" xml:space="preserve">
     <value>Cidadãos.</value>
   </data>
+	<data name="UserVaccineNotFound" xml:space="preserve">
+    <value>Usuário não possui vacinas cadastradas que são necessárias para geração do passaporte.</value>
+  </data>
 </root>

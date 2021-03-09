@@ -97,7 +97,7 @@ namespace iPassport.Domain.Entities.Authentication
         public bool IsCitizen() => Profile == (int)EProfileType.Citizen;
                 
         public Users CreateCitizen(CitizenCreateDto dto)
-        => new Users(dto.FullName,
+        => new Users(dto.CompleteName,
                 dto.Cpf,
                 dto.Rg,
                 dto.Cns,
