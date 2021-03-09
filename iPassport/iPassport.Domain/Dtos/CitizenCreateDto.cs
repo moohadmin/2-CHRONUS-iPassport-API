@@ -6,7 +6,7 @@ namespace iPassport.Domain.Dtos
     public class CitizenCreateDto
     {
         public Guid Id { get; set; }
-        public string FullName { get; set; }
+        public string CompleteName { get; set; }
         public string Gender { get; set; }
         public string Cpf { get; set; }
         public string Cns { get; set; }
