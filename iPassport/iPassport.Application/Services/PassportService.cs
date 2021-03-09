@@ -12,6 +12,7 @@ using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -46,10 +47,13 @@ namespace iPassport.Application.Services
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _userDetailsRepository.GetByUserId(UserId);
+            var userDetails = await _userDetailsRepository.GetUserWithVaccine(UserId);
 
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
+
+            if (userDetails.UserVaccines == null || !userDetails.UserVaccines.Any())
+                throw new BusinessException(_localizer["UserVaccineNotFound"]);
 
             var passport = await _repository.FindByUser(userDetails.Id);
 
