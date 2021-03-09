@@ -56,9 +56,9 @@ VALUES
  'admin@chronus.com', 
  'ADMIN@CHRONUS.COM', 
  true, 
- 'AQAAAAEAACcQAAAAEIUwyMSlFlGMsIZZUVTUKNkPv3jX8h8xQ78PuwMRrMKNg7d/QSlDIoHYBIUQH77w8g==', 
- 'RR2CGMKT3S7TMSKMPS3D2VSGVJLMVV3G', 
- '339042e5-fe29-4c6a-82c5-133d98c10d70', 
+ <PasswordHash>, 
+ <SecurityStamp>, 
+ <ConcurrencyStamp>, 
  null, 
  false,  --Phone number confirmed
  false,
