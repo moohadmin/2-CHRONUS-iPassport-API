@@ -1,4 +1,3 @@
-
 --User
 INSERT INTO "Users"
 ("Id",
@@ -33,7 +32,8 @@ INSERT INTO "Users"
 "AccessFailedCount", 
 "Profile", 
 "AddressId", 
-"CompanyId")
+"CompanyId",
+"CreateDate")
 VALUES
 (uuid_generate_v4(),
  true, 
@@ -67,7 +67,8 @@ VALUES
  0, 
  0, --Profile
  null,
- null);
+ null,
+ timezone('utc', now()));
  
 --user Details
 insert into "UserDetails" ("Id" ,"PlanId","CreateDate","UpdateDate","WasCovidInfected","Bond","PriorityGroup")
@@ -79,6 +80,3 @@ values
  null,
  null,
  null);
-
-
- 
