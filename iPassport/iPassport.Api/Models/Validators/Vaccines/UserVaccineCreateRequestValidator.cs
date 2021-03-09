@@ -11,13 +11,13 @@ namespace iPassport.Api.Models.Validators.Vaccines
         public UserVaccineCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Dose)
-                .SetValidator(new RequiredFieldValidator<int>("Dose", localizer));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Dose"));
 
             RuleFor(x => x.VaccinationDate)
-                .SetValidator(new RequiredFieldValidator<DateTime>("VaccinationDate", localizer));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "VaccinationDate"));
 
             RuleFor(x => x.Vaccine)
-                .SetValidator(new GuidValidator("Vaccine", localizer));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Vaccine"));
 
             RuleFor(x => x.Batch)
                 .SetValidator(new RequiredFieldValidator<string>("Batch", localizer));
