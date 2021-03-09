@@ -2,6 +2,7 @@ using Amazon.S3;
 using FluentValidation.AspNetCore;
 using iPassport.Api.AutoMapper;
 using iPassport.Api.Configurations;
+using iPassport.Api.Configurations.Converters;
 using iPassport.Api.Configurations.Filters;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Middlewares.Auth;
@@ -61,7 +62,8 @@ namespace iPassport.Api
                                 ));
                 };
                 options.SuppressModelStateInvalidFilter = true;
-            });
+            })
+            .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new EmptyStringJsonConverter()));
 
             services.AddIdentity<Users, Roles>().AddEntityFrameworkStores<PassportIdentityContext>().AddDefaultTokenProviders();
 
