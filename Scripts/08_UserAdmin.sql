@@ -1,0 +1,84 @@
+
+--User
+INSERT INTO "Users"
+("Id",
+"AcceptTerms",
+"UpdateDate", 
+"FullName", 
+"CPF", 
+"RG", 
+"CNS", 
+"PassportDoc", 
+"Birthday", 
+"LastLogin", 
+"Gender", 
+"Breed", 
+"BloodType", 
+"Occupation", 
+"Photo", 
+"InternationalDocument", 
+"UserName", 
+"NormalizedUserName", 
+"Email", 
+"NormalizedEmail", 
+"EmailConfirmed", 
+"PasswordHash", 
+"SecurityStamp", 
+"ConcurrencyStamp", 
+"PhoneNumber", 
+"PhoneNumberConfirmed", 
+"TwoFactorEnabled", 
+"LockoutEnd", 
+"LockoutEnabled", 
+"AccessFailedCount", 
+"Profile", 
+"AddressId", 
+"CompanyId")
+VALUES
+(uuid_generate_v4(),
+ true, 
+ timezone('utc', now()), 
+ 'Admin Chronus', 
+ null,
+ null,
+ null, 
+ null,
+ timezone('utc', now()), 
+ null,
+ null, 
+ null, 
+ null, 
+ null, 
+ null, 
+ null, 
+ 'chronusadmin', 
+ 'CHRONUSADMIN', 
+ 'admin@chronus.com', 
+ 'ADMIN@CHRONUS.COM', 
+ true, 
+ 'AQAAAAEAACcQAAAAEIUwyMSlFlGMsIZZUVTUKNkPv3jX8h8xQ78PuwMRrMKNg7d/QSlDIoHYBIUQH77w8g==', 
+ 'RR2CGMKT3S7TMSKMPS3D2VSGVJLMVV3G', 
+ '339042e5-fe29-4c6a-82c5-133d98c10d70', 
+ null, 
+ false,  --Phone number confirmed
+ false,
+ null, 
+ true, 
+ 0, 
+ 0, --Profile
+ null,
+ null);
+ 
+--user Details
+insert into "UserDetails" ("Id" ,"PlanId","CreateDate","UpdateDate","WasCovidInfected","Bond","PriorityGroup")
+values 
+((select "Id" from "Users" u where u."UserName" = 'chronusadmin'),
+ null,
+ timezone('utc', now()), 
+ timezone('utc', now()),
+ null,
+ null,
+ null);
+
+
+ 
