@@ -77,6 +77,11 @@ namespace iPassport.Api.Models.Validators.Users
                 .Cascade(CascadeMode.Stop)
                 .NotNull().When(x => x.NumberOfDoses > 0).WithMessage(string.Format(localizer["RequiredField"], "Doses"))
                 .SetValidator(new UserVaccineCreateRequestValidator(localizer)).When(x => x.NumberOfDoses > 0);
+
+            RuleFor(x => x.Email)
+                .EmailAddress()
+                .When(x => !string.IsNullOrWhiteSpace(x.Email))
+                .WithMessage(string.Format(localizer["InvalidField"], "Email"));
         }
     }
 }

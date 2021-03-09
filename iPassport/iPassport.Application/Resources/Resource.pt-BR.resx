@@ -300,10 +300,13 @@
   <data name="VaccineNotFound" xml:space="preserve">
     <value>Vacina não encontrada.</value>
   </data>
-	<data name="Citizens" xml:space="preserve">
+  <data name="Citizens" xml:space="preserve">
     <value>Cidadãos.</value>
   </data>
-	<data name="UserVaccineNotFound" xml:space="preserve">
+  <data name="UserVaccineNotFound" xml:space="preserve">
     <value>Usuário não possui vacinas cadastradas que são necessárias para geração do passaporte.</value>
+  </data>
+  <data name="DuplicateUserName" xml:space="preserve">
+    <value>UserName/CPF já cadastrado.</value>
   </data>
 </root>

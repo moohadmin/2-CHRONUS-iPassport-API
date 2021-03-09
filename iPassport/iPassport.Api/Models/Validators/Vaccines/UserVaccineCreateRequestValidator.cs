@@ -11,7 +11,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
         public UserVaccineCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Dose)
-                .SetValidator(new RequiredFieldValidator<int>("PriorityGroup", localizer));
+                .SetValidator(new RequiredFieldValidator<int>("Dose", localizer));
 
             RuleFor(x => x.VaccinationDate)
                 .SetValidator(new RequiredFieldValidator<DateTime>("VaccinationDate", localizer));

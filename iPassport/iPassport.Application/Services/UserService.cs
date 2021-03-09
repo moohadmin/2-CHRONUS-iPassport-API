@@ -80,8 +80,18 @@ namespace iPassport.Application.Services
             {
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user);
+                
                 if (!result.Succeeded)
-                    throw new BusinessException(_localizer["UserNotCreated"]);
+                {
+                    string err = string.Empty;
+
+                    foreach(var error in result.Errors)
+                    {
+                        err +=$"{_localizer[error.Code]}\n";
+                    }
+
+                    throw new BusinessException(err);
+                }
 
                 /// Re-Hidrated UserId to UserDetails
                 dto.Id = user.Id;
