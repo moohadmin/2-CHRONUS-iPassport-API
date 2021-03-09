@@ -1,13 +1,9 @@
 ﻿using iPassport.Application.Interfaces;
 using iPassport.Domain.Dtos.PinIntegration.FindPin;
-using iPassport.Domain.Dtos.PinIntegration.SendPin.PinRequest;
 using iPassport.Domain.Dtos.PinIntegration.SendPin.PinResponse;
 using iPassport.Infra.ExternalServices;
 using iPassport.Test.Settings.Factories;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -17,13 +13,11 @@ namespace iPassport.Test.Services
     {
 
         ISmsExternalService _service;
-        IConfiguration _config;
 
         [TestInitialize]
         public void Setup()
         {
-            _config = Mock.Of<IConfiguration>();
-            _service = new SmsIntegrationService(_config);
+            _service = new SmsIntegrationService();
             EnvVariablesFactory.Create();
         }
 

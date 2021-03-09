@@ -2,6 +2,7 @@
 using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Resources;
+using iPassport.Application.Services.Constants;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -18,17 +19,15 @@ namespace iPassport.Application.Services.AuthenticationServices
 {
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration _configuration;
+        
         private readonly IHttpContextAccessor _accessor;
         private readonly IUserTokenRepository _userTokenRepository;
         private readonly IStringLocalizer<Resource> _localizer;
 
-        public TokenService(IConfiguration configuration,
-            IHttpContextAccessor accessor,
+        public TokenService(IHttpContextAccessor accessor,
             IUserTokenRepository userTokenRepository,
             IStringLocalizer<Resource> localizer)
         {
-            _configuration = configuration;
             _accessor = accessor;
             _userTokenRepository = userTokenRepository;
             _localizer = localizer;
@@ -37,7 +36,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         public async Task<string> GenerateBasic(Users user, bool hasPlan)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
+            var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -63,7 +62,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         public async Task<string> GenerateByEmail(Users user, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("Secret").Value);
+            var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

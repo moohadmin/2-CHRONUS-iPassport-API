@@ -6,6 +6,7 @@
 /src/bin
 /src/obj
 
+
 #iPassport
 #Upload Image
 **/Content/Image/
@@ -30,6 +31,7 @@ gitlabKey.pub
 *.user
 *.userosscache
 *.sln.docstates
+launchSettings.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

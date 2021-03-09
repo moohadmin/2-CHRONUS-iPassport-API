@@ -38,20 +38,90 @@ spec:
         image: ${IMAGE_TAG}
         imagePullPolicy: Always
         env:
-        - name: CONNECTION_STRING
+        - name: ASPNETCORE_ENVIRONMENT
           valueFrom:
             configMapKeyRef:
-              key: CONNECTION_STRING
+              key: ASPNETCORE_ENVIRONMENT
               name: ${APP_NAME}-${APP_SUBGROUP}
-        - name: DB_PASSWORD
+        - name: DATABASE_CONNECTION_STRING
           valueFrom:
             configMapKeyRef:
-              key: DB_PASSWORD
+              key: DATABASE_CONNECTION_STRING
               name: ${APP_NAME}-${APP_SUBGROUP}
-        - name: PIN_INTEGRATION_SIMULADO
+        - name: STORAGE_S3_BUCKET_NAME
           valueFrom:
             configMapKeyRef:
-              key: PIN_INTEGRATION_SIMULADO
+              key: STORAGE_S3_BUCKET_NAME
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            configMapKeyRef:
+              key: AWS_ACCESS_KEY_ID
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: AWS_SECRET_ACCESS_KEY
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            configMapKeyRef:
+              key: AWS_DEFAULT_REGION
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_MOCK
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_MOCK
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_BASE_URL
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_CLIENT_ID
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_CLIENT_SECRET
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_GRANT_TYPE
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_GRANT_TYPE
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_AUTHENTICATION_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_AUTHENTICATION_KEY
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_FROM_NUMBER
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_FROM_NUMBER
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_GET_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_GET_TOKEN
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_SEND_API_URL
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_SEND_API_URL
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_GET_API_URL
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_GET_API_URL
+              name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: SECRET_JWT_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET_JWT_TOKEN
               name: ${APP_NAME}-${APP_SUBGROUP}
         ports:
         - containerPort: 80

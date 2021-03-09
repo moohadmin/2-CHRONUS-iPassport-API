@@ -34,9 +34,9 @@ namespace iPassport.Api.Controllers
         /// This API Create User
         /// </summary>
         /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="204">Server returns no data.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -52,9 +52,9 @@ namespace iPassport.Api.Controllers
         /// This Add User Image
         /// </summary>
         /// <returns></returns>
-        /// <response code="200">Operation OK</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="200">Operation OK<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -70,9 +70,9 @@ namespace iPassport.Api.Controllers
         /// This API Associate Plan to User
         /// </summary>
         /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="204">Server returns no data.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -88,9 +88,9 @@ namespace iPassport.Api.Controllers
         /// This API Associate Plan to User
         /// </summary>
         /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="204">Server returns no data.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -106,9 +106,9 @@ namespace iPassport.Api.Controllers
         /// This API Get User Plan
         /// </summary>
         /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="204">Server returns no data.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -124,10 +124,10 @@ namespace iPassport.Api.Controllers
         /// This API Get the current User
         /// </summary>
         /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="404">NotFound Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="204">Server returns no data.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="404">NotFound Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -143,10 +143,10 @@ namespace iPassport.Api.Controllers
         /// This API Get the User vaccines
         /// </summary>
         /// <returns></returns>
-        /// <response code="200">Ok.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="404">NotFound Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="200">Ok.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="404">NotFound Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -163,9 +163,9 @@ namespace iPassport.Api.Controllers
         /// This API is get the get logged Citzen count
         /// </summary>
         /// <returns></returns>
-        /// <response code="200">Ok.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="200">Ok.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -181,10 +181,10 @@ namespace iPassport.Api.Controllers
         /// This API Get the User registered count
         /// </summary>
         /// <returns></returns>
-        /// <response code="200">Ok.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="404">NotFound Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="200">Ok.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="404">NotFound Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -201,9 +201,9 @@ namespace iPassport.Api.Controllers
         /// This API is get the get logged Agent count
         /// </summary>
         /// <returns></returns>
-        /// <response code="200">Ok.</response>
-        /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="200">Ok.<</response>
+        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]

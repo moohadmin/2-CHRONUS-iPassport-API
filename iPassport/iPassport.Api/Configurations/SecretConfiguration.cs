@@ -1,12 +1,12 @@
-using Microsoft.Extensions.Configuration;
+using iPassport.Application.Services.Constants;
 
 namespace iPassport.Api.Configurations
 {
     public static class SecretConfiguration
     {
-        public static string GetSecret(IConfiguration _configuration)
+        public static string GetSecret()
         {
-            return _configuration.GetSection("Secret").Value;
+            return EnvConstants.SECRET_JWT_TOKEN;
         }
     }
 }
