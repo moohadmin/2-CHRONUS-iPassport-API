@@ -19,6 +19,9 @@ namespace iPassport.Api.Models.Validators.Vaccines
             RuleFor(x => x.Vaccine)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Vaccine"));
 
+            RuleFor(x => x.City)
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "City"));
+
             RuleFor(x => x.Batch)
                 .SetValidator(new RequiredFieldValidator<string>("Batch", localizer));
 
