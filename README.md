@@ -112,8 +112,6 @@ Just put the following snippet on yout `<project-root>/.vscode/launch.json` file
 
 > for convenience, the rest of the code where omitted.
 
-
-
 ## Docker - Run Images Locally
 
 First clean and build the application
@@ -157,5 +155,3 @@ $ docker run -it --rm -p 80:80 \
     --env="NOTIFICATIONS_GET_API_URL=/sms/1/reports" \
     ipassport:local
 ```
-
-
