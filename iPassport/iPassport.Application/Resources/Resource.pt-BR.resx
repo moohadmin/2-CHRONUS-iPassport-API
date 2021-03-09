@@ -309,4 +309,10 @@
   <data name="DuplicateUserName" xml:space="preserve">
     <value>UserName/CPF já cadastrado.</value>
   </data>
+  <data name="CnsAndCpfRequired" xml:space="preserve">
+    <value>É necessário preencher ao menos um dos campos de documento (CNS ou CPF).</value>
+  </data>
+  <data name="DifferentVaccinesDoses" xml:space="preserve">
+    <value>Não é permitido o cadastro de doses com vacinas diferentes.</value>
+  </data>
 </root>

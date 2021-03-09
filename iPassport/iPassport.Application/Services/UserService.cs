@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -60,21 +61,18 @@ namespace iPassport.Application.Services
             
             if (dto.CompanyId.HasValue)
             {
-                var company = await _companyRepository.Find(dto.CompanyId.Value);
-                if (company == null)
+                if (await _companyRepository.Find(dto.CompanyId.Value) == null)
                     throw new BusinessException(_localizer["CompanyNotFound"]);
             }
 
-            var city = await _cityRepository.Find(dto.Address.CityId);
-            if (city == null)
+            if (await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
-            foreach (var d in dto.Doses)
-            {
-                var vaccine = await _vaccineRepository.Find(d.VaccineId);
-                if (vaccine == null)
-                    throw new BusinessException(_localizer["VaccineNotFound"]);
-            }
+            if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
+                throw new BusinessException(_localizer["VaccineNotFound"]);
+
+            if(!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
+                throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
 
             try
             {

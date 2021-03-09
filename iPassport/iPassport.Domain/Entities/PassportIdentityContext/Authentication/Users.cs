@@ -30,6 +30,7 @@ namespace iPassport.Domain.Entities.Authentication
             PhoneNumber = mobile;
             Profile = profile;
             CompanyId = companyId;
+            CreateDate = DateTime.UtcNow;
         }
 
         public Users(string fullName, string cpf, Address address, string userName, string mobile, int profile, Guid? companyId)
@@ -43,6 +44,7 @@ namespace iPassport.Domain.Entities.Authentication
             Profile = profile;
 
             CompanyId = companyId;
+            CreateDate = DateTime.UtcNow;
         }
 
         public bool AcceptTerms { get; set; }
@@ -58,11 +60,12 @@ namespace iPassport.Domain.Entities.Authentication
         public string Breed { get; set; }
         public string BloodType { get; set; }
         public string Occupation { get; set; }
-        public Guid AddressId { get; private set; }
+        public Guid? AddressId { get; private set; }
         public string Photo { get; set; }
         public string InternationalDocument { get; set; }
         public int Profile { get; set; }
         public Guid? CompanyId { get; set; }
+        public DateTime CreateDate { get; set; }
 
         public Address Address { get; set; }
         public Company Company { get; set; }
