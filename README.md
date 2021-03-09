@@ -112,3 +112,46 @@ Just put the following snippet on yout `<project-root>/.vscode/launch.json` file
 
 > for convenience, the rest of the code where omitted.
 
+## Docker - Run Images Locally
+
+First clean and build the application
+
+```shell
+$ dotnet clean
+$ rm -rf $(find $(pwd)/ -type d -name "obj") && rm -rf $(find $(pwd)/ -type d -name "bin")
+$ dotnet build
+$ rm -rf ./artifacts
+$ dotnet publish -c Release -o ./artifacts
+```
+
+
+Then Build the image
+
+```shell
+$ docker image remove ipassport:local
+$ docker build -f ./iPassport.Api/Dockerfile -t ipassport:local .
+```
+
+Finally run docker image as shown.
+
+```shell
+$ docker run -it --rm -p 80:80 \
+    --env="ASPNETCORE_ENVIRONMENT=Development" \
+    --env="DATABASE_CONNECTION_STRING=Host=localhost;Port=5432;Database=passport;Username=passport;Password=1234" \
+    --env="SECRET_JWT_TOKEN=*****" \
+    --env="STORAGE_S3_BUCKET_NAME=chronus-docs" \
+    --env="AWS_ACCESS_KEY_ID=*****" \
+    --env="AWS_SECRET_ACCESS_KEY=*****" \
+    --env="AWS_DEFAULT_REGION=sa-east-1" \
+    --env="NOTIFICATIONS_MOCK=true" \
+    --env="NOTIFICATIONS_BASE_URL=https://*****.api.infobip.com" \
+    --env="NOTIFICATIONS_CLIENT_ID=*****" \
+    --env="NOTIFICATIONS_CLIENT_SECRET=*****" \
+    --env="NOTIFICATIONS_GRANT_TYPE=client_credentials" \
+    --env="NOTIFICATIONS_AUTHENTICATION_KEY=*****" \
+    --env="NOTIFICATIONS_FROM_NUMBER=IPassport" \
+    --env="NOTIFICATIONS_GET_TOKEN=/auth/1/oauth2/token" \
+    --env="NOTIFICATIONS_SEND_API_URL=/sms/2/text/advanced" \
+    --env="NOTIFICATIONS_GET_API_URL=/sms/1/reports" \
+    ipassport:local
+```
