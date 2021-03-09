@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
+using iPassport.Application.Services.Constants;
 using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
@@ -102,8 +103,9 @@ namespace iPassport.Application.Services
 
         public async Task<Auth2FactMobile> SaveAuth2FactMobile(Guid userId, string phone, string pin, string MessageId)
         {
-            var simulateAmbient = Environment.GetEnvironmentVariable("PIN_INTEGRATION_SIMULADO");
-            if (!string.IsNullOrWhiteSpace(simulateAmbient) && Convert.ToBoolean(simulateAmbient))
+            var AmbienteSimulado = EnvConstants.NOTIFICATIONS_MOCK;
+
+            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
                 pin = "1111";
 
             var twoFactDto = new Auth2FactMobileDto
