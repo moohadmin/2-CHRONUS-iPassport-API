@@ -72,7 +72,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                     new Claim("UserId", user.Id.ToString()),
                     new Claim("FirstLogin", (user.LastLogin == null).ToString()),
                     new Claim(("FullName"), user.FullName),
-                    new Claim(ClaimTypes.Role, role)
+                    //new Claim(ClaimTypes.Role, role)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

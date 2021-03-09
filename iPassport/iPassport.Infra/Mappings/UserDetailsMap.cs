@@ -16,6 +16,10 @@ namespace iPassport.Infra.Mappings
             builder.Property(c => c.UpdateDate)
                 .IsRequired();
 
+            builder.Property(c => c.Bond);
+
+            builder.Property(c => c.PriorityGroup);
+
             builder.HasOne(c => c.Plan)
                 .WithMany(p => p.Users);
         }

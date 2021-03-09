@@ -65,6 +65,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
+            
             var roles = await _userManager.GetRolesAsync(user);
 
             if (await _userManager.CheckPasswordAsync(user, password))
