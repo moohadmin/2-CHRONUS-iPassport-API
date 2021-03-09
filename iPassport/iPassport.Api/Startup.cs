@@ -145,15 +145,6 @@ namespace iPassport.Api
             ///Add AWS Services
             services.AddAWSService<IAmazonS3>();
 
-
-            var envs = Environment.GetEnvironmentVariables();
-
-            Console.WriteLine("XXXXXXXXXXXXX");
-
-            foreach(var k in envs.Keys)
-            {
-                Console.WriteLine($"{k}\t\t{envs[k]}");
-            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

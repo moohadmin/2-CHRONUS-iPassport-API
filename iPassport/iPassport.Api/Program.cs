@@ -12,6 +12,7 @@ namespace iPassport.Api
     {
         public static void Main(string[] args)
         {
+
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
             try
