@@ -2,7 +2,6 @@
 using iPassport.Api.Models.Requests.User;
 using iPassport.Api.Models.Validators.Vaccines;
 using iPassport.Application.Resources;
-using iPassport.Domain.Enums;
 using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
 using System;
@@ -16,11 +15,6 @@ namespace iPassport.Api.Models.Validators.Users
         {
             RuleFor(x => x.CompleteName)
                 .SetValidator(new RequiredFieldValidator<string>("CompleteName", localizer));
-
-            RuleFor(x => x.Gender)
-                .Cascade(CascadeMode.Stop)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Gender"))
-                .SetValidator(new RequiredFieldValidator<EGendersTypes?>("Gender", localizer));
 
             RuleFor(x => x.Address)
                 .SetValidator(new AddressValidator(localizer, false));

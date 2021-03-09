@@ -58,7 +58,7 @@ namespace iPassport.Application.Services
         {
             var user = new Users().CreateCitizen(dto);
             user.SetUpdateDate();
-            
+
             if (dto.CompanyId.HasValue)
             {
                 if (await _companyRepository.Find(dto.CompanyId.Value) == null)
@@ -68,24 +68,27 @@ namespace iPassport.Application.Services
             if (await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
-            if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
-                throw new BusinessException(_localizer["VaccineNotFound"]);
+            if (dto.Doses != null && dto.Doses.Any())
+            {
+                if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
+                    throw new BusinessException(_localizer["VaccineNotFound"]);
 
-            if(!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
-                throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+                if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
+                    throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+            }
 
             try
             {
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user);
-                
+
                 if (!result.Succeeded)
                 {
                     string err = string.Empty;
 
-                    foreach(var error in result.Errors)
+                    foreach (var error in result.Errors)
                     {
-                        err +=$"{_localizer[error.Code]}\n";
+                        err += $"{_localizer[error.Code]}\n";
                     }
 
                     throw new BusinessException(err);
