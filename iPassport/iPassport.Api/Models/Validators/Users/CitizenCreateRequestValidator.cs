@@ -45,7 +45,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(string.Format(localizer["InvalidField"], "CNS"));
 
             RuleFor(x => x.CompanyId)
-                .SetValidator(new GuidValidator("CompanyId", localizer));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "CompanyId"));
 
             RuleFor(x => x.PriorityGroup)
                 .SetValidator(new RequiredFieldValidator<string>("PriorityGroup", localizer));
