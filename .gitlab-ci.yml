@@ -70,7 +70,7 @@ docker:tags:gitlab-registry:
     - gcloud config set project $PROJECT
     - gcloud config set compute/zone $ZONE
     - gcloud container clusters get-credentials $CLUSTER --zone $ZONE
-    - for YAML in $(ls $CONFIG_DIR);do cat $CONFIG_DIR/$YAML | envsubst | kubectl apply -n ${ENVIRONMENT} -f -;done
+    - for YAML in $(ls $CONFIG_DIR);do cat $CONFIG_DIR/$YAML | envsubst; cat $CONFIG_DIR/$YAML | envsubst | kubectl apply -n ${ENVIRONMENT} -f -;done
 
 deploy:develop:
   extends: .deploy
