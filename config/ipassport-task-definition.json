@@ -1,7 +1,7 @@
 {
   "ipcMode": null,
   "apiVersion": "v1",
-  "Kind":"Deployment",
+  "kind": "Deployment",
   "executionRoleArn": "arn:aws:iam::896477545676:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
