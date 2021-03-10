@@ -20,7 +20,18 @@ namespace iPassport.Api.Configurations.Filters
                     Extensions = GetExtensions(path.Value.Operations),
                     Responses = responses
                 });
+            
             }
+
+            var x = new OpenApiPathItem();
+            //var operation = new Dictionary<, OpenApiOperation>();
+            //x.Operations.Add();
+            
+
+            
+
+            //swaggerDoc.Paths.Add("/swagger/{proxy+}", path);
+
         }
 
         private Dictionary<string, IOpenApiExtension> GetExtensions(IDictionary<OperationType, OpenApiOperation> operations)
@@ -46,7 +57,13 @@ namespace iPassport.Api.Configurations.Filters
                 ["responses"] = extentionsIntegrationObjectResponses,
                 ["requestTemplates"] = new OpenApiObject() { ["application/json"] = new OpenApiString("{\"statusCode\": 200}") },
                 ["passthroughBehavior"] = new OpenApiString("when_no_match"),
-                ["type"] = new OpenApiString("mock")
+                ["type"] = new OpenApiString("mock"),
+                ["uri"] = new OpenApiString("${LOAD_BALANCER_URN}"),
+                ["httpMethod"] = new OpenApiString("ANY"),
+                ["connectionType"] = new OpenApiString("VPC_LINK"),
+                ["connectionId"] = new OpenApiString("${CONNECTION_ID}"),
+                ["type"] = new OpenApiString("http_proxy"),
+                ["payloadFormatVersion"] = new OpenApiString("1.0")
             };
 
             OpenApiArray extensionsConsumesProducesValue = new OpenApiArray() { new OpenApiString("application/json") };
