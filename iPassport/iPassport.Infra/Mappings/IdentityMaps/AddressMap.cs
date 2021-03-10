@@ -12,9 +12,11 @@ namespace iPassport.Infra.Mappings.IdentityMaps
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Cep);
+            builder.Property(x => x.Cep)
+                .IsRequired(false);
 
-            builder.Property(x => x.Description);
+            builder.Property(x => x.Description)
+                .IsRequired(false);
 
             builder.Property(x => x.UpdateDate)
                 .IsRequired();
