@@ -51,15 +51,13 @@ namespace iPassport.Api.Configurations.Filters
                 return;
             }
 
-            relativePath = relativePath.StartsWith("/")? relativePath.Substring(1) : relativePath;
-
-            string uri = $"${{uri_schema}}://${{uri_dns}}/{relativePath}";
+            string uri = "${LOAD_BALANCER_URN}";
 
             OpenApiObject integrationObject = new OpenApiObject {
                 ["uri"] = new OpenApiString(uri),
-                ["httpMethod"] = new OpenApiString(httpMethod),
+                ["httpMethod"] = new OpenApiString("ANY"),
                 ["connectionType"] = new OpenApiString("VPC_LINK"),
-                ["connectionId"] = new OpenApiString("${connection_id}"),
+                ["connectionId"] = new OpenApiString("${CONNECTION_ID}"),
                 ["type"] = new OpenApiString("http_proxy"),
                 ["payloadFormatVersion"] = new OpenApiString("1.0"),
             };

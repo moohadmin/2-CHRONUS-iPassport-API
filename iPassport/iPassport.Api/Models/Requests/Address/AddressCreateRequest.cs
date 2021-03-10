@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace iPassport.Api.Models.Requests
 {
@@ -8,7 +7,6 @@ namespace iPassport.Api.Models.Requests
         /// <summary>
         /// Address
         /// </summary>
-        [DisplayFormat(ConvertEmptyStringToNull = true)]
         public string Description { get; set; }
         /// <summary>
         /// Address

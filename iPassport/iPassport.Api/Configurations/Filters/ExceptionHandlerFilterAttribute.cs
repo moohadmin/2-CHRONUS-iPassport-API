@@ -1,7 +1,9 @@
 ﻿using iPassport.Api.Models.Responses;
 using iPassport.Application.Exceptions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Hosting;
 using NLog;
 using NLog.Web;
 using System;
@@ -14,6 +16,12 @@ namespace iPassport.Api.Configurations.Filters
     public class ExceptionHandlerFilterAttribute : ExceptionFilterAttribute
     {
         private readonly Logger logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+        private bool _devEnv;
+
+        public ExceptionHandlerFilterAttribute(IWebHostEnvironment env) : base()
+        {
+            _devEnv = env.IsDevelopment();
+        }
 
         /// <summary>
         /// Filter exception
@@ -60,9 +68,9 @@ namespace iPassport.Api.Configurations.Filters
                 context.Result = new JsonResult(new ServerErrorResponse
                 (
                     context.Exception.Message,
-                    context.Exception.InnerException?.Message,
-                    context.Exception.StackTrace
-                ));
+                    _devEnv ? context.Exception.InnerException?.Message : null,
+                    _devEnv ? context.Exception.StackTrace : null
+                )); ;
 
                 LogError(context.Exception);
                 return;
@@ -75,8 +83,8 @@ namespace iPassport.Api.Configurations.Filters
                 context.Result = new JsonResult(new ServerErrorResponse
                 (
                     context.Exception.Message,
-                    context.Exception.InnerException?.Message,
-                    (context.Exception as InternalErrorException).Trace
+                    _devEnv ? context.Exception.InnerException?.Message : null,
+                    _devEnv ? (context.Exception as InternalErrorException).Trace : null
                 ));
 
                 LogError(context.Exception);
@@ -88,8 +96,8 @@ namespace iPassport.Api.Configurations.Filters
             context.Result = new JsonResult(new ServerErrorResponse
             (
                 context.Exception.Message,
-                context.Exception.InnerException?.Message,
-                context.Exception.StackTrace
+                _devEnv ? context.Exception.InnerException?.Message : null,
+                _devEnv ? context.Exception.StackTrace : null
             ));
 
             LogError(context.Exception);
