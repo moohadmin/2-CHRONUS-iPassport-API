@@ -12,17 +12,14 @@ namespace iPassport.Api.Models.Validators.Users
     {
         public UserAgentCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.Address)
-                .SetValidator(new RequiredFieldValidator<AddressCreateRequest>("Address", localizer))
-                .SetValidator(new AddressValidator(localizer, true));
+            RuleFor(x => x.FullName)
+                .SetValidator(new RequiredFieldValidator<string>("FullName", localizer));
 
             RuleFor(x => x.CPF).Cascade(CascadeMode.Stop)
+                 .NotEmpty().WithMessage(string.Format(localizer["InvalidField"], "CPF"))
                  .Length(11).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
                  .Must(x => Regex.IsMatch(x, "^[0-9]+$")).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
                  .Must(x => CpfUtils.Valid(x)).WithMessage(string.Format(localizer["InvalidField"], "CPF"));
-
-            RuleFor(x => x.FullName)
-                .SetValidator(new RequiredFieldValidator<string>("FullName", localizer));
 
             RuleFor(x => x.Mobile)
                 .Cascade(CascadeMode.Stop)
@@ -35,14 +32,14 @@ namespace iPassport.Api.Models.Validators.Users
                 .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
                     .WithMessage(string.Format(localizer["InvalidField"], "Mobile"));
 
+            RuleFor(x => x.Username)
+                .SetValidator(new RequiredFieldValidator<string>("Username", localizer));
+
             RuleFor(x => x.Password)
                 .SetValidator(new RequiredFieldValidator<string>("Password", localizer));
 
             RuleFor(x => x.PasswordIsValid)
                 .SetValidator(new RequiredFieldValidator<bool>("PasswordIsValid", localizer));
-
-            RuleFor(x => x.Username)
-                .SetValidator(new RequiredFieldValidator<string>("Username", localizer));
 
             RuleFor(x => x.CompanyId)
                 .SetValidator(new GuidValidator("CompanyId", localizer));

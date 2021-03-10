@@ -36,7 +36,7 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<IList<HealthViewModel>>(res);
 
-            return new ResponseApi(true, "List of HealthChecks Test!", result);
+            return new ResponseApi(true, "List of HealthChecks!", result);
         }
     }
 }
