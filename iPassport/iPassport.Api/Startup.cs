@@ -120,6 +120,7 @@ namespace iPassport.Api
                         }, new List<string>()
                     }
                 });
+                c.OperationFilter<AwsApiGatewayIntegrationFilter>();
             });
 
             services.AddWebEncoders(o =>
