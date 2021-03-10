@@ -121,6 +121,7 @@ namespace iPassport.Api
                     }
                 });
                 c.OperationFilter<AwsApiGatewayIntegrationFilter>();
+                c.DocumentFilter<AwsApiGatewayCorsIntegration>();
             });
 
             services.AddWebEncoders(o =>

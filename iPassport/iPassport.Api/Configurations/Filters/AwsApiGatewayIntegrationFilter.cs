@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
+using System.Collections.Generic;
 
 namespace iPassport.Api.Configurations.Filters
 {
+
     /// <summary>
     /// Assembly: Swashbuckle.AspNetCore.SwaggerGen.dll
     /// Class: Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter
@@ -36,6 +40,12 @@ namespace iPassport.Api.Configurations.Filters
         /// <returns></returns>
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
+            AddApiGatewayPathParamIntegration(operation, context);
+            AddApiGatewayCorsHeader(operation, context);
+        }
+
+        private void AddApiGatewayPathParamIntegration(OpenApiOperation operation, OperationFilterContext context)
+        {
             ApiDescription apiDescription = context.ApiDescription;
 
             if (apiDescription == null)
@@ -51,15 +61,18 @@ namespace iPassport.Api.Configurations.Filters
                 return;
             }
 
+            relativePath = relativePath.StartsWith("/") ? relativePath.Substring(1) : relativePath;
+
             string uri = "${LOAD_BALANCER_URN}";
 
-            OpenApiObject integrationObject = new OpenApiObject {
+            OpenApiObject integrationObject = new OpenApiObject
+            {
                 ["uri"] = new OpenApiString(uri),
-                ["httpMethod"] = new OpenApiString("ANY"),
+                ["httpMethod"] = new OpenApiString(httpMethod),
                 ["connectionType"] = new OpenApiString("VPC_LINK"),
                 ["connectionId"] = new OpenApiString("${CONNECTION_ID}"),
                 ["type"] = new OpenApiString("http_proxy"),
-                ["payloadFormatVersion"] = new OpenApiString("1.0"),
+                ["payloadFormatVersion"] = new OpenApiString("1.0")
             };
 
             var parameters = apiDescription.ParameterDescriptions;
@@ -68,7 +81,7 @@ namespace iPassport.Api.Configurations.Filters
 
             foreach (var parameter in parameters)
             {
-                if (BindingSource.Path ==  parameter.Source)
+                if (BindingSource.Path == parameter.Source)
                 {
                     requestParameters[$"integration.request.path.{parameter.Name}"] = new OpenApiString($"method.request.path.{parameter.Name}");
                 }
@@ -76,10 +89,24 @@ namespace iPassport.Api.Configurations.Filters
 
             if (requestParameters.Count > 0)
             {
-                integrationObject["requestParameters"] = requestParameters;    
+                integrationObject["requestParameters"] = requestParameters;
             }
 
             operation.Extensions.Add(INTEGRATION_OBJECT_ATTRIBUTE, integrationObject);
+        }
+
+        private void AddApiGatewayCorsHeader(OpenApiOperation operation, OperationFilterContext context)
+        {
+            if (operation.RequestBody != null && operation.RequestBody.Content.ContainsKey("multipart/form-data"))
+            {
+                operation.Parameters.Add(new OpenApiParameter { Name = "Content-Type", In = ParameterLocation.Header, Description = "Content-Type", Required = true });
+                operation.Parameters.Add(new OpenApiParameter { Name = "Accept", In = ParameterLocation.Header, Description = "Accept", Required = true });
+            }
+
+            foreach (var resp in operation.Responses)
+            {
+                resp.Value.Headers.Add("Access-Control-Allow-Origin", new OpenApiHeader { Extensions = new Dictionary<string, IOpenApiExtension> { { "type", new OpenApiString("string") } } });
+            }
         }
     }
 }
