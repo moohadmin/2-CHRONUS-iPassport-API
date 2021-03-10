@@ -68,7 +68,7 @@ namespace iPassport.Api.Models.Validators.Users
 
             RuleFor(x => x.Email)
                 .EmailAddress()
-                .When(x => !string.IsNullOrWhiteSpace(x.Email))
+                .When(x => x != null)
                 .WithMessage(string.Format(localizer["InvalidField"], "Email"));
         }
     }

@@ -219,8 +219,8 @@ namespace iPassport.Application.Services
             if (company == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            var city = await _cityRepository.Find(dto.Address.CityId);
-            if (city == null)
+            
+            if (dto.Address != null  && await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var user = new Users().CreateAgent(dto);

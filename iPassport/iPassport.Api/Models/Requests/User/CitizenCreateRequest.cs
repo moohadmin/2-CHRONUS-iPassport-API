@@ -1,6 +1,7 @@
 ﻿using iPassport.Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace iPassport.Api.Models.Requests.User
 {
