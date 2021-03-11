@@ -31,6 +31,9 @@ namespace iPassport.Domain.Entities.Authentication
             Profile = profile;
             CompanyId = companyId;
             CreateDate = DateTime.UtcNow;
+
+            if (userName == null)
+                UserName = Id.ToString();
         }
 
         public Users(string fullName, string cpf, Address address, string userName, string mobile, int profile, Guid? companyId)
@@ -113,7 +116,7 @@ namespace iPassport.Domain.Entities.Authentication
                 CreateUserAddress(dto.Address),
                 null,
                 null,
-                dto.Cpf,
+                null,
                 dto.Email,
                 dto.Telephone,
                 dto.CompanyId,
