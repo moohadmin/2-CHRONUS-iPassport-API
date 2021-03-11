@@ -40,10 +40,10 @@ namespace iPassport.Api.Configurations.Filters
                             ["x-amazon-apigateway-integration"] = new OpenApiObject()
                             {
                                 ["payloadFormatVersion"] = new OpenApiString("1.0"),
-                                ["connectionId"] = new OpenApiString("bnzy9j"),
+                                ["connectionId"] = new OpenApiString("${CONNECTION_ID}"),
                                 ["type"] = new OpenApiString("http_proxy"),
                                 ["httpMethod"] = new OpenApiString("ANY"),
-                                ["uri"] = new OpenApiString("arn:aws:elasticloadbalancing:sa-east-1:896477545676:listener/app/ipassport-api-load-balancer/7a21cc904c6e92d3/c5be1a53a9fb6064"),
+                                ["uri"] = new OpenApiString("${LOAD_BALANCER_URN}"),
                                 ["connectionType"] = new OpenApiString("VPC_LINK")
                             }
                         }
