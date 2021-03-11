@@ -20,18 +20,36 @@ namespace iPassport.Api.Configurations.Filters
                     Extensions = GetExtensions(path.Value.Operations),
                     Responses = responses
                 });
-            
             }
 
-            var x = new OpenApiPathItem();
-            //var operation = new Dictionary<, OpenApiOperation>();
-            //x.Operations.Add();
-            
-
-            
-
-            //swaggerDoc.Paths.Add("/swagger/{proxy+}", path);
-
+            swaggerDoc.Paths.Add("/swagger/{proxy+}", new OpenApiPathItem()
+            {
+                Extensions = new Dictionary<string, IOpenApiExtension>()
+                {
+                    {
+                        "x-amazon-apigateway-any-method",
+                        new OpenApiObject()
+                        {
+                            ["responses"] = new OpenApiObject()
+                            {
+                                ["default"] = new OpenApiObject()
+                                {
+                                    ["description"] = new OpenApiString("Default response for ANY /swagger/{proxy+}")
+                                }
+                            },
+                            ["x-amazon-apigateway-integration"] = new OpenApiObject()
+                            {
+                                ["payloadFormatVersion"] = new OpenApiString("1.0"),
+                                ["connectionId"] = new OpenApiString("bnzy9j"),
+                                ["type"] = new OpenApiString("http_proxy"),
+                                ["httpMethod"] = new OpenApiString("ANY"),
+                                ["uri"] = new OpenApiString("arn:aws:elasticloadbalancing:sa-east-1:896477545676:listener/app/ipassport-api-load-balancer/7a21cc904c6e92d3/c5be1a53a9fb6064"),
+                                ["connectionType"] = new OpenApiString("VPC_LINK")
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         private Dictionary<string, IOpenApiExtension> GetExtensions(IDictionary<OperationType, OpenApiOperation> operations)
@@ -82,7 +100,7 @@ namespace iPassport.Api.Configurations.Filters
 
             return new OpenApiResponses
             {
-                { 
+                {
                     "200", new OpenApiResponse
                     {
                         Headers = new Dictionary<string, OpenApiHeader>()
@@ -96,5 +114,11 @@ namespace iPassport.Api.Configurations.Filters
                 }
             };
         }
+    }
+
+    public class CustomOpenApiPathItem : OpenApiPathItem
+    {
+        public new Dictionary<string, OpenApiOperation> Operations { get; set; }
+        public OpenApiResponses Responses { get; set; }
     }
 }
