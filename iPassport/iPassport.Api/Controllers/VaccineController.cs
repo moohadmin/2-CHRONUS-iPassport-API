@@ -10,14 +10,29 @@ using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
+    /// <summary>
+    /// Vaccine Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class VaccineController : ControllerBase
     {
+        /// <summary>
+        /// Auto Mapper Property
+        /// </summary>
         private readonly IMapper _mapper;
+
+        /// <summary>
+        /// Vaccine Service Property
+        /// </summary>
         private readonly IVaccineService _service;
 
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="mapper">Auto Mapper instance</param>
+        /// <param name="service">Vaccine service instance</param>
         public VaccineController(IMapper mapper, IVaccineService service)
         {
             _mapper = mapper;
@@ -25,12 +40,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get vaccinated count
+        /// This API is responsible for get the Vaccinated count.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="request">Get Vaccinated count Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Vaccinated count.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -42,12 +59,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get vaccines by your manufacuter
+        /// This API is responsible for Get paged list of Citzen by name and Manufacutrer.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">Get Vaccines Paged Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Paged Vaccines list.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]

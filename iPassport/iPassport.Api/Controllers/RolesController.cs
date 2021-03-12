@@ -1,21 +1,27 @@
 ﻿using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
     /// <summary>
-    ///  RolesController
+    ///  Roles Controller
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
     {
+        /// <summary>
+        /// Role service property
+        /// </summary>
         private readonly IRoleService _service;
 
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="service">Role service instance</param>
         public RolesController(IRoleService service) =>  _service = service;
 
         /// <summary>

@@ -13,14 +13,29 @@ using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
+    /// <summary>
+    /// Country Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class CountryController : ControllerBase
     {
+        /// <summary>
+        /// Auto Mapper Property
+        /// </summary>
         private readonly IMapper _mapper;
+
+        /// <summary>
+        /// Country Service Property
+        /// </summary>
         private readonly ICountryService _service;
 
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="mapper">Auto Mapper Instance</param>
+        /// <param name="countryService">Country Service Instance</param>
         public CountryController(IMapper mapper, ICountryService countryService)
         {
             _mapper = mapper;
@@ -28,14 +43,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// Get Country by Id
+        /// This API is responsible for Get Country By Id.
         /// </summary>
         /// <param name="countryId">Country Id</param>
-        /// <returns>Country</returns>
-        /// <response code="200">Ok.</response>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="404">NotFound Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Company Object.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -47,14 +62,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// Get countries by part of name
+        /// This API is responsible for Get paged list of Countries by name.
         /// </summary>
-        /// <param name="countryId">Country Id</param>
-        /// <returns>Country</returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">Get Country Paged Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="404">NotFound Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Paged Companies list.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -67,14 +82,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// Add Country
+        /// This API is responsible for Add Country.
         /// </summary>
-        /// <param name="countryId">Country Id</param>
-        /// <returns>Country</returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">Country Create Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="404">NotFound Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Country Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]

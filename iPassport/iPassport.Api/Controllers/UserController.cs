@@ -14,15 +14,35 @@ using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
+    /// <summary>
+    /// User Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
 
     public class UserController : ControllerBase
     {
+        /// <summary>
+        /// Auto Mapper Property
+        /// </summary>
         private readonly IMapper _mapper;
+
+        /// <summary>
+        /// User Service Property
+        /// </summary>
         private readonly IUserService _service;
+
+        /// <summary>
+        /// User Vaccine Service Property
+        /// </summary>
         private readonly IUserVaccineService _vaccineService;
 
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="mapper">Auto Mapper instance</param>
+        /// <param name="userService">User service instance</param>
+        /// <param name="vaccineService">User Vaccine service instance</param>
         public UserController(IMapper mapper, IUserService userService, IUserVaccineService vaccineService)
         {
             _mapper = mapper;
@@ -31,12 +51,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Create User
+        /// This API is responsible for add Citizen.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="request">Citizen Create Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Citizen Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -49,12 +71,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This Add User Image
+        /// This API is responsible for add User Image.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Operation OK<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="request">User Image Create Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User Image Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -67,12 +91,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Associate Plan to User
+        /// This API is responsible for change User Plan.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="planId">Plan Id</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Associated Plan Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -85,12 +111,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Associate Plan to User
+        /// This API is responsible for add User Plan.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="planId">Plan Id</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Associated Plan Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -103,12 +131,13 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Get User Plan
+        /// This API is responsible for get User Plan.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User Plan Object.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -121,13 +150,13 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Get the current User
+        /// This API is responsible for get current User.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="404">NotFound Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Current User Object.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -139,20 +168,22 @@ namespace iPassport.Api.Controllers
             return Ok(res);
         }
 
+
         /// <summary>
-        /// This API Get the User vaccines
+        /// This API is responsible for get User vaccines By your Passport Id.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="404">NotFound Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="request">Get Paged User Vaccines Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User vaccines.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet("Vaccine")]
-        public async Task<ActionResult> GetPagedUserVaccines([FromQuery] GetPagedUserVaccinesRequest request)
+        public async Task<ActionResult> GetPagedUserVaccines([FromQuery] GetPagedUserVaccinesByPassportRequest request)
         {
             var res = await _vaccineService.GetUserVaccines(_mapper.Map<GetByIdPagedFilter>(request));
 
@@ -160,12 +191,35 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get logged Citzen count
+        /// This API is responsible for get current User vaccines.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="request">Get Paged User Vaccines Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User vaccines.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpGet("Vaccine/Current")]
+        public async Task<ActionResult> GetPagedUserVaccines([FromQuery] PageFilterRequest request)
+        {
+            var res = await _vaccineService.GetCurrentUserVaccines(_mapper.Map<PageFilter>(request));
+
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        /// This API is responsible for get the logged Citizen count.
+        /// </summary>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Logged Citizen count.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -178,13 +232,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Get the User registered count
+        /// This API is responsible for get the registered user count.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="404">NotFound Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="request">Get registered User count Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Registered User count.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -198,12 +253,13 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get logged Agent count
+        /// This API is responsible for get the logged Agent count.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Logged Agent count.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -216,12 +272,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Create User Agent
+        /// This API is responsible for Add Agent.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.</response>
+        /// <param name="request">Agent Create Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Agent Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -234,14 +292,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// Get countries by part of name
+        /// This API is responsible for Get paged list of Citzen by name.
         /// </summary>
-        /// <param name="countryId">Country Id</param>
-        /// <returns>Country</returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">Get Citzen Paged Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="404">NotFound Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Paged Citzen list.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]

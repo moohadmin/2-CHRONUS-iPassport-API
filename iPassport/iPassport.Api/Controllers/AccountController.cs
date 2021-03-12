@@ -9,24 +9,32 @@ using System.Threading.Tasks;
 namespace iPassport.Api.Controllers
 {
     /// <summary>
-    ///  AccountController
+    ///  Account Controller
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
+        /// <summary>
+        /// Account Service Property
+        /// </summary>
         private readonly IAccountService _service;
-
+        
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="accountService">Account Service Instance</param>
         public AccountController(IAccountService accountService) => _service = accountService;
 
         /// <summary>
-        /// This API is BasicLogin
+        /// This API is responsible for Agent login.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="request">Agent login request</param>
         /// <response code="200">Server returns Ok</response>
-        /// <response code="400">Bussiness Exception<</response>
+        /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -38,13 +46,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is LoginByEmail
+        /// This API is responsible for E-mail login.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="request">Email login request</param>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception<</response>
         /// <response code="401">Token invalid or expired<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -56,13 +65,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is LoginMobile
+        /// This API is responsible for Mobile login.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="request">Mobile login request</param>
         /// <response code="200">Server returns Ok</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="401">Token invalid or expired<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -74,13 +84,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is request PIN verification
+        /// This API is responsible request pin verification.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="request">Pin request</param>
         /// <response code="200">Server returns Ok</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="401">Token invalid or expired<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -92,13 +103,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is reset the user password
+        /// This API is responsible for reset user password.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="request">Mobile Login Request</param>
         /// <response code="200">Server returns Ok</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="401">Token invalid or expired<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Operation Result</returns>
         [Authorize]
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
@@ -111,13 +123,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is to Resend PIN verification
+        /// This API is responsible for resend pin verification request login.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="request">Resend Pin Request</param>
         /// <response code="200">Server returns Ok</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="401">Token invalid or expired<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -129,13 +142,13 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is to Resend  PIN verification
+        /// This API is responsible for logout the current user token.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Server returns Ok/response>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
