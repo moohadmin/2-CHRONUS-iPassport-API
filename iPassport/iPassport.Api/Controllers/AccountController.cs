@@ -32,7 +32,7 @@ namespace iPassport.Api.Controllers
         /// <param name="request">Agent login request</param>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="401">Token invalid or expired<</response>
+        /// <response code="401">Token invalid or expired</response>
         /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
         /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
@@ -50,8 +50,8 @@ namespace iPassport.Api.Controllers
         /// </summary>
         /// <param name="request">Email login request</param>
         /// <response code="200">Server returns Ok</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="401">Token invalid or expired<</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
         /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
         /// <returns>Operation Result</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
