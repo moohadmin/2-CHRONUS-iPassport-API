@@ -117,7 +117,7 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetPagedUserVaccines_MustReturnOk()
         {
-            var mockRequest = Mock.Of<GetPagedUserVaccinesRequest>();
+            var mockRequest = Mock.Of<GetPagedUserVaccinesByPassportRequest>();
 
             // Arrange
             _mockVaccineService.Setup(r => r.GetUserVaccines(It.IsAny<GetByIdPagedFilter>()).Result);
@@ -127,6 +127,23 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockVaccineService.Verify(a => a.GetUserVaccines(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetPagedCurrentUserVaccines_MustReturnOk()
+        {
+            var mockRequest = Mock.Of<PageFilterRequest>();
+
+            // Arrange
+            _mockVaccineService.Setup(r => r.GetCurrentUserVaccines(It.IsAny<PageFilter>()).Result);
+
+            // Act
+            var result = _controller.GetPagedUserVaccines(mockRequest);
+
+            // Assert
+            _mockVaccineService.Verify(a => a.GetCurrentUserVaccines(It.IsAny<PageFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

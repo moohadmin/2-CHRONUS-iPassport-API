@@ -10,14 +10,29 @@ using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
+    /// <summary>
+    /// Plan Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class PlanController : ControllerBase
     {
+        /// <summary>
+        /// Auto Mapper property
+        /// </summary>
         private readonly IMapper _mapper;
+
+        /// <summary>
+        /// Plan service property
+        /// </summary>
         private readonly IPlanService _service;
 
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="service">Plan service instance</param>
+        /// <param name="mapper">Auto Mapper instence</param>
         public PlanController(IMapper mapper, IPlanService service)
         {
             _mapper = mapper;
@@ -25,12 +40,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Create Plan
+        /// This API is responsible for Add Plan.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="204">Server returns no data.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <param name="request">Plan Create Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Plan Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -42,12 +59,13 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is list all Plans
+        /// This API is responsible for Get all Plans.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.<</response>
-        /// <response code="400">Bussiness Exception<</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now<</response>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>List of Plans.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]

@@ -2,7 +2,7 @@
 
 namespace iPassport.Api.Models.Requests.User
 {
-    public class GetPagedUserVaccinesRequest : PageFilterRequest
+    public class GetPagedUserVaccinesByPassportRequest : PageFilterRequest
     {
         public Guid PassportId { get; set; }
     }
