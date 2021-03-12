@@ -7,9 +7,16 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace iPassport.Api
 {
+    /// <summary>
+    /// Program
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public static class Program
     {
+        /// <summary>
+        /// Main
+        /// </summary>
+        /// <param name="args">Arguments</param>
         public static void Main(string[] args)
         {
 
@@ -31,11 +38,23 @@ namespace iPassport.Api
             }
         }
 
+        /// <summary>
+        /// Create Host Builder
+        /// </summary>
+        /// <param name="args">Arguments</param>
+        /// <returns>Host Builder</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().ConfigureLogging(logging => logging.ClearProviders()).UseNLog();
+                    webBuilder
+                        .UseStartup<Startup>()
+                        .ConfigureLogging(logging => logging.ClearProviders())
+                        .UseNLog()
+                        .UseKestrel(options =>
+                        {
+                            options.Limits.MaxRequestBodySize = 10485760;
+                        });
                 });
     }
 }
