@@ -32,7 +32,7 @@
         },
         {
           "name": "NOTIFICATIONS_MOCK",
-          "value": "false"
+          "value": "true"
         },
         {
           "name": "AWS_DEFAULT_REGION",
