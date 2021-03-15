@@ -29,6 +29,7 @@ namespace iPassport.Api.AutoMapper
             GenderMapper.Map(this);
             UserDiseaseTestMapper.Map(this);
             PriorityGroupMapper.Map(this);
+            BloodTypeMapper.Map(this);
         }
     }
 }

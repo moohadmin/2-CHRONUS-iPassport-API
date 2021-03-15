@@ -327,4 +327,7 @@
   <data name="PriorityGroups" xml:space="preserve">
     <value>Grupos Prioritários.</value>
   </data>
+	<data name="BloodTypes" xml:space="preserve">
+    <value>Tipos Sanguíneos.</value>
+  </data>
 </root>
