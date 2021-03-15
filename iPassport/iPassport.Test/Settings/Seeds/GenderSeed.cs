@@ -7,7 +7,6 @@ namespace iPassport.Test.Seeds
     {
         public static Gender Get() => new Gender("Masculino");
 
-
         public static IList<Gender> GetGenders()
         {
             return new List<Gender>()
@@ -20,8 +19,6 @@ namespace iPassport.Test.Seeds
 
         public static PagedData<Gender> GetPaged()
         {
-
-
             return new PagedData<Gender>() { Data = GetGenders() };
         }
     }
