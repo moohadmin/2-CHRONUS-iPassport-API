@@ -25,7 +25,7 @@ namespace iPassport.Application.Models.ViewModels
         public long? Population { get; set; }
 
         /// <summary>
-        /// Country Id
+        /// State Id
         /// </summary>
         public System.Guid StateId { get; set; }
         

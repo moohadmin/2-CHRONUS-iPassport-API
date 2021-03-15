@@ -61,6 +61,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICityService, CityService>();
 
             services.AddScoped<ICompanyService, CompanyService>();
+
+            services.AddScoped<IHealthUnitService, HealthUnitService>();
             #endregion
 
             #region DI Repositories
@@ -101,11 +103,13 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
 
             services.AddScoped<ICompanyRepository, CompanyRepository>();
+
+            services.AddScoped<IHealthUnitRepository, HealthUnitRepository>();
             #endregion
 
             #region DI Settings
 
-            // ASP.NET HttpContext dependency
+            /// ASP.NET HttpContext dependency
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #endregion
