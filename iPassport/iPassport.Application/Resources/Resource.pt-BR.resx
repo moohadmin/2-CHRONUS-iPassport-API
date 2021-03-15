@@ -315,4 +315,8 @@
   <data name="DifferentVaccinesDoses" xml:space="preserve">
     <value>Não é permitido o cadastro de doses com vacinas diferentes.</value>
   </data>
+  <data name="HealthUnits" xml:space="preserve">
+    <value>Unidades de saúde.</value>
+  </data>
+
 </root>

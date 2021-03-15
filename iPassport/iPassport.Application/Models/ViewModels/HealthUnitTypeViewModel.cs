@@ -1,0 +1,19 @@
+﻿using System;
+
+namespace iPassport.Application.Models.ViewModels
+{
+    /// <summary>
+    /// HealthUnitType ViewModel
+    /// </summary>
+    public class HealthUnitTypeViewModel
+    {
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid Id { get; set; }
+        /// <summary>
+        /// Health unit Type Name
+        /// </summary>
+        public string Name { get; set; }       
+    }
+}

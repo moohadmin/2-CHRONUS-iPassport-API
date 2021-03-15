@@ -28,6 +28,8 @@ namespace iPassport.Infra.Contexts
         public DbSet<UserVaccine> UserVaccines { get; set; }
         public DbSet<PassportUse> PassportUses { get; set; }
         public DbSet<VaccineManufacturer> VaccineManufacturers { get; set; }
+        public DbSet<HealthUnit> HealthUnits { get; set; }
+        public DbSet<HealthUnitType> HealthUnitTypes { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
@@ -44,6 +46,8 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new UserVaccineMap());
             //modelBuilder.ApplyConfiguration(new PassportUseMap());
             //modelBuilder.ApplyConfiguration(new VaccineManufacterMap());
+            modelBuilder.ApplyConfiguration(new HealthUnitMap());
+            modelBuilder.ApplyConfiguration(new HealthUnitTypeMap());
 
             //To avoid delete cascade.
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

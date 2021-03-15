@@ -19,6 +19,7 @@ namespace iPassport.Api.AutoMapper
             CityMapper.Map(this);
             CompanyMapper.Map(this);
             AddressMapper.Map(this);
+            HealthUnitMapper.Map(this);
         }
     }
 }
