@@ -324,6 +324,12 @@
   <data name="UserDiseaseTests" xml:space="preserve">
     <value>Testes do Usuário.</value>
   </data>
+  <data name="PriorityGroups" xml:space="preserve">
+    <value>Grupos Prioritários.</value>
+  </data>
+	<data name="BloodTypes" xml:space="preserve">
+    <value>Tipos Sanguíneos.</value>
+  </data>
   <data name="PassportNotApproved" xml:space="preserve">
     <value>Usuário não de acordo com as regras de imunização para geração do Passaport.</value>
   </data>
