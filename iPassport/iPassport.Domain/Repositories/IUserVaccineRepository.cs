@@ -9,9 +9,10 @@ namespace iPassport.Domain.Repositories
 {
     public interface IUserVaccineRepository : IRepository<UserVaccine>
     {
-        Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccines(GetByIdPagedFilter filter);
+        Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByPassportId(GetByIdPagedFilter filter);
 
         Task<int> GetVaccinatedCount(GetVaccinatedCountFilter filter);
         Task<IList<VaccineIndicatorDto>> GetVaccinatedCountByManufacturer(GetVaccinatedCountFilter filter);
+        Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByUserId(GetByIdPagedFilter pageFilter);
     }
 }

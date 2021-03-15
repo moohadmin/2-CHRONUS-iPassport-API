@@ -14,7 +14,19 @@ namespace iPassport.Infra.Repositories
     {
         public UserVaccineRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccines(GetByIdPagedFilter pageFilter)
+
+        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByUserId(GetByIdPagedFilter pageFilter)
+        {
+            var q = await _DbSet
+               .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
+               .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
+               .Where(v => v.UserDetails.Id == pageFilter.Id)
+               .ToListAsync();
+
+            return GeneratePaggedVaccineDetails(q, pageFilter);
+        }
+
+        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByPassportId(GetByIdPagedFilter pageFilter)
         {
             var q = await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
@@ -22,35 +34,7 @@ namespace iPassport.Infra.Repositories
                 .Where(v => v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
                 .ToListAsync();
 
-            var x = q.GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
-            .Select(v => new UserVaccineDetailsDto()
-            {
-                UserId = v.FirstOrDefault().UserId,
-                VaccineId = v.Key.VaccineId,
-                VaccineName = v.Key.Name,
-                RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
-                ImmunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
-                Doses = v.Select(x => new VaccineDoseDto()
-                {
-                    Dose = x.Dose,
-                    VaccinationDate = x.VaccinationDate,
-                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
-                })
-            });
-
-            (int take, int skip) = CalcPageOffset(pageFilter);
-
-            var data = x.Take(take).Skip(skip).ToList();
-            var totalPages = x.Count() > pageFilter.PageSize ? x.Count() / pageFilter.PageSize : 1;
-
-            return new PagedData<UserVaccineDetailsDto>()
-            {
-                PageNumber = pageFilter.PageNumber,
-                PageSize = pageFilter.PageSize,
-                TotalPages = totalPages,
-                TotalRecords = data.Count,
-                Data = data
-            };
+            return GeneratePaggedVaccineDetails(q, pageFilter);
         }
 
         public async Task<int> GetVaccinatedCount(GetVaccinatedCountFilter filter)
@@ -91,6 +75,39 @@ namespace iPassport.Infra.Repositories
                 }).OrderBy(v => v.Disease).ToList();
 
             return result;
+        }
+
+        private PagedData<UserVaccineDetailsDto> GeneratePaggedVaccineDetails(IList<UserVaccine> userVaccines, PageFilter pageFilter)
+        {
+            var q = userVaccines.GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
+            .Select(v => new UserVaccineDetailsDto()
+            {
+                UserId = v.FirstOrDefault().UserId,
+                VaccineId = v.Key.VaccineId,
+                VaccineName = v.Key.Name,
+                RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
+                ImmunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
+                Doses = v.Select(x => new VaccineDoseDto()
+                {
+                    Dose = x.Dose,
+                    VaccinationDate = x.VaccinationDate,
+                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
+                })
+            });
+
+            (int take, int skip) = CalcPageOffset(pageFilter);
+
+            var data = q.Take(take).Skip(skip).ToList();
+            var totalPages = q.Count() > pageFilter.PageSize ? q.Count() / pageFilter.PageSize : 1;
+
+            return new PagedData<UserVaccineDetailsDto>()
+            {
+                PageNumber = pageFilter.PageNumber,
+                PageSize = pageFilter.PageSize,
+                TotalPages = totalPages,
+                TotalRecords = data.Count,
+                Data = data
+            };
         }
     }
 }
