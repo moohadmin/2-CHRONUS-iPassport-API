@@ -21,6 +21,7 @@ namespace iPassport.Test.Controllers
     {
         Mock<IUserService> _mockService;
         Mock<IUserVaccineService> _mockVaccineService;
+        Mock<IUserDiseaseTestService> _mockUserDiseaseTestService;
         IMapper _mapper;
         UserController _controller;
 
@@ -29,8 +30,9 @@ namespace iPassport.Test.Controllers
         {
             _mockService = new Mock<IUserService>();
             _mockVaccineService = new Mock<IUserVaccineService>();
+            _mockUserDiseaseTestService = new Mock<IUserDiseaseTestService>();
             _mapper = AutoMapperFactory.Create();
-            _controller = new UserController(_mapper, _mockService.Object, _mockVaccineService.Object);
+            _controller = new UserController(_mapper, _mockService.Object, _mockVaccineService.Object, _mockUserDiseaseTestService.Object);
         }
 
         [TestMethod]
@@ -228,6 +230,40 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockService.Verify(r => r.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetPagedUserTests_MustReturnOk()
+        {
+            var mockRequest = Mock.Of<GetPagedUserVaccinesByPassportRequest>();
+
+            // Arrange
+            _mockUserDiseaseTestService.Setup(r => r.GetUserDiseaseTest(It.IsAny<GetByIdPagedFilter>()).Result);
+
+            // Act
+            var result = _controller.GetPagedUserTests(mockRequest);
+
+            // Assert
+            _mockUserDiseaseTestService.Verify(a => a.GetUserDiseaseTest(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetCurrentUserDiseaseTest_MustReturnOk()
+        {
+            var mockRequest = Mock.Of<PageFilterRequest>();
+
+            // Arrange
+            _mockUserDiseaseTestService.Setup(r => r.GetCurrentUserDiseaseTest(It.IsAny<PageFilter>()).Result);
+
+            // Act
+            var result = _controller.GetPagedUserTests(mockRequest);
+
+            // Assert
+            _mockUserDiseaseTestService.Verify(a => a.GetCurrentUserDiseaseTest(It.IsAny<PageFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

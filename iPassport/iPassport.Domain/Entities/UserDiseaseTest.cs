@@ -16,11 +16,11 @@ namespace iPassport.Domain.Entities
             ResultDate = resultDate;
         }
 
-        public Guid DiseaseId { get; set; }
-        public Guid UserId { get; set; }
-        public bool? Result { get; set; }
-        public DateTime TestDate { get; set; }
-        public DateTime? ResultDate { get; set; }
+        public Guid DiseaseId { get; private set; }
+        public Guid UserId { get; private set; }
+        public bool? Result { get; private set; }
+        public DateTime TestDate { get; private set; }
+        public DateTime? ResultDate { get; private set; }
 
         public virtual UserDetails User { get; set; }
         public virtual Disease Disease { get; set; }

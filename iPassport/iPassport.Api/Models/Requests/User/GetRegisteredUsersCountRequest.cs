@@ -1,8 +1,8 @@
-﻿using iPassport.Domain.Enums;
-using System;
-
-namespace iPassport.Api.Models.Requests
+﻿namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// Get Registered Users Count Request
+    /// </summary>
     public class GetRegisteredUsersCountRequest
     {
         /// <summary>

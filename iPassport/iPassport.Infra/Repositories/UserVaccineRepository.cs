@@ -14,7 +14,6 @@ namespace iPassport.Infra.Repositories
     {
         public UserVaccineRepository(iPassportContext context) : base(context) { }
 
-
         public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByUserId(GetByIdPagedFilter pageFilter)
         {
             var q = await _DbSet

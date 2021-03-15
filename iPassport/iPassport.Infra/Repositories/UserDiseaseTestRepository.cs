@@ -21,5 +21,15 @@ namespace iPassport.Infra.Repositories
 
             return await Paginate(q, pageFilter);
         }
+
+        public async Task<PagedData<UserDiseaseTest>> GetPagedUserDiseaseByUserId(GetByIdPagedFilter pageFilter)
+        {
+            var q = _DbSet
+               .Include(v => v.Disease)
+               .Include(v => v.User).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
+               .Where(v => v.User.Id == pageFilter.Id);
+
+            return await Paginate(q, pageFilter);
+        }
     }
 }
