@@ -49,14 +49,14 @@ namespace iPassport.Test.Services
             var mockFilter = Mock.Of<GetByIdPagedFilter>();
             
             // Arrange
-            _mockRepository.Setup(r => r.GetPagedUserVaccines(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
+            _mockRepository.Setup(r => r.GetPagedUserVaccinesByPassportId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
             _mockUserRepository.Setup(r => r.GetUserWithVaccine(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetUserVaccines(mockFilter);
 
             // Assert
-            _mockRepository.Verify(a => a.GetPagedUserVaccines(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            _mockRepository.Verify(a => a.GetPagedUserVaccinesByPassportId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
@@ -70,14 +70,14 @@ namespace iPassport.Test.Services
             var mockFilter = Mock.Of<PageFilter>();
 
             // Arrange
-            _mockRepository.Setup(r => r.GetPagedUserVaccines(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
+            _mockRepository.Setup(r => r.GetPagedUserVaccinesByUserId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
             _mockUserRepository.Setup(r => r.GetUserWithVaccine(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetCurrentUserVaccines(mockFilter);
 
             // Assert
-            _mockRepository.Verify(a => a.GetPagedUserVaccines(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            _mockRepository.Verify(a => a.GetPagedUserVaccinesByUserId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
