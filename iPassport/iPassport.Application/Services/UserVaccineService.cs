@@ -4,6 +4,7 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -31,27 +32,36 @@ namespace iPassport.Application.Services
             _userDetailsRepository = userDetailsRepository;
         }
 
-        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter) =>
-            await GetPagedUserVaccines(pageFilter);
+        public async Task<PagedResponseApi> GetCurrentUserVaccines(PageFilter pageFilter)
+        { 
+            var res = await _repository.GetPagedUserVaccinesByUserId(new GetByIdPagedFilter(_accessor.GetCurrentUserId(), pageFilter));
 
-        public async Task<PagedResponseApi> GetCurrentUserVaccines(PageFilter pageFilter) => 
-            await GetPagedUserVaccines(new GetByIdPagedFilter(_accessor.GetCurrentUserId(), pageFilter));
+            await GetVaccineDetailsStatus(res.Data);
 
-        private async Task<PagedResponseApi> GetPagedUserVaccines(GetByIdPagedFilter pageFilter)
-        {
-            var res = await _repository.GetPagedUserVaccines(pageFilter);
+            var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data);
 
-            if (res.Data.Any())
-            {
-                var user = await _userDetailsRepository.GetUserWithVaccine(res.Data.FirstOrDefault().UserId);
-                foreach (var d in res.Data)
-                    d.Status = user.GetUserVaccineStatus(d.VaccineId);
-            }
+            return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+        }
+
+        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter) { 
+            var res = await _repository.GetPagedUserVaccinesByPassportId(pageFilter);
+
+            await GetVaccineDetailsStatus(res.Data);
 
             var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 
+        }
+
+        private async Task GetVaccineDetailsStatus(IList<UserVaccineDetailsDto> detailsDto)
+        {
+            if (detailsDto.Any())
+            {
+                var user = await _userDetailsRepository.GetUserWithVaccine(detailsDto.FirstOrDefault().UserId);
+                foreach (var d in detailsDto)
+                    d.Status = user.GetUserVaccineStatus(d.VaccineId);
+            }
         }
     }
 }
