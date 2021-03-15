@@ -265,7 +265,7 @@
     <value>Usuário não encontrado.</value>
   </data>
   <data name="UserOrPasswordInvalid" xml:space="preserve">
-    <value>Usuário e/ou senha incorreta.Por favor, tente novamente.</value>
+    <value>Usuário e/ou senha incorreta. Por favor, tente novamente.</value>
   </data>
   <data name="UserVaccines" xml:space="preserve">
     <value>Vacinas do usuário.</value>
@@ -320,5 +320,8 @@
   </data>
   <data name="Genders" xml:space="preserve">
     <value>Gêneros.</value>
+  </data>
+  <data name="UserDiseaseTests" xml:space="preserve">
+    <value>Testes do Usuário.</value>
   </data>
 </root>

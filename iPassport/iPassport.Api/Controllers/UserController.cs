@@ -38,16 +38,23 @@ namespace iPassport.Api.Controllers
         private readonly IUserVaccineService _vaccineService;
 
         /// <summary>
+        /// User Disease Test Service Property
+        /// </summary>
+        private readonly IUserDiseaseTestService _userDiseaseTestService;
+
+        /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="mapper">Auto Mapper instance</param>
         /// <param name="userService">User service instance</param>
         /// <param name="vaccineService">User Vaccine service instance</param>
-        public UserController(IMapper mapper, IUserService userService, IUserVaccineService vaccineService)
+        /// <param name="userDiseaseTestService">User Disease Test service instance</param>
+        public UserController(IMapper mapper, IUserService userService, IUserVaccineService vaccineService, IUserDiseaseTestService userDiseaseTestService)
         {
             _mapper = mapper;
             _service = userService;
             _vaccineService = vaccineService;
+            _userDiseaseTestService = userDiseaseTestService;
         }
 
         /// <summary>
@@ -168,7 +175,6 @@ namespace iPassport.Api.Controllers
             return Ok(res);
         }
 
-
         /// <summary>
         /// This API is responsible for get User vaccines By your Passport Id.
         /// </summary>
@@ -210,7 +216,6 @@ namespace iPassport.Api.Controllers
 
             return Ok(res);
         }
-
 
         /// <summary>
         /// This API is responsible for get the logged Citizen count.
@@ -312,5 +317,46 @@ namespace iPassport.Api.Controllers
             return Ok(res);
         }
 
+        /// <summary>
+        /// This API is responsible for get User Disease tests By your Passport Id.
+        /// </summary>
+        /// <param name="request">Get Paged User Disease tests Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User Disease tests results.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpGet("Test")]
+        public async Task<ActionResult> GetPagedUserTests([FromQuery] GetPagedUserVaccinesByPassportRequest request)
+        {
+            var res = await _userDiseaseTestService.GetUserDiseaseTest(_mapper.Map<GetByIdPagedFilter>(request));
+
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for get current User Disease tests.
+        /// </summary>
+        /// <param name="request">Get Paged User Disease tests Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User Disease tests results.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpGet("Test/Current")]
+        public async Task<ActionResult> GetPagedUserTests([FromQuery] PageFilterRequest request)
+        {
+            var res = await _userDiseaseTestService.GetCurrentUserDiseaseTest(_mapper.Map<PageFilter>(request));
+
+            return Ok(res);
+        }
     }
 }

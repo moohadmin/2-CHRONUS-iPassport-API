@@ -3,9 +3,9 @@
 namespace iPassport.Api.Models.Requests.User
 {
     /// <summary>
-    /// Get Paged User Vaccines By Passport Request
+    /// Get Paged User Disease Test By Passport Request
     /// </summary>
-    public class GetPagedUserVaccinesByPassportRequest : PageFilterRequest
+    public class GetPagedUserDiseaseTestByPassportRequest : PageFilterRequest
     {
         /// <summary>
         /// Passport Id
