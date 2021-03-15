@@ -331,6 +331,6 @@
     <value>Tipos Sanguíneos.</value>
   </data>
   <data name="PassportNotApproved" xml:space="preserve">
-    <value>Usuário não de acordo com as regras de imunização para geração do Passaport.</value>
+    <value>Usuário não está de acordo com as regras de imunização para geração do Passaport.</value>
   </data>
 </root>
