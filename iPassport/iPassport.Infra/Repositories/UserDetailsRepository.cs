@@ -1,6 +1,4 @@
 ﻿using iPassport.Domain.Entities;
-using iPassport.Domain.Enums;
-using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +15,10 @@ namespace iPassport.Infra.Repositories
         public async Task<UserDetails> GetByUserId(Guid id) =>
             await _DbSet.Include(u => u.Plan).Where(x => x.Id == id).FirstOrDefaultAsync();
 
-        public async Task<UserDetails> GetUserWithVaccine(Guid id) =>
+        public async Task<UserDetails> GetLoadedUsersById(Guid id) =>
             await _DbSet.Include(u => u.UserVaccines).ThenInclude(v => v.Vaccine)
                         .Include(x => x.Plan)
+                        .Include(x => x.UserDiseaseTests)
                         .Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 }

@@ -5,11 +5,13 @@ using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -21,6 +23,7 @@ namespace iPassport.Test.Services
         IUserDiseaseTestService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
+        Mock<IUserDetailsRepository> _mockUserRepository;
 
         [TestInitialize]
         public void Setup()
@@ -28,27 +31,30 @@ namespace iPassport.Test.Services
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<IUserDiseaseTestRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _mockUserRepository = new Mock<IUserDetailsRepository>();
 
             var accessor = HttpContextAccessorFactory.Create();
 
-            _service = new UserDiseaseTestService(_mapper, _mockRepository.Object, _mockLocalizer.Object, accessor);
+            _service = new UserDiseaseTestService(_mapper, _mockRepository.Object, _mockLocalizer.Object, accessor, _mockUserRepository.Object);
         }
 
         [TestMethod]
         public void GetPagedUserVaccines()
         {
             var seed = UserDiseaseTestSeed.GetUserDiseaseTests();
+            var userSeed = UserSeed.GetUserDetails();
 
             var mockFilter = Mock.Of<GetByIdPagedFilter>();
 
             // Arrange
-            _mockRepository.Setup(r => r.GetPaggedUserDiseaseByPassportId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
+            _mockRepository.Setup(r => r.GetPaggedUserDiseaseTestsByPassportId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
+            _mockUserRepository.Setup(r => r.GetLoadedUsersById(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetUserDiseaseTest(mockFilter);
 
             // Assert
-            _mockRepository.Verify(a => a.GetPaggedUserDiseaseByPassportId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            _mockRepository.Verify(a => a.GetPaggedUserDiseaseTestsByPassportId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
@@ -57,17 +63,19 @@ namespace iPassport.Test.Services
         public void GetCurrentUserVaccines()
         {
             var seed = UserDiseaseTestSeed.GetUserDiseaseTests();
+            var userSeed = UserSeed.GetUserDetails();
 
             var mockFilter = Mock.Of<PageFilter>();
 
             // Arrange
-            _mockRepository.Setup(r => r.GetPagedUserDiseaseByUserId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
+            _mockRepository.Setup(r => r.GetPagedUserDiseaseTestsByUserId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
+            _mockUserRepository.Setup(r => r.GetLoadedUsersById(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetCurrentUserDiseaseTest(mockFilter);
 
             // Assert
-            _mockRepository.Verify(a => a.GetPagedUserDiseaseByUserId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
+            _mockRepository.Verify(a => a.GetPagedUserDiseaseTestsByUserId(It.IsAny<GetByIdPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

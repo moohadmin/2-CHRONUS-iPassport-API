@@ -58,7 +58,7 @@ namespace iPassport.Application.Services
         {
             if (detailsDto.Any())
             {
-                var user = await _userDetailsRepository.GetUserWithVaccine(detailsDto.FirstOrDefault().UserId);
+                var user = await _userDetailsRepository.GetLoadedUsersById(detailsDto.FirstOrDefault().UserId);
                 foreach (var d in detailsDto)
                     d.Status = user.GetUserVaccineStatus(d.VaccineId);
             }
