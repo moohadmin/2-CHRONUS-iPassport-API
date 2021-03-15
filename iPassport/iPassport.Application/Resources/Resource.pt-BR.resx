@@ -324,4 +324,7 @@
   <data name="UserDiseaseTests" xml:space="preserve">
     <value>Testes do Usuário.</value>
   </data>
+  <data name="PriorityGroups" xml:space="preserve">
+    <value>Grupos Prioritários.</value>
+  </data>
 </root>

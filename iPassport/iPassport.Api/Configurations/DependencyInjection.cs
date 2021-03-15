@@ -67,6 +67,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IGenderService, GenderService>();
 
             services.AddScoped<IUserDiseaseTestService, UserDiseaseTestService>();
+
+            services.AddScoped<IPriorityGroupService, PriorityGroupService>();
             #endregion
 
             #region DI Repositories
@@ -113,6 +115,7 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IGenderRepository, GenderRepository>();
 
             services.AddScoped<IUserDiseaseTestRepository, UserDiseaseTestRepository>();
+            services.AddScoped<IPriorityGroupRepository, PriorityGroupRepository>();
             #endregion
 
             #region DI Settings
