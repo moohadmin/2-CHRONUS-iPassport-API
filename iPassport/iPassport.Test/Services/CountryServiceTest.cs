@@ -73,7 +73,7 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<GetByNamePartsPagedFilter>();
-            _mockRepository.Setup(x => x.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()).Result).Returns(CountrySeed.GetPagedCountries());
+            _mockRepository.Setup(x => x.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()).Result).Returns(CountrySeed.GetPaged());
 
             // Act
             var result = _service.FindByNameParts(mockRequest);
