@@ -20,6 +20,7 @@ namespace iPassport.Api.AutoMapper
             CompanyMapper.Map(this);
             AddressMapper.Map(this);
             HealthUnitMapper.Map(this);
+            GenderMapper.Map(this);
         }
     }
 }

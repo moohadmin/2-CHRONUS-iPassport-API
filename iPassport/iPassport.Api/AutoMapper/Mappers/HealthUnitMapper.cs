@@ -12,7 +12,7 @@ namespace iPassport.Api.AutoMapper.Mappers
         /// <summary>
         /// Health Unit Map Method
         /// </summary>
-        /// <param name="profile">Auto Mapper profile to Health Unit</param>
+        /// <param name="profile">Auto Mapper profile</param>
         public static void Map(Profile profile)
         {
             profile.CreateMap<HealthUnit, HealthUnitViewModel>()

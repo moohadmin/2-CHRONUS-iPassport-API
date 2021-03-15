@@ -19,7 +19,7 @@ namespace iPassport.Test.Seeds
             };
         }
 
-        public static PagedData<Country> GetPagedCountries()
+        public static PagedData<Country> GetPaged()
         {
             
 
