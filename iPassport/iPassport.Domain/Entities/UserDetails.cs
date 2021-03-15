@@ -39,6 +39,7 @@ namespace iPassport.Domain.Entities
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
+        public virtual IEnumerable<UserDiseaseTest> UserDiseaseTests { get; set; }
 
         public UserDetails Create(UserCreateDto dto) =>
             new UserDetails(dto.UserId);
