@@ -47,7 +47,7 @@ namespace iPassport.Application.Services
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _userDetailsRepository.GetUserWithVaccine(UserId);
+            var userDetails = await _userDetailsRepository.GetLoadedUsersById(UserId);
 
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
@@ -87,6 +87,11 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
         {
+            var userDetails = await _userDetailsRepository.GetLoadedUsersById(dto.CitizenId);
+
+            if(!userDetails.IsApprovedPassport())
+                throw new BusinessException(_localizer["PassportNotApproved"]);
+
             dto = await ValidPassportToAcess(dto);
             dto.AllowAccess = true;
 
@@ -152,7 +157,7 @@ namespace iPassport.Application.Services
             viewModel.Cpf = passportCitizen.CPF;
             viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo);
             viewModel.UserFullName = passportCitizen.FullName;
-            viewModel.Immunized = passport.UserDetails.IsImmunized();
+            viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
 
             return new ResponseApi(true, "Passport para validação",viewModel);
         }

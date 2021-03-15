@@ -21,11 +21,11 @@ namespace iPassport.Domain.Entities
                 UserVaccines = userVaccines;
 
             if (wasCovidInfected != null)
-                 WasCovidInfected = wasCovidInfected.Value;
-            
+                WasCovidInfected = wasCovidInfected.Value;
+
             if (bond != null)
                 Bond = bond;
-            
+
             if (priorityGroup != null)
                 PriorityGroup = priorityGroup;
         }
@@ -43,10 +43,10 @@ namespace iPassport.Domain.Entities
 
         public UserDetails Create(UserCreateDto dto) =>
             new UserDetails(dto.UserId);
-        
+
         public UserDetails Create(UserAgentCreateDto dto) =>
             new UserDetails(dto.UserId);
-        
+
         public UserDetails Create(CitizenCreateDto dto) =>
             new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected, bond: dto.Bond, priorityGroup: dto.PriorityGroup);
 
@@ -61,23 +61,35 @@ namespace iPassport.Domain.Entities
         }
 
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
-        
-        public bool IsImmunized()
+
+        public bool IsApprovedPassport()
         {
+            bool isApproved = true;
+
             if (UserVaccines == null || !UserVaccines.Any())
-                return false;
-            
+                isApproved = false;
+
             var vacinnes = UserVaccines.Select(x => x.Vaccine).Distinct().ToList();
-            
+
             if (vacinnes == null || !vacinnes.Any())
-                return false;
-            
+                isApproved = false;
+
             foreach (var vaccine in vacinnes)
             {
                 if (vaccine == null || GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
-                    return false;
+                    isApproved = false;
             }
-            return true;
+
+            if (!isApproved)
+            {
+                if ((UserDiseaseTests == null || !UserDiseaseTests.Any()) || (GetDiseaseTestStatus() != EDiseaseTestStatus.Negative))
+                    isApproved = false;
+                
+                else
+                    isApproved = true;
+            }
+
+            return isApproved;
         }
 
         public EUserVaccineStatus GetUserVaccineStatus(Guid vaccineId)
@@ -86,7 +98,7 @@ namespace iPassport.Domain.Entities
                 return EUserVaccineStatus.Unvaccinated;
 
             var vaccine = UserVaccines.FirstOrDefault(x => x.VaccineId == vaccineId).Vaccine;
-            
+
             DateTime lastVaccineDate = DateTime.MinValue;
             int validDoses = 0;
 
@@ -94,10 +106,10 @@ namespace iPassport.Domain.Entities
             {
                 if (vaccine.UniqueDose())
                     return userVaccine.IsImmunized() ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
-               
+
                 else if (!userVaccine.IsFirstDose())
                 {
-                    if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.MinTimeNextDose) 
+                    if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.MinTimeNextDose)
                         && userVaccine.VaccinationDate <= lastVaccineDate.AddDays(vaccine.MaxTimeNextDose))
                         validDoses += 1;
                     else
@@ -105,7 +117,7 @@ namespace iPassport.Domain.Entities
                 }
                 else
                     validDoses += 1;
-                
+
                 lastVaccineDate = userVaccine.VaccinationDate;
             }
 
@@ -117,6 +129,23 @@ namespace iPassport.Domain.Entities
             }
             else
                 return EUserVaccineStatus.Waiting;
+        }
+
+        public EDiseaseTestStatus GetDiseaseTestStatus(Guid? testId = null)
+        {
+            var validTests = UserDiseaseTests?.Where(x => (x.TestDate - DateTime.UtcNow).TotalDays <= 3
+                                                            && (testId == null || x.Id == testId)).ToList();
+
+            if (validTests == null || !validTests.Any())
+                return EDiseaseTestStatus.Expired;
+
+            if (validTests.Any(x => x.Result == null || x.ResultDate == null))
+                return EDiseaseTestStatus.Waiting;
+
+            if (validTests.Any(x => x.Result == false))
+                return EDiseaseTestStatus.Negative;
+
+            return EDiseaseTestStatus.Positive;
         }
     }
 }
