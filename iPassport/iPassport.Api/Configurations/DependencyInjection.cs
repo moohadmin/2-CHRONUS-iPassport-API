@@ -63,6 +63,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICompanyService, CompanyService>();
 
             services.AddScoped<IHealthUnitService, HealthUnitService>();
+            
+            services.AddScoped<IGenderService, GenderService>();
 
             services.AddScoped<IUserDiseaseTestService, UserDiseaseTestService>();
             #endregion
@@ -107,6 +109,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICompanyRepository, CompanyRepository>();
 
             services.AddScoped<IHealthUnitRepository, HealthUnitRepository>();
+
+            services.AddScoped<IGenderRepository, GenderRepository>();
 
             services.AddScoped<IUserDiseaseTestRepository, UserDiseaseTestRepository>();
             #endregion

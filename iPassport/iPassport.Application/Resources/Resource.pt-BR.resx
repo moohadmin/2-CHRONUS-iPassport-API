@@ -318,6 +318,9 @@
   <data name="HealthUnits" xml:space="preserve">
     <value>Unidades de saúde.</value>
   </data>
+  <data name="Genders" xml:space="preserve">
+    <value>Gêneros.</value>
+  </data>
   <data name="UserDiseaseTests" xml:space="preserve">
     <value>Testes do Usuário.</value>
   </data>
