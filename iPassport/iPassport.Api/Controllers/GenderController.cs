@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace iPassport.Api.Controllers
 {
     /// <summary>
-    /// Country Controller
+    /// Gender Controller
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -47,7 +47,7 @@ namespace iPassport.Api.Controllers
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
         /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
-        /// <returns>Paged Companies list.</returns>
+        /// <returns>Paged Genders list.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
