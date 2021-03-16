@@ -71,6 +71,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IPriorityGroupService, PriorityGroupService>();
 
             services.AddScoped<IBloodTypeService, BloodTypeService>();
+
+            services.AddScoped<IHumanRaceService, HumanRaceService>();
             #endregion
 
             #region DI Repositories
@@ -121,6 +123,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IPriorityGroupRepository, PriorityGroupRepository>();
 
             services.AddScoped<IBloodTypeRepository, BloodTypeRepository>();
+
+            services.AddScoped<IHumanRaceRepository, HumanRaceRepository>();
             #endregion
 
             #region DI Settings

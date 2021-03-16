@@ -23,6 +23,7 @@ namespace iPassport.Infra.Contexts
         public DbSet<Gender> Genders { get; set; }
         public DbSet<PriorityGroup> PriorityGroups { get; set; }
         public DbSet<BloodType> BloodTypes { get; set; }
+        public DbSet<HumanRace> HumanRaces { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -59,6 +60,8 @@ namespace iPassport.Infra.Contexts
             builder.ApplyConfiguration(new PriorityGroupMap());
 
             builder.ApplyConfiguration(new BloodTypeMap());
+
+            builder.ApplyConfiguration(new HumanRaceMap());
 
             //To avoid delete cascade.
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
