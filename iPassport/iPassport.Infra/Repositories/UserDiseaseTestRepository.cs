@@ -28,9 +28,14 @@ namespace iPassport.Infra.Repositories
             return await Paginate(q, pageFilter);
         }
 
-        private IQueryable<UserDiseaseTest> GetActiveTests() =>
-            _DbSet.Include(v => v.User).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
-                .Where(x => (x.TestDate - DateTime.UtcNow).TotalHours <= Constants.DISEATE_TEST_VALIDATE_IN_HOURS)
+        private IQueryable<UserDiseaseTest> GetActiveTests()
+        {
+            var now = DateTime.UtcNow.AddHours(Constants.DISEATE_TEST_VALIDATE_IN_HOURS * -1);
+
+            return _DbSet.Include(v => v.User).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
+                .Where(x => x.TestDate <= now)
                 .OrderByDescending(x => x.TestDate);
+        
+        }
     }
 }
