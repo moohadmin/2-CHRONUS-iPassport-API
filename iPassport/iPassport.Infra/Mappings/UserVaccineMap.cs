@@ -32,7 +32,8 @@ namespace iPassport.Infra.Mappings
 
             builder.HasOne(c => c.HealthUnit)
                 .WithMany(c => c.UserVaccines)
-                .HasForeignKey(c => c.HealthUnitId);
+                .HasForeignKey(c => c.HealthUnitId)
+                .IsRequired(false);
 
         }
     }

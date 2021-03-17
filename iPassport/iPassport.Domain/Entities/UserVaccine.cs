@@ -41,7 +41,7 @@ namespace iPassport.Domain.Entities
         /// Depreciated field moved to HealthUnit entity
         /// </summary>
         public int? UnityType { get; private set; }
-        public Guid HealthUnitId { get; private set; }
+        public Guid? HealthUnitId { get; private set; }
 
         public virtual UserDetails UserDetails { get; set; }
         public virtual Vaccine Vaccine { get; set; }
