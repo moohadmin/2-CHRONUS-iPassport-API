@@ -26,7 +26,7 @@ namespace iPassport.Domain.Entities
         public Guid VaccineId { get; private set; }
         public Guid UserId { get; private set; }
         /// <summary>
-        /// Depreciated must use HealthUnitId
+        /// Depreciated field moved to HealthUnit entity
         /// </summary>
         public string UnitName { get; private set; }
         public string Batch { get; private set; }
@@ -34,11 +34,11 @@ namespace iPassport.Domain.Entities
         public string EmployeeCpf { get; private set; }
         public string EmployeeCoren { get; private set; }
         /// <summary>
-        /// Depreciated must use HealthUnitId
+        /// Depreciated field moved to HealthUnit entity
         /// </summary>
         public Guid? CityId { get; private set; }
         /// <summary>
-        /// Depreciated must use HealthUnitId
+        /// Depreciated field moved to HealthUnit entity
         /// </summary>
         public int? UnityType { get; private set; }
         public Guid HealthUnitId { get; private set; }
