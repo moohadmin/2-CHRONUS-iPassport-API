@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
 {
@@ -18,5 +19,6 @@ namespace iPassport.Domain.Entities
 
         public virtual HealthUnitType Type { get; set; }
         
+        public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
     }
 }

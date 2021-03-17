@@ -15,9 +15,9 @@ namespace iPassport.Api.Models.Requests.User
         public string CompleteName { get; set; }
 
         /// <summary>
-        /// Gender
+        /// Gender Id
         /// </summary>
-        public EGendersTypes? Gender { get; set; }
+        public Guid? GenderId { get; set; }
 
         /// <summary>
         /// Cpf
@@ -45,19 +45,19 @@ namespace iPassport.Api.Models.Requests.User
         public string Bond { get; set; }
 
         /// <summary>
-        /// Priority Group
+        /// Priority Group Id
         /// </summary>
-        public string PriorityGroup { get; set; }
+        public Guid PriorityGroupId { get; set; }
 
         /// <summary>
-        /// Blood Type
+        /// Blood Type Id
         /// </summary>
-        public string BloodType { get; set; }
+        public Guid? BloodTypeId { get; set; }
 
         /// <summary>
-        /// Breed
+        /// Human Race Id
         /// </summary>
-        public EBreedTypes? Breed { get; set; }
+        public Guid? HumanRaceId { get; set; }
 
         /// <summary>
         /// Email
@@ -93,5 +93,10 @@ namespace iPassport.Api.Models.Requests.User
         /// Birthday
         /// </summary>
         public DateTime? Birthday { get; set; }
+
+        /// <summary>
+        /// User Test
+        /// </summary>
+        public UserDiseaseTestCreateRequest Test { get; set; }
     }
 }

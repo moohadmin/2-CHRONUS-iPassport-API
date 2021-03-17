@@ -20,10 +20,25 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.HasOne(x => x.Address)
                 .WithMany()
                 .HasForeignKey(x => x.AddressId);
-            
+
             builder.HasOne(x => x.Company)
                 .WithMany()
                 .HasForeignKey(x => x.CompanyId)
+                .IsRequired(false);
+
+            builder.HasOne(x => x.GGender)
+                .WithMany()
+                .HasForeignKey(x => x.GenderId)
+                .IsRequired(false);
+
+            builder.HasOne(x => x.HumanRace)
+                .WithMany()
+                .HasForeignKey(x => x.HumanRaceId)
+                .IsRequired(false);
+
+            builder.HasOne(x => x.BBloodType)
+                .WithMany()
+                .HasForeignKey(x => x.BloodTypeId)
                 .IsRequired(false);
         }
     }

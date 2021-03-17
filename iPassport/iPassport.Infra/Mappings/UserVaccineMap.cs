@@ -30,6 +30,10 @@ namespace iPassport.Infra.Mappings
                 .WithMany(c => c.UserVaccines)
                 .HasForeignKey(c => c.UserId);
 
+            builder.HasOne(c => c.HealthUnit)
+                .WithMany(c => c.UserVaccines)
+                .HasForeignKey(c => c.HealthUnitId);
+
         }
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace iPassport.Infra.Mappings.IdentityMaps
+namespace iPassport.Infra.Mappings
 {
     public class PriorityGroupMap : IEntityTypeConfiguration<PriorityGroup>
     {

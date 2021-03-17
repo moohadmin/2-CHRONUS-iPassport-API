@@ -22,6 +22,10 @@ namespace iPassport.Infra.Mappings
 
             builder.HasOne(c => c.Plan)
                 .WithMany(p => p.Users);
+
+            builder.HasOne(c => c.PPriorityGroup)                
+                .WithMany()
+                .HasForeignKey(x => x.PriorityGroupId);
         }
     }
 }

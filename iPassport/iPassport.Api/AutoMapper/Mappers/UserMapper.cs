@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
-using iPassport.Domain.Filters;
 using iPassport.Domain.Entities.Authentication;
-using iPassport.Api.Models.Requests.User;
+using iPassport.Domain.Filters;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -13,7 +13,7 @@ namespace iPassport.Api.AutoMapper.Mappers
     {
         public static void Map(Profile profile)
         {
-            profile.CreateMap<UserCreateRequest, UserCreateDto>()
+            profile.CreateMap<UserCreateRequest, UserCreateDto>()                
                 .ForMember(des => des.Username, act => act.MapFrom(src => src.Username))
                 .ForMember(des => des.Password, act => act.MapFrom(src => src.Password))
                 .ForMember(des => des.PasswordIsValid, act => act.MapFrom(src => src.PasswordIsValid))
@@ -56,6 +56,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address));
 
             profile.CreateMap<CitizenCreateRequest, CitizenCreateDto>();
+                
 
             profile.CreateMap<Users, CitizenByNameViewModel>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))

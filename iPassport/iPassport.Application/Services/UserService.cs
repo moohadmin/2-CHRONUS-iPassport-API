@@ -76,6 +76,10 @@ namespace iPassport.Application.Services
                 if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
                     throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
             }
+            if(dto.Test != null && dto.Test.TestDate != DateTime.MinValue)
+            {
+                dto.Test.DiseaseId = new Guid("54b741bd-dbd2-4f10-9289-135a445db15d");                
+            }
 
             try
             {

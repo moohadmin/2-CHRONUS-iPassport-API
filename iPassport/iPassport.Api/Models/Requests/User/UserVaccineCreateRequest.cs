@@ -24,11 +24,6 @@ namespace iPassport.Api.Models.Requests.User
         public Guid? Vaccine { get; set; }
 
         /// <summary>
-        /// Unit Name
-        /// </summary>
-        public string UnitName { get; set; }
-
-        /// <summary>
         /// Batch
         /// </summary>
         public string Batch { get; set; }
@@ -49,13 +44,9 @@ namespace iPassport.Api.Models.Requests.User
         public string EmployeeCoren { get; set; }
 
         /// <summary>
-        /// City Id
+        /// Health Unit Id
         /// </summary>
-        public Guid? City { get; set; }
-
-        /// <summary>
-        /// Unity Type
-        /// </summary>
-        public EHealthUnityType? UnityType { get; set; }
+        public Guid HealthUnitId { get; set; }
+                
     }
 }
