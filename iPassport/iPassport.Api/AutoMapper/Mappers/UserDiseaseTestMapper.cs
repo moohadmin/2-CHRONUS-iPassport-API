@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 
 namespace iPassport.Api.AutoMapper.Mappers
@@ -7,7 +9,7 @@ namespace iPassport.Api.AutoMapper.Mappers
     /// <summary>
     /// User Disease Test Mapper Class
     /// </summary>
-    public class UserDiseaseTestMapper
+    public static class UserDiseaseTestMapper
     {
         /// <summary>
         /// Map Method
@@ -17,6 +19,11 @@ namespace iPassport.Api.AutoMapper.Mappers
         {
             profile.CreateMap<UserDiseaseTest, UserDiseaseTestViewModel>()
                 .ReverseMap();
+
+            profile.CreateMap<UserDiseaseTestCreateRequest, UserDiseaseTestCreateDto>()
+                .ForMember(des => des.Result, act => act.MapFrom(src => src.Result))
+                .ForMember(des => des.TestDate, act => act.MapFrom(src => src.TestDate))
+                .ForMember(des => des.ResultDate, act => act.MapFrom(src => src.ResultDate));
         }
     }
 }

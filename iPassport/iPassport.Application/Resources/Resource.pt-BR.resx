@@ -336,4 +336,19 @@
   <data name="HumanRaces" xml:space="preserve">
     <value>Raças.</value>
   </data>
+	<data name="GenderNotFound" xml:space="preserve">
+    <value>Gênero não encontrado.</value>
+  </data>
+	<data name="HumanRaceNotFound" xml:space="preserve">
+    <value>Raça não encontrada.</value>
+  </data>
+	<data name="PriorityGroupNotFound" xml:space="preserve">
+    <value>Grupo prioritário não encontrado.</value>
+  </data>
+	<data name="BloodTypeNotFound" xml:space="preserve">
+    <value>Tipo sanguíneo não encontrado.</value>
+  </data>
+	<data name="HealthUnitNotFound" xml:space="preserve">
+    <value>Unidade de saúde não encontrada.</value>
+  </data>
 </root>

@@ -4,7 +4,7 @@ using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Filters;
-using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Repositories;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Threading.Tasks;

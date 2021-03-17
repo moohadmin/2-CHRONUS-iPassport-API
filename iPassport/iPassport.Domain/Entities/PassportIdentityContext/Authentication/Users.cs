@@ -9,7 +9,7 @@ namespace iPassport.Domain.Entities.Authentication
     public class Users : IdentityUser<Guid>
     {
         public Users() { }
-        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid? companyId, int profile)
+        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, Guid? genderId, Guid? humanRaceId, Guid? bloodTypeId, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid? companyId, int profile)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
@@ -18,9 +18,9 @@ namespace iPassport.Domain.Entities.Authentication
             CNS = cns;
             PassportDoc = passportDocument;
             Birthday = birthday;
-            Gender = gender;
-            Breed = breed;
-            BloodType = bloodType;
+            GenderId = genderId;
+            HumanRaceId = humanRaceId;
+            BloodTypeId = bloodTypeId;
             Occupation = occupation;
             Address = address;
             Photo = photo;
@@ -59,8 +59,17 @@ namespace iPassport.Domain.Entities.Authentication
         public string PassportDoc { get; set; }
         public DateTime Birthday { get; set; }
         public DateTime? LastLogin { get; set; }
+        /// <summary>
+        /// Depreciated must use GenderId
+        /// </summary>
         public string Gender { get; set; }
+        /// <summary>
+        /// Depreciated must use HumanRaceId
+        /// </summary>
         public string Breed { get; set; }
+        /// <summary>
+        /// Depreciated must use BloodTypeId
+        /// </summary>
         public string BloodType { get; set; }
         public string Occupation { get; set; }
         public Guid? AddressId { get; private set; }
@@ -69,9 +78,16 @@ namespace iPassport.Domain.Entities.Authentication
         public int Profile { get; set; }
         public Guid? CompanyId { get; set; }
         public DateTime CreateDate { get; set; }
+        public Guid? HumanRaceId { get; set; }
+        public Guid? GenderId { get; set; }
+        public Guid? BloodTypeId { get; set; }
+        
 
         public Address Address { get; set; }
         public Company Company { get; set; }
+        public HumanRace HumanRace { get; set; }
+        public Gender GGender { get; set; }
+        public BloodType BBloodType { get; set; }
 
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
@@ -109,9 +125,9 @@ namespace iPassport.Domain.Entities.Authentication
                 dto.Cns,
                 null,
                 dto.Birthday,
-                dto.Gender,
-                dto.Breed,
-                dto.BloodType, 
+                dto.GenderId,
+                dto.HumanRaceId,
+                dto.BloodTypeId, 
                 dto.Occupation,
                 CreateUserAddress(dto.Address),
                 null,
