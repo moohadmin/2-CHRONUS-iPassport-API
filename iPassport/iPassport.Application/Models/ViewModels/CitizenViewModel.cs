@@ -28,9 +28,9 @@ namespace iPassport.Application.Models.ViewModels
         public string CPF { get; set; }
 
         /// <summary>
-        /// Email
+        /// Telephone
         /// </summary>
-        public string Email { get; set; }
+        public string Telephone { get; set; }
 
         /// <summary>
         /// Status
