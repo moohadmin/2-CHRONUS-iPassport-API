@@ -134,19 +134,19 @@ namespace iPassport.Domain.Entities
 
         public EDiseaseTestStatus GetDiseaseTestStatus(Guid? testId = null)
         {
-            var validTests = UserDiseaseTests?.Where(x => (x.TestDate - DateTime.UtcNow).TotalHours <= Constants.DISEATE_TEST_VALIDATE_IN_HOURS
+            var validTests = UserDiseaseTests?.Where(x => (x.TestDate - DateTime.UtcNow).TotalHours <= Constants.DISEASE_TEST_VALIDATE_IN_HOURS
                                                             && (testId == null || x.Id == testId)).ToList();
 
             if (validTests == null || !validTests.Any())
                 return EDiseaseTestStatus.Expired;
 
-            if (validTests.Any(x => x.Result == null || x.ResultDate == null))
+            if (validTests.All(x => x.Result == null || x.ResultDate == null))
                 return EDiseaseTestStatus.Waiting;
 
-            if (validTests.Any(x => x.Result == false))
-                return EDiseaseTestStatus.Negative;
+            if (validTests.Any(x => x.Result == true))
+                return EDiseaseTestStatus.Positive;
 
-            return EDiseaseTestStatus.Positive;
+            return EDiseaseTestStatus.Negative;
         }
     }
 }

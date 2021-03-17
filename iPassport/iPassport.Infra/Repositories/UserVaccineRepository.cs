@@ -99,7 +99,17 @@ namespace iPassport.Infra.Repositories
             (int take, int skip) = CalcPageOffset(pageFilter);
 
             var data = q.Take(take).Skip(skip).ToList();
-            var totalPages = q.Count() > pageFilter.PageSize ? q.Count() / pageFilter.PageSize : 1;
+            
+            int totalPages = 0;
+            if (q.Count() < pageFilter.PageSize)
+            {
+                totalPages = 1;
+            }
+            else
+            {
+                totalPages = q.Count() / pageFilter.PageSize;
+                totalPages = q.Count() % pageFilter.PageSize > 0 ? totalPages + 1 : totalPages;
+            }
 
             return new PagedData<UserVaccineDetailsDto>()
             {
