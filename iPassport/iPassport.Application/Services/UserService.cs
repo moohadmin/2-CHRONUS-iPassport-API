@@ -76,10 +76,6 @@ namespace iPassport.Application.Services
                 if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
                     throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
             }
-            if(dto.Test != null && dto.Test.TestDate != DateTime.MinValue)
-            {
-                dto.Test.DiseaseId = new Guid("54b741bd-dbd2-4f10-9289-135a445db15d");                
-            }
 
             try
             {
@@ -268,11 +264,11 @@ namespace iPassport.Application.Services
             }
         }
 
-        public async Task<PagedResponseApi> FindCitizensByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
-            var res = await _userRepository.FindCitizensByNameParts(filter);
+            var res = await _userRepository.GetPaggedCizten(filter);
 
-            var result = _mapper.Map<IList<CitizenByNameViewModel>>(res.Data);
+            var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 

@@ -10,6 +10,8 @@ namespace iPassport.Infra.Mappings
         {
             builder.HasKey(k => k.Id);
 
+            builder.Property(c => c.Name);
+
             builder.Property(c => c.CreateDate)
                 .IsRequired();
 
@@ -22,10 +24,6 @@ namespace iPassport.Infra.Mappings
 
             builder.Property(c => c.TestDate)
                 .IsRequired();
-
-            builder.HasOne(c => c.Disease)
-                .WithMany(p => p.UserDiseaseTests)
-                .HasForeignKey(c => c.DiseaseId);
 
             builder.HasOne(c => c.User)
                 .WithMany(p => p.UserDiseaseTests)

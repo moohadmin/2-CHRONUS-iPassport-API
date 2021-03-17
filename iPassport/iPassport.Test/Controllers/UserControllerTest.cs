@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
-using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
@@ -220,16 +219,16 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetByNameParts_MustReturnOk()
         {
-            var mockrequest = Mock.Of<GetByNamePartsPagedRequest>();
+            var mockrequest = Mock.Of<GetCitzenPagedRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Setup(r => r.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()));
 
             // Act
             var result = _controller.GetCitizenByNameParts(mockrequest);
 
             // Assert
-            _mockService.Verify(r => r.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Verify(r => r.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

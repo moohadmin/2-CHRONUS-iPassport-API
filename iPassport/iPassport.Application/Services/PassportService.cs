@@ -74,7 +74,7 @@ namespace iPassport.Application.Services
             }
 
             var viewModel = _mapper.Map<PassportViewModel>(passport);
-            var authUser = await _userRepository.FindById(UserId);
+            var authUser = await _userRepository.GetById(UserId);
             
             viewModel.UserFullName = authUser.FullName;
             viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
@@ -147,11 +147,11 @@ namespace iPassport.Application.Services
             if (passport == null)
                 throw new BusinessException(_localizer["PassportNotFound"]);
             
-            var authUser = await _userRepository.FindById(_accessor.GetCurrentUserId());
+            var authUser = await _userRepository.GetById(_accessor.GetCurrentUserId());
             if(!authUser.IsAgent())
                 throw new BusinessException(_localizer["UserNotAgent"]);
             
-            var passportCitizen = await _userRepository.FindById(passport.UserDetails.Id);
+            var passportCitizen = await _userRepository.GetById(passport.UserDetails.Id);
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;

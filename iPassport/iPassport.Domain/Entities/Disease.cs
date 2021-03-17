@@ -21,6 +21,5 @@ namespace iPassport.Domain.Entities
         public string Description { get; private set; }
 
         public virtual IEnumerable<Vaccine> Vaccines { get; set; }
-        public virtual IEnumerable<UserDiseaseTest> UserDiseaseTests { get; set; }
     }
 }

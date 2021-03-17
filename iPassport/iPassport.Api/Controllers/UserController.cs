@@ -309,10 +309,10 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
-        [HttpGet("CitizenByName")]
-        public async Task<ActionResult> GetCitizenByNameParts([FromQuery] GetByNamePartsPagedRequest request)
+        [HttpGet("Citizen")]
+        public async Task<ActionResult> GetCitizenByNameParts([FromQuery] GetCitzenPagedRequest request)
         {
-            var res = await _service.FindCitizensByNameParts(_mapper.Map<GetByNamePartsPagedFilter>(request));
+            var res = await _service.GetPaggedCizten(_mapper.Map<GetCitzenPagedFilter>(request));
 
             return Ok(res);
         }

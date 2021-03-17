@@ -7,25 +7,26 @@ namespace iPassport.Domain.Entities
     {
         public UserDiseaseTest() { Id = Guid.NewGuid(); }
         
-        public UserDiseaseTest(Guid diseaseId, Guid userId, bool? result, DateTime testDate, DateTime? resultDate)
+        public UserDiseaseTest(Guid userId, bool? result, DateTime testDate, DateTime? resultDate, string name)
         {
             Id = Guid.NewGuid();
-            DiseaseId = diseaseId;
             UserId = userId;
             Result = result;
             TestDate = testDate;
             ResultDate = resultDate;
+            if(!string.IsNullOrWhiteSpace(name))
+                Name = name;
         }
 
-        public Guid DiseaseId { get; private set; }
+        public string Name { get; private set; }
         public Guid UserId { get; private set; }
         public bool? Result { get; private set; }        
         public DateTime TestDate { get; private set; }
         public DateTime? ResultDate { get; private set; }
 
         public virtual UserDetails User { get; set; }
-        public virtual Disease Disease { get; set; }
+        
 
-        public UserDiseaseTest Create(UserDiseaseTestCreateDto dto) => new UserDiseaseTest(dto.DiseaseId, dto.UserId, dto.Result, dto.TestDate, dto.ResultDate);
+        public UserDiseaseTest Create(UserDiseaseTestCreateDto dto) => new UserDiseaseTest(dto.UserId, dto.Result, dto.TestDate, dto.ResultDate, dto.Name);
     }
 }

@@ -88,7 +88,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (!acceptTerms)
                 throw new BusinessException(_localizer["TermsOfUseNotAccepted"]);
 
-            var user = await _userRepository.FindById(userId);
+            var user = await _userRepository.GetById(userId);
             if (user == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
@@ -117,7 +117,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc)
         {
-            var user = await _userRepository.FindByDocument(doctype, doc.Trim());
+            var user = await _userRepository.GetByDocument(doctype, doc.Trim());
             
             if (user == null)
                 throw new BusinessException(_localizer["InvalidDocLogin"]);
@@ -132,7 +132,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> ResendPin(string phone, Guid userId)
         {
-            var user = await _userRepository.FindById(userId);
+            var user = await _userRepository.GetById(userId);
             if (user == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
