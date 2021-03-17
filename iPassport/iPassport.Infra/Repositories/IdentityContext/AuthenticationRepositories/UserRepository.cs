@@ -17,10 +17,10 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public UserRepository(PassportIdentityContext context) => _context = context;
 
-        public async Task<Users> FindByPhone(string phone) =>
+        public async Task<Users> GetByPhone(string phone) =>
             await _context.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
 
-        public async Task<Users> FindById(Guid id) =>
+        public async Task<Users> GetById(Guid id) =>
             await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
 
         public async Task Update(Users user)
@@ -31,17 +31,11 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Users> FindByDocument(EDocumentType documentType, string document)
+        public async Task<Users> GetByDocument(EDocumentType documentType, string document)
         {
-            return documentType switch
-            {
-                EDocumentType.CPF => await _context.Users.Where(x => x.CPF == document).FirstOrDefaultAsync(),
-                EDocumentType.RG => await _context.Users.Where(x => x.RG == document).FirstOrDefaultAsync(),
-                EDocumentType.Passport => await _context.Users.Where(x => x.PassportDoc == document).FirstOrDefaultAsync(),
-                EDocumentType.CNS => await _context.Users.Where(x => x.CNS == document).FirstOrDefaultAsync(),
-                EDocumentType.InternationalDocument => await _context.Users.Where(x => x.InternationalDocument == document).FirstOrDefaultAsync(),
-                _ => null,
-            };
+            IQueryable<Users> query = _context.Users;
+
+            return await GetUserDocument(query, documentType, document).FirstOrDefaultAsync();
         }
 
         public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.Profile == (int)filter.Profile).CountAsync();
@@ -49,11 +43,17 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Citizen && u.LastLogin != null).CountAsync();
         public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Agent && u.LastLogin != null).CountAsync();
 
-        public async Task<PagedData<Users>> FindCitizensByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
-            var query = _context.Users.Where(m => m.Profile == (int)EProfileType.Citizen 
-                            && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower())))
-            .OrderBy(m => m.FullName);
+            IQueryable<Users> query = _context.Users;
+
+            if (filter.DocumentType.HasValue)
+                query = GetUserDocument(query, filter.DocumentType.Value, filter.Document);
+            
+          query = query.Where(m => m.Profile == (int)EProfileType.Citizen 
+                            && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower()))
+                            && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().Contains(filter.Telephone.ToLower())))
+                    .OrderBy(m => m.FullName);
 
             return await Paginate(query, filter);
         }
@@ -73,6 +73,19 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             int skip = (filter.PageNumber - 1) * filter.PageSize;
             int take = skip + filter.PageSize;
             return (take, skip);
+        }
+
+        private IQueryable<Users> GetUserDocument(IQueryable<Users> query, EDocumentType documentType, string document)
+        {
+            return documentType switch
+            {
+                EDocumentType.CPF => query.Where(x => x.CPF == document),
+                EDocumentType.RG => query.Where(x => x.RG == document),
+                EDocumentType.Passport => query.Where(x => x.PassportDoc == document),
+                EDocumentType.CNS => query.Where(x => x.CNS == document),
+                EDocumentType.InternationalDocument => query.Where(x => x.InternationalDocument == document),
+                _ => null,
+            };
         }
 
         public void Dispose()

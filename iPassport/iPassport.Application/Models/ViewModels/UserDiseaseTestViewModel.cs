@@ -5,8 +5,8 @@ namespace iPassport.Application.Models.ViewModels
 {
     public class UserDiseaseTestViewModel
     {
+        public string Name { get;  set; }
         public Guid Id { get; set; }
-        public Guid DiseaseId { get; set; }
         public Guid UserId { get; set; }
         public bool? Result { get; set; }
         public DateTime TestDate { get; set; }

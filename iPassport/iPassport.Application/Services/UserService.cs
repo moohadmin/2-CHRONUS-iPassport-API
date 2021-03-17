@@ -264,11 +264,11 @@ namespace iPassport.Application.Services
             }
         }
 
-        public async Task<PagedResponseApi> FindCitizensByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
-            var res = await _userRepository.FindCitizensByNameParts(filter);
+            var res = await _userRepository.GetPaggedCizten(filter);
 
-            var result = _mapper.Map<IList<CitizenByNameViewModel>>(res.Data);
+            var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 
