@@ -72,8 +72,9 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(string.Format(localizer["InvalidField"], "Email"));
 
             RuleFor(x => x.Test)
+                .NotEmpty()
                 .SetValidator(new UserDiseaseTestCreateRequestValidator(localizer))
-                .When(x => x.Test != null);
+                .When(x => x.WasTestPerformed.GetValueOrDefault());
 
             
         }

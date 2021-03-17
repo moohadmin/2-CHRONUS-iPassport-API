@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Utils;
 using System;
 
 namespace iPassport.Domain.Entities
@@ -14,8 +15,7 @@ namespace iPassport.Domain.Entities
             Result = result;
             TestDate = testDate;
             ResultDate = resultDate;
-            if(!string.IsNullOrWhiteSpace(name))
-                Name = name;
+            Name = string.IsNullOrWhiteSpace(name) ? Constants.DISEATE_TEST_NAME : name;
         }
 
         public string Name { get; private set; }

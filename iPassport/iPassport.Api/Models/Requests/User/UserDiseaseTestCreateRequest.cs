@@ -7,10 +7,7 @@ namespace iPassport.Api.Models.Requests.User
     /// </summary>
     public class UserDiseaseTestCreateRequest
     {
-        /// <summary>
-        /// Was Test Performed
-        /// </summary>
-        public bool? WasTestPerformed { get;  set; }
+        
         /// <summary>
         /// Test Result
         /// </summary>

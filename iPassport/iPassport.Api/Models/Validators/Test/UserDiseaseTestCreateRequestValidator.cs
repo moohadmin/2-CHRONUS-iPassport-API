@@ -18,17 +18,17 @@ namespace iPassport.Api.Models.Validators.Vaccines
         public UserDiseaseTestCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Result)
-                .SetValidator(new RequiredFieldValidator<bool?>("TestDate", localizer))
-                .When(x => x.WasTestPerformed.GetValueOrDefault()
-                        && (x.Result.HasValue || x.ResultDate.HasValue));
+                .NotNull()
+                .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
+                .WithMessage(string.Format(localizer["RequiredField"], "Result"));
 
             RuleFor(x => x.TestDate)
-                .SetValidator(new RequiredFieldValidator<DateTime>("TestDate", localizer))
-                .When(x => x.WasTestPerformed.GetValueOrDefault());
+                .SetValidator(new RequiredFieldValidator<DateTime>("TestDate", localizer));
 
             RuleFor(x => x.ResultDate)
-                .SetValidator(new RequiredFieldValidator<DateTime?>("ResultDate",localizer))
-                .When(x => x.WasTestPerformed.GetValueOrDefault() && x.ResultDate.HasValue);
+                .NotEmpty()                
+                .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
+                .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"));
         }
     }
 }

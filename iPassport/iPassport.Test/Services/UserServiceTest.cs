@@ -40,6 +40,11 @@ namespace iPassport.Test.Services
         Mock<ICompanyRepository> _mockCompanyRepository;
         Mock<ICityRepository> _mockCityRepository;
         Mock<IVaccineRepository> _mockVaccineRepository;
+        Mock<IGenderRepository> _mockGenderRepository;
+        Mock<IBloodTypeRepository> _mockBloodTypeRepository;
+        Mock<IHumanRaceRepository> _mockHumanRaceRepository;
+        Mock<IPriorityGroupRepository> _mockPriorityGroupRepository;
+        Mock<IHealthUnitRepository> _mockHealthUnitRepository;
 
         [TestInitialize]
         public void Setup()
@@ -55,8 +60,14 @@ namespace iPassport.Test.Services
             _mockCompanyRepository = new Mock<ICompanyRepository>();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockVaccineRepository = new Mock<IVaccineRepository>();
-
-            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object);
+            _mockGenderRepository = new Mock<IGenderRepository>();
+            _mockBloodTypeRepository = new Mock<IBloodTypeRepository>();
+            _mockHumanRaceRepository = new Mock<IHumanRaceRepository>();
+            _mockPriorityGroupRepository = new Mock<IPriorityGroupRepository>();
+            _mockHealthUnitRepository = new Mock<IHealthUnitRepository>();
+            
+            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
+                _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object);
         }
 
         [TestMethod]

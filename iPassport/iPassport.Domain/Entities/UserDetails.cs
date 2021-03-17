@@ -71,7 +71,10 @@ namespace iPassport.Domain.Entities
 
         private IList<UserDiseaseTest> CreateUserDiseaseTest(UserDiseaseTestCreateDto dto)
         {
-            var userDiseaseTests = new List<UserDiseaseTest>();            
+            var userDiseaseTests = new List<UserDiseaseTest>();
+            if (dto == null)
+                return userDiseaseTests;
+            
             userDiseaseTests.Add(new UserDiseaseTest().Create(dto));
 
             return userDiseaseTests;

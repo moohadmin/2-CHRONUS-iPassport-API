@@ -95,6 +95,11 @@ namespace iPassport.Api.Models.Requests.User
         public DateTime? Birthday { get; set; }
 
         /// <summary>
+        /// Was Test Performed
+        /// </summary>
+        public bool? WasTestPerformed { get; set; }
+
+        /// <summary>
         /// User Test
         /// </summary>
         public UserDiseaseTestCreateRequest Test { get; set; }
