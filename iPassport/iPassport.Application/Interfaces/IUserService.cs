@@ -19,6 +19,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetLoggedAgentCount();
 
         Task<ResponseApi> AddAgent(UserAgentCreateDto dto);
-        Task<PagedResponseApi> FindCitizensByNameParts(GetByNamePartsPagedFilter filter);
+        Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter);
     }
 }

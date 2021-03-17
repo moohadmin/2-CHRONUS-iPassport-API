@@ -223,15 +223,16 @@ namespace iPassport.Test.Services
         public void FindCitizensByNameParts()
         {
             // Arrange
-            var mockRequest = Mock.Of<GetByNamePartsPagedFilter>();
-            _mockUserRepository.Setup(x => x.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()).Result)
+            var mockRequest = Mock.Of<GetCitzenPagedFilter>();
+
+            _mockUserRepository.Setup(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()).Result)
                 .Returns(UserSeed.GetPagedUsers());
 
             // Act
-            var result = _service.FindCitizensByNameParts(mockRequest);
+            var result = _service.GetPaggedCizten(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockUserRepository.Verify(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

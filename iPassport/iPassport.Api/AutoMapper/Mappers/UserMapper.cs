@@ -9,8 +9,15 @@ using iPassport.Api.Models.Requests.User;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
+    /// <summary>
+    /// User Mapper Class
+    /// </summary>
     public static class UserMapper
     {
+        /// <summary>
+        /// Map Method
+        /// </summary>
+        /// <param name="profile">Auto Mapper Profile Instance</param>
         public static void Map(Profile profile)
         {
             profile.CreateMap<UserCreateRequest, UserCreateDto>()
@@ -57,11 +64,12 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<CitizenCreateRequest, CitizenCreateDto>();
 
-            profile.CreateMap<Users, CitizenByNameViewModel>()
+            profile.CreateMap<Users, CitizenViewModel>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.FullName, act => act.MapFrom(src => src.FullName))
                 .ForMember(des => des.CNS, act => act.MapFrom(src => src.CNS))
-                .ForMember(des => des.CPF, act => act.MapFrom(src => src.CPF));
+                .ForMember(des => des.CPF, act => act.MapFrom(src => src.CPF))
+                .ForMember(des => des.Email, act => act.MapFrom(src => src.Email));
         }
     }
 }

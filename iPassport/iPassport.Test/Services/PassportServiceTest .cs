@@ -67,7 +67,7 @@ namespace iPassport.Test.Services
             
             // Arrange
             _mockUserDetailsRepository.Setup(r => r.GetLoadedUsersById(It.IsNotNull<Guid>()).Result).Returns(detailsSeed);
-            _mockUserRepository.Setup(r => r.FindById(It.IsAny<Guid>()).Result).Returns(authSeed);
+            _mockUserRepository.Setup(r => r.GetById(It.IsAny<Guid>()).Result).Returns(authSeed);
             _mockRepository.Setup(r => r.FindByUser(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
             
             // Act
@@ -124,7 +124,7 @@ namespace iPassport.Test.Services
             var urlPhoto = "https://teste.testes.com";
 
             _mockRepository.Setup(r => r.FindByPassportDetailsValid(It.IsNotNull<Guid>()).Result).Returns(mockPassport);
-            _mockUserRepository.Setup(x => x.FindById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAgent());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAgent());
             _externalStorageService.Setup(x => x.GeneratePreSignedURL(It.IsAny<string>())).Returns(urlPhoto);
 
             // Act
