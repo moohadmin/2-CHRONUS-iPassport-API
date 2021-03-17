@@ -40,7 +40,7 @@ namespace iPassport.Application.Services
             
             await GetUserDiseaseTestStatus(result);
 
-            return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+            return new PagedResponseApi(true, _localizer["UserDiseaseTests"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
         public async Task<PagedResponseApi> GetUserDiseaseTest(GetByIdPagedFilter pageFilter)
@@ -51,7 +51,7 @@ namespace iPassport.Application.Services
 
             await GetUserDiseaseTestStatus(result);
 
-            return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+            return new PagedResponseApi(true, _localizer["UserDiseaseTests"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 
         }
 
