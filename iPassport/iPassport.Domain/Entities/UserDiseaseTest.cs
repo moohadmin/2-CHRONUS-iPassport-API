@@ -15,7 +15,7 @@ namespace iPassport.Domain.Entities
             Result = result;
             TestDate = testDate;
             ResultDate = resultDate;
-            Name = string.IsNullOrWhiteSpace(name) ? Constants.DISEATE_TEST_NAME : name;
+            Name = string.IsNullOrWhiteSpace(name) ? Constants.DISEASE_TEST_NAME : name;
         }
 
         public string Name { get; private set; }
