@@ -3,6 +3,7 @@ using iPassport.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using iPassport.Domain.Utils;
 
 namespace iPassport.Domain.Entities
 {
@@ -133,7 +134,7 @@ namespace iPassport.Domain.Entities
 
         public EDiseaseTestStatus GetDiseaseTestStatus(Guid? testId = null)
         {
-            var validTests = UserDiseaseTests?.Where(x => (x.TestDate - DateTime.UtcNow).TotalDays <= 3
+            var validTests = UserDiseaseTests?.Where(x => (x.TestDate - DateTime.UtcNow).TotalHours <= Constants.DISEATE_TEST_VALIDATE_IN_HOURS
                                                             && (testId == null || x.Id == testId)).ToList();
 
             if (validTests == null || !validTests.Any())
