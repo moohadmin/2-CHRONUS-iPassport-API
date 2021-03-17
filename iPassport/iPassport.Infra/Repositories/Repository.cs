@@ -57,7 +57,17 @@ namespace iPassport.Infra.Repositories
             var dataCount = await dbSet.CountAsync();
 
             var data = await dbSet.Take(take).Skip(skip).ToListAsync();
-            var totalPages = dataCount > filter.PageSize ? dataCount / filter.PageSize : 1;
+            
+            int totalPages = 0;
+            if (dataCount < filter.PageSize)
+            {
+                totalPages = 1;
+            }
+            else
+            {
+                totalPages = dataCount / filter.PageSize;
+                totalPages = dataCount % filter.PageSize > 0 ? totalPages + 1 : totalPages;
+            }
 
             return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = dataCount, Data = data };
         }
