@@ -30,10 +30,10 @@ namespace iPassport.Infra.Repositories
 
         private IQueryable<UserDiseaseTest> GetActiveTests()
         {
-            var now = DateTime.UtcNow.AddHours(Constants.DISEATE_TEST_VALIDATE_IN_HOURS * -1);
+            var now = DateTime.UtcNow.AddHours(Constants.DISEASE_TEST_VALIDATE_IN_HOURS * -1);
 
             return _DbSet.Include(v => v.User).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
-                .Where(x => x.TestDate <= now)
+                .Where(x => x.TestDate >= now)
                 .OrderByDescending(x => x.TestDate);
         
         }

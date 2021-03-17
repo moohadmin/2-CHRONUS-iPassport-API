@@ -46,11 +46,12 @@ namespace iPassport.Infra.Repositories
         protected virtual async Task<PagedData<T>> Paginate(IQueryable<T> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);
+            var dataCount = await dbSet.CountAsync();
 
             var data = await dbSet.Take(take).Skip(skip).ToListAsync();
-            var totalPages = data.Count > filter.PageSize ? data.Count / filter.PageSize : 1;
+            var totalPages = dataCount > filter.PageSize ? dataCount / filter.PageSize : 1;
 
-            return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = data.Count, Data = data };
+            return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = dataCount, Data = data };
         }
 
         protected (int, int) CalcPageOffset(PageFilter filter)
