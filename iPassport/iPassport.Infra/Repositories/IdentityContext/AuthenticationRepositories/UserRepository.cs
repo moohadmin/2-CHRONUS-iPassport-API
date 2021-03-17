@@ -49,11 +49,11 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
             if (filter.DocumentType.HasValue)
                 query = GetUserDocument(query, filter.DocumentType.Value, filter.Document);
-            
-          query = query.Where(m => m.Profile == (int)EProfileType.Citizen 
-                            && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower()))
-                            && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().Contains(filter.Telephone.ToLower())))
-                    .OrderBy(m => m.FullName);
+
+            query = query.Where(m => m.Profile == (int)EProfileType.Citizen
+                              && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower()))
+                              && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().Contains(filter.Telephone.ToLower())))
+                      .OrderBy(m => m.FullName);
 
             return await Paginate(query, filter);
         }
@@ -61,11 +61,22 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         protected virtual async Task<PagedData<Users>> Paginate(IQueryable<Users> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);
-
+            
+            var dataCount = await dbSet.CountAsync();
             var data = await dbSet.Take(take).Skip(skip).ToListAsync();
-            var totalPages = data.Count > filter.PageSize ? data.Count / filter.PageSize : 1;
 
-            return new PagedData<Users>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = data.Count, Data = data };
+            int totalPages = 0;
+            if (dataCount < filter.PageSize)
+            {
+                totalPages = 1;
+            }
+            else
+            {
+                totalPages = dataCount / filter.PageSize;
+                totalPages = dataCount % filter.PageSize > 0 ? totalPages + 1 : totalPages;
+            }
+            
+            return new PagedData<Users>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = dataCount, Data = data };
         }
 
         protected (int, int) CalcPageOffset(PageFilter filter)
