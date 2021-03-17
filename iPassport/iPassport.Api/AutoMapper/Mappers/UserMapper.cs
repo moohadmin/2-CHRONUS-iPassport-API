@@ -67,11 +67,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 
 
             profile.CreateMap<Users, CitizenViewModel>()
-                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
-                .ForMember(des => des.FullName, act => act.MapFrom(src => src.FullName))
-                .ForMember(des => des.CNS, act => act.MapFrom(src => src.CNS))
-                .ForMember(des => des.CPF, act => act.MapFrom(src => src.CPF))
-                .ForMember(des => des.Email, act => act.MapFrom(src => src.Email));
+                .ForMember(des => des.Telephone, act => act.MapFrom(src => src.PhoneNumber));
         }
     }
 }
