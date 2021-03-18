@@ -308,6 +308,10 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             var userDetails = await _detailsRepository.GetLoadedUserById(id);
+
+            if (userDetails == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
 
             var citizenDetailsViewModel = _mapper.Map<CitizenDetailsViewModel>(citizenDto);
