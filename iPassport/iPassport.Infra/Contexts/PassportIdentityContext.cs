@@ -20,8 +20,7 @@ namespace iPassport.Infra.Contexts
         public DbSet<Country> Country { get; set; }
         public DbSet<Company> Company { get; set; }
         public DbSet<UserToken> AppUserTokens { get; set; }
-        public DbSet<Gender> Genders { get; set; }
-        public DbSet<PriorityGroup> PriorityGroups { get; set; }
+        public DbSet<Gender> Genders { get; set; }        
         public DbSet<BloodType> BloodTypes { get; set; }
         public DbSet<HumanRace> HumanRaces { get; set; }
 
@@ -55,9 +54,7 @@ namespace iPassport.Infra.Contexts
 
             builder.ApplyConfiguration(new CompanyMap());
 
-            builder.ApplyConfiguration(new GenderMap());
-
-            builder.ApplyConfiguration(new PriorityGroupMap());
+            builder.ApplyConfiguration(new GenderMap());            
 
             builder.ApplyConfiguration(new BloodTypeMap());
 

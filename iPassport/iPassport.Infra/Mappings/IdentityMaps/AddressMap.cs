@@ -18,6 +18,12 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(x => x.Description)
                 .IsRequired(false);
 
+            builder.Property(x => x.District)
+                .IsRequired(false);
+
+            builder.Property(x => x.Number)
+                .IsRequired(false);
+
             builder.Property(x => x.UpdateDate)
                 .IsRequired();
 

@@ -43,8 +43,8 @@ namespace iPassport.Api.Models.Validators.Users
                 .Must(x => !string.IsNullOrWhiteSpace(x.Cpf) || !string.IsNullOrWhiteSpace(x.Cns))
                 .WithMessage(localizer["CnsAndCpfRequired"]);
 
-            RuleFor(x => x.PriorityGroup)
-                .SetValidator(new RequiredFieldValidator<string>("PriorityGroup", localizer));
+            RuleFor(x => x.PriorityGroupId)
+                .SetValidator(new GuidValidator("PriorityGroupId", localizer));
 
             RuleFor(x => x.Telephone)
                 .Cascade(CascadeMode.Stop)
@@ -70,6 +70,13 @@ namespace iPassport.Api.Models.Validators.Users
                 .EmailAddress()
                 .When(x => x != null)
                 .WithMessage(string.Format(localizer["InvalidField"], "Email"));
+
+            RuleFor(x => x.Test)
+                .NotEmpty()
+                .SetValidator(new UserDiseaseTestCreateRequestValidator(localizer))
+                .When(x => x.WasTestPerformed.GetValueOrDefault());
+
+            
         }
     }
 }

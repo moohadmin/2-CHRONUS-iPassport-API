@@ -11,7 +11,8 @@ namespace iPassport.Domain.Entities
     {
         public UserDetails() { }
 
-        public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null, bool? wasCovidInfected = null, string bond = null, string priorityGroup = null) : base()
+        public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null, bool? wasCovidInfected = null, string bond = null, Guid? priorityGroupId = null,
+            IList<UserDiseaseTest> userDiseaseTests = null) : base()
         {
             Id = userId;
 
@@ -27,29 +28,36 @@ namespace iPassport.Domain.Entities
             if (bond != null)
                 Bond = bond;
 
-            if (priorityGroup != null)
-                PriorityGroup = priorityGroup;
+            if (priorityGroupId != null)
+                PriorityGroupId = priorityGroupId;
+
+            if (userDiseaseTests != null)
+                UserDiseaseTests = userDiseaseTests;
         }
 
         public bool? WasCovidInfected { get; private set; }
         public string Bond { get; private set; }
+        /// <summary>
+        /// Depreciated must use PriorityGroupId
+        /// </summary>
         public string PriorityGroup { get; private set; }
 
         public Guid? PlanId { get; private set; }
+        public Guid? PriorityGroupId { get; private set; }
 
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }
+        public virtual PriorityGroup PPriorityGroup { get; set; }
+
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
         public virtual IEnumerable<UserDiseaseTest> UserDiseaseTests { get; set; }
-
-        public UserDetails Create(UserCreateDto dto) =>
-            new UserDetails(dto.UserId);
 
         public UserDetails Create(UserAgentCreateDto dto) =>
             new UserDetails(dto.UserId);
 
         public UserDetails Create(CitizenCreateDto dto) =>
-            new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected, bond: dto.Bond, priorityGroup: dto.PriorityGroup);
+            new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected, bond: dto.Bond, priorityGroupId: dto.PriorityGroupId,
+                userDiseaseTests: CreateUserDiseaseTest(dto.Test));
 
         private IList<UserVaccine> CreateUservaccine(IList<UserVaccineCreateDto> dto)
         {
@@ -59,6 +67,17 @@ namespace iPassport.Domain.Entities
                 uservaccines.Add(new UserVaccine().Create(d));
 
             return uservaccines;
+        }
+
+        private IList<UserDiseaseTest> CreateUserDiseaseTest(UserDiseaseTestCreateDto dto)
+        {
+            var userDiseaseTests = new List<UserDiseaseTest>();
+            if (dto == null)
+                return userDiseaseTests;
+            
+            userDiseaseTests.Add(new UserDiseaseTest().Create(dto));
+
+            return userDiseaseTests;
         }
 
         public void AssociatePlan(Guid plandId) => PlanId = plandId;

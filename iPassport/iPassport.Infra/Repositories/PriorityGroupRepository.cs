@@ -1,15 +1,15 @@
 ﻿using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
-using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace iPassport.Infra.Repositories.IdentityContext
+namespace iPassport.Infra.Repositories
 {
-    public class PriorityGroupRepository : IdentityBaseRepository<PriorityGroup>, IPriorityGroupRepository
+    public class PriorityGroupRepository : Repository<PriorityGroup>, IPriorityGroupRepository
     {
-        public PriorityGroupRepository(PassportIdentityContext context) : base(context) { }
+        public PriorityGroupRepository(iPassportContext context) : base(context) { }
 
         public async Task<PagedData<PriorityGroup>> FindByNameParts(GetByNamePartsPagedFilter filter)
         {

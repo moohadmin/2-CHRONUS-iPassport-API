@@ -37,9 +37,15 @@ namespace iPassport.Application.Services
         private readonly ICompanyRepository _companyRepository;
         private readonly ICityRepository _cityRepository;
         private readonly IVaccineRepository _vaccineRepository;
+        private readonly IGenderRepository _genderRepository;
+        private readonly IBloodTypeRepository _bloodTypeRepository;
+        private readonly IHumanRaceRepository _humanRaceRepository;
+        private readonly IPriorityGroupRepository _priorityGroupRepository;
+        private readonly IHealthUnitRepository _healthUnitRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
-            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository)
+            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository,
+            IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -52,6 +58,11 @@ namespace iPassport.Application.Services
             _companyRepository = companyRepository;
             _cityRepository = cityRepository;
             _vaccineRepository = vaccineRepository;
+            _genderRepository = genderRepository;
+            _bloodTypeRepository = bloodTypeRepository;
+            _humanRaceRepository = humanRaceRepository;
+            _priorityGroupRepository = priorityGroupRepository;
+            _healthUnitRepository = healthUnitRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
@@ -59,13 +70,22 @@ namespace iPassport.Application.Services
             var user = new Users().CreateCitizen(dto);
             user.SetUpdateDate();
 
-            if (dto.CompanyId.HasValue)
-            {
-                if (await _companyRepository.Find(dto.CompanyId.Value) == null)
-                    throw new BusinessException(_localizer["CompanyNotFound"]);
-            }
+            if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            if (await _cityRepository.Find(dto.Address.CityId) == null)
+            if (dto.GenderId.HasValue && await _genderRepository.Find(dto.GenderId.Value) == null)
+                throw new BusinessException(_localizer["GenderNotFound"]);
+
+            if (dto.BloodTypeId.HasValue && await _bloodTypeRepository.Find(dto.BloodTypeId.Value) == null)
+                throw new BusinessException(_localizer["BloodTypeNotFound"]);
+
+            if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
+                throw new BusinessException(_localizer["HumanRaceNotFound"]);
+
+            if (!dto.PriorityGroupId.HasValue || await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
+                throw new BusinessException(_localizer["PriorityGroupNotFound"]);
+
+            if (dto.Address == null || await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             if (dto.Doses != null && dto.Doses.Any())
@@ -75,6 +95,12 @@ namespace iPassport.Application.Services
 
                 if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
                     throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+
+                foreach (var item in dto.Doses)
+                {
+                    if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
+                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
+                }
             }
 
             try
@@ -219,8 +245,8 @@ namespace iPassport.Application.Services
             if (company == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            
-            if (dto.Address != null  && await _cityRepository.Find(dto.Address.CityId) == null)
+
+            if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var user = new Users().CreateAgent(dto);
