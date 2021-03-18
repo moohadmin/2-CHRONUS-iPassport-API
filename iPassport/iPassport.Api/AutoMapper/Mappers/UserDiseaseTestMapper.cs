@@ -24,6 +24,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Result, act => act.MapFrom(src => src.Result))
                 .ForMember(des => des.TestDate, act => act.MapFrom(src => src.TestDate))
                 .ForMember(des => des.ResultDate, act => act.MapFrom(src => src.ResultDate));
+
+            profile.CreateMap<UserDiseaseTestDto, UserDiseaseTestViewModel>();
         }
     }
 }

@@ -47,7 +47,7 @@ namespace iPassport.Test.Services
             
             // Arrange
             _mockRepository.Setup(r => r.GetPagedUserVaccinesByPassportId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
-            _mockUserRepository.Setup(r => r.GetLoadedUsersById(It.IsAny<Guid>()).Result).Returns(userSeed);
+            _mockUserRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetUserVaccines(mockFilter);
@@ -68,7 +68,7 @@ namespace iPassport.Test.Services
 
             // Arrange
             _mockRepository.Setup(r => r.GetPagedUserVaccinesByUserId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(seed);
-            _mockUserRepository.Setup(r => r.GetLoadedUsersById(It.IsAny<Guid>()).Result).Returns(userSeed);
+            _mockUserRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(userSeed);
 
             // Act
             var result = _service.GetCurrentUserVaccines(mockFilter);
