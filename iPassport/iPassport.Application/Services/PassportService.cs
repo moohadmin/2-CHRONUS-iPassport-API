@@ -87,12 +87,13 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
         {
+            dto = await ValidPassportToAcess(dto);
+
             var userDetails = await _userDetailsRepository.GetLoadedUsersById(dto.CitizenId);
 
             if(!userDetails.IsApprovedPassport())
                 throw new BusinessException(_localizer["PassportNotApproved"]);
-
-            dto = await ValidPassportToAcess(dto);
+            
             dto.AllowAccess = true;
 
             var passportUse = new PassportUse();
