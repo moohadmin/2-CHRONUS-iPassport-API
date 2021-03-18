@@ -299,5 +299,20 @@ namespace iPassport.Application.Services
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 
         }
+
+        public async Task<ResponseApi> GetCitizenById(Guid id)
+        {
+            var authUser = await _userRepository.GetLoadedUsersById(id);
+            
+            if (authUser == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            var userDetails = await _detailsRepository.GetLoadedUserById(id);
+            var citizenDto = new CitizenDetailsDto(authUser, userDetails);
+
+            var citizenDetailsViewModel = _mapper.Map<CitizenDetailsViewModel>(citizenDto);
+
+            return new ResponseApi(true, _localizer["Citizen"], citizenDetailsViewModel);
+        }
     }
 }

@@ -248,5 +248,24 @@ namespace iPassport.Test.Services
             Assert.IsNotNull(result.Result.Data);
         }
 
+        [TestMethod]
+        public void GetCitizenById()
+        {
+            // Arrange
+            var mockRequest = Guid.NewGuid();
+
+            _mockUserRepository.Setup(x => x.GetLoadedUsersById(It.IsAny<Guid>()).Result)
+                .Returns(UserSeed.GetUsers().FirstOrDefault());
+            _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+
+            // Act
+            var result = _service.GetCitizenById(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetLoadedUsersById(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.GetLoadedUserById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
     }
 }
