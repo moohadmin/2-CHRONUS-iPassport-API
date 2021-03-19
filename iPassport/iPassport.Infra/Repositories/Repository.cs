@@ -35,7 +35,6 @@ namespace iPassport.Infra.Repositories
                 var result = await _context.SaveChangesAsync();
 
                 return result > 0;
-
             }
             catch (DbUpdateException ex)
             {
