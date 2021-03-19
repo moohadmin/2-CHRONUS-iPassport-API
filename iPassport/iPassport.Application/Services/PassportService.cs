@@ -52,7 +52,7 @@ namespace iPassport.Application.Services
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            if (userDetails.UserVaccines == null || !userDetails.UserVaccines.Any())
+            if ((userDetails.UserVaccines == null || !userDetails.UserVaccines.Any()) && (userDetails.UserDiseaseTests == null || !userDetails.UserDiseaseTests.Any()))
                 throw new BusinessException(_localizer["UserVaccineNotFound"]);
 
             var passport = await _repository.FindByUser(userDetails.Id);

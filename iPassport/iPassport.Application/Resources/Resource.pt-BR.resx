@@ -304,7 +304,7 @@
     <value>Cidadãos.</value>
   </data>
   <data name="UserVaccineNotFound" xml:space="preserve">
-    <value>Usuário não possui vacinas cadastradas que são necessárias para geração do passaporte.</value>
+    <value>Usuário não possui vacinas e/ou testes cadastrados que são necessários para geração do passaporte.</value>
   </data>
   <data name="DuplicateUserName" xml:space="preserve">
     <value>UserName/CPF já cadastrado.</value>
@@ -336,19 +336,19 @@
   <data name="HumanRaces" xml:space="preserve">
     <value>Raças.</value>
   </data>
-	<data name="GenderNotFound" xml:space="preserve">
+  <data name="GenderNotFound" xml:space="preserve">
     <value>Gênero não encontrado.</value>
   </data>
-	<data name="HumanRaceNotFound" xml:space="preserve">
+  <data name="HumanRaceNotFound" xml:space="preserve">
     <value>Raça não encontrada.</value>
   </data>
-	<data name="PriorityGroupNotFound" xml:space="preserve">
+  <data name="PriorityGroupNotFound" xml:space="preserve">
     <value>Grupo prioritário não encontrado.</value>
   </data>
-	<data name="BloodTypeNotFound" xml:space="preserve">
+  <data name="BloodTypeNotFound" xml:space="preserve">
     <value>Tipo sanguíneo não encontrado.</value>
   </data>
-	<data name="HealthUnitNotFound" xml:space="preserve">
+  <data name="HealthUnitNotFound" xml:space="preserve">
     <value>Unidade de saúde não encontrada.</value>
   </data>
 </root>
