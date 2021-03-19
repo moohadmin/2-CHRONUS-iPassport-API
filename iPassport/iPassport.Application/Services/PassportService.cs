@@ -47,7 +47,7 @@ namespace iPassport.Application.Services
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _userDetailsRepository.GetLoadedUsersById(UserId);
+            var userDetails = await _userDetailsRepository.GetLoadedUserById(UserId);
 
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
@@ -89,7 +89,7 @@ namespace iPassport.Application.Services
         {
             dto = await ValidPassportToAcess(dto);
 
-            var userDetails = await _userDetailsRepository.GetLoadedUsersById(dto.CitizenId);
+            var userDetails = await _userDetailsRepository.GetLoadedUserById(dto.CitizenId);
 
             if(!userDetails.IsApprovedPassport())
                 throw new BusinessException(_localizer["PassportNotApproved"]);

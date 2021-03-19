@@ -351,4 +351,7 @@
   <data name="HealthUnitNotFound" xml:space="preserve">
     <value>Unidade de saúde não encontrada.</value>
   </data>
+  <data name="Citizen" xml:space="preserve">
+    <value>Cidadão</value>
+  </data>
 </root>

@@ -66,7 +66,7 @@ namespace iPassport.Test.Services
             var passportSeed = PassportSeed.Get();
             
             // Arrange
-            _mockUserDetailsRepository.Setup(r => r.GetLoadedUsersById(It.IsNotNull<Guid>()).Result).Returns(detailsSeed);
+            _mockUserDetailsRepository.Setup(r => r.GetLoadedUserById(It.IsNotNull<Guid>()).Result).Returns(detailsSeed);
             _mockUserRepository.Setup(r => r.GetById(It.IsAny<Guid>()).Result).Returns(authSeed);
             _mockRepository.Setup(r => r.FindByUser(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
             

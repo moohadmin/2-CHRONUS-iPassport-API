@@ -358,5 +358,25 @@ namespace iPassport.Api.Controllers
 
             return Ok(res);
         }
+
+        /// <summary>
+        /// This API is responsible for get Citizen By Id.
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Citizen Object.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpGet("Citizen/{id}")]
+        public async Task<ActionResult> GetCitizenById(Guid id)
+        {
+            var res = await _service.GetCitizenById(id);
+            return Ok(res);
+        }
     }
 }

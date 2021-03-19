@@ -23,6 +23,15 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         public async Task<Users> GetById(Guid id) =>
             await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
 
+        public async Task<Users> GetLoadedUsersById(Guid id) =>
+            await _context.Users
+                .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+                .Include(x => x.Company)
+                .Include(x => x.BBloodType)
+                .Include(x => x.GGender)
+                .Include(x => x.HumanRace)
+                .Where(x => x.Id == id).FirstOrDefaultAsync();
+
         public async Task Update(Users user)
         {
             user.SetUpdateDate();
@@ -61,7 +70,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         protected virtual async Task<PagedData<Users>> Paginate(IQueryable<Users> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);
-            
+
             var dataCount = await dbSet.CountAsync();
             var data = await dbSet.Take(take).Skip(skip).ToListAsync();
 
@@ -75,7 +84,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                 totalPages = dataCount / filter.PageSize;
                 totalPages = dataCount % filter.PageSize > 0 ? totalPages + 1 : totalPages;
             }
-            
+
             return new PagedData<Users>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = dataCount, Data = data };
         }
 

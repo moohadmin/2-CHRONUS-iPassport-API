@@ -64,10 +64,12 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<CitizenCreateRequest, CitizenCreateDto>()
                 .ForMember(des => des.Test, act => act.MapFrom(src => src.WasTestPerformed.GetValueOrDefault() ? src.Test : null));
-                
 
             profile.CreateMap<Users, CitizenViewModel>()
                 .ForMember(des => des.Telephone, act => act.MapFrom(src => src.PhoneNumber));
+
+            profile.CreateMap<CitizenDetailsDto, CitizenDetailsViewModel>();
+
         }
     }
 }

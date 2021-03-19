@@ -90,6 +90,7 @@ namespace iPassport.Infra.Repositories
                 ImmunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
                 Doses = v.Select(x => new VaccineDoseDto()
                 {
+                    Id = x.Id,
                     Dose = x.Dose,
                     VaccinationDate = x.VaccinationDate,
                     ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)

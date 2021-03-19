@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 
 namespace iPassport.Api.AutoMapper.Mappers
@@ -17,7 +18,10 @@ namespace iPassport.Api.AutoMapper.Mappers
         {
             profile.CreateMap<PriorityGroup, PriorityGroupViewModel>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
-                .ForMember(des => des.Name, act => act.MapFrom(src => src.Name));
+                .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
+                .ReverseMap();
+
+            profile.CreateMap<PriorityGroupDto, PriorityGroupViewModel>();
         }
     }
 }
