@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Dtos;
+using System;
 using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
@@ -9,6 +10,7 @@ namespace iPassport.Domain.Entities
 
         public string Name { get; private set; }
         public string Cnpj { get; private set; }
+        public string Ine { get; private set; }
         public string Email { get; private set; }        
         public string ResponsiblePersonName { get; private set; }
         public string ResponsiblePersonPhone { get; private set; }
@@ -16,9 +18,24 @@ namespace iPassport.Domain.Entities
         public DateTime? DeactivationDate { get; private set; }
         public Guid TypeId { get; private set; }
         public Guid? AddressId { get; private set; }
+        public bool? Active { get; private set; }
 
         public virtual HealthUnitType Type { get; set; }
         
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
+
+        public HealthUnit Create(HealthUnitCreateDto dto) =>
+            new HealthUnit()
+            {
+                Name = dto.Name,
+                Cnpj = dto.Cnpj,
+                Ine = dto.Ine,
+                Email = dto.Email,
+                ResponsiblePersonName = dto.ResponsiblePersonName,
+                ResponsiblePersonPhone = dto.ResponsiblePersonPhone,
+                TypeId = (Guid)dto.TypeId,
+                AddressId = dto.Address.Id,
+                Active = dto.IsActive
+            };
     }
 }

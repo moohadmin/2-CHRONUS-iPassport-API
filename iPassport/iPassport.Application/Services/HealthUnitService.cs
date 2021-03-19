@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
+using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
+using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.PassportIdentityContext;
@@ -17,15 +21,45 @@ namespace iPassport.Application.Services
     {
         private readonly IHealthUnitRepository  _healthUnitRepository;
         private readonly IAddressRepository  _addressRepository;
+        private readonly ICityRepository  _cityRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
 
-        public HealthUnitService(IHealthUnitRepository healthUnitRepository, IStringLocalizer<Resource> localizer, IMapper mapper, IAddressRepository addressRepository)
+        public HealthUnitService(IHealthUnitRepository healthUnitRepository, IStringLocalizer<Resource> localizer, IMapper mapper, IAddressRepository addressRepository, ICityRepository cityRepository)
         {
             _healthUnitRepository = healthUnitRepository;
             _localizer = localizer;
             _mapper = mapper;
             _addressRepository = addressRepository;
+            _cityRepository = cityRepository;
+        }
+
+        public async Task<ResponseApi> Add(HealthUnitCreateDto dto)
+        {
+            var city = await _cityRepository.Find(dto.Address.CityId);
+
+            if (city == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            var address = new Address().Create(dto.Address);
+            if (!await _addressRepository.InsertAsync(address))
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
+            
+            // Ine must be informed when exists cnpj in database
+            if(string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
+                throw new BusinessException(_localizer["IneRequired"]);
+
+            var healthUnit = new HealthUnit().Create(dto);
+
+            var result = await _healthUnitRepository.InsertAsync(healthUnit);
+            
+            if (!result)
+            {
+                await _addressRepository.Delete(address);   
+                throw new BusinessException(_localizer["OperationNotPerformed"]);
+            }
+
+            return new ResponseApi(true, _localizer["HealthUnitCreated"], healthUnit.Id);
         }
 
         public async Task<PagedResponseApi> FindByNameParts(GetByNamePartsPagedFilter filter)

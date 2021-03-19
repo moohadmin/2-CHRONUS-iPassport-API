@@ -8,5 +8,6 @@ namespace iPassport.Domain.Repositories
     public interface IHealthUnitRepository : IRepository<HealthUnit>
     {
         Task<PagedData<HealthUnit>> FindByNameParts(GetByNamePartsPagedFilter filter);
+        Task<HealthUnit> GetByCnpj(string cnpj);
     }
 }

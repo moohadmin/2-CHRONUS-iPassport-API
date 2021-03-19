@@ -18,6 +18,11 @@ namespace iPassport.Api.Models.Requests.HealthUnit
         public string Cnpj { get; set; }
 
         /// <summary>
+        /// Ine
+        /// </summary>
+        public string Ine { get; set; }
+
+        /// <summary>
         /// E-mail
         /// </summary>
         public string Email { get; set; }
@@ -45,7 +50,7 @@ namespace iPassport.Api.Models.Requests.HealthUnit
         /// <summary>
         /// Type Id
         /// </summary>
-        public Guid TypeId { get; set; }
+        public Guid? TypeId { get; set; }
 
         /// <summary>
         /// Address
@@ -55,6 +60,6 @@ namespace iPassport.Api.Models.Requests.HealthUnit
         /// <summary>
         /// Is Active?
         /// </summary>
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

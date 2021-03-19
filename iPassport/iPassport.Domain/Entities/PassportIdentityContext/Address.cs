@@ -5,6 +5,7 @@ namespace iPassport.Domain.Entities
     public class Address : Entity
     {
         public Address() { }
+
         public Address(string description, System.Guid cityId, string cep, string number, string district) : base()
         {
             Id = System.Guid.NewGuid();

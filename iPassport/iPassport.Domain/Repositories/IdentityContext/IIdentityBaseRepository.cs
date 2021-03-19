@@ -11,5 +11,6 @@ namespace iPassport.Domain.Repositories
         Task<T> Find(Guid id);
         Task<bool> InsertAsync(T obj);
         Task<bool> Update(T obj);
+        Task<bool> Delete(T obj);
     }
 }

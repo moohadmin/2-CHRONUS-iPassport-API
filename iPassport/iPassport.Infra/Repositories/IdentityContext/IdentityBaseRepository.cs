@@ -43,6 +43,14 @@ namespace iPassport.Infra.Repositories
             return result > 0;
         }
 
+        public async Task<bool> Delete(T obj)
+        {
+            _DbSet.Remove(obj);
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
+        }
+
         protected virtual async Task<PagedData<T>> Paginate(IQueryable<T> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);

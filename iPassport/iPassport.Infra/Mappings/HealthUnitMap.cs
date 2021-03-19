@@ -13,10 +13,17 @@ namespace iPassport.Infra.Mappings
         {
             builder.HasKey(p => p.Id);
 
+            builder.HasIndex(t => t.Ine)
+                .IsUnique();
+
             builder.Property(p => p.Name)
                 .IsRequired();
 
             builder.Property(p => p.Cnpj);
+
+            builder.Property(p => p.Ine);
+
+            builder.Property(p => p.Active);
 
             builder.Property(p => p.Email);
 
