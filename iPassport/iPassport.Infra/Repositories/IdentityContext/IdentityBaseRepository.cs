@@ -1,8 +1,10 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Application.Exceptions;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,17 +29,61 @@ namespace iPassport.Infra.Repositories
 
         public virtual async Task<bool> InsertAsync(T obj)
         {
-            _DbSet.Add(obj);
-            var result = await _context.SaveChangesAsync();
+            try
+            {
+                _DbSet.Add(obj);
+                var result = await _context.SaveChangesAsync();
 
-            return result > 0;
+                return result > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException.GetType() == (typeof(PostgresException)))
+                {
+                    var key = ((PostgresException)ex.InnerException).ConstraintName.Split('_').Last();
+
+                    throw new UniqueKeyException(key, ex);
+                }
+
+                throw new PersistenceException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistenceException(ex);
+            }
         }
 
         public async Task<bool> Update(T obj)
         {
-            obj.SetUpdateDate();
+            try
+            {
+                obj.SetUpdateDate();
 
-            _context.Entry(obj).State = EntityState.Modified;
+                _context.Entry(obj).State = EntityState.Modified;
+                var result = await _context.SaveChangesAsync();
+
+                return result > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException.GetType() == (typeof(PostgresException)))
+                {
+                    var key = ((PostgresException)ex.InnerException).ConstraintName.Split('_').Last();
+
+                    throw new UniqueKeyException(key, ex);
+                }
+
+                throw new PersistenceException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistenceException(ex);
+            }
+        }
+
+        public async Task<bool> Delete(T obj)
+        {
+            _DbSet.Remove(obj);
             var result = await _context.SaveChangesAsync();
 
             return result > 0;
@@ -49,7 +95,7 @@ namespace iPassport.Infra.Repositories
             var dataCount = await dbSet.CountAsync();
 
             var data = await dbSet.Take(take).Skip(skip).ToListAsync();
-            
+
             int totalPages = 0;
             if (dataCount < filter.PageSize)
             {

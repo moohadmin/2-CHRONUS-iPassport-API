@@ -1,10 +1,12 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Application.Exceptions;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,10 +36,28 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task Update(Users user)
         {
-            user.SetUpdateDate();
+            try
+            {
+                user.SetUpdateDate();
 
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+                _context.Entry(user).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException.GetType() == (typeof(PostgresException)))
+                {
+                    var key = ((PostgresException)ex.InnerException).ConstraintName.Split('_').Last();
+
+                    throw new UniqueKeyException(key, ex);
+                }
+
+                throw new PersistenceException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistenceException(ex);
+            }
         }
 
         public async Task<Users> GetByDocument(EDocumentType documentType, string document)

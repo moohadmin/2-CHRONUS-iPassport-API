@@ -28,6 +28,7 @@ namespace iPassport.Domain.Entities
         /// <summary>
         /// Depreciated field moved to HealthUnit entity
         /// </summary>
+        [Obsolete("This Property is Deprecated")]
         public string UnitName { get; private set; }
         public string Batch { get; private set; }
         public string EmployeeName { get; private set; }
@@ -36,10 +37,12 @@ namespace iPassport.Domain.Entities
         /// <summary>
         /// Depreciated field moved to HealthUnit entity
         /// </summary>
+        [Obsolete("This Property is Deprecated")]
         public Guid? CityId { get; private set; }
         /// <summary>
         /// Depreciated field moved to HealthUnit entity
         /// </summary>
+        [Obsolete("This Property is Deprecated")]
         public int? UnityType { get; private set; }
         public Guid? HealthUnitId { get; private set; }
 

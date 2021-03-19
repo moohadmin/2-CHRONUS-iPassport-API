@@ -27,6 +27,7 @@ namespace iPassport.Test.Services
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
         Mock<IAddressRepository> _mockAddressRepository;
+        Mock<ICityRepository> _mockCityRepository;
 
         [TestInitialize]
         public void Setup()
@@ -35,16 +36,18 @@ namespace iPassport.Test.Services
             _mockRepository = new Mock<IHealthUnitRepository>();
             _mockAddressRepository = new Mock<IAddressRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _mockCityRepository = new Mock<ICityRepository>();
 
-            _service = new HealthUnitService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object);
+            _service = new HealthUnitService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object);
         }
 
         [TestMethod]
-        public void FindByNameParts_MustReturnOk()
+        public void FindByNameParts()
         {
             // Arrange
             var mockRequest = Mock.Of<GetByNamePartsPagedFilter>();
             _mockRepository.Setup(x => x.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()).Result).Returns(HealthUnitSeed.GetPaged());
+            
             // Act
             var result = _service.FindByNameParts(mockRequest);
 
@@ -54,5 +57,23 @@ namespace iPassport.Test.Services
             Assert.IsNotNull(result.Result.Data);
         }
 
+        [TestMethod]
+        public void Add()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<HealthUnitCreateDto>(x =>x.Address == Mock.Of<AddressCreateDto>() && x.TypeId == Guid.NewGuid());
+
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<HealthUnit>()).Result).Returns(true);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockAddressRepository.Setup(x => x.InsertAsync(It.IsAny<Address>()).Result).Returns(true);
+
+            // Act
+            var result = _service.Add(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.InsertAsync(It.IsAny<HealthUnit>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
     }
 }

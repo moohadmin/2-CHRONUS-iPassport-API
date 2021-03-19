@@ -20,5 +20,8 @@ namespace iPassport.Infra.Repositories
 
             return await Paginate(query, filter);
         }
+
+        public async Task<HealthUnit> GetByCnpj(string cnpj) =>
+            await _DbSet.FirstOrDefaultAsync(x => x.Cnpj == cnpj);
     }
 }

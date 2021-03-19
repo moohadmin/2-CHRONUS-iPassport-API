@@ -1,9 +1,11 @@
 ﻿using iPassport.Api.Models.Responses;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Resources;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
 using NLog;
 using NLog.Web;
 using System;
@@ -16,11 +18,17 @@ namespace iPassport.Api.Configurations.Filters
     public class ExceptionHandlerFilterAttribute : ExceptionFilterAttribute
     {
         private readonly Logger logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+        private readonly IStringLocalizer<Resource> _localizer;
         private bool _devEnv;
-
-        public ExceptionHandlerFilterAttribute(IWebHostEnvironment env) : base()
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="env">Current Web Host Environment</param>
+        /// <param name="localizer">Localizer</param>
+        public ExceptionHandlerFilterAttribute(IWebHostEnvironment env, IStringLocalizer<Resource> localizer) : base()
         {
             _devEnv = env.IsDevelopment();
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -38,6 +46,21 @@ namespace iPassport.Api.Configurations.Filters
                 context.Result = new JsonResult(new BussinessExceptionResponse
                 (
                     new List<string>() { context.Exception.Message }
+                ));
+
+                LogError(context.Exception);
+                return;
+            }
+
+            if (context.Exception is UniqueKeyException)
+            {
+                var statusCode = (context.Exception as UniqueKeyException).HttpCode;
+
+                context.HttpContext.Response.ContentType = "application/json";
+                context.HttpContext.Response.StatusCode = statusCode;
+                context.Result = new JsonResult(new BussinessExceptionResponse
+                (
+                    string.Format(_localizer["DataAlreadyRegistered"], ((UniqueKeyException)context.Exception).Key)
                 ));
 
                 LogError(context.Exception);

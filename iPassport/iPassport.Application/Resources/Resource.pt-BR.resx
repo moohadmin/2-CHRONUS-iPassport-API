@@ -354,4 +354,10 @@
   <data name="Citizen" xml:space="preserve">
     <value>Cidadão</value>
   </data>
+  <data name="IneRequired" xml:space="preserve">
+    <value>Já existe o cadastro deste CNPJ na base. Caso o mesmo pertença à Secretaria de Saúde, favor informar o INE para validação.</value>
+  </data>
+  <data name="HealthUnitCreated" xml:space="preserve">
+    <value>Unidade de saúde cadastrada com sucesso.</value>
+  </data>
 </root>
