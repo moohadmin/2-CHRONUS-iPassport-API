@@ -304,7 +304,7 @@
     <value>Cidadãos.</value>
   </data>
   <data name="UserVaccineNotFound" xml:space="preserve">
-    <value>Usuário não possui vacinas cadastradas que são necessárias para geração do passaporte.</value>
+    <value>Usuário não possui vacinas e/ou testes cadastrados que são necessários para geração do passaporte.</value>
   </data>
   <data name="DuplicateUserName" xml:space="preserve">
     <value>UserName/CPF já cadastrado.</value>
