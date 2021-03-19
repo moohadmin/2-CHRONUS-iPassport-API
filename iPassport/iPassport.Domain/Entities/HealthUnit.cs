@@ -15,7 +15,7 @@ namespace iPassport.Domain.Entities
         public string ResponsiblePersonOccupation { get; private set; }
         public DateTime? DeactivationDate { get; private set; }
         public Guid TypeId { get; private set; }
-        public Guid? AddressId { get; set; }
+        public Guid? AddressId { get; private set; }
 
         public virtual HealthUnitType Type { get; set; }
         
