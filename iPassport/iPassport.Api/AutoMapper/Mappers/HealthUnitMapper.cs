@@ -30,10 +30,6 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<HealthUnitType, HealthUnitTypeViewModel>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                  .ForMember(des => des.Name, act => act.MapFrom(src => src.Name));
-
-
-
-
         }
     }
 }

@@ -47,12 +47,12 @@ namespace iPassport.Application.Services
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _userDetailsRepository.GetLoadedUsersById(UserId);
+            var userDetails = await _userDetailsRepository.GetLoadedUserById(UserId);
 
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            if (userDetails.UserVaccines == null || !userDetails.UserVaccines.Any())
+            if ((userDetails.UserVaccines == null || !userDetails.UserVaccines.Any()) && (userDetails.UserDiseaseTests == null || !userDetails.UserDiseaseTests.Any()))
                 throw new BusinessException(_localizer["UserVaccineNotFound"]);
 
             var passport = await _repository.FindByUser(userDetails.Id);
@@ -87,12 +87,13 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
         {
-            var userDetails = await _userDetailsRepository.GetLoadedUsersById(dto.CitizenId);
+            dto = await ValidPassportToAcess(dto);
+
+            var userDetails = await _userDetailsRepository.GetLoadedUserById(dto.CitizenId);
 
             if(!userDetails.IsApprovedPassport())
                 throw new BusinessException(_localizer["PassportNotApproved"]);
-
-            dto = await ValidPassportToAcess(dto);
+            
             dto.AllowAccess = true;
 
             var passportUse = new PassportUse();

@@ -59,7 +59,7 @@ namespace iPassport.Application.Services
         {
             if (tests.Any())
             {
-                var user = await _userDetailsRepository.GetLoadedUsersById(tests.FirstOrDefault().UserId);
+                var user = await _userDetailsRepository.GetLoadedUserById(tests.FirstOrDefault().UserId);
                 
                 foreach (var t in tests)
                     t.Status = user.GetDiseaseTestStatus(t.Id);

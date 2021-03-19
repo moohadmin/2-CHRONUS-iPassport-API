@@ -11,6 +11,7 @@ namespace iPassport.Domain.Repositories.Authentication
     {
         Task<Users> GetByPhone(string phone);
         Task<Users> GetById(Guid id);
+        Task<Users> GetLoadedUsersById(Guid id);
         Task Update(Users user);
         Task<Users> GetByDocument(EDocumentType documentType, string document);
         Task<int> GetLoggedCitzenCount();
