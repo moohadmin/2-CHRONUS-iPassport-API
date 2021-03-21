@@ -12,10 +12,12 @@ namespace iPassport.Infra.Repositories
     {
         public HealthUnitRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<HealthUnit>> FindByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedData<HealthUnit>> GetPagedHealthUnits(GetHealthUnitPagedFilter filter)
         {
             var query = _DbSet.Include(x => x.Type)
-                               .Where(m => string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
+                               .Where(m => (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
+                                        && (string.IsNullOrWhiteSpace(filter.Cnpj) || m.Cnpj.Contains(filter.Cnpj))
+                                        && (string.IsNullOrWhiteSpace(filter.Ine) || m.Ine.Contains(filter.Ine)))
                                .OrderBy(m => m.Name);
 
             return await Paginate(query, filter);

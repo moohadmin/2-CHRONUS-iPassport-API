@@ -45,6 +45,7 @@ namespace iPassport.Test.Services
         Mock<IHumanRaceRepository> _mockHumanRaceRepository;
         Mock<IPriorityGroupRepository> _mockPriorityGroupRepository;
         Mock<IHealthUnitRepository> _mockHealthUnitRepository;
+        Mock<IAddressRepository> _mockAddressRepository;
 
         [TestInitialize]
         public void Setup()
@@ -65,9 +66,10 @@ namespace iPassport.Test.Services
             _mockHumanRaceRepository = new Mock<IHumanRaceRepository>();
             _mockPriorityGroupRepository = new Mock<IPriorityGroupRepository>();
             _mockHealthUnitRepository = new Mock<IHealthUnitRepository>();
-            
+            _mockAddressRepository = new Mock<IAddressRepository>();
+
             _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
-                _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object);
+                _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object, _mockAddressRepository.Object);
         }
 
         [TestMethod]
@@ -257,6 +259,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Setup(x => x.GetLoadedUsersById(It.IsAny<Guid>()).Result)
                 .Returns(UserSeed.GetUsers().FirstOrDefault());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockAddressRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
 
             // Act
             var result = _service.GetCitizenById(mockRequest);

@@ -8,7 +8,7 @@ namespace iPassport.Application.Interfaces
 {
     public interface IHealthUnitService
     {
-        Task<PagedResponseApi> FindByNameParts(GetByNamePartsPagedFilter filter);
+        Task<PagedResponseApi> FindByNameParts(GetHealthUnitPagedFilter filter);
         Task<ResponseApi> Add(HealthUnitCreateDto dto);
     }
 }

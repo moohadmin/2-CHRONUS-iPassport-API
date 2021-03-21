@@ -42,10 +42,11 @@ namespace iPassport.Application.Services
         private readonly IHumanRaceRepository _humanRaceRepository;
         private readonly IPriorityGroupRepository _priorityGroupRepository;
         private readonly IHealthUnitRepository _healthUnitRepository;
+        private readonly IAddressRepository _addressRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
             IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository,
-            IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository)
+            IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository, IAddressRepository addressRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -63,6 +64,7 @@ namespace iPassport.Application.Services
             _humanRaceRepository = humanRaceRepository;
             _priorityGroupRepository = priorityGroupRepository;
             _healthUnitRepository = healthUnitRepository;
+            _addressRepository = addressRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
@@ -313,10 +315,33 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
+            
+            GetHealthUnitAddress(citizenDto.Doses);
 
             var citizenDetailsViewModel = _mapper.Map<CitizenDetailsViewModel>(citizenDto);
 
             return new ResponseApi(true, _localizer["Citizen"], citizenDetailsViewModel);
+        }
+
+        private void GetHealthUnitAddress(IList<UserVaccineDetailsDto> userVaccines)
+        {
+            var loadedUserVaccines = new List<UserVaccineDetailsDto>();
+
+            userVaccines.ToList().ForEach(x =>
+            {
+                var loadedDoses = new List<VaccineDoseDto>();
+                x.Doses.ToList().ForEach(y =>
+                {
+                    if(y.HeahltUnit != null && y.HeahltUnit.Address != null)
+                    {
+                        y.HeahltUnit.Address = new AddressDto(_addressRepository.Find(y.HeahltUnit.Address.Id.Value).Result);
+                    }
+                    loadedDoses.Add(y);
+                });
+                x.Doses = loadedDoses;
+                loadedUserVaccines.Add(x);
+            });
+            userVaccines = loadedUserVaccines;
         }
     }
 }
