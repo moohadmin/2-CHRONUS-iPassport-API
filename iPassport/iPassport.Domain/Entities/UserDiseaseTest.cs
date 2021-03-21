@@ -28,5 +28,14 @@ namespace iPassport.Domain.Entities
         
 
         public UserDiseaseTest Create(UserDiseaseTestCreateDto dto) => new UserDiseaseTest(dto.UserId, dto.Result, dto.TestDate, dto.ResultDate, dto.Name);
+        public UserDiseaseTest Create(UserDiseaseTestEditDto dto) => new UserDiseaseTest(dto.UserId, dto.Result, dto.TestDate, dto.ResultDate, dto.Name);
+
+        public void Change(UserDiseaseTestEditDto dto)
+        {
+            Result = dto.Result;
+            TestDate = dto.TestDate;
+            ResultDate = dto.ResultDate;
+            Name = string.IsNullOrWhiteSpace(dto.Name) ? Constants.DISEASE_TEST_NAME : dto.Name;
+        }
     }
 }

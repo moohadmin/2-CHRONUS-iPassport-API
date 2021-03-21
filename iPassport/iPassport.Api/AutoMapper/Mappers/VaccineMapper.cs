@@ -25,7 +25,10 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<UserVaccineCreateRequest, UserVaccineCreateDto>()
                 .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine));
-                
+
+           profile.CreateMap<UserVaccineEditRequest, UserVaccineEditDto>()
+                .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine))
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.UserVaccineId));
         }
     }
 }

@@ -1,0 +1,35 @@
+﻿using FluentValidation;
+using iPassport.Api.Models.Requests.User;
+using iPassport.Application.Resources;
+using Microsoft.Extensions.Localization;
+using System;
+
+namespace iPassport.Api.Models.Validators.Vaccines
+{
+    /// <summary>
+    /// UserDiseaseTestEditRequestValidator Class
+    /// </summary>
+    public class UserDiseaseTestEditRequestValidator : AbstractValidator<UserDiseaseTestEditRequest>
+    {
+        /// <summary>
+        /// UserDiseaseTestEditRequestValidator Contrutor
+        /// </summary>
+        /// <param name="localizer"> Resource</param>
+        public UserDiseaseTestEditRequestValidator(IStringLocalizer<Resource> localizer)
+        {
+            RuleFor(x => x.Result)
+                .NotNull()
+                .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
+                .WithMessage(string.Format(localizer["RequiredField"], "Result"));
+
+            RuleFor(x => x.TestDate)
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], "TestDate"));
+
+            RuleFor(x => x.ResultDate)
+                .NotEmpty()                
+                .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
+                .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"));
+        }
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using System;
 
 namespace iPassport.Domain.Entities
 {
@@ -24,5 +25,14 @@ namespace iPassport.Domain.Entities
         public City City { get; set; }
 
         public Address Create(AddressCreateDto dto) => new Address(dto.Description, dto.CityId, dto.Cep, dto.Number, dto.District);
+
+        internal void ChangeAddress(AddressEditDto dto)
+        {
+            Description = dto.Description;
+            Cep = dto.Cep;
+            CityId = dto.CityId;
+            Number = dto.Number;
+            District = dto.District;
+        }
     }
 }

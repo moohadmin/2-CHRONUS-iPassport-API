@@ -40,9 +40,9 @@ namespace iPassport.Domain.Entities.Authentication
         {
             Id = Guid.NewGuid();
             FullName = fullName;
-            CPF = cpf;           
-            Address = address;            
-            UserName = userName;            
+            CPF = cpf;
+            Address = address;
+            UserName = userName;
             PhoneNumber = mobile;
             Profile = profile;
 
@@ -81,7 +81,7 @@ namespace iPassport.Domain.Entities.Authentication
         public Guid? HumanRaceId { get; set; }
         public Guid? GenderId { get; set; }
         public Guid? BloodTypeId { get; set; }
-        
+
 
         public Address Address { get; set; }
         public Company Company { get; set; }
@@ -94,7 +94,7 @@ namespace iPassport.Domain.Entities.Authentication
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
         public bool UserHavePhoto() => !string.IsNullOrWhiteSpace(Photo);
         public void UpdateLastLogin() => LastLogin = DateTime.UtcNow;
-        
+
         public void AddPhoto(string imageUrl)
         {
             if (string.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
@@ -102,22 +102,22 @@ namespace iPassport.Domain.Entities.Authentication
                 Photo = imageUrl;
             }
         }
- 
+
         public void PhotoNameGenerator(UserImageDto dto)
         {
             var extension = Path.GetExtension(dto.ImageFile.FileName);
             dto.FileName = $"{Id}{extension}";
         }
-                
+
         public Users CreateAgent(UserAgentCreateDto dto) =>
-            new Users(dto.FullName, dto.CPF, dto.Address != null ? CreateUserAddress(dto.Address) : null, dto.Username, dto.Mobile, dto.Profile, dto.CompanyId);
-        
+            new Users(dto.FullName, dto.CPF, dto.Address != null ? CreateUserAddress(dto.Address) : null, dto.Username, dto.Mobile, (int)EProfileType.Agent, dto.CompanyId);
+
         private Address CreateUserAddress(AddressCreateDto dto) =>
             new Address().Create(dto);
 
         public bool IsAgent() => Profile == (int)EProfileType.Agent;
         public bool IsCitizen() => Profile == (int)EProfileType.Citizen;
-                
+
         public Users CreateCitizen(CitizenCreateDto dto)
         => new Users(dto.CompleteName,
                 dto.Cpf,
@@ -127,7 +127,7 @@ namespace iPassport.Domain.Entities.Authentication
                 dto.Birthday,
                 dto.GenderId,
                 dto.HumanRaceId,
-                dto.BloodTypeId, 
+                dto.BloodTypeId,
                 dto.Occupation,
                 CreateUserAddress(dto.Address),
                 null,
@@ -137,6 +137,25 @@ namespace iPassport.Domain.Entities.Authentication
                 dto.Telephone,
                 dto.CompanyId,
                 (int)EProfileType.Citizen);
-        
+
+        public void ChangeCitizen(CitizenEditDto dto)
+        {
+            SetUpdateDate();
+            Birthday = dto.Birthday;
+            CNS = dto.Cns;
+            FullName = dto.CompleteName;
+            CPF = dto.Cpf;
+            Email = dto.Email;
+            Occupation = dto.Occupation;
+            PhoneNumber = dto.Telephone;
+
+            CompanyId = dto.CompanyId;
+            BloodTypeId = dto.BloodTypeId;
+            GenderId = dto.GenderId;
+            HumanRaceId = dto.HumanRaceId;
+
+            if (AddressId.HasValue)            
+                Address.ChangeAddress(dto.Address);
+        }
     }
 }

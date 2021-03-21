@@ -17,7 +17,7 @@ namespace iPassport.Domain.Dtos
             Bond = userDetails.Bond;
             Email = authUser.Email;
             WasCovidInfected = userDetails.WasCovidInfected;
-            NumberOfDoses = userDetails.UserVaccines?.Count();
+            NumberOfDoses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.Count();
             Telephone = authUser.PhoneNumber;
             Birthday = authUser.Birthday;
             WasTestPerformed = userDetails.UserDiseaseTests?.Any();
@@ -28,7 +28,7 @@ namespace iPassport.Domain.Dtos
             HumanRace = authUser.HumanRace != null ? new HumanRaceDto(authUser.HumanRace) : null;
             Company = authUser.Company != null ? new CompanyDto(authUser.Company) : null;
             Gender = authUser.GGender != null ? new GenderDto(authUser.GGender) : null;
-            Doses = userDetails.UserVaccines?.GroupBy(v => new { v.VaccineId })
+            Doses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.GroupBy(v => new { v.VaccineId })
             .Select(v => new UserVaccineDetailsDto()
             {
                 UserId = v.FirstOrDefault().UserId,

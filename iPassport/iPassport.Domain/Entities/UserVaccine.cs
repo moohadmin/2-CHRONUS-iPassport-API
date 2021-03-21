@@ -45,17 +45,20 @@ namespace iPassport.Domain.Entities
         [Obsolete("This Property is Deprecated")]
         public int? UnityType { get; private set; }
         public Guid? HealthUnitId { get; private set; }
+        public DateTime? ExclusionDate { get; private set; }
 
         public virtual UserDetails UserDetails { get; set; }
         public virtual Vaccine Vaccine { get; set; }
-        public virtual HealthUnit HealthUnit  { get; set; }
+        public virtual HealthUnit HealthUnit { get; set; }
 
 
         public UserVaccine Create(UserVaccineCreateDto dto)
             => new UserVaccine(dto.VaccinationDate, dto.Dose, dto.VaccineId, dto.UserId, dto.Batch, dto.EmployeeName, dto.EmployeeCpf, dto.EmployeeCoren, dto.HealthUnitId);
-        
+        public UserVaccine Create(UserVaccineEditDto dto)
+            => new UserVaccine(dto.VaccinationDate, dto.Dose, dto.VaccineId, dto.UserId, dto.Batch, dto.EmployeeName, dto.EmployeeCpf, dto.EmployeeCoren, dto.HealthUnitId);
+
         public DateTime GetExpirationDate(Vaccine vaccine) => VaccinationDate.AddMonths(vaccine.ExpirationTimeInMonths);
-        
+
         public bool IsImmunized()
         {
             var today = DateTime.UtcNow.Date;
@@ -71,5 +74,22 @@ namespace iPassport.Domain.Entities
         }
 
         public bool IsFirstDose() => Dose == 1;
+
+        public void Change(UserVaccineEditDto dto)
+        {
+            Batch = dto.Batch;
+            Dose = dto.Dose;
+            EmployeeCoren = dto.EmployeeCoren;
+            EmployeeCpf = dto.EmployeeCpf;
+            EmployeeName = dto.EmployeeName;
+            VaccinationDate = dto.VaccinationDate;
+
+            VaccineId = dto.VaccineId;
+            HealthUnitId = dto.HealthUnitId;
+        }
+
+        public void Delete() => ExclusionDate = DateTime.UtcNow;
+
+
     }
 }

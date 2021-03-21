@@ -70,6 +70,27 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<CitizenDetailsDto, CitizenDetailsViewModel>();
 
+
+            profile.CreateMap<CitizenEditRequest, CitizenEditDto>()
+                .ForMember(des => des.CompleteName, act => act.MapFrom(src => src.CompleteName))
+                .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
+                .ForMember(des => des.Birthday, act => act.MapFrom(src => src.Birthday))
+                .ForMember(des => des.BloodTypeId, act => act.MapFrom(src => src.BloodTypeId.HasValue ? src.BloodTypeId : null))
+                .ForMember(des => des.Bond, act => act.MapFrom(src => src.Bond))
+                .ForMember(des => des.Cns, act => act.MapFrom(src => src.Cns))
+                .ForMember(des => des.CompanyId, act => act.MapFrom(src => src.CompanyId.HasValue ? src.CompanyId : null))
+                .ForMember(des => des.Cpf, act => act.MapFrom(src => src.Cpf))
+                .ForMember(des => des.Doses, act => act.MapFrom(src => src.Doses)) //Rever
+                .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
+                .ForMember(des => des.GenderId, act => act.MapFrom(src => src.GenderId.HasValue ? src.GenderId : null))
+                .ForMember(des => des.HumanRaceId, act => act.MapFrom(src => src.HumanRaceId.HasValue ? src.HumanRaceId : null))
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.UserId))
+                .ForMember(des => des.NumberOfDoses, act => act.MapFrom(src => src.NumberOfDoses))
+                .ForMember(des => des.Occupation, act => act.MapFrom(src => src.Occupation))                
+                .ForMember(des => des.PriorityGroupId, act => act.MapFrom(src => src.PriorityGroupId))                
+                .ForMember(des => des.Telephone, act => act.MapFrom(src => src.Telephone))
+                .ForMember(des => des.WasCovidInfected, act => act.MapFrom(src => src.WasCovidInfected))
+                .ForMember(des => des.Test, act => act.MapFrom(src => src.WasTestPerformed.GetValueOrDefault() ? src.Test : null));
         }
     }
 }
