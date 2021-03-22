@@ -20,8 +20,8 @@ namespace iPassport.Domain.Entities
 
         public ImportedFile Create() => new ImportedFile();
         
-        public int TotalLinesImportedSuccessfully() => TotalLines - ImportedFileDetails.Count();
-        public int TotalLinesImportedError() => ImportedFileDetails.Count();
+        public int TotalLinesImportedSuccessfully() => TotalLines - ImportedFileDetails.Select(x => x.LineNumber).Distinct().Count();
+        public int TotalLinesImportedError() => ImportedFileDetails.Select(x => x.LineNumber).Distinct().Count();
         public int Status()
         {
             if (!ImportedFileDetails.Any())

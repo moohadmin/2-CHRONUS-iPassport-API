@@ -95,7 +95,7 @@ namespace iPassport.Domain.Entities
         {
             List<UserVaccine> userVacines = new ();
             if (dto.HasVaccineUniqueDoseData)
-                userVacines.Add(new UserVaccine(dto.VaccinationDateUniqueDose.Value, 0, dto.VaccineIdUniqueDose.Value, dto.UserId, dto.BatchUniqueDose, dto.EmployeeNameVaccinationUniqueDose, dto.EmployeeCpfVaccinationUniqueDose, dto.EmployeeCorenVaccinationUniqueDose, dto.HealthUnityIdUniqueDose.Value));
+                userVacines.Add(new UserVaccine(dto.VaccinationDateUniqueDose.Value, 1, dto.VaccineIdUniqueDose.Value, dto.UserId, dto.BatchUniqueDose, dto.EmployeeNameVaccinationUniqueDose, dto.EmployeeCpfVaccinationUniqueDose, dto.EmployeeCorenVaccinationUniqueDose, dto.HealthUnityIdUniqueDose.Value));
 
             if (dto.HasVaccineFirstDoseData)
                 userVacines.Add(new UserVaccine(dto.VaccinationDateFirstDose.Value, 1, dto.VaccineIdFirstDose.Value, dto.UserId, dto.BatchFirstDose, dto.EmployeeNameVaccinationFirstDose, dto.EmployeeCpfVaccinationFirstDose, dto.EmployeeCorenVaccinationFirstDose, dto.HealthUnityIdFirstDose.Value));

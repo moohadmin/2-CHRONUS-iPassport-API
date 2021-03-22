@@ -139,7 +139,7 @@ namespace iPassport.Domain.Dtos
         }
         public bool? ResultBool
         {
-            get => string.IsNullOrEmpty(Result) ? null : Result == "Sim";
+            get => string.IsNullOrEmpty(Result) ? null : Result == "Positivo";
         }
         public Guid UserId { get; set; }
     }

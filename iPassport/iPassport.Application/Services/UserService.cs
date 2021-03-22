@@ -81,7 +81,6 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
         {
             var user = new Users().CreateCitizen(dto);
-            user.SetUpdateDate();
 
             if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
@@ -257,7 +256,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var user = new Users().CreateAgent(dto);
-            user.SetUpdateDate();
+            
 
             try
             {
@@ -537,32 +536,53 @@ namespace iPassport.Application.Services
             var validData = fileData.Where(f => f.IsValid).ToList();
             await GetComplementaryDatForUserImport(validData);
 
-            validData.ForEach(data =>
+
+            foreach (var data in validData)
             {
-                Users user = Users.CreateUser(data.Result);
+                try
+                {
+                    Users user = Users.CreateUser(data.Result);
 
-                // Add User in iPassportIdentityContext
-                var result = _userManager.CreateAsync(user).Result;
+                    _unitOfWork.BeginTransactionIdentity();
+                    _unitOfWork.BeginTransactionPassport();
 
-                //if (!result.Succeeded)
-                //{
-                //    string err = string.Empty;
+                    // Add User in iPassportIdentityContext                   
+                    var result = await _userManager.CreateAsync(user);
+                    ValidSaveUserIdentityResult(result);
 
-                //    foreach (var error in result.Errors)
-                //    {
-                //        err += $"{_localizer[error.Code]}\n";
-                //    }
+                    // Re-Hidrated UserId to UserDetails
+                    data.Result.UserId = user.Id;
 
-                //    throw new BusinessException(err);
-                //}
+                    // Add Details to User in iPassportContext
+                    UserDetails UserDetail = UserDetails.CreateUserDetail(data.Result);
+                    await _detailsRepository.InsertAsync(UserDetail);
 
-                // Re-Hidrated UserId to UserDetails
-                data.Result.UserId = user.Id;
+                    _unitOfWork.CommitIdentity();
+                    _unitOfWork.CommitPassport();
+                }
+                catch (Exception ex)
+                {
+                    _unitOfWork.RollbackIdentity();
+                    _unitOfWork.RollbackPassport();
 
-                // Add Details to User in iPassportContext
-                UserDetails userDatail = UserDetails.CreateUserDetail(data.Result);
-                _detailsRepository.InsertAsync(userDatail);
-            });
+                    if (ex.ToString().Contains("IX_Users_CNS"))
+                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+                    if (ex.ToString().Contains("IX_Users_CPF"))
+                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+                    if (ex.ToString().Contains("IX_Users_RG"))
+                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+                    if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    if (ex.ToString().Contains("IX_Users_Email"))
+                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw;
+                } 
+            }
+            
 
             return;
         }
