@@ -20,7 +20,9 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<AddressCreateRequest, AddressCreateDto>()
             .ForMember(des => des.Cep, act => act.MapFrom(src => src.Cep))
             .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
-            .ForMember(des => des.CityId, act => act.MapFrom(src => src.CityId));
+            .ForMember(des => des.CityId, act => act.MapFrom(src => src.CityId))
+            .ForMember(des => des.Number, act => act.MapFrom(src => src.Number))
+            .ForMember(des => des.District, act => act.MapFrom(src => src.District));
 
             profile.CreateMap<Address, AddressViewModel>()
             .ForMember(des => des.Cep, act => act.MapFrom(src => src.Cep))
@@ -54,6 +56,14 @@ namespace iPassport.Api.AutoMapper.Mappers
                 opt.MapFrom(src => src.City.State.Country.Id);
             })
             .ReverseMap();
+
+            profile.CreateMap<AddressEditRequest, AddressEditDto>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.AddressId))
+                .ForMember(des => des.Cep, act => act.MapFrom(src => src.Cep))
+                .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
+                .ForMember(des => des.CityId, act => act.MapFrom(src => src.CityId))
+                .ForMember(des => des.Number, act => act.MapFrom(src => src.Number))
+                .ForMember(des => des.District, act => act.MapFrom(src => src.District));
         }
     }
 }

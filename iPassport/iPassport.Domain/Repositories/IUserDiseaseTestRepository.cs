@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace iPassport.Domain.Repositories
 {
-    public interface IUserDiseaseTestRepository
+    public interface IUserDiseaseTestRepository : IRepository<UserDiseaseTest>
     {
         Task<PagedData<UserDiseaseTest>> GetPaggedUserDiseaseTestsByPassportId(GetByIdPagedFilter pageFilter);
         Task<PagedData<UserDiseaseTest>> GetPagedUserDiseaseTestsByUserId(GetByIdPagedFilter pageFilter);

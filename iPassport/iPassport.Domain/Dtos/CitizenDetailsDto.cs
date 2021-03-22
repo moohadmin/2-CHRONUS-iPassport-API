@@ -17,7 +17,7 @@ namespace iPassport.Domain.Dtos
             Bond = userDetails.Bond;
             Email = authUser.Email;
             WasCovidInfected = userDetails.WasCovidInfected;
-            NumberOfDoses = userDetails.UserVaccines?.Count();
+            NumberOfDoses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.Count();
             Telephone = authUser.PhoneNumber;
             Birthday = authUser.Birthday;
             WasTestPerformed = userDetails.UserDiseaseTests?.Any();
@@ -28,7 +28,7 @@ namespace iPassport.Domain.Dtos
             HumanRace = authUser.HumanRace != null ? new HumanRaceDto(authUser.HumanRace) : null;
             Company = authUser.Company != null ? new CompanyDto(authUser.Company) : null;
             Gender = authUser.GGender != null ? new GenderDto(authUser.GGender) : null;
-            Doses = userDetails.UserVaccines?.GroupBy(v => new { v.VaccineId })
+            Doses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.GroupBy(v => new { v.VaccineId })
             .Select(v => new UserVaccineDetailsDto()
             {
                 UserId = v.FirstOrDefault().UserId,
@@ -41,7 +41,9 @@ namespace iPassport.Domain.Dtos
                     Id = x.Id,
                     Dose = x.Dose,
                     VaccinationDate = x.VaccinationDate,
-                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine?.ExpirationTimeInMonths ?? 0)
+                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine?.ExpirationTimeInMonths ?? 0),
+                    Batch = x.Batch,
+                    HeahltUnit = x.HealthUnit != null ? new HealthUnitDto(x.HealthUnit) : null,
                 })
             }).ToList();
         }

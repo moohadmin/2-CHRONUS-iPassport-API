@@ -8,5 +8,7 @@ namespace iPassport.Application.Models.ViewModels
         public int Dose { get; set; }
         public DateTime VaccinationDate { get; set; }
         public DateTime ExpirationDate { get; set; }
+        public string Batch { get; set; }
+        public HealthUnitViewModel HeahltUnit { get; set; }
     }
 }

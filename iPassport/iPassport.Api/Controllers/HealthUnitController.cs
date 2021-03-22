@@ -43,7 +43,7 @@ namespace iPassport.Api.Controllers
         /// <summary>
         /// This API is responsible for Get paged list of Health Unit by name.
         /// </summary>
-        /// <param name="request">GetByNamePartsPagedRequest</param>
+        /// <param name="request">Get Health Unit Paged Request</param>
         /// <returns>Heailth Unit</returns>
         /// <response code="200">Ok.</response>
         /// <response code="400">Bussiness Exception</response>
@@ -53,9 +53,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        public async Task<ActionResult> GetByNameParts([FromQuery] GetByNamePartsPagedRequest request)
+        public async Task<ActionResult> GetByNameParts([FromQuery] GetHealthUnitPagedRequest request)
         {
-            var res = await _service.FindByNameParts(_mapper.Map<GetByNamePartsPagedFilter>(request));
+            var res = await _service.FindByNameParts(_mapper.Map<GetHealthUnitPagedFilter>(request));
 
             return Ok(res);
         }

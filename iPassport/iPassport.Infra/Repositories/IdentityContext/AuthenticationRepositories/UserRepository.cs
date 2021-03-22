@@ -23,7 +23,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             await _context.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
 
         public async Task<Users> GetById(Guid id) =>
-            await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+            await _context.Users.Where(x => x.Id == id).Include(y => y.Address).FirstOrDefaultAsync();
 
         public async Task<Users> GetLoadedUsersById(Guid id) =>
             await _context.Users

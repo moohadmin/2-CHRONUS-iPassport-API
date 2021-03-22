@@ -5,6 +5,7 @@ namespace iPassport.Domain.Dtos
 {
     public class AddressDto
     {
+        public AddressDto(){}
 
         public AddressDto(Address address)
         {
