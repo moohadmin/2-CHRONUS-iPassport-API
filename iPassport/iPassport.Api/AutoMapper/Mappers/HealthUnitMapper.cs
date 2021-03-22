@@ -3,6 +3,7 @@ using iPassport.Api.Models.Requests.HealthUnit;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Filters;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -34,6 +35,12 @@ namespace iPassport.Api.AutoMapper.Mappers
                  .ForMember(des => des.Name, act => act.MapFrom(src => src.Name));
 
             profile.CreateMap<HealthUnitCreateRequest, HealthUnitCreateDto>();
+
+            profile.CreateMap<HealthUnitTypeDto, HealthUnitTypeViewModel>();
+
+            profile.CreateMap<HealthUnitDto, HealthUnitViewModel>();
+
+            profile.CreateMap<GetHealthUnitPagedRequest, GetHealthUnitPagedFilter>();
         }
     }
 }

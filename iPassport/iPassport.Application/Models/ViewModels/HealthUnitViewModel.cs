@@ -3,7 +3,7 @@
 namespace iPassport.Application.Models.ViewModels
 {
     /// <summary>
-    /// HealthUnitViewModel
+    /// Health Unit View Model
     /// </summary>
     public class HealthUnitViewModel
     {

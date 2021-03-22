@@ -8,5 +8,7 @@ namespace iPassport.Domain.Dtos
         public int Dose { get; set; }
         public DateTime VaccinationDate { get; set; }
         public DateTime ExpirationDate { get; set; }
+        public string Batch { get; set; }
+        public HealthUnitDto HeahltUnit { get; set; }
     }
 }

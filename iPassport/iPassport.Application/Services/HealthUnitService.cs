@@ -62,9 +62,9 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["HealthUnitCreated"], healthUnit.Id);
         }
 
-        public async Task<PagedResponseApi> FindByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedResponseApi> FindByNameParts(GetHealthUnitPagedFilter filter)
         {
-            var res = await _healthUnitRepository.FindByNameParts(filter);
+            var res = await _healthUnitRepository.GetPagedHealthUnits(filter);
 
             var result = _mapper.Map<IList<HealthUnitViewModel>>(res.Data);
 
@@ -75,7 +75,6 @@ namespace iPassport.Application.Services
             }
 
             return new PagedResponseApi(true, _localizer["HealthUnits"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
-
         }
     }
 }
