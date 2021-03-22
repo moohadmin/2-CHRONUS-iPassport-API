@@ -25,14 +25,21 @@ namespace iPassport.Application.Services
         private readonly ICityRepository  _cityRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HealthUnitService(IHealthUnitRepository healthUnitRepository, IStringLocalizer<Resource> localizer, IMapper mapper, IAddressRepository addressRepository, ICityRepository cityRepository)
+        public HealthUnitService(IHealthUnitRepository healthUnitRepository,
+                                IStringLocalizer<Resource> localizer,
+                                IMapper mapper, 
+                                IAddressRepository addressRepository,
+                                ICityRepository cityRepository,
+                                IUnitOfWork unitOfWork)
         {
             _healthUnitRepository = healthUnitRepository;
             _localizer = localizer;
             _mapper = mapper;
             _addressRepository = addressRepository;
             _cityRepository = cityRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ResponseApi> Add(HealthUnitCreateDto dto)
@@ -61,6 +68,47 @@ namespace iPassport.Application.Services
             }
 
             return new ResponseApi(true, _localizer["HealthUnitCreated"], healthUnit.Id);
+        }
+
+        public async Task<ResponseApi> Edit(HealthUnitEditDto dto)
+        {
+            var address = await _addressRepository.Find(dto.Address.Id);
+            if (address == null)
+                throw new BusinessException(_localizer["AddressNotFound"]);
+
+            var unit = await _healthUnitRepository.Find(dto.Id);
+            if(unit == null)
+                throw new BusinessException(_localizer["HealthUnitNotFound"]);
+
+            if (string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
+                throw new BusinessException(_localizer["IneRequired"]);
+
+            try
+            {
+                address.ChangeAddress(dto.Address);
+                unit.ChangeHealthUnit(dto);
+
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
+                if(!await _healthUnitRepository.Update(unit))
+                    throw new BusinessException(_localizer["OperationNotPerformed"]);
+
+                if(!await _addressRepository.Update(address))
+                    throw new BusinessException(_localizer["OperationNotPerformed"]);
+
+                _unitOfWork.CommitIdentity();
+                _unitOfWork.CommitPassport();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                throw;
+            }
+
+            return new ResponseApi(true, _localizer["HealthUnitUpdated"], address.Id);
         }
 
         public async Task<PagedResponseApi> FindByNameParts(GetHealthUnitPagedFilter filter)

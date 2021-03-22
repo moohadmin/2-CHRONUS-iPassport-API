@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using iPassport.Api.Models.Requests.HealthUnit;
-using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
@@ -96,6 +95,26 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> GetById(Guid id)
         {
             var res = await _service.GetById(id);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for edit Health Unit.
+        /// </summary>
+        /// <param name="request">Health Unit edit Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Health Unit Id</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult> Edit([FromBody] HealthUnitEditRequest request)
+        {
+            var res = await _service.Edit(_mapper.Map<HealthUnitEditDto>(request));
             return Ok(res);
         }
     }

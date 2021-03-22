@@ -398,7 +398,5 @@ namespace iPassport.Api.Controllers
             var res = await _service.EditCitizen(_mapper.Map<CitizenEditDto>(request));
             return Ok(res);
         }
-
-
     }
 }
