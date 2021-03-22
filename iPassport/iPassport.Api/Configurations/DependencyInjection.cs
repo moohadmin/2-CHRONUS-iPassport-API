@@ -74,6 +74,9 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IHumanRaceService, HumanRaceService>();
 
+            services.AddScoped<IImportedFileService, ImportedFileService>();
+
+
             services.AddScoped<IHealthUnitTypeService, HealthUnitTypeService>();
             #endregion
 
@@ -131,6 +134,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IHealthUnitTypeRepository, HealthUnitTypeRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IImportedFileRepository, ImportedFileRepository>();
             #endregion
 
             #region DI Settings

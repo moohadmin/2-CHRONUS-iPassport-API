@@ -31,6 +31,7 @@ namespace iPassport.Api.AutoMapper
             PriorityGroupMapper.Map(this);
             BloodTypeMapper.Map(this);
             HumanRaceMapper.Map(this);
+            ImportedFileMapper.Map(this);
         }
     }
 }

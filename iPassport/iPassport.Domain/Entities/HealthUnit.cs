@@ -27,6 +27,7 @@ namespace iPassport.Domain.Entities
         public HealthUnit Create(HealthUnitCreateDto dto) =>
             new HealthUnit()
             {
+                Id = Guid.NewGuid(),
                 Name = dto.Name,
                 Cnpj = dto.Cnpj,
                 Ine = dto.Ine,
