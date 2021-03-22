@@ -10,7 +10,7 @@ namespace iPassport.Api.Models.Requests.User
         /// <summary>
         /// Test Id
         /// </summary>
-        public Guid? TestId { get; set; }
+        public Guid? Id { get; set; }
         /// <summary>
         /// Test Result
         /// </summary>

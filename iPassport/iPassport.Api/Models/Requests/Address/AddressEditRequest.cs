@@ -10,7 +10,7 @@ namespace iPassport.Api.Models.Requests
         /// <summary>
         /// AddressId
         /// </summary>
-        public Guid? AddressId { get; set; }
+        public Guid? Id { get; set; }
         /// <summary>
         /// Description
         /// </summary>

@@ -31,7 +31,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Result, act => act.MapFrom(src => src.Result))
                 .ForMember(des => des.TestDate, act => act.MapFrom(src => src.TestDate))
                 .ForMember(des => des.ResultDate, act => act.MapFrom(src => src.ResultDate))
-                .ForMember(des => des.Id, act => act.MapFrom(src => src.TestId))
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 ;
         }
     }

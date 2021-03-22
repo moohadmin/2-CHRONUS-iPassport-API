@@ -11,7 +11,7 @@ namespace iPassport.Api.Models.Requests.User
         /// <summary>
         /// User Vaccine Id
         /// </summary>
-        public Guid? UserVaccineId { get; set; }
+        public Guid? Id { get; set; }
         /// <summary>
         /// Vaccination Date
         /// </summary>
