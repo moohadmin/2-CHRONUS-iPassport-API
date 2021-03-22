@@ -7,6 +7,7 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
+using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -71,7 +72,8 @@ namespace iPassport.Test.Controllers
             var mockRequest = Guid.NewGuid();
 
             // Arrange
-            _mockService.Setup(r => r.GetById(It.IsAny<Guid>()));
+            _mockService.Setup(r => r.GetById(It.IsAny<Guid>()).Result)
+                .Returns(new ResponseApi(true, "test", CompanySeed.Get()));
 
             // Act
             var result = _controller.GetById(mockRequest);

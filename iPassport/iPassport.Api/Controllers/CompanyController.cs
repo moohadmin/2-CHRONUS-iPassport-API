@@ -93,7 +93,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetById([FromQuery] Guid id)
+        public async Task<ActionResult> GetById(Guid id)
         {
             var res = await _service.GetById(id);
             return Ok(res);

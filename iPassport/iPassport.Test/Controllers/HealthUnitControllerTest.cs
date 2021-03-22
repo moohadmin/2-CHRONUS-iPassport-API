@@ -2,8 +2,6 @@
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.HealthUnit;
-using iPassport.Api.Models.Requests.Shared;
-using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -68,6 +66,24 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockService.Verify(a => a.Add(It.IsAny<HealthUnitCreateDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetById_MustReturnOk()
+        {
+            var mockRequest = Guid.NewGuid();
+
+            // Arrange
+            _mockService.Setup(r => r.GetById(It.IsAny<Guid>()).Result)
+                .Returns(new ResponseApi(true, "test", HealthUnitSeed.GetHealthUnits().FirstOrDefault()));
+
+            // Act
+            var result = _controller.GetById(mockRequest);
+
+            // Assert
+            _mockService.Verify(a => a.GetById(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
