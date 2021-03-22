@@ -48,7 +48,7 @@ namespace iPassport.Domain.Dtos
                     EmployeeCpf = x.EmployeeCpf,
                     EmployeeCoren = x.EmployeeCoren
                 }),
-                Manufacturer = v.FirstOrDefault().Vaccine.Manufacturer != null ? new VaccineManufacturerDto(v.FirstOrDefault().Vaccine.Manufacturer) : null
+                Manufacturer = v.FirstOrDefault().Vaccine?.Manufacturer != null ? new VaccineManufacturerDto(v.FirstOrDefault().Vaccine.Manufacturer) : null
             }).ToList() : null;
         }
 
