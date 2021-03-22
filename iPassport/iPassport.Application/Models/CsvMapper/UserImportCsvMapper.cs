@@ -19,7 +19,7 @@ namespace iPassport.Application.Models.CsvMapper
             MapProperty(8, x => x.PriorityGroup);
             MapProperty(9, x => x.BloodType);
             MapProperty(10, x => x.HumanRace);
-            MapProperty(11, x => x.Ddi);
+            MapProperty(11, x => x.CountryCode);
             MapProperty(12, x => x.PhoneNumber);
             MapProperty(13, x => x.Email);
             MapProperty(14, x => x.Cep);

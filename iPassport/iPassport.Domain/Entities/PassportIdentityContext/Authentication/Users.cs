@@ -171,7 +171,7 @@ namespace iPassport.Domain.Entities.Authentication
                 Occupation = dto.Occupation,
                 BloodTypeId = dto.BloodTypeId,
                 HumanRaceId = dto.HumanRaceId,
-                PhoneNumber = string.Concat(dto.Ddi, dto.PhoneNumber),
+                PhoneNumber = string.Concat(dto.CountryCode, dto.PhoneNumber),
                 Email = dto.Email,
                 Address = new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District)
             };

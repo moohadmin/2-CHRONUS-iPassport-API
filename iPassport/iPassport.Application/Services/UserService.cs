@@ -10,6 +10,7 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
@@ -50,11 +51,12 @@ namespace iPassport.Application.Services
         private readonly IUserDiseaseTestRepository _userDiseaseTestRepository;
         private readonly IAddressRepository _addressRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IImportedFileRepository _importedFileRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
             IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository,
             IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository,
-            IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork)
+            IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IImportedFileRepository importedFileRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -76,6 +78,7 @@ namespace iPassport.Application.Services
             _userDiseaseTestRepository = userDiseaseTestRepository;
             _addressRepository = addressRepository;
             _unitOfWork = unitOfWork;
+            _importedFileRepository = importedFileRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
@@ -529,13 +532,16 @@ namespace iPassport.Application.Services
 
         public async Task ImportUsers(IFormFile file)
         {
+
             List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
 
-            // Validar dados extraídos
-            ValidateImportUsers(fileData);
+            ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
+            importedFile.ImportedFileDetails = GetCsvErrors(fileData, importedFile.Id);
+
+            // VALIDATE REQUIRED DATA FROM IMPORTED FILE
 
             var validData = fileData.Where(f => f.IsValid).ToList();
-            await GetComplementaryDatForUserImport(validData);
+            await GetComplementaryDatForUserImport(validData, importedFile);
 
             validData.ForEach(data =>
             {
@@ -564,7 +570,14 @@ namespace iPassport.Application.Services
                 _detailsRepository.InsertAsync(userDatail);
             });
 
+            await _importedFileRepository.InsertAsync(importedFile);
+
             return;
+        }
+
+        private IList<ImportedFileDetails> GetCsvErrors(List<CsvMappingResult<UserImportDto>> fileData, Guid importedFileId)
+        {
+            return fileData.Where(f => !f.IsValid).Select(f => new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + ((EFileImportColumns)f.Error.ColumnIndex).ToString()], _localizer["InvalidValue"], f.RowIndex + 1, importedFileId)).ToList();
         }
 
         private List<CsvMappingResult<UserImportDto>> ReadCsvData(IFormFile file)
@@ -579,7 +592,7 @@ namespace iPassport.Application.Services
             return csvParser.ReadFromStream(ms, Encoding.UTF8).ToList();
         }
 
-        private async Task GetComplementaryDatForUserImport(List<CsvMappingResult<UserImportDto>> validData)
+        private async Task GetComplementaryDatForUserImport(List<CsvMappingResult<UserImportDto>> validData, ImportedFile importedFile)
         {
             var genders = await _genderRepository.FindByListNames(validData.Select(f => f.Result.Gender.Trim().ToUpper()).Distinct().ToList());
             var companies = await _companyRepository.FindListCnpj(validData.Select(f => f.Result.Cnpj).Distinct().ToList());
@@ -598,13 +611,60 @@ namespace iPassport.Application.Services
             healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjThirdDose, Ine = f.Result.HealthUnityIneThirdDose }).Distinct().ToList());
             var healthUnits = await _healthUnitRepository.FindByCnpjAndIne(healthUnityFilter.Select(h => h.Cnpj).Distinct().ToList(), healthUnityFilter.Select(h => h.Ine).Distinct().ToList());
 
+            Guid? id;
+
             validData.ForEach(v =>
             {
-                v.Result.GenderId = genders.Where(g => g.Name.ToUpper() == v.Result.Gender.ToUpper()).Select(g => g.Id).Single();
-                v.Result.CompanyId = companies.Where(c => c.Cnpj == v.Result.Cnpj).Select(c => c.Id).Single();
-                v.Result.PriorityGroupId = priorityGroups.Where(p => p.Name.ToUpper() == v.Result.PriorityGroup.ToUpper()).Select(p => p.Id).Single();
-                v.Result.BloodTypeId = bloodTypes.Where(b => b.Name.ToUpper() == v.Result.BloodType.ToUpper()).Select(b => b.Id).Single();
-                v.Result.HumanRaceId = humanRaces.Where(h => h.Name.ToUpper() == v.Result.HumanRace.ToUpper()).Select(h => h.Id).Single();
+                id = genders.Where(g => g.Name.ToUpper() == v.Result.Gender.ToUpper()).Select(g => g.Id).SingleOrDefault();
+                if (id == null && !string.IsNullOrEmpty(v.Result.Gender))
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Gender.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                }
+                else
+                {
+                    v.Result.GenderId = id;
+                }
+
+                id = companies.Where(c => c.Cnpj == v.Result.Cnpj).Select(c => c.Id).SingleOrDefault();
+                if (id == null && !string.IsNullOrEmpty(v.Result.Cnpj))
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cnpj.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                }
+                else
+                {
+                    v.Result.CompanyId = id;
+                }
+
+                id = priorityGroups.Where(p => p.Name.ToUpper() == v.Result.PriorityGroup.ToUpper()).Select(p => p.Id).SingleOrDefault();
+                if (id == null && !string.IsNullOrEmpty(v.Result.PriorityGroup))
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PriorityGroup.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                }
+                else
+                {
+                    v.Result.PriorityGroupId = id;
+                }
+
+                id = bloodTypes.Where(b => b.Name.ToUpper() == v.Result.BloodType.ToUpper()).Select(b => b.Id).Single();
+                if (id == null && !string.IsNullOrEmpty(v.Result.BloodType))
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.BloodType.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                }
+                else
+                {
+                    v.Result.BloodTypeId = id;
+                }
+
+                id = humanRaces.Where(h => h.Name.ToUpper() == v.Result.HumanRace.ToUpper()).Select(h => h.Id).Single();
+                if (id == null && !string.IsNullOrEmpty(v.Result.HumanRace))
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HumanRace.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                }
+                else
+                {
+                    v.Result.HumanRaceId = id;
+                }
+
                 v.Result.CityId = cities.Where(c => c.Name.ToUpper() == v.Result.City.ToUpper()
                                                         && c.State.Name.ToUpper() == v.Result.State.ToUpper()
                                                         && c.State.Country.Name.ToUpper() == v.Result.Country.ToUpper()).Select(c => c.Id).Single();
@@ -624,17 +684,6 @@ namespace iPassport.Application.Services
                                                             && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
                 v.Result.HealthUnityIdThirdDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
                                                                             && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
-            });
-        }
-
-        private void ValidateImportUsers(List<CsvMappingResult<UserImportDto>> fileData)
-        {
-            // fileData.ForEach(d => d.Error = new CsvMappingError { ColumnIndex = 1, Value = "" });
-
-            Parallel.ForEach(fileData.Where(f => f.IsValid), new ParallelOptions { MaxDegreeOfParallelism = Domain.Utils.Constants.IMPORT_USER_MAX_DEGREE_OF_PARALLELISM }, (data) =>
-            {
-                if (string.IsNullOrEmpty(data.Result.FullName))
-                    data.Error = new CsvMappingError { Value = string.Format(_localizer["RequiredField"], "NOME COMPLETO"), ColumnIndex = 1 };
             });
         }
     }

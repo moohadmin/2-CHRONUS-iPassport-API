@@ -15,7 +15,7 @@ namespace iPassport.Domain.Dtos
         public string PriorityGroup { get; set; }
         public string BloodType { get; set; }
         public string HumanRace { get; set; }
-        public int Ddi { get; set; }
+        public int CountryCode { get; set; }
         public ulong PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Cep { get; set; }
@@ -139,7 +139,7 @@ namespace iPassport.Domain.Dtos
         }
         public bool? ResultBool
         {
-            get => string.IsNullOrEmpty(Result) ? null : Result == "Sim";
+            get => string.IsNullOrEmpty(Result) ? null : Result == "Positivo";
         }
         public Guid UserId { get; set; }
     }
