@@ -12,6 +12,7 @@ namespace iPassport.Domain.Dtos
             Result = userDiseaseTest?.Result;
             TestDate = userDiseaseTest?.TestDate;
             ResultDate = userDiseaseTest?.ResultDate;
+            UserId = userDiseaseTest?.UserId;
         }
 
         public string Name { get; set; }
@@ -19,5 +20,6 @@ namespace iPassport.Domain.Dtos
         public bool? Result { get; set; }
         public DateTime? TestDate { get; set; }
         public DateTime? ResultDate { get; set; }
+        public Guid? UserId { get; set; }
     }
 }
