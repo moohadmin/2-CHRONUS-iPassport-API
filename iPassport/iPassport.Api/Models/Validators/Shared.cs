@@ -78,7 +78,7 @@ namespace iPassport.Api.Models.Validators
         /// </summary>
         public AddressEditValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.AddressId)
+            RuleFor(x => x.Id)
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], "AddressId"));
 
