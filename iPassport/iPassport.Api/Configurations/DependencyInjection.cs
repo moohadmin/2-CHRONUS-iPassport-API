@@ -133,9 +133,11 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IHealthUnitTypeRepository, HealthUnitTypeRepository>();
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IImportedFileDetailsRepository, ImportedFileDetailsRepository>();
 
             services.AddScoped<IImportedFileRepository, ImportedFileRepository>();
+            
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
 
             #region DI Settings

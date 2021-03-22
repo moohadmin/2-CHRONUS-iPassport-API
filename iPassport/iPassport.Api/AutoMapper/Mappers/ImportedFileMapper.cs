@@ -9,14 +9,14 @@ using iPassport.Domain.Filters;
 namespace iPassport.Api.AutoMapper.Mappers
 {
     /// <summary>
-    /// ImportedFileMapper Class
+    /// Imported File Mapper Class
     /// </summary>
     public static class ImportedFileMapper
     {
         /// <summary>
-        /// ImportedFileMapper Map Method
+        /// Imported File Mapper Map Method
         /// </summary>
-        /// <param name="profile"></param>
+        /// <param name="profile">Auto Mapper Profile</param>
         public static void Map(Profile profile)
         {
             profile.CreateMap<GetImportedFileRequest, GetImportedFileFilter>();
@@ -29,10 +29,9 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Status, act => act.MapFrom(src => src.Status()))
                 .ForMember(des => des.ImportedLines, act => act.MapFrom(src => src.TotalLinesImportedSuccessfully()))
                 .ForMember(des => des.UnImportedLines, act => act.MapFrom(src => src.TotalLinesImportedError()))
-                .ForMember(des => des.UserId, act => act.MapFrom(src => src.UserId))
-                ;
-                           
-                
+                .ForMember(des => des.UserId, act => act.MapFrom(src => src.UserId));
+
+            profile.CreateMap<ImportedFileDetails, ImportedFileDetailsViewModel>();
         }
     }
 }

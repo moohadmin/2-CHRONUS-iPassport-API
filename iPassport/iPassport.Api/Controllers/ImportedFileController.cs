@@ -3,10 +3,10 @@ using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
-using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
@@ -55,6 +55,25 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> GetByPeriod([FromQuery]GetImportedFileRequest request)
         {
             var res = await _service.FindByPeriod(_mapper.Map<GetImportedFileFilter>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for Get Import file details list.
+        /// </summary>
+        /// <param name="id">Import file Id</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Import file details list.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("{id}/Details")]
+        public async Task<ActionResult> GetById(Guid id)
+        {
+            var res = await _service.GetImportedFileDetails(id);
             return Ok(res);
         }
     }
