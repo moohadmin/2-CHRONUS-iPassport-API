@@ -266,6 +266,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Setup(x => x.GetLoadedUsersById(It.IsAny<Guid>()).Result)
                 .Returns(UserSeed.GetUsers().FirstOrDefault());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockAddressRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
 
             // Act
             var result = _service.GetCitizenById(mockRequest);

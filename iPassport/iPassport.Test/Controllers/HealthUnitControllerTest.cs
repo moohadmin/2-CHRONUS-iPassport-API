@@ -6,6 +6,7 @@ using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Application.Models.Pagination;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Test.Seeds;
@@ -38,16 +39,17 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetByNameParts_MustReturnOk()
         {
-            var mockRequest = Mock.Of<GetByNamePartsPagedRequest>();
+            var mockRequest = Mock.Of<GetHealthUnitPagedRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Setup(r => r.FindByNameParts(It.IsAny<GetHealthUnitPagedFilter>()).Result)
+                .Returns(new PagedResponseApi(true, "success", 1, 1, 1, 10, HealthUnitSeed.GetHealthUnits()));
 
             // Act
             var result = _controller.GetByNameParts(mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Verify(a => a.FindByNameParts(It.IsAny<GetHealthUnitPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

@@ -323,6 +323,8 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
+            
+            GetHealthUnitAddress(citizenDto.Doses);
 
             var citizenDetailsViewModel = _mapper.Map<CitizenDetailsViewModel>(citizenDto);
 
@@ -498,6 +500,27 @@ namespace iPassport.Application.Services
 
                 throw new BusinessException(err);
             }
+        }
+
+        private void GetHealthUnitAddress(IList<UserVaccineDetailsDto> userVaccines)
+        {
+            var loadedUserVaccines = new List<UserVaccineDetailsDto>();
+
+            userVaccines.ToList().ForEach(x =>
+            {
+                var loadedDoses = new List<VaccineDoseDto>();
+                x.Doses.ToList().ForEach(y =>
+                {
+                    if(y.HeahltUnit != null && y.HeahltUnit.Address != null)
+                    {
+                        y.HeahltUnit.Address = new AddressDto(_addressRepository.Find(y.HeahltUnit.Address.Id.Value).Result);
+                    }
+                    loadedDoses.Add(y);
+                });
+                x.Doses = loadedDoses;
+                loadedUserVaccines.Add(x);
+            });
+            userVaccines = loadedUserVaccines;
         }
     }
 }

@@ -41,7 +41,9 @@ namespace iPassport.Domain.Dtos
                     Id = x.Id,
                     Dose = x.Dose,
                     VaccinationDate = x.VaccinationDate,
-                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine?.ExpirationTimeInMonths ?? 0)
+                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine?.ExpirationTimeInMonths ?? 0),
+                    Batch = x.Batch,
+                    HeahltUnit = x.HealthUnit != null ? new HealthUnitDto(x.HealthUnit) : null,
                 })
             }).ToList();
         }
