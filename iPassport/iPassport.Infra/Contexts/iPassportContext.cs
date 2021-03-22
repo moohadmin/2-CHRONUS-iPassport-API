@@ -32,6 +32,8 @@ namespace iPassport.Infra.Contexts
         public DbSet<HealthUnitType> HealthUnitTypes { get; set; }
         public DbSet<UserDiseaseTest> UserDiseaseTests { get; set; }
         public DbSet<PriorityGroup> PriorityGroups { get; set; }
+        public DbSet<ImportedFile> ImportedFiles { get; set; }
+        public DbSet<ImportedFileDetails> ImportedFileDetails { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
@@ -51,7 +53,8 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new HealthUnitTypeMap());
             modelBuilder.ApplyConfiguration(new UserDiseaseTestMap());
             modelBuilder.ApplyConfiguration(new PriorityGroupMap());
-
+            modelBuilder.ApplyConfiguration(new ImportedFileMap());
+            modelBuilder.ApplyConfiguration(new ImportedFileDetailsMap());
             //To avoid delete cascade.
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {

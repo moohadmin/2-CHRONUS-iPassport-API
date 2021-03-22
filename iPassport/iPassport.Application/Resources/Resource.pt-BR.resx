@@ -378,4 +378,10 @@
 	<data name="UserNotUpdated" xml:space="preserve">
     <value>Usuário não pode ser atualizado.</value>
   </data>
+	<data name="ImportedFiles" xml:space="preserve">
+    <value>Arquivos Importados.</value>
+  </data>
+	<data name="InvalidPeriod" xml:space="preserve">
+    <value>Período inválido.</value>
+  </data>
 </root>
