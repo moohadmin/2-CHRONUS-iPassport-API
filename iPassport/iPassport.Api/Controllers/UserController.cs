@@ -403,7 +403,7 @@ namespace iPassport.Api.Controllers
         /// <summary>
         /// This API is responsible for add User Image.
         /// </summary>
-        /// <param name="file">CSV file with user data.</param>
+        /// <param name="request">CSV file with user data.</param>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>

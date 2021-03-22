@@ -532,11 +532,12 @@ namespace iPassport.Application.Services
             List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
 
             // Validar dados extraídos
+            ValidateImportUsers(fileData);
 
             var validData = fileData.Where(f => f.IsValid).ToList();
             await GetComplementaryDatForUserImport(validData);
 
-            Parallel.ForEach(validData, new ParallelOptions { MaxDegreeOfParallelism = Domain.Utils.Constants.IMPORT_USER_MAX_DEGREE_OF_PARALLELISM }, (data) =>
+            validData.ForEach(data =>
             {
                 Users user = Users.CreateUser(data.Result);
 
@@ -623,6 +624,17 @@ namespace iPassport.Application.Services
                                                             && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
                 v.Result.HealthUnityIdThirdDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
                                                                             && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+            });
+        }
+
+        private void ValidateImportUsers(List<CsvMappingResult<UserImportDto>> fileData)
+        {
+            // fileData.ForEach(d => d.Error = new CsvMappingError { ColumnIndex = 1, Value = "" });
+
+            Parallel.ForEach(fileData.Where(f => f.IsValid), new ParallelOptions { MaxDegreeOfParallelism = Domain.Utils.Constants.IMPORT_USER_MAX_DEGREE_OF_PARALLELISM }, (data) =>
+            {
+                if (string.IsNullOrEmpty(data.Result.FullName))
+                    data.Error = new CsvMappingError { Value = string.Format(_localizer["RequiredField"], "NOME COMPLETO"), ColumnIndex = 1 };
             });
         }
     }
