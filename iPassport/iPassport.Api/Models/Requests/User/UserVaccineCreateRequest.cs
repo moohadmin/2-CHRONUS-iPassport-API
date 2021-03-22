@@ -1,5 +1,4 @@
-﻿using iPassport.Domain.Enums;
-using System;
+﻿using System;
 
 namespace iPassport.Api.Models.Requests.User
 {

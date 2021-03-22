@@ -2,6 +2,8 @@
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Infra.Contexts;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,5 +20,8 @@ namespace iPassport.Infra.Repositories.IdentityContext
             return await Paginate(query, filter);
         }
 
+        public async Task<Company> GetLoadedCompanyById(Guid id) =>
+            await _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+                    .FirstOrDefaultAsync(x => x.Id == id);
     }
 }

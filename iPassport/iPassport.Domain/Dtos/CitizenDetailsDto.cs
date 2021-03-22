@@ -28,7 +28,7 @@ namespace iPassport.Domain.Dtos
             HumanRace = authUser.HumanRace != null ? new HumanRaceDto(authUser.HumanRace) : null;
             Company = authUser.Company != null ? new CompanyDto(authUser.Company) : null;
             Gender = authUser.GGender != null ? new GenderDto(authUser.GGender) : null;
-            Doses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.GroupBy(v => new { v.VaccineId })
+            Doses = userDetails.UserVaccines != null ? userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.GroupBy(v => new { v.VaccineId })
             .Select(v => new UserVaccineDetailsDto()
             {
                 UserId = v.FirstOrDefault().UserId,
@@ -43,9 +43,13 @@ namespace iPassport.Domain.Dtos
                     VaccinationDate = x.VaccinationDate,
                     ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine?.ExpirationTimeInMonths ?? 0),
                     Batch = x.Batch,
-                    HeahltUnit = x.HealthUnit != null ? new HealthUnitDto(x.HealthUnit) : null,
-                })
-            }).ToList();
+                    HealthUnit = x.HealthUnit != null ? new HealthUnitDto(x.HealthUnit) : null,
+                    EmployeeName = x.EmployeeName,
+                    EmployeeCpf = x.EmployeeCpf,
+                    EmployeeCoren = x.EmployeeCoren
+                }),
+                Manufacturer = v.FirstOrDefault().Vaccine?.Manufacturer != null ? new VaccineManufacturerDto(v.FirstOrDefault().Vaccine.Manufacturer) : null
+            }).ToList() : null;
         }
 
         public string CompleteName { get; set; }

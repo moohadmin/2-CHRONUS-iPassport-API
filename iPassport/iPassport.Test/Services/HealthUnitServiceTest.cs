@@ -15,6 +15,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -72,6 +73,26 @@ namespace iPassport.Test.Services
 
             // Assert
             _mockRepository.Verify(a => a.InsertAsync(It.IsAny<HealthUnit>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void GetById_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Guid.NewGuid();
+
+            _mockRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
+                .Returns(HealthUnitSeed.GetHealthUnits().FirstOrDefault());
+            _mockAddressRepository.Setup(x => x.FindFullAddress(It.IsAny<Guid>()).Result)
+                .Returns(AddressSeed.Get());
+
+            // Act
+            var result = _service.GetById(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.Find(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

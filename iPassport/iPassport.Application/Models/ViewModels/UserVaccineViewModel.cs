@@ -13,5 +13,6 @@ namespace iPassport.Application.Models.ViewModels
         public int ImmunizationTime { get; set; }
         public Guid UserId { get; set; }
         public EUserVaccineStatus Status { get; set; }
+        public VaccineManufacturerViewModel Manufacturer { get; set; }
     }
 }

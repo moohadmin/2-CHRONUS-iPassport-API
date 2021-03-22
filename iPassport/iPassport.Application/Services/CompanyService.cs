@@ -10,6 +10,7 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -52,6 +53,15 @@ namespace iPassport.Application.Services
             var result = _mapper.Map<IList<CompanyViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["Companies"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+        }
+
+        public async Task<ResponseApi> GetById(Guid id)
+        {
+            var res = await _companyRepository.GetLoadedCompanyById(id);
+
+            var result = _mapper.Map<CompanyViewModel>(res);
+
+            return new ResponseApi(true, _localizer["Companiies"], result);
         }
     }
 }

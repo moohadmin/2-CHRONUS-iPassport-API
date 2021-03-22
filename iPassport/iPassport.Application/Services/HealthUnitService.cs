@@ -11,6 +11,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,6 +76,20 @@ namespace iPassport.Application.Services
             }
 
             return new PagedResponseApi(true, _localizer["HealthUnits"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+        }
+
+        public async Task<ResponseApi> GetById(Guid id)
+        {
+            var res = await _healthUnitRepository.Find(id);
+            var result = _mapper.Map<HealthUnitViewModel>(res);
+            
+            if (res.AddressId.HasValue)
+            {
+                var resultAddress = await _addressRepository.FindFullAddress(res.AddressId.Value);
+                result.Address = _mapper.Map<AddressViewModel>(resultAddress);
+            }
+
+            return new ResponseApi(true, _localizer["HealthUnits"], result);
         }
     }
 }

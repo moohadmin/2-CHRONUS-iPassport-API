@@ -72,5 +72,20 @@ namespace iPassport.Test.Services
             Assert.IsNotNull(result.Result.Data);
         }
 
+        [TestMethod]
+        public void GetById_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Guid.NewGuid();
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
+
+            // Act
+            var result = _service.GetById(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.GetLoadedCompanyById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
     }
 }

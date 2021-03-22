@@ -16,7 +16,7 @@ namespace iPassport.Infra.Repositories
             await _DbSet.Include(u => u.Plan).Where(x => x.Id == id).FirstOrDefaultAsync();
 
         public async Task<UserDetails> GetLoadedUserById(Guid id) =>
-            await _DbSet.Include(u => u.UserVaccines).ThenInclude(v => v.Vaccine)
+            await _DbSet.Include(u => u.UserVaccines).ThenInclude(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                         .Include(u => u.UserVaccines).ThenInclude(v => v.HealthUnit).ThenInclude(u => u.Type)
                         .Include(x => x.Plan)
                         .Include(x => x.UserDiseaseTests)

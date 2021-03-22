@@ -13,5 +13,6 @@ namespace iPassport.Domain.Dtos
         public int? ImmunizationTime { get; set; }
         public Guid UserId { get; set; }
         public EUserVaccineStatus Status { get; set; }
+        public VaccineManufacturerDto Manufacturer { get; set; }
     }
 }

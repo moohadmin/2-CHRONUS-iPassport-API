@@ -9,7 +9,6 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
-using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
@@ -511,9 +510,9 @@ namespace iPassport.Application.Services
                 var loadedDoses = new List<VaccineDoseDto>();
                 x.Doses.ToList().ForEach(y =>
                 {
-                    if(y.HeahltUnit != null && y.HeahltUnit.Address != null)
+                    if(y.HealthUnit != null && y.HealthUnit.Address != null)
                     {
-                        y.HeahltUnit.Address = new AddressDto(_addressRepository.Find(y.HeahltUnit.Address.Id.Value).Result);
+                        y.HealthUnit.Address = new AddressDto(_addressRepository.Find(y.HealthUnit.Address.Id.Value).Result);
                     }
                     loadedDoses.Add(y);
                 });
