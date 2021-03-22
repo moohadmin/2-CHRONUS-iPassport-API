@@ -29,6 +29,7 @@ namespace iPassport.Test.Services
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
         Mock<IAddressRepository> _mockAddressRepository;
         Mock<ICityRepository> _mockCityRepository;
+        Mock<IUnitOfWork> _mockUnitOfWork;
 
         [TestInitialize]
         public void Setup()
@@ -38,8 +39,9 @@ namespace iPassport.Test.Services
             _mockAddressRepository = new Mock<IAddressRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCityRepository = new Mock<ICityRepository>();
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            _service = new HealthUnitService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object);
+            _service = new HealthUnitService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockUnitOfWork.Object);
         }
 
         [TestMethod]
@@ -85,6 +87,7 @@ namespace iPassport.Test.Services
 
             _mockRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
                 .Returns(HealthUnitSeed.GetHealthUnits().FirstOrDefault());
+            
             _mockAddressRepository.Setup(x => x.FindFullAddress(It.IsAny<Guid>()).Result)
                 .Returns(AddressSeed.Get());
 
@@ -93,6 +96,33 @@ namespace iPassport.Test.Services
 
             // Assert
             _mockRepository.Verify(a => a.Find(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void Edit_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<HealthUnitEditDto>(x => x.Address == Mock.Of<AddressEditDto>() && x.TypeId == Guid.NewGuid());
+
+            _mockRepository.Setup(x => x.Update(It.IsAny<HealthUnit>()).Result)
+                .Returns(true);
+
+            _mockAddressRepository.Setup(x => x.Update(It.IsAny<Address>()).Result)
+                .Returns(true);
+
+            _mockRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
+                .Returns(HealthUnitSeed.GetHealthUnits().FirstOrDefault());
+
+            _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
+                .Returns(AddressSeed.Get());
+
+            // Act
+            var result = _service.Edit(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.Update(It.IsAny<HealthUnit>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

@@ -12,5 +12,6 @@ namespace iPassport.Application.Interfaces
         Task<PagedResponseApi> FindByNameParts(GetHealthUnitPagedFilter filter);
         Task<ResponseApi> Add(HealthUnitCreateDto dto);
         Task<ResponseApi> GetById(Guid id);
+        Task<ResponseApi> Edit(HealthUnitEditDto dto);
     }
 }

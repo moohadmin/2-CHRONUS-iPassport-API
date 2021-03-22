@@ -37,5 +37,18 @@ namespace iPassport.Domain.Entities
                 AddressId = dto.Address.Id,
                 Active = dto.IsActive
             };
+
+        public void ChangeHealthUnit(HealthUnitEditDto dto)
+        {
+            Name = dto.Name;
+            Cnpj = dto.Cnpj;
+            Ine = dto.Ine;
+            Email = dto.Email;
+            ResponsiblePersonName = dto.ResponsiblePersonName;
+            ResponsiblePersonOccupation = dto.ResponsiblePersonOccupation;
+            ResponsiblePersonPhone = dto.ResponsiblePersonPhone;
+            TypeId = dto.TypeId.Value;
+            AddressId = dto.Address.Id;
+        }
     }
 }

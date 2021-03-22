@@ -512,7 +512,7 @@ namespace iPassport.Application.Services
                 {
                     if(y.HealthUnit != null && y.HealthUnit.Address != null)
                     {
-                        y.HealthUnit.Address = new AddressDto(_addressRepository.Find(y.HealthUnit.Address.Id.Value).Result);
+                        y.HealthUnit.Address = new AddressDto(_addressRepository.FindFullAddress(y.HealthUnit.Address.Id.Value).Result);
                     }
                     loadedDoses.Add(y);
                 });
