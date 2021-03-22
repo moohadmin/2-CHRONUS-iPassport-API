@@ -57,9 +57,9 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetById(Guid id)
         {
-            var res = await _companyRepository.Find(id);
+            var res = await _companyRepository.GetLoadedCompanyById(id);
 
-            var result = _mapper.Map<IList<CompanyViewModel>>(res);
+            var result = _mapper.Map<CompanyViewModel>(res);
 
             return new ResponseApi(true, _localizer["Companiies"], result);
         }

@@ -1,4 +1,6 @@
-﻿namespace iPassport.Application.Models.ViewModels
+﻿using System;
+
+namespace iPassport.Application.Models.ViewModels
 {
     /// <summary>
     /// Company View Model
@@ -8,7 +10,7 @@
         /// <summary>
         /// Id
         /// </summary>
-        public System.Guid Id { get; set; }
+        public Guid Id { get; set; }
         /// <summary>
         /// Company's Name
         /// </summary>
@@ -20,6 +22,11 @@
         /// <summary>
         /// Address Id
         /// </summary>
-        public System.Guid AddressId { get; set; }
+        public Guid AddressId { get; set; }
+
+        /// <summary>
+        /// Address
+        /// </summary>
+        public AddressViewModel Address { get; set; }
     }
 }
