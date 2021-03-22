@@ -80,7 +80,7 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        public void GetById_MustReturnOk()
+        public void GetById()
         {
             // Arrange
             var mockRequest = Guid.NewGuid();
@@ -101,7 +101,7 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        public void Edit_MustReturnOk()
+        public void Edit()
         {
             // Arrange
             var mockRequest = Mock.Of<HealthUnitEditDto>(x => x.Address == Mock.Of<AddressEditDto>() && x.TypeId == Guid.NewGuid());
