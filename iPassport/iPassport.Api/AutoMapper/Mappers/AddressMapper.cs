@@ -58,7 +58,7 @@ namespace iPassport.Api.AutoMapper.Mappers
             .ReverseMap();
 
             profile.CreateMap<AddressEditRequest, AddressEditDto>()
-                .ForMember(des => des.Id, act => act.MapFrom(src => src.AddressId))
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.Cep, act => act.MapFrom(src => src.Cep))
                 .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
                 .ForMember(des => des.CityId, act => act.MapFrom(src => src.CityId))
