@@ -2,7 +2,9 @@
 using iPassport.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace iPassport.Domain.Entities.Authentication
 {
@@ -157,5 +159,21 @@ namespace iPassport.Domain.Entities.Authentication
             if (AddressId.HasValue)            
                 Address.ChangeAddress(dto.Address);
         }
+
+        public static Users CreateUser(UserImportDto dto)
+            => new ()
+            {
+                FullName = dto.FullName,
+                GenderId = dto.GenderId,
+                Birthday = dto.Birthday,
+                CPF = dto.Cpf,
+                CNS = dto.Cns,
+                Occupation = dto.Occupation,
+                BloodTypeId = dto.BloodTypeId,
+                HumanRaceId = dto.HumanRaceId,
+                PhoneNumber = string.Concat(dto.Ddi, dto.PhoneNumber),
+                Email = dto.Email,
+                Address = new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District)
+            };
     }
 }

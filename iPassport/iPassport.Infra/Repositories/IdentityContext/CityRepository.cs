@@ -2,6 +2,8 @@
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Infra.Contexts;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,5 +21,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
             return await Paginate(query, filter);
         }
+
+        public async Task<IList<City>> FindByCityStateAndCountryNames(List<string> filter)
+            => await _DbSet.Include(c => c.State).ThenInclude(s => s.Country)
+                .Where(m => filter.Any(f => f == m.Name.ToUpper() + m.State.Name.ToUpper() + m.State.Country.Name.ToUpper())).ToListAsync();
     }
 }

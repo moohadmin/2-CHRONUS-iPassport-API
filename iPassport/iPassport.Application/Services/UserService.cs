@@ -3,6 +3,7 @@ using iPassport.Application.Exceptions;
 using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Application.Models.CsvMapper;
 using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
@@ -18,8 +19,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using TinyCsvParser;
+using TinyCsvParser.Mapping;
 
 namespace iPassport.Application.Services
 {
@@ -520,6 +525,105 @@ namespace iPassport.Application.Services
                 loadedUserVaccines.Add(x);
             });
             userVaccines = loadedUserVaccines;
+        }
+
+        public async Task ImportUsers(IFormFile file)
+        {
+            List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
+
+            // Validar dados extraídos
+
+            var validData = fileData.Where(f => f.IsValid).ToList();
+            await GetComplementaryDatForUserImport(validData);
+
+            Parallel.ForEach(validData, new ParallelOptions { MaxDegreeOfParallelism = Domain.Utils.Constants.IMPORT_USER_MAX_DEGREE_OF_PARALLELISM }, (data) =>
+            {
+                Users user = Users.CreateUser(data.Result);
+
+                // Add User in iPassportIdentityContext
+                var result = _userManager.CreateAsync(user).Result;
+
+                //if (!result.Succeeded)
+                //{
+                //    string err = string.Empty;
+
+                //    foreach (var error in result.Errors)
+                //    {
+                //        err += $"{_localizer[error.Code]}\n";
+                //    }
+
+                //    throw new BusinessException(err);
+                //}
+
+                // Re-Hidrated UserId to UserDetails
+                data.Result.UserId = user.Id;
+
+                // Add Details to User in iPassportContext
+                UserDetails userDatail = UserDetails.CreateUserDetail(data.Result);
+                _detailsRepository.InsertAsync(userDatail);
+            });
+
+            return;
+        }
+
+        private List<CsvMappingResult<UserImportDto>> ReadCsvData(IFormFile file)
+        {
+            CsvParserOptions csvParserOptions = new(true, ';');
+            UserImportCsvMapper csvMapper = new();
+            CsvParser<UserImportDto> csvParser = new(csvParserOptions, csvMapper);
+
+            using MemoryStream ms = new();
+            file.CopyTo(ms);
+            ms.Seek(0, SeekOrigin.Begin);
+            return csvParser.ReadFromStream(ms, Encoding.UTF8).ToList();
+        }
+
+        private async Task GetComplementaryDatForUserImport(List<CsvMappingResult<UserImportDto>> validData)
+        {
+            var genders = await _genderRepository.FindByListNames(validData.Select(f => f.Result.Gender.Trim().ToUpper()).Distinct().ToList());
+            var companies = await _companyRepository.FindListCnpj(validData.Select(f => f.Result.Cnpj).Distinct().ToList());
+            var priorityGroups = await _priorityGroupRepository.FindByListName(validData.Select(f => f.Result.PriorityGroup.Trim().ToUpper()).Distinct().ToList());
+            var bloodTypes = await _bloodTypeRepository.FindByListName(validData.Select(f => f.Result.BloodType.Trim().ToUpper()).Distinct().ToList());
+            var humanRaces = await _humanRaceRepository.FindByListName(validData.Select(f => f.Result.HumanRace.Trim().ToUpper()).Distinct().ToList());
+            var cities = await _cityRepository.FindByCityStateAndCountryNames(validData.Select(f => f.Result.City.Trim().ToUpper() + f.Result.State.Trim().ToUpper() + f.Result.Country.Trim().ToUpper()).Distinct().ToList());
+            var vaccineFilter = validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => f.Result.VaccineNameUniqueDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameUniqueDose.Trim().ToUpper()).Distinct().ToList();
+            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => f.Result.VaccineNameFirstDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameFirstDose.Trim().ToUpper()).Distinct().ToList());
+            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => f.Result.VaccineNameSecondDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameSecondDose.Trim().ToUpper()).Distinct().ToList());
+            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => f.Result.VaccineNameThirdDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameThirdDose.Trim().ToUpper()).Distinct().ToList());
+            var vaccines = await _vaccineRepository.GetByVaccineAndManufacturerNames(vaccineFilter.Distinct().ToList());
+            var healthUnityFilter = validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjUniqueDose, Ine = f.Result.HealthUnityIneUniqueDose }).Distinct().ToList();
+            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjFirstDose, Ine = f.Result.HealthUnityIneFirstDose }).Distinct().ToList());
+            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjSecondDose, Ine = f.Result.HealthUnityIneSecondDose }).Distinct().ToList());
+            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjThirdDose, Ine = f.Result.HealthUnityIneThirdDose }).Distinct().ToList());
+            var healthUnits = await _healthUnitRepository.FindByCnpjAndIne(healthUnityFilter.Select(h => h.Cnpj).Distinct().ToList(), healthUnityFilter.Select(h => h.Ine).Distinct().ToList());
+
+            validData.ForEach(v =>
+            {
+                v.Result.GenderId = genders.Where(g => g.Name.ToUpper() == v.Result.Gender.ToUpper()).Select(g => g.Id).Single();
+                v.Result.CompanyId = companies.Where(c => c.Cnpj == v.Result.Cnpj).Select(c => c.Id).Single();
+                v.Result.PriorityGroupId = priorityGroups.Where(p => p.Name.ToUpper() == v.Result.PriorityGroup.ToUpper()).Select(p => p.Id).Single();
+                v.Result.BloodTypeId = bloodTypes.Where(b => b.Name.ToUpper() == v.Result.BloodType.ToUpper()).Select(b => b.Id).Single();
+                v.Result.HumanRaceId = humanRaces.Where(h => h.Name.ToUpper() == v.Result.HumanRace.ToUpper()).Select(h => h.Id).Single();
+                v.Result.CityId = cities.Where(c => c.Name.ToUpper() == v.Result.City.ToUpper()
+                                                        && c.State.Name.ToUpper() == v.Result.State.ToUpper()
+                                                        && c.State.Country.Name.ToUpper() == v.Result.Country.ToUpper()).Select(c => c.Id).Single();
+                v.Result.VaccineIdUniqueDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameUniqueDose.ToUpper()
+                                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameUniqueDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+                v.Result.HealthUnityIdUniqueDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) || v.Result.HealthUnityCnpjUniqueDose == h.Cnpj)
+                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose) || v.Result.HealthUnityIneUniqueDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                v.Result.VaccineIdFirstDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameFirstDose.ToUpper()
+                                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameFirstDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+                v.Result.HealthUnityIdFirstDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || v.Result.HealthUnityCnpjFirstDose == h.Cnpj)
+                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose) || v.Result.HealthUnityIneFirstDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                v.Result.VaccineIdSecondDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameSecondDose.ToUpper()
+                                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameSecondDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+                v.Result.HealthUnityIdSecondDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || v.Result.HealthUnityCnpjSecondDose == h.Cnpj)
+                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose) || v.Result.HealthUnityIneSecondDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                v.Result.VaccineIdThirdDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameThirdDose.ToUpper()
+                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+                v.Result.HealthUnityIdThirdDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
+                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+            });
         }
     }
 }

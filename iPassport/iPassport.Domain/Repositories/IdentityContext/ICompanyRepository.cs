@@ -1,6 +1,7 @@
 ﻿using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Domain.Repositories.PassportIdentityContext
@@ -9,5 +10,6 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
     {
         Task<PagedData<Company>> FindByNameParts(GetByNamePartsPagedFilter filter);
         Task<Company> GetLoadedCompanyById(Guid id);
+        Task<IList<Company>> FindListCnpj(List<string> listCnpj);
     }
 }

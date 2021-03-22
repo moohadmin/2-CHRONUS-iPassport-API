@@ -4,6 +4,7 @@ using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,5 +27,8 @@ namespace iPassport.Infra.Repositories
 
         public async Task<HealthUnit> GetByCnpj(string cnpj) =>
             await _DbSet.FirstOrDefaultAsync(x => x.Cnpj == cnpj);
+
+        public async Task<IList<HealthUnit>> FindByCnpjAndIne(List<string> listCnpj, List<string> listIne)
+            => await _DbSet.Where(m => listCnpj.Any(l => l == m.Cnpj)).Union(_DbSet.Where(m => listIne.Any(l => l == m.Ine))).ToListAsync();
     }
 }

@@ -8,6 +8,7 @@ using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -399,6 +400,24 @@ namespace iPassport.Api.Controllers
             return Ok(res);
         }
 
-
+        /// <summary>
+        /// This API is responsible for add User Image.
+        /// </summary>
+        /// <param name="file">CSV file with user data.</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User Image Id</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpPost("Import")]
+        public async Task<ActionResult> ImportUsers([FromForm] UserImportRequest request)
+        {
+            await _service.ImportUsers(request.File);
+            return Ok();
+        }
     }
 }
