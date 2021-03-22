@@ -17,6 +17,5 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
             return await Paginate(query, filter);
         }
-
     }
 }
