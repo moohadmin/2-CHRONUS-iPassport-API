@@ -22,6 +22,8 @@ namespace iPassport.Infra.Mappings
             builder.Property(c => c.UpdateDate)
                 .IsRequired();
 
+            builder.Property(c => c.ExclusionDate);
+
             builder.HasOne(c => c.Vaccine)
                 .WithMany(c => c.UserVaccines)
                 .HasForeignKey(c => c.VaccineId);
@@ -34,6 +36,8 @@ namespace iPassport.Infra.Mappings
                 .WithMany(c => c.UserVaccines)
                 .HasForeignKey(c => c.HealthUnitId)
                 .IsRequired(false);
+
+
 
         }
     }

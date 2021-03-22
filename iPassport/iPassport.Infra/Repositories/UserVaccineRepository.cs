@@ -19,7 +19,7 @@ namespace iPassport.Infra.Repositories
             var q = await _DbSet
                .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
-               .Where(v => v.UserDetails.Id == pageFilter.Id)
+               .Where(v => v.ExclusionDate == null && v.UserDetails.Id == pageFilter.Id)
                .OrderBy(x => x.Vaccine.Name)
                .ToListAsync();
 
@@ -31,7 +31,7 @@ namespace iPassport.Infra.Repositories
             var q = await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
-                .Where(v => v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
+                .Where(v => v.ExclusionDate == null && v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
                 .OrderBy(x => x.Vaccine.Name)
                 .ToListAsync();
 
@@ -43,7 +43,7 @@ namespace iPassport.Infra.Repositories
             return await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.Vaccine).ThenInclude(v => v.Diseases)
-                .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
+                .Where(v => v.ExclusionDate == null && (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (filter.DiseaseId == null || v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
                     && (filter.DosageCount == 0 ? v.Vaccine.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.RequiredDoses > 1))
@@ -55,7 +55,7 @@ namespace iPassport.Infra.Repositories
             var query = await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.Vaccine).ThenInclude(v => v.Diseases)
-                .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
+                .Where(v => v.ExclusionDate == null && (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (filter.DiseaseId == null || v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
                     && (filter.DosageCount == 0 ? v.Vaccine.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.RequiredDoses > 1))

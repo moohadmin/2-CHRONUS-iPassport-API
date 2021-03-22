@@ -125,6 +125,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IBloodTypeRepository, BloodTypeRepository>();
 
             services.AddScoped<IHumanRaceRepository, HumanRaceRepository>();
+            
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
 
             #region DI Settings

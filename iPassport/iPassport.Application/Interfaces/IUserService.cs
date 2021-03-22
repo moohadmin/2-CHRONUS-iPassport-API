@@ -20,5 +20,7 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> AddAgent(UserAgentCreateDto dto);
         Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter);
         Task<ResponseApi> GetCitizenById(Guid id);
+
+        Task<ResponseApi> EditCitizen(CitizenEditDto dto);
     }
 }
