@@ -1,60 +1,70 @@
 ﻿using System;
 
-namespace iPassport.Application.Models.ViewModels
+namespace iPassport.Api.Models.Requests.HealthUnit
 {
     /// <summary>
-    /// Health Unit View Model
+    /// Health Unit Edit Request
     /// </summary>
-    public class HealthUnitViewModel
+    public class HealthUnitEditRequest
     {
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
+
         /// <summary>
-        /// Health unit Name
+        /// Name
         /// </summary>
         public string Name { get; set; }
+
         /// <summary>
-        /// Health unit Cnpj
+        /// Cnpj
         /// </summary>
         public string Cnpj { get; set; }
+
         /// <summary>
         /// Ine
         /// </summary>
         public string Ine { get; set; }
+
         /// <summary>
-        /// Health unit Email
+        /// E-mail
         /// </summary>
         public string Email { get; set; }
+
         /// <summary>
-        /// Health unit Responsible Person Name
+        /// Responsible Person Name
         /// </summary>
         public string ResponsiblePersonName { get; set; }
+
         /// <summary>
-        /// Health unit Responsible Person Phone
+        /// Responsible Person Phone
         /// </summary>
         public string ResponsiblePersonPhone { get; set; }
+
         /// <summary>
-        /// Health unit Responsible Person Occupation 
+        /// Responsible Person Occupation
         /// </summary>
         public string ResponsiblePersonOccupation { get; set; }
-        /// <summary>
-        /// Health unit Is Active
-        /// </summary>
-        public bool IsActive { get; set; }
-        /// <summary>
-        /// Health unit Type
-        /// </summary>
-        public HealthUnitTypeViewModel Type { get; set; }
-        /// <summary>
-        /// Health unit AddressId
-        /// </summary>
-        public Guid? AddressId { get; set; }
-        /// <summary>
-        /// Health Unit Info Address
-        /// </summary>
-        public AddressViewModel Address {get; set;}
 
+        /// <summary>
+        /// Deactivation Date
+        /// </summary>
+        public DateTime? DeactivationDate { get; set; }
+
+        /// <summary>
+        /// Type Id
+        /// </summary>
+        public Guid? TypeId { get; set; }
+
+        /// <summary>
+        /// Address
+        /// </summary>
+        public AddressEditRequest Address { get; set; }
+
+        /// <summary>
+        /// Is Active?
+        /// </summary>
+        public bool? IsActive { get; set; }
     }
 }

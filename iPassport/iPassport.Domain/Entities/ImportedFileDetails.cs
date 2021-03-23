@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 namespace iPassport.Domain.Entities
 {
@@ -23,7 +20,7 @@ namespace iPassport.Domain.Entities
         public string ErrorDescription { get; private set; }
         public Guid ImportedFileId { get; private set; }
 
-        public ImportedFile ImportedFile { get; set; }
+        public virtual ImportedFile ImportedFile { get; set; }
         public ImportedFileDetails Create() => new ImportedFileDetails();
     }
 }

@@ -384,6 +384,15 @@
   <data name="InvalidPeriod" xml:space="preserve">
     <value>Período inválido.</value>
   </data>
+  <data name="HealthUnitUpdated" xml:space="preserve">
+    <value>Unidade de saúde atualizada.</value>
+  </data>
+  <data name="HealthUnitTypes" xml:space="preserve">
+    <value>Tipos de Unidade de Saúde</value>
+  </data>
+  <data name="ImportedFileNotFound" xml:space="preserve">
+    <value>Arquivo não encontrado.</value>
+  </data>
   <data name="CityDoesntExistsInDataBase" xml:space="preserve">
     <value>Não existe o cadastro desta cidade na base.</value>
   </data>

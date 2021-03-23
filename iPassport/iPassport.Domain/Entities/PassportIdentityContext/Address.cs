@@ -26,7 +26,7 @@ namespace iPassport.Domain.Entities
 
         public Address Create(AddressCreateDto dto) => new Address(dto.Description, dto.CityId, dto.Cep, dto.Number, dto.District);
 
-        internal void ChangeAddress(AddressEditDto dto)
+        public void ChangeAddress(AddressEditDto dto)
         {
             Description = dto.Description;
             Cep = dto.Cep;

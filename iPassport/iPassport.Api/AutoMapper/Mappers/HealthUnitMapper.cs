@@ -36,6 +36,8 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<HealthUnitCreateRequest, HealthUnitCreateDto>();
 
+            profile.CreateMap<HealthUnitEditRequest, HealthUnitEditDto>();
+
             profile.CreateMap<HealthUnitTypeDto, HealthUnitTypeViewModel>();
 
             profile.CreateMap<HealthUnitDto, HealthUnitViewModel>();
