@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Dtos;
 using System;
+using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
 {
@@ -90,6 +91,22 @@ namespace iPassport.Domain.Entities
 
         public void Delete() => ExclusionDate = DateTime.UtcNow;
 
+        public static IEnumerable<UserVaccine> CreateListUserVaccine(UserImportDto dto)
+        {
+            List<UserVaccine> userVacines = new ();
+            if (dto.HasVaccineUniqueDoseData)
+                userVacines.Add(new UserVaccine(dto.VaccinationDateUniqueDose.Value, 1, dto.VaccineIdUniqueDose.Value, dto.UserId, dto.BatchUniqueDose, dto.EmployeeNameVaccinationUniqueDose, dto.EmployeeCpfVaccinationUniqueDose, dto.EmployeeCorenVaccinationUniqueDose, dto.HealthUnityIdUniqueDose.Value));
 
+            if (dto.HasVaccineFirstDoseData)
+                userVacines.Add(new UserVaccine(dto.VaccinationDateFirstDose.Value, 1, dto.VaccineIdFirstDose.Value, dto.UserId, dto.BatchFirstDose, dto.EmployeeNameVaccinationFirstDose, dto.EmployeeCpfVaccinationFirstDose, dto.EmployeeCorenVaccinationFirstDose, dto.HealthUnityIdFirstDose.Value));
+
+            if (dto.HasVaccineSecondDoseData)
+                userVacines.Add(new UserVaccine(dto.VaccinationDateSecondDose.Value, 2, dto.VaccineIdSecondDose.Value, dto.UserId, dto.BatchSecondDose, dto.EmployeeNameVaccinationSecondDose, dto.EmployeeCpfVaccinationSecondDose, dto.EmployeeCorenVaccinationSecondDose, dto.HealthUnityIdSecondDose.Value));
+
+            if (dto.HasVaccineThirdDoseData)
+                userVacines.Add(new UserVaccine(dto.VaccinationDateThirdDose.Value, 3, dto.VaccineIdThirdDose.Value, dto.UserId, dto.BatchThirdDose, dto.EmployeeNameVaccinationThirdDose, dto.EmployeeCpfVaccinationThirdDose, dto.EmployeeCorenVaccinationThirdDose, dto.HealthUnityIdThirdDose.Value));
+
+            return userVacines;
+        }
     }
 }

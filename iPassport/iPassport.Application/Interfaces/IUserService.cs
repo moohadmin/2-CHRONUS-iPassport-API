@@ -2,6 +2,7 @@
 using iPassport.Application.Models.Pagination;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> AddAgent(UserAgentCreateDto dto);
         Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter);
         Task<ResponseApi> GetCitizenById(Guid id);
-
         Task<ResponseApi> EditCitizen(CitizenEditDto dto);
+        Task ImportUsers(IFormFile file);
     }
 }

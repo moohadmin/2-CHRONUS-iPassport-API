@@ -2,6 +2,8 @@
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,5 +19,8 @@ namespace iPassport.Infra.Repositories
 
             return await Paginate(query, filter);
         }
+
+        public async Task<IList<PriorityGroup>> FindByListName(List<string> listName)
+            => await _DbSet.Where(m => listName.Contains(m.Name.ToUpper())).ToListAsync();
     }
 }

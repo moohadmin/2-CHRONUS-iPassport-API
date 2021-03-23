@@ -2,7 +2,9 @@
 using iPassport.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace iPassport.Domain.Entities.Authentication
 {
@@ -31,6 +33,7 @@ namespace iPassport.Domain.Entities.Authentication
             Profile = profile;
             CompanyId = companyId;
             CreateDate = DateTime.UtcNow;
+            UpdateDate = DateTime.UtcNow;
 
             if (userName == null)
                 UserName = Id.ToString();
@@ -48,6 +51,7 @@ namespace iPassport.Domain.Entities.Authentication
 
             CompanyId = companyId;
             CreateDate = DateTime.UtcNow;
+            UpdateDate = DateTime.UtcNow;
         }
 
         public bool AcceptTerms { get; set; }
@@ -154,8 +158,29 @@ namespace iPassport.Domain.Entities.Authentication
             GenderId = dto.GenderId;
             HumanRaceId = dto.HumanRaceId;
 
-            if (AddressId.HasValue)            
+            if (AddressId.HasValue)
                 Address.ChangeAddress(dto.Address);
         }
+
+        public static Users CreateCitizen(UserImportDto dto)
+            => new (dto.FullName,
+                    dto.Cpf,
+                    null,
+                    dto.Cns,
+                    null,
+                    dto.Birthday,
+                    dto.GenderId,
+                    dto.HumanRaceId,
+                    dto.BloodTypeId,
+                    dto.Occupation,
+                    new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District),
+                    null,
+                    null,
+                    null,
+                    dto.Email,
+                    string.Concat(dto.CountryCode, dto.PhoneNumber),
+                    dto.CompanyId,
+                    (int)EProfileType.Citizen);
     }
 }
+

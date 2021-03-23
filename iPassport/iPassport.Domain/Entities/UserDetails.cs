@@ -175,5 +175,16 @@ namespace iPassport.Domain.Entities
 
             PriorityGroupId = dto.PriorityGroupId;
         }
+
+        public static UserDetails CreateUserDetail(UserImportDto dto)
+            => new ()
+            {
+                Id = dto.UserId,
+                Bond = dto.Bond,
+                PriorityGroupId = dto.PriorityGroupId,
+                WasCovidInfected = dto.WasCovidInfectedBool,
+                UserDiseaseTests = dto.WasTestPerformed == "Sim" ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
+                UserVaccines = UserVaccine.CreateListUserVaccine(dto)
+            };
     }
 }

@@ -49,6 +49,7 @@ namespace iPassport.Test.Services
         Mock<IUserDiseaseTestRepository> _mockUserDiseaseTestRepository;
         Mock<IAddressRepository> _mockAddressRepository;
         Mock<IUnitOfWork> _mockUnitOfWork;
+        Mock<IImportedFileRepository> _mockImportedFileRepository;
 
         [TestInitialize]
         public void Setup()
@@ -73,10 +74,11 @@ namespace iPassport.Test.Services
             _mockUserDiseaseTestRepository = new Mock<IUserDiseaseTestRepository>();
             _mockAddressRepository = new Mock<IAddressRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockImportedFileRepository = new();
 
             _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
                 _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object,
-                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object);
+                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object);
         }
 
         [TestMethod]

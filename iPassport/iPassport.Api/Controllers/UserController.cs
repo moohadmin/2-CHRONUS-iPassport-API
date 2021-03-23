@@ -8,6 +8,7 @@ using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -397,6 +398,26 @@ namespace iPassport.Api.Controllers
         {
             var res = await _service.EditCitizen(_mapper.Map<CitizenEditDto>(request));
             return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for import citizens by file.
+        /// </summary>
+        /// <param name="request">CSV file with user data.</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>User Image Id</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpPost("Import")]
+        public async Task<ActionResult> ImportUsers([FromForm] UserImportRequest request)
+        {
+            await _service.ImportUsers(request.File);
+            return Ok();
         }
     }
 }

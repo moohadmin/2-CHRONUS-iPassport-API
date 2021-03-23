@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Domain.Repositories
@@ -9,5 +10,6 @@ namespace iPassport.Domain.Repositories
     {
         Task<PagedData<HealthUnit>> GetPagedHealthUnits(GetHealthUnitPagedFilter filter);
         Task<HealthUnit> GetByCnpj(string cnpj);
+        Task<IList<HealthUnit>> FindByCnpjAndIne(List<string> listCnpj, List<string> listIne);
     }
 }
