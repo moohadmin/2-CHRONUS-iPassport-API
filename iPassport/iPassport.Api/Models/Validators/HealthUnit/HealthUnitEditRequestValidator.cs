@@ -3,7 +3,6 @@ using iPassport.Api.Models.Requests.HealthUnit;
 using iPassport.Application.Resources;
 using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
-using System;
 using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.HealthUnit
@@ -34,7 +33,7 @@ namespace iPassport.Api.Models.Validators.HealthUnit
             RuleFor(x => x.Ine)
                 .Cascade(CascadeMode.Stop)
                 .SetValidator(new RequiredFieldValidator<string>("Ine", localizer)).When(x => string.IsNullOrWhiteSpace(x.Cnpj))
-                .Length(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "CNS"))
+                .Length(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"))
                 .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"));
 
             RuleFor(x => x.Email)

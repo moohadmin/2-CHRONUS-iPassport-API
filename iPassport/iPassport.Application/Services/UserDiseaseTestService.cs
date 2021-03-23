@@ -4,7 +4,6 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
-using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
