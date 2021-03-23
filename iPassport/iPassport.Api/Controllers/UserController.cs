@@ -401,7 +401,7 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is responsible for add User Image.
+        /// This API is responsible for import citizens by file.
         /// </summary>
         /// <param name="request">CSV file with user data.</param>
         /// <response code="200">Server returns Ok</response>
