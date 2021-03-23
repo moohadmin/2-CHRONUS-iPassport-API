@@ -384,14 +384,149 @@
   <data name="InvalidPeriod" xml:space="preserve">
     <value>Período inválido.</value>
   </data>
+  <data name="CityDoesntExistsInDataBase" xml:space="preserve">
+    <value>Não existe o cadastro desta cidade na base.</value>
+  </data>
   <data name="CnpjDoesntExistsInDataBase" xml:space="preserve">
     <value>Não existe o cadastro deste CNPJ na base.</value>
+  </data>
+  <data name="CnpjIneDoesntExistsInDataBase" xml:space="preserve">
+    <value>Não existe o cadastro deste CNPJ/INE na base.</value>
+  </data>
+  <data name="ColumnNameImportFileBatchFirstDose" xml:space="preserve">
+    <value>Lote - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileBatchSecondDose" xml:space="preserve">
+    <value>Data - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileBatchThirdDose" xml:space="preserve">
+    <value>Lote - Dose III</value>
+  </data>
+  <data name="ColumnNameImportFileBatchUniqueDose" xml:space="preserve">
+    <value>Lote - Dose Única</value>
   </data>
   <data name="ColumnNameImportFileBirthday" xml:space="preserve">
     <value>Data Nascimento</value>
   </data>
+  <data name="ColumnNameImportFileBloodType" xml:space="preserve">
+    <value>Tipo Sanguineo</value>
+  </data>
+  <data name="ColumnNameImportFileCity" xml:space="preserve">
+    <value>Cidade</value>
+  </data>
+  <data name="ColumnNameImportFileCnpj" xml:space="preserve">
+    <value>CNPJ da Empresa</value>
+  </data>
+  <data name="ColumnNameImportFileCns" xml:space="preserve">
+    <value>CNS</value>
+  </data>
+  <data name="ColumnNameImportFileCountry" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="ColumnNameImportFileCountryCode" xml:space="preserve">
+    <value>DDI Telefone</value>
+  </data>
+  <data name="ColumnNameImportFileCpf" xml:space="preserve">
+    <value>CPF</value>
+  </data>
+  <data name="ColumnNameImportFileEmail" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
   <data name="ColumnNameImportFileFullName" xml:space="preserve">
     <value>Nome Completo</value>
+  </data>
+  <data name="ColumnNameImportFileGender" xml:space="preserve">
+    <value>Genero</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityCnpjFirstDose" xml:space="preserve">
+    <value>CNPJ da Unidade Vacinação - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityCnpjSecondDose" xml:space="preserve">
+    <value>CNPJ da Unidade Vacinação - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityCnpjThirdDose" xml:space="preserve">
+    <value>CNPJ da Unidade Vacinação - Dose III</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityCnpjUniqueDose" xml:space="preserve">
+    <value>CNPJ da Unidade Vacinação - Dose Única</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityIneFirstDose" xml:space="preserve">
+    <value>INE da Unidade Vacinação - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityIneSecondDose" xml:space="preserve">
+    <value>INE da Unidade Vacinação - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityIneThirdDose" xml:space="preserve">
+    <value>INE da Unidade Vacinação - Dose III</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityIneUniqueDose" xml:space="preserve">
+    <value>INE da Unidade Vacinação - Dose Única</value>
+  </data>
+  <data name="ColumnNameImportFileHumanRace" xml:space="preserve">
+    <value>Raça</value>
+  </data>
+  <data name="ColumnNameImportFilePhoneNumber" xml:space="preserve">
+    <value>Telefone</value>
+  </data>
+  <data name="ColumnNameImportFilePriorityGroup" xml:space="preserve">
+    <value>Grupo Proritário</value>
+  </data>
+  <data name="ColumnNameImportFileResult" xml:space="preserve">
+    <value>Resultado do teste PCR</value>
+  </data>
+  <data name="ColumnNameImportFileResultDate" xml:space="preserve">
+    <value>Data do resultado PCR</value>
+  </data>
+  <data name="ColumnNameImportFileState" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="ColumnNameImportFileTestDate" xml:space="preserve">
+    <value>Data do teste PCR</value>
+  </data>
+  <data name="ColumnNameImportFileVaccinationDateFirstDose" xml:space="preserve">
+    <value>Data - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileVaccinationDateSecondDose" xml:space="preserve">
+    <value>CNPJ da Unidade Vacinação - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileVaccinationDateThirdDose" xml:space="preserve">
+    <value>Data - Dose III</value>
+  </data>
+  <data name="ColumnNameImportFileVaccinationDateUniqueDose" xml:space="preserve">
+    <value>Data - Dose Única</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineManufacturerNameFirstDose" xml:space="preserve">
+    <value>Fabricante (Marca) - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineManufacturerNameSecondDose" xml:space="preserve">
+    <value>Fabricante (Marca) - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineManufacturerNameThirdDose" xml:space="preserve">
+    <value>Fabricante (Marca) - Dose III</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineManufacturerNameUniqueDose" xml:space="preserve">
+    <value>Fabricante (Marca) - Dose Única</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineNameFirstDose" xml:space="preserve">
+    <value>Vacina (Nome) - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineNameSecondDose" xml:space="preserve">
+    <value>Vacina (Nome) - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineNameThirdDose" xml:space="preserve">
+    <value>Vacina (Nome) - Dose III</value>
+  </data>
+  <data name="ColumnNameImportFileVaccineNameUniqueDose" xml:space="preserve">
+    <value>Vacina (Nome) - Dose Única</value>
+  </data>
+  <data name="ColumnNameImportFileWasCovidInfected" xml:space="preserve">
+    <value>Já teve Covid 19</value>
+  </data>
+  <data name="ColumnNameImportFileWasTestPerformed" xml:space="preserve">
+    <value>Realizou o teste PCR</value>
+  </data>
+  <data name="IneDoesntExistsInDataBase" xml:space="preserve">
+    <value>Não existe o cadastro deste INE na base.</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
     <value>Valor inválido.</value>

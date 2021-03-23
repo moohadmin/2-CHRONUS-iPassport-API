@@ -531,7 +531,6 @@ namespace iPassport.Application.Services
 
         public async Task ImportUsers(IFormFile file)
         {
-
             List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
 
             ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
@@ -542,17 +541,16 @@ namespace iPassport.Application.Services
             var validData = fileData.Where(f => f.IsValid).ToList();
             await GetComplementaryDatForUserImport(validData, importedFile);
 
-
-            foreach (var data in validData)
+            foreach (var data in validData.Where(d => d.IsValid))
             {
                 try
                 {
-                    Users user = Users.CreateUser(data.Result);
+                    Users user = Users.CreateCitizen(data.Result);
 
                     _unitOfWork.BeginTransactionIdentity();
                     _unitOfWork.BeginTransactionPassport();
 
-                    // Add User in iPassportIdentityContext                   
+                    // Add User in iPassportIdentityContext
                     var result = await _userManager.CreateAsync(user);
                     ValidSaveUserIdentityResult(result);
 
@@ -572,23 +570,17 @@ namespace iPassport.Application.Services
                     _unitOfWork.RollbackPassport();
 
                     if (ex.ToString().Contains("IX_Users_CNS"))
-                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                    if (ex.ToString().Contains("IX_Users_CPF"))
-                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                    if (ex.ToString().Contains("IX_Users_RG"))
-                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                    if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
-                    if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
-                    if (ex.ToString().Contains("IX_Users_Email"))
-                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
-                    if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                        throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
-                    throw;
-                } 
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cns.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "CNS"), data.RowIndex + 1, importedFile.Id));
+                    else if (ex.ToString().Contains("IX_Users_CPF"))
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cpf.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "CPF"), data.RowIndex + 1, importedFile.Id));
+                    else if (ex.ToString().Contains("IX_Users_Email"))
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Email.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "E-mail"), data.RowIndex + 1, importedFile.Id));
+                    else if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PhoneNumber.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "Phone"), data.RowIndex + 1, importedFile.Id));
+                    else
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails("", ex.Message, data.RowIndex + 1, importedFile.Id));
+                }
             }
-            
 
             await _importedFileRepository.InsertAsync(importedFile);
 
@@ -636,9 +628,10 @@ namespace iPassport.Application.Services
             validData.ForEach(v =>
             {
                 id = genders.Where(g => g.Name.ToUpper() == v.Result.Gender.ToUpper()).Select(g => g.Id).SingleOrDefault();
-                if (id == null && !string.IsNullOrEmpty(v.Result.Gender))
+                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.Gender))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Gender.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                    v.Error = new CsvMappingError();
                 }
                 else
                 {
@@ -646,9 +639,10 @@ namespace iPassport.Application.Services
                 }
 
                 id = companies.Where(c => c.Cnpj == v.Result.Cnpj).Select(c => c.Id).SingleOrDefault();
-                if (id == null && !string.IsNullOrEmpty(v.Result.Cnpj))
+                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.Cnpj))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cnpj.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    v.Error = new CsvMappingError();
                 }
                 else
                 {
@@ -656,54 +650,153 @@ namespace iPassport.Application.Services
                 }
 
                 id = priorityGroups.Where(p => p.Name.ToUpper() == v.Result.PriorityGroup.ToUpper()).Select(p => p.Id).SingleOrDefault();
-                if (id == null && !string.IsNullOrEmpty(v.Result.PriorityGroup))
+                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.PriorityGroup))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PriorityGroup.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                    v.Error = new CsvMappingError();
                 }
                 else
                 {
                     v.Result.PriorityGroupId = id;
                 }
 
-                id = bloodTypes.Where(b => b.Name.ToUpper() == v.Result.BloodType.ToUpper()).Select(b => b.Id).Single();
-                if (id == null && !string.IsNullOrEmpty(v.Result.BloodType))
+                id = bloodTypes.Where(b => b.Name.ToUpper() == v.Result.BloodType.ToUpper()).Select(b => b.Id).SingleOrDefault();
+                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.BloodType))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.BloodType.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                    v.Error = new CsvMappingError();
                 }
                 else
                 {
                     v.Result.BloodTypeId = id;
                 }
 
-                id = humanRaces.Where(h => h.Name.ToUpper() == v.Result.HumanRace.ToUpper()).Select(h => h.Id).Single();
-                if (id == null && !string.IsNullOrEmpty(v.Result.HumanRace))
+                id = humanRaces.Where(h => h.Name.ToUpper() == v.Result.HumanRace.ToUpper()).Select(h => h.Id).SingleOrDefault();
+                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.HumanRace))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HumanRace.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
+                    v.Error = new CsvMappingError();
                 }
                 else
                 {
                     v.Result.HumanRaceId = id;
                 }
 
-                v.Result.CityId = cities.Where(c => c.Name.ToUpper() == v.Result.City.ToUpper()
-                                                        && c.State.Name.ToUpper() == v.Result.State.ToUpper()
-                                                        && c.State.Country.Name.ToUpper() == v.Result.Country.ToUpper()).Select(c => c.Id).Single();
+                id = cities.Where(c => c.Name.ToUpper() == v.Result.City.ToUpper() && c.State.Name.ToUpper() == v.Result.State.ToUpper()
+                                    && c.State.Country.Name.ToUpper() == v.Result.Country.ToUpper()).Select(c => c.Id).SingleOrDefault();
+                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.City))
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.City.ToString()], _localizer["CityDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    v.Error = new CsvMappingError();
+                }
+                else
+                {
+                    v.Result.CityId = id.Value;
+                }
+
                 v.Result.VaccineIdUniqueDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameUniqueDose.ToUpper()
-                                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameUniqueDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-                v.Result.HealthUnityIdUniqueDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) || v.Result.HealthUnityCnpjUniqueDose == h.Cnpj)
-                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose) || v.Result.HealthUnityIneUniqueDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameUniqueDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+
+                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) || v.Result.HealthUnityCnpjUniqueDose == h.Cnpj)
+                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose) || v.Result.HealthUnityIneUniqueDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose)))
+                {
+                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneUniqueDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    v.Error = new CsvMappingError();
+                }
+                else
+                {
+                    v.Result.HealthUnityIdUniqueDose = id.Value;
+                }
+
                 v.Result.VaccineIdFirstDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameFirstDose.ToUpper()
-                                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameFirstDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-                v.Result.HealthUnityIdFirstDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || v.Result.HealthUnityCnpjFirstDose == h.Cnpj)
-                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose) || v.Result.HealthUnityIneFirstDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameFirstDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+                
+                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || v.Result.HealthUnityCnpjFirstDose == h.Cnpj)
+                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose) || v.Result.HealthUnityIneFirstDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose)))
+                {
+                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneFirstDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    v.Error = new CsvMappingError();
+                }
+                else
+                {
+                    v.Result.HealthUnityIdFirstDose = id.Value;
+                }
+
                 v.Result.VaccineIdSecondDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameSecondDose.ToUpper()
-                                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameSecondDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-                v.Result.HealthUnityIdSecondDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || v.Result.HealthUnityCnpjSecondDose == h.Cnpj)
-                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose) || v.Result.HealthUnityIneSecondDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameSecondDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+
+                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || v.Result.HealthUnityCnpjSecondDose == h.Cnpj)
+                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose) || v.Result.HealthUnityIneSecondDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose)))
+                {
+                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneSecondDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    v.Error = new CsvMappingError();
+                }
+                else
+                {
+                    v.Result.HealthUnityIdSecondDose = id.Value;
+                }
+
                 v.Result.VaccineIdThirdDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameThirdDose.ToUpper()
-                                                            && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-                v.Result.HealthUnityIdThirdDose = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
-                                                                            && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+                
+                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
+                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
+                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose)))
+                {
+                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneThirdDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    v.Error = new CsvMappingError();
+                }
+                else
+                {
+                    v.Result.HealthUnityIdThirdDose = id.Value;
+                }
             });
         }
     }

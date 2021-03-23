@@ -15,7 +15,7 @@ namespace iPassport.Domain.Enums
         PriorityGroup = 8,
         BloodType = 9,
         HumanRace = 10,
-        Ddi = 11,
+        CountryCode = 11,
         PhoneNumber = 12,
         Email = 13,
         Cep = 14,

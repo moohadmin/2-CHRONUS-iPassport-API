@@ -162,8 +162,8 @@ namespace iPassport.Domain.Entities.Authentication
                 Address.ChangeAddress(dto.Address);
         }
 
-        public static Users CreateUser(UserImportDto dto)
-            => new Users(dto.FullName,
+        public static Users CreateCitizen(UserImportDto dto)
+            => new (dto.FullName,
                     dto.Cpf,
                     null,
                     dto.Cns,
@@ -178,7 +178,7 @@ namespace iPassport.Domain.Entities.Authentication
                     null,
                     null,
                     dto.Email,
-                    string.Concat(dto.Ddi, dto.PhoneNumber),
+                    string.Concat(dto.CountryCode, dto.PhoneNumber),
                     dto.CompanyId,
                     (int)EProfileType.Citizen);
     }
