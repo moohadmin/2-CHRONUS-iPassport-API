@@ -34,6 +34,7 @@ namespace iPassport.Domain.Entities
                 Email = dto.Email,
                 ResponsiblePersonName = dto.ResponsiblePersonName,
                 ResponsiblePersonPhone = dto.ResponsiblePersonPhone,
+                ResponsiblePersonOccupation = dto.ResponsiblePersonOccupation,
                 TypeId = (Guid)dto.TypeId,
                 AddressId = dto.Address.Id,
                 Active = dto.IsActive
