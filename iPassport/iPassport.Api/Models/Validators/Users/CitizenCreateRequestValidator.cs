@@ -9,8 +9,15 @@ using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Users
 {
+    /// <summary>
+    /// Citizen Create Request Validator
+    /// </summary>
     public class CitizenCreateRequestValidator : AbstractValidator<CitizenCreateRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">localizer</param>
         public CitizenCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.CompleteName)
@@ -23,7 +30,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .Cascade(CascadeMode.Stop)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Birthday"))
                 .SetValidator(new RequiredFieldValidator<DateTime?>("Birthday", localizer))
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(string.Format(localizer["InvalidField"], "Birthday"))
+                .LessThan(DateTime.UtcNow).WithMessage(string.Format(localizer["InvalidField"], "Birthday"))
                 .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage(string.Format(localizer["InvalidField"], "Birthday"));
 
             RuleFor(x => x.Cpf)
