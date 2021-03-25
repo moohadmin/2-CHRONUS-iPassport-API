@@ -123,6 +123,11 @@ spec:
             configMapKeyRef:
               key: SECRET_JWT_TOKEN
               name: ${APP_NAME}-${APP_SUBGROUP}
+        - name: NOTIFICATIONS_MOCK_NUMBER
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATIONS_MOCK_NUMBER
+              name: ${APP_NAME}-${APP_SUBGROUP}
         ports:
         - containerPort: 80
         readinessProbe:
