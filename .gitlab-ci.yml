@@ -137,3 +137,12 @@ deploy:tags:
     CONFIG_DIR: config
   only:
     - tags
+
+deploy:master:
+  extends: .deploy
+  variables:    
+    ENVIRONMENT: test 
+    IMAGE_TAG: ${CI_REGISTRY_IMAGE}:master_${CI_PIPELINE_ID}
+    CONFIG_DIR: config
+  only:
+    - master
