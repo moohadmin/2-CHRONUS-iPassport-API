@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Resources;
 using iPassport.Domain.Utils;
@@ -8,8 +7,15 @@ using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Users
 {
+    /// <summary>
+    /// User Agent Create Request Validator
+    /// </summary>
     public class UserAgentCreateRequestValidator : AbstractValidator<UserAgentCreateRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">localizer</param>
         public UserAgentCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.FullName)
