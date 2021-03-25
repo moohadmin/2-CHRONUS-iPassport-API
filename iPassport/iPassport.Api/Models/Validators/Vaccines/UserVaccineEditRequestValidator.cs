@@ -3,6 +3,7 @@ using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Resources;
 using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Vaccines
@@ -23,7 +24,8 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Dose"));
 
             RuleFor(x => x.VaccinationDate)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "VaccinationDate"));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "VaccinationDate"))
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.VaccinationDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "VaccinationDate"));
 
             RuleFor(x => x.Vaccine)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Vaccine"));
