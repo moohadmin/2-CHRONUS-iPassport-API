@@ -103,9 +103,10 @@ namespace iPassport.Application.Services
 
         public async Task<Auth2FactMobile> SaveAuth2FactMobile(Guid userId, string phone, string pin, string MessageId)
         {
-            var AmbienteSimulado = EnvConstants.NOTIFICATIONS_MOCK;
-
-            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
+            var IsNotificationMock = EnvConstants.NOTIFICATIONS_MOCK;
+            var NotificationMockNumber = EnvConstants.NOTIFICATIONS_MOCK_NUMBER;
+            if ((!string.IsNullOrWhiteSpace(IsNotificationMock) && Convert.ToBoolean(IsNotificationMock)) 
+                    || (!String.IsNullOrWhiteSpace(NotificationMockNumber)) && NotificationMockNumber.Trim() == phone)
                 pin = "1111";
 
             var twoFactDto = new Auth2FactMobileDto
