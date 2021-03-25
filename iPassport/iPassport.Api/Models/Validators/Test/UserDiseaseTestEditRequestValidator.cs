@@ -31,7 +31,8 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .NotEmpty()                
                 .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
                 .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"))
-                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.ResultDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "ResultDate"));
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.ResultDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "ResultDate"))
+                .GreaterThanOrEqualTo(x => x.TestDate).When(x => x.ResultDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "ResultDate"));
 
         }
     }
