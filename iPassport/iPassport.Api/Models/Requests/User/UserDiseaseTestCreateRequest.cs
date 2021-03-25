@@ -15,7 +15,7 @@ namespace iPassport.Api.Models.Requests.User
         /// <summary>
         /// Test Date
         /// </summary>
-        public DateTime TestDate { get;  set; }
+        public DateTime? TestDate { get;  set; }
         /// <summary>
         /// Result Date
         /// </summary>

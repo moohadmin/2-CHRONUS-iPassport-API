@@ -7,14 +7,14 @@ using System;
 namespace iPassport.Api.Models.Validators.Vaccines
 {
     /// <summary>
-    /// UserDiseaseTestEditRequestValidator Class
+    /// User Disease Test Edit Request Validator Class
     /// </summary>
     public class UserDiseaseTestEditRequestValidator : AbstractValidator<UserDiseaseTestEditRequest>
     {
         /// <summary>
-        /// UserDiseaseTestEditRequestValidator Contrutor
+        /// User Disease Test Edit Request Validator Contrutor
         /// </summary>
-        /// <param name="localizer"> Resource</param>
+        /// <param name="localizer">Resource</param>
         public UserDiseaseTestEditRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Result)
@@ -24,12 +24,15 @@ namespace iPassport.Api.Models.Validators.Vaccines
 
             RuleFor(x => x.TestDate)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "TestDate"));
+                .WithMessage(string.Format(localizer["RequiredField"], "TestDate"))
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.TestDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "TestDate"));
 
             RuleFor(x => x.ResultDate)
                 .NotEmpty()                
                 .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
-                .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"));
+                .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"))
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.ResultDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "ResultDate"));
+
         }
     }
 }
