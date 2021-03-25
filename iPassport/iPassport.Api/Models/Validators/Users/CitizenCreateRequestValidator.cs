@@ -50,9 +50,6 @@ namespace iPassport.Api.Models.Validators.Users
                 .Must(x => !string.IsNullOrWhiteSpace(x.Cpf) || !string.IsNullOrWhiteSpace(x.Cns))
                 .WithMessage(localizer["CnsAndCpfRequired"]);
 
-            RuleFor(x => x.PriorityGroupId)
-                .SetValidator(new GuidValidator("PriorityGroupId", localizer));
-
             RuleFor(x => x.Telephone)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
