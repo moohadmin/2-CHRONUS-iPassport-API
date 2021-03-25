@@ -104,6 +104,7 @@ namespace iPassport.Application.Services.Constants
 
         // Notification
         public static readonly string NOTIFICATIONS_MOCK = GetEnvironmentVariable("NOTIFICATIONS_MOCK", "false");
+        public static readonly string NOTIFICATIONS_MOCK_NUMBER = GetEnvironmentVariable("NOTIFICATIONS_MOCK_NUMBER");
         public static readonly string NOTIFICATIONS_BASE_URL = GetEnvironmentVariable("NOTIFICATIONS_BASE_URL", AWS_SECRET_NOTIFICATIONS, ".base_url");
         public static readonly string NOTIFICATIONS_CLIENT_ID = GetEnvironmentVariable("NOTIFICATIONS_CLIENT_ID", AWS_SECRET_NOTIFICATIONS, ".client_id");
         public static readonly string NOTIFICATIONS_CLIENT_SECRET = GetEnvironmentVariable("NOTIFICATIONS_CLIENT_SECRET", AWS_SECRET_NOTIFICATIONS, ".client_secret");
