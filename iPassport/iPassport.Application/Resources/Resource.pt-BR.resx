@@ -546,10 +546,10 @@
   <data name="BirthdayCannotBeHiggerThenActualDate" xml:space="preserve">
     <value>A data de nascimento não pode ser maior que a data atual.</value>
   </data>
-  <data name="TestResultCannotBeHiggerThenTestDate" xml:space="preserve">
+  <data name="TestResultDateCannotBeHiggerThenTestDate" xml:space="preserve">
     <value>A data do resultado não pode ser menor ou igual à data do teste.</value>
   </data>
-  <data name="TestCannotBeHiggerThenActualDate" xml:space="preserve">
+  <data name="TestDateCannotBeHiggerThenActualDate" xml:space="preserve">
     <value>A data do teste não pode ser maior que a data atual.</value>
   </data>
   <data name="VaccinationDateBeHiggerThenActualDate" xml:space="preserve">
