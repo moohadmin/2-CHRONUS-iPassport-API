@@ -25,7 +25,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
 
             RuleFor(x => x.VaccinationDate)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "VaccinationDate"))
-                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.VaccinationDate.HasValue).WithMessage(localizer["VaccinationDateValidation"]);
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.VaccinationDate.HasValue).WithMessage(localizer["VaccinationDateBeHiggerThenActualDate"]);
 
             RuleFor(x => x.Vaccine)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Vaccine"));

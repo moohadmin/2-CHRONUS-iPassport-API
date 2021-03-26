@@ -543,16 +543,16 @@
   <data name="NonstandardField" xml:space="preserve">
     <value>Campo fora do padrão.</value>
   </data>
-  <data name="BirthdayValidation" xml:space="preserve">
+  <data name="BirthdayCannotBeHiggerThenActualDate" xml:space="preserve">
     <value>A data de nascimento não pode ser maior que a data atual.</value>
   </data>
-  <data name="TestResultValidation" xml:space="preserve">
+  <data name="TestResultCannotBeHiggerThenTestDate" xml:space="preserve">
     <value>A data do resultado não pode ser menor ou igual à data do teste.</value>
   </data>
-  <data name="TestValidation" xml:space="preserve">
+  <data name="TestCannotBeHiggerThenActualDate" xml:space="preserve">
     <value>A data do teste não pode ser maior que a data atual.</value>
   </data>
-  <data name="VaccinationDateValidation" xml:space="preserve">
+  <data name="VaccinationDateBeHiggerThenActualDate" xml:space="preserve">
     <value>A data de vacinação não pode ser maior que a data atual.</value>
   </data>
 </root>
