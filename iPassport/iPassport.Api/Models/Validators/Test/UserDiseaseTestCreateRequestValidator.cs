@@ -24,14 +24,13 @@ namespace iPassport.Api.Models.Validators.Vaccines
 
             RuleFor(x => x.TestDate)
                 .NotEmpty()
-                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.TestDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "TestDate"));
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.TestDate.HasValue).WithMessage(localizer["TestValidation"]);
 
             RuleFor(x => x.ResultDate)
                 .NotEmpty()                
                 .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
                 .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"))
-                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.ResultDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "ResultDate"))
-                .GreaterThanOrEqualTo(x => x.TestDate).When(x => x.ResultDate.HasValue).WithMessage(string.Format(localizer["InvalidField"], "ResultDate"));
+                .GreaterThanOrEqualTo(x => x.TestDate).When(x => x.ResultDate.HasValue).WithMessage(localizer["TestResultValidation"]);
         }
     }
 }

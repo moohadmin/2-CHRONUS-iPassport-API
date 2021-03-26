@@ -70,7 +70,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .Cascade(CascadeMode.Stop)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Birthday"))
                 .SetValidator(new RequiredFieldValidator<DateTime?>("Birthday", localizer))
-                .LessThan(DateTime.UtcNow).WithMessage(string.Format(localizer["InvalidField"], "Birthday"))
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(localizer["BirthdayValidation"])
                 .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage(string.Format(localizer["InvalidField"], "Birthday"));
 
             RuleFor(x => x.Test)
