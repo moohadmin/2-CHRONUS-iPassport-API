@@ -28,6 +28,8 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .IsRequired();
 
             builder.Property(x => x.Population);
+
+            builder.HasIndex(x => x.Name);
         }
     }
 }

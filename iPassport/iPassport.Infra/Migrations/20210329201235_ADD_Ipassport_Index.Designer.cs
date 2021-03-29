@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210329201235_ADD_Ipassport_Index")]
+    partial class ADD_Ipassport_Index
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -424,9 +426,6 @@ namespace iPassport.Infra.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid?>("ImportedFileId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("PlanId")
                         .HasColumnType("uuid");
 
@@ -443,8 +442,6 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ImportedFileId");
 
                     b.HasIndex("PlanId");
 
@@ -704,10 +701,6 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
-                    b.HasOne("iPassport.Domain.Entities.ImportedFile", "ImportedFile")
-                        .WithMany()
-                        .HasForeignKey("ImportedFileId");
-
                     b.HasOne("iPassport.Domain.Entities.Plan", "Plan")
                         .WithMany("Users")
                         .HasForeignKey("PlanId");
@@ -715,8 +708,6 @@ namespace iPassport.Infra.Migrations
                     b.HasOne("iPassport.Domain.Entities.PriorityGroup", "PPriorityGroup")
                         .WithMany()
                         .HasForeignKey("PriorityGroupId");
-
-                    b.Navigation("ImportedFile");
 
                     b.Navigation("Plan");
 
