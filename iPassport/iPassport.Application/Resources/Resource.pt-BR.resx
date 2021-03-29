@@ -558,4 +558,52 @@
   <data name="FieldRequired" xml:space="preserve">
     <value>Campo obrigatório.</value>
   </data>
+  <data name="Address" xml:space="preserve">
+    <value>Endereço</value>
+  </data>
+  <data name="AddressId" xml:space="preserve">
+    <value>Identificador do Endereço</value>
+  </data>
+  <data name="Batch" xml:space="preserve">
+    <value>Lote</value>
+  </data>
+  <data name="Birthday" xml:space="preserve">
+    <value>Data de nascimento</value>
+  </data>
+  <data name="CityId" xml:space="preserve">
+    <value>Identificador da Cidade</value>
+  </data>
+  <data name="CompleteName" xml:space="preserve">
+    <value>Nome Completo</value>
+  </data>
+  <data name="EmployeeCpf" xml:space="preserve">
+    <value>CPF Profi. Vacinação</value>
+  </data>
+  <data name="HealthUnitId" xml:space="preserve">
+    <value>Identificador da Unidade de Saúde</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Número</value>
+  </data>
+  <data name="NumberOfDoses" xml:space="preserve">
+    <value>Numero de Doses</value>
+  </data>
+  <data name="ResultDate" xml:space="preserve">
+    <value>Data do Resultado</value>
+  </data>
+  <data name="Telephone" xml:space="preserve">
+    <value>Telefone</value>
+  </data>
+  <data name="TestResult" xml:space="preserve">
+    <value>Resuldado do Teste</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>Identificador do Usuário</value>
+  </data>
+  <data name="VaccinationDate" xml:space="preserve">
+    <value>Data de vacinação</value>
+  </data>
+  <data name="Vaccine" xml:space="preserve">
+    <value>Vacina</value>
+  </data>
 </root>

@@ -80,7 +80,7 @@ namespace iPassport.Api.Models.Validators
         {
             RuleFor(x => x.Id)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "Address.Id"));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["AddressId"]));
 
             RuleFor(x => x.Cep)
                 .Must(x => Regex.IsMatch(x, "^[0-9]{8}$"))
@@ -90,11 +90,11 @@ namespace iPassport.Api.Models.Validators
             RuleFor(y => y.Number)
                     .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
                     .When(x => !String.IsNullOrWhiteSpace(x.Number))
-                    .WithMessage(string.Format(localizer["InvalidField"], "Number"));
+                    .WithMessage(string.Format(localizer["InvalidField"], localizer["Number"]));
 
             RuleFor(x => x.CityId)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "CityId"));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["CityId"]));
         }
     }
 }
