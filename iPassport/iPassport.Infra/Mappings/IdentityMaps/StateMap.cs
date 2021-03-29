@@ -34,6 +34,8 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .HasForeignKey(x => x.CountryId)
                 .IsRequired();
 
+            builder.HasIndex(x => x.Name);
+
         }
     }
 }

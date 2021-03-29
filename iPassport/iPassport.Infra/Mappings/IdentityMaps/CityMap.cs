@@ -30,6 +30,8 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .WithMany(x => x.Cities)
                 .HasForeignKey(x => x.StateId)
                 .IsRequired();
+
+            builder.HasIndex(x => x.Name);
         }
     }
 }

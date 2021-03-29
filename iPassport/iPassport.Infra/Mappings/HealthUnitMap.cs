@@ -46,6 +46,8 @@ namespace iPassport.Infra.Mappings
             builder.HasOne(x => x.Type)
                 .WithMany()
                 .HasForeignKey(x => x.TypeId);
+
+            builder.HasIndex(x => x.Cnpj);
         }
     }
 }

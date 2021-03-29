@@ -22,6 +22,8 @@ namespace iPassport.Infra.Mappings
             builder.HasMany(c => c.Vaccines)
                 .WithOne(c => c.Manufacturer)
                 .HasForeignKey(c => c.ManufacturerId);
+
+            builder.HasIndex(x => x.Name);
         }
     }
 }
