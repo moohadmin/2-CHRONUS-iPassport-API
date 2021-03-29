@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using iPassport.Application.Exceptions;
 using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
@@ -8,6 +9,7 @@ using iPassport.Application.Models.Pagination;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Dtos.DtoValidator;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
@@ -532,11 +534,9 @@ namespace iPassport.Application.Services
         public async Task ImportUsers(IFormFile file)
         {
             List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
-
             ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
-            importedFile.ImportedFileDetails = GetCsvErrors(fileData, importedFile.Id);
-
-            // VALIDATE REQUIRED DATA FROM IMPORTED FILE
+            importedFile.ImportedFileDetails = GetExtractionErrors(fileData, importedFile.Id);
+            ValidateExtractedData(fileData, importedFile);
 
             var validData = fileData.Where(f => f.IsValid).ToList();
             await GetComplementaryDatForUserImport(validData, importedFile);
@@ -587,7 +587,24 @@ namespace iPassport.Application.Services
             return;
         }
 
-        private IList<ImportedFileDetails> GetCsvErrors(List<CsvMappingResult<UserImportDto>> fileData, Guid importedFileId)
+        private void ValidateExtractedData(List<CsvMappingResult<UserImportDto>> fileData, ImportedFile importedFile)
+        {
+            ValidationResult validationResult;
+
+            fileData.Where(f => f.IsValid).ToList().ForEach(d =>
+            {
+                validationResult = new UserImportDtoValidator(_localizer).Validate(d.Result);
+                if (!validationResult.IsValid)
+                {
+                    validationResult.Errors.ToList().ForEach(e =>
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + e.PropertyName], e.ErrorMessage, d.RowIndex, importedFile.Id))
+                    );
+                    d.Error = new CsvMappingError();
+                }
+            });
+        }
+
+        private IList<ImportedFileDetails> GetExtractionErrors(List<CsvMappingResult<UserImportDto>> fileData, Guid importedFileId)
         {
             return fileData.Where(f => !f.IsValid).Select(f => new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + ((EFileImportColumns)f.Error.ColumnIndex).ToString()], _localizer["InvalidValue"], f.RowIndex + 1, importedFileId)).ToList();
         }
