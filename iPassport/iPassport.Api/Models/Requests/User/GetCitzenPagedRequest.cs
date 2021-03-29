@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Enums;
+using System;
 
 namespace iPassport.Api.Models.Requests.User
 {
@@ -31,5 +32,27 @@ namespace iPassport.Api.Models.Requests.User
         /// Telephone
         /// </summary>
         public string Telephone { get; set; }
+
+        /// <summary>
+        /// CityId
+        /// </summary>
+        public Guid? CityId { get; set; }
+
+        /// <summary>
+        /// StateId
+        /// </summary>
+        public Guid? StateId { get; set; }
+
+        /// <summary>
+        /// CountryId
+        /// </summary>
+        public Guid? CountryId { get; set; }
+
+        /// <summary>
+        /// CompanyId
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+
+
     }
 }
