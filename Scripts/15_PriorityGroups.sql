@@ -1,9 +1,6 @@
 -- Inserindo Grupos Prioritários
 
 INSERT INTO public."PriorityGroups"("Id", "Name", "CreateDate", "UpdateDate")
-	VALUES (uuid_generate_v4(), 'Nenhum', timezone('utc', now()), timezone('utc', now()));
-	
-INSERT INTO public."PriorityGroups"("Id", "Name", "CreateDate", "UpdateDate")
 	VALUES (uuid_generate_v4(), 'Caminhoneiros', timezone('utc', now()), timezone('utc', now()));
 	
 INSERT INTO public."PriorityGroups"("Id", "Name", "CreateDate", "UpdateDate")
