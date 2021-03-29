@@ -1,8 +1,10 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Application.Exceptions;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace iPassport.Infra.Repositories
 {
     public class Repository<T> : IRepository<T> where T : Entity
     {
-        private readonly iPassportContext _context;
+        protected readonly iPassportContext _context;
         protected readonly DbSet<T> _DbSet;
 
         public Repository(iPassportContext context)
@@ -27,38 +29,85 @@ namespace iPassport.Infra.Repositories
 
         public virtual async Task<bool> InsertAsync(T obj)
         {
-            _DbSet.Add(obj);
-            var result = await _context.SaveChangesAsync();
+            try
+            {
+                _DbSet.Add(obj);
+                var result = await _context.SaveChangesAsync();
 
-            return result > 0;
+                return result > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.GetType() == (typeof(PostgresException)))
+                {
+                    var key = ((PostgresException)ex.InnerException).ConstraintName.Split('_').Last();
+
+                    throw new UniqueKeyException(key, ex);
+                }
+
+                throw new PersistenceException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistenceException(ex);
+            }
         }
 
         public async Task<bool> Update(T obj)
         {
-            obj.SetUpdateDate();
+            try
+            {
+                obj.SetUpdateDate();
 
-            _context.Entry(obj).State = EntityState.Modified;
-            var result = await _context.SaveChangesAsync();
+                _context.Entry(obj).State = EntityState.Modified;
+                var result = await _context.SaveChangesAsync();
 
-            return result > 0;
+                return result > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.GetType() == (typeof(PostgresException)))
+                {
+                    var key = ((PostgresException)ex.InnerException).ConstraintName.Split('_').Last();
+
+                    throw new UniqueKeyException(key, ex);
+                }
+
+                throw new PersistenceException(ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PersistenceException(ex);
+            }
         }
 
         public async Task<bool> Delete(T obj)
         {
             _DbSet.Remove(obj);
             var result = await _context.SaveChangesAsync();
-            
+
             return result > 0;
         }
 
         protected virtual async Task<PagedData<T>> Paginate(IQueryable<T> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);
+            var dataCount = await dbSet.CountAsync();
 
             var data = await dbSet.Take(take).Skip(skip).ToListAsync();
-            var totalPages = data.Count > filter.PageSize ? data.Count / filter.PageSize : 1;
 
-            return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = data.Count, Data = data };
+            int totalPages = 0;
+            if (dataCount < filter.PageSize)
+            {
+                totalPages = 1;
+            }
+            else
+            {
+                totalPages = dataCount / filter.PageSize;
+                totalPages = dataCount % filter.PageSize > 0 ? totalPages + 1 : totalPages;
+            }
+
+            return new PagedData<T>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = dataCount, Data = data };
         }
 
         protected (int, int) CalcPageOffset(PageFilter filter)

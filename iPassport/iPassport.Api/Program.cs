@@ -51,10 +51,13 @@ namespace iPassport.Api
                         .UseStartup<Startup>()
                         .ConfigureLogging(logging => logging.ClearProviders())
                         .UseNLog()
-                        .UseKestrel(options =>
+#if (!DEBUG)
+        .UseKestrel(options =>
                         {
                             options.Limits.MaxRequestBodySize = 10485760;
-                        });
+                        })
+#endif
+                        ;
                 });
     }
 }

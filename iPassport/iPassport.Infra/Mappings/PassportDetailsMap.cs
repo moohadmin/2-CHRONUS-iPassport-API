@@ -12,7 +12,6 @@ namespace iPassport.Infra.Mappings
             builder.HasKey(k => k.Id);
 
             builder.Property(x => x.ExpirationDate)
-                .HasColumnType("DateTime")
                 .IsRequired();
         }
 

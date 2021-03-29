@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests;
 using iPassport.Application.Resources;
-using iPassport.Domain.Enums;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Text.RegularExpressions;
@@ -29,10 +28,19 @@ namespace iPassport.Api.Models.Validators
         }
     }
 
+    /// <summary>
+    /// AddressValidator Class
+    /// </summary>
     public class AddressValidator : AbstractValidator<AddressCreateRequest>
     {
+        /// <summary>
+        /// AddressValidator Construtor
+        /// </summary>
         public AddressValidator() { }
 
+        /// <summary>
+        /// AddressValidator Construtor
+        /// </summary>
         public AddressValidator(IStringLocalizer<Resource> localizer, bool validateCep)
         {
             if (validateCep)
@@ -43,11 +51,50 @@ namespace iPassport.Api.Models.Validators
                     .Must(x => Regex.IsMatch(x, "^[0-9]{8}$")).WithMessage(string.Format(localizer["InvalidField"], "Cep"));
 
                 RuleFor(x => x.Description).SetValidator(new RequiredFieldValidator<string>("Description", localizer));
-
             }
+
+            RuleFor(y => y.Number)
+                    .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
+                    .When(x => !String.IsNullOrWhiteSpace(x.Number))
+                    .WithMessage(string.Format(localizer["InvalidField"], "Number"));
 
             RuleFor(x => x.CityId)
                 .SetValidator(new GuidValidator("CityId", localizer));
+        }
+    }
+
+    /// <summary>
+    /// AddressValidator Class
+    /// </summary>
+    public class AddressEditValidator : AbstractValidator<AddressEditRequest>
+    {
+        /// <summary>
+        /// AddressValidator Construtor
+        /// </summary>
+        public AddressEditValidator() { }
+
+        /// <summary>
+        /// AddressValidator Construtor
+        /// </summary>
+        public AddressEditValidator(IStringLocalizer<Resource> localizer)
+        {
+            RuleFor(x => x.Id)
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["AddressId"]));
+
+            RuleFor(x => x.Cep)
+                .Must(x => Regex.IsMatch(x, "^[0-9]{8}$"))
+                .When(x => !string.IsNullOrWhiteSpace(x.Cep))
+                .WithMessage(string.Format(localizer["InvalidField"], "Cep"));
+
+            RuleFor(y => y.Number)
+                    .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
+                    .When(x => !String.IsNullOrWhiteSpace(x.Number))
+                    .WithMessage(string.Format(localizer["InvalidField"], localizer["Number"]));
+
+            RuleFor(x => x.CityId)
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["CityId"]));
         }
     }
 }

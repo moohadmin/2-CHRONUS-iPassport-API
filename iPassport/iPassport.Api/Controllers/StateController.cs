@@ -11,14 +11,29 @@ using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
+    /// <summary>
+    /// State Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class StateController : ControllerBase
     {
+        /// <summary>
+        /// Auto Mapper Property
+        /// </summary>
         private readonly IMapper _mapper;
+
+        /// <summary>
+        /// State Service Property
+        /// </summary>
         private readonly IStateService _service;
 
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="mapper">Auto Mapper Instance</param>
+        /// <param name="service">State Service Instance</param>
         public StateController(IMapper mapper, IStateService service)
         {
             _mapper = mapper;
@@ -26,12 +41,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get States by your Country
+        /// This API is responsible for Get paged list of States by name and Country.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">Get State Paged Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Paged State list.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -43,12 +60,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get States by your Country
+        /// This API is responsible for Add State.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">State Create Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>State Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]

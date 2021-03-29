@@ -6,27 +6,32 @@ using System;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
+    /// <summary>
+    /// User Vaccine Create Request Validator
+    /// </summary>
     public class UserVaccineCreateRequestValidator : AbstractValidator<UserVaccineCreateRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">localizer</param>
         public UserVaccineCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Dose)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Dose"));
 
             RuleFor(x => x.VaccinationDate)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "VaccinationDate"));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], localizer["VaccinationDate"]))
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.VaccinationDate.HasValue).WithMessage(localizer["VaccinationDateCannotBeHiggerThenActualDate"]);
 
             RuleFor(x => x.Vaccine)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Vaccine"));
-
-            RuleFor(x => x.City)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "City"));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], localizer["Vaccine"]));
 
             RuleFor(x => x.Batch)
-                .SetValidator(new RequiredFieldValidator<string>("Batch", localizer));
+                .SetValidator(new RequiredFieldValidator<string>(localizer["Batch"], localizer));
 
-            RuleFor(x => x.UnitName)
-                .SetValidator(new RequiredFieldValidator<string>("UnitName", localizer));
+            RuleFor(x => x.HealthUnitId)
+                .SetValidator(new GuidValidator(localizer["HealthUnitId"], localizer));
         }
     }
 }

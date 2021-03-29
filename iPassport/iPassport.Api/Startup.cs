@@ -22,8 +22,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.Unicode;
@@ -31,13 +33,27 @@ using System.Threading.Tasks;
 
 namespace iPassport.Api
 {
+    /// <summary>
+    /// Project Startup Class
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public class Startup
     {
+        /// <summary>
+        /// Class COnstructor
+        /// </summary>
+        /// <param name="configuration">Config</param>
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
+        /// <summary>
+        /// Config property
+        /// </summary>
         private readonly IConfiguration Configuration;
 
+        /// <summary>
+        /// Configure Services
+        /// </summary>
+        /// <param name="services">Services Collection</param>
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -122,6 +138,12 @@ namespace iPassport.Api
                 });
                 c.OperationFilter<AwsApiGatewayIntegrationFilter>();
                 c.DocumentFilter<AwsApiGatewayCorsIntegration>();
+
+                // Add Xml coments
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.AddWebEncoders(o =>
@@ -129,22 +151,22 @@ namespace iPassport.Api
                 o.TextEncoderSettings = new System.Text.Encodings.Web.TextEncoderSettings(UnicodeRanges.All);
             });
 
-            /// Update Migrations
+            // Update Migrations
             services.AddHostedService<MigrationsWork>();
 
-            ///Add DB Context
+            // Add DB Context
             services.AddCustomDataContext();
 
-            ///Add Identity DB Context
+            // Add Identity DB Context
             services.AddIdentityDataContext();
 
-            ///Helth Checks
+            // Helth Checks
             services.AddHealthChecks();
 
-            ///Add Dependecy Injection
+            // Add Dependecy Injection
             services.AddDependencyInjection();
 
-            ///Add AutoMapper
+            // Add AutoMapper
             services.AddAutoMapperSetup();
 
             // Localization
@@ -169,11 +191,16 @@ namespace iPassport.Api
 
             services.AddSingleton<Resource>();
 
-            ///Add AWS Services
+            // Add AWS Services
             services.AddAWSService<IAmazonS3>();
 
         }
 
+        /// <summary>
+        /// Configure 
+        /// </summary>
+        /// <param name="app">Application Builder</param>
+        /// <param name="env">Web Host Environment</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

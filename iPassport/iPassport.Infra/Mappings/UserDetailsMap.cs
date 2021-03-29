@@ -20,8 +20,20 @@ namespace iPassport.Infra.Mappings
 
             builder.Property(c => c.PriorityGroup);
 
+            builder.Property(c => c.ImportedFileId);
+
             builder.HasOne(c => c.Plan)
                 .WithMany(p => p.Users);
+
+            builder.HasOne(c => c.PPriorityGroup)
+                .WithMany()
+                .HasForeignKey(x => x.PriorityGroupId)
+                .IsRequired(false);
+
+            builder.HasOne(c => c.ImportedFile)
+                .WithMany()
+                .HasForeignKey(x => x.ImportedFileId)
+                .IsRequired(false);
         }
     }
 }

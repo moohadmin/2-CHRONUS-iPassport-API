@@ -65,7 +65,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
-            
+
             var roles = await _userManager.GetRolesAsync(user);
 
             if (await _userManager.CheckPasswordAsync(user, password))
@@ -75,8 +75,11 @@ namespace iPassport.Application.Services.AuthenticationServices
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
-                user.UpdateLastLogin();
-                await _userRepository.Update(user);
+                if (user.LastLogin != null)
+                {
+                    user.UpdateLastLogin();
+                    await _userRepository.Update(user);
+                }
 
                 return new ResponseApi(true, _localizer["UserAuthenticated"], token);
             }
@@ -88,7 +91,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (!acceptTerms)
                 throw new BusinessException(_localizer["TermsOfUseNotAccepted"]);
 
-            var user = await _userRepository.FindById(userId);
+            var user = await _userRepository.GetById(userId);
             if (user == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
@@ -100,7 +103,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             var hasPlan = userDetails.PlanId.HasValue;
 
             var token = await _tokenService.GenerateBasic(user, hasPlan);
-            
+
             if (token != null)
             {
                 if (!user.AcceptTerms)
@@ -117,8 +120,8 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> SendPin(string phone, EDocumentType doctype, string doc)
         {
-            var user = await _userRepository.FindByDocument(doctype, doc.Trim());
-            
+            var user = await _userRepository.GetByDocument(doctype, doc.Trim());
+
             if (user == null)
                 throw new BusinessException(_localizer["InvalidDocLogin"]);
 
@@ -132,11 +135,11 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> ResendPin(string phone, Guid userId)
         {
-            var user = await _userRepository.FindById(userId);
+            var user = await _userRepository.GetById(userId);
             if (user == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            await _auth2FactService.ResendPin(userId, phone);
+            await _auth2FactService.SendPin(userId, phone);
 
             return new ResponseApi(true, _localizer["PinSent"], null);
         }
@@ -153,6 +156,9 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (result != IdentityResult.Success)
                 throw new BusinessException(_localizer["PasswordOutPattern"]);
+
+            user.UpdateLastLogin();
+            await _userRepository.Update(user);
 
             return new ResponseApi(true, _localizer["PasswordChanged"], null);
         }

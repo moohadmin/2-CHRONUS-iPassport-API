@@ -79,7 +79,7 @@ namespace iPassport.Test.Controllers
             _mockService.Setup(r => r.Get()).Returns(Task.FromResult(new ResponseApi(true, "Acesso Recusado")));
 
             // Act
-            var result = _controller.AcessDenied(mockRequest);
+            var result = _controller.AccessDenied(mockRequest);
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));

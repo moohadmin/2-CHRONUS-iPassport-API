@@ -38,7 +38,10 @@ namespace iPassport.Application.Services
         public async Task<Auth2FactMobile> SendPin(Guid userId, string phone)
         {
             var userPinList = await _auth2FactRepository.FindActiveByUser(userId);
-            if(userPinList != null)
+            if (userPinList != null && userPinList.Any(x => x.PreventsResendingPIN()))
+                throw new BusinessException(_localizer["PinResendTime"]);
+
+            if (userPinList != null)
             {
                 foreach (var item in userPinList)
                 {
@@ -46,8 +49,6 @@ namespace iPassport.Application.Services
                     await _auth2FactRepository.Update(item);
                 }
             }
-            
-
             var pin = PinGenerate();
             var text = string.Format(_localizer["PinGenerated"], pin);
 
@@ -78,34 +79,12 @@ namespace iPassport.Application.Services
             return pin;
         }
 
-        public async Task<Auth2FactMobile> ResendPin(Guid userId, string phone)
-        {
-            var userPinList = await _auth2FactRepository.FindActiveByUser(userId);
-            if (userPinList != null && userPinList.Any(x => x.PreventsResendingPIN()))
-                throw new BusinessException(_localizer["PinResendTime"]);
-
-            if (userPinList != null)
-            {
-                foreach (var item in userPinList)
-                {
-                    item.SetInvalid();
-                    await _auth2FactRepository.Update(item);
-                }
-            }
-
-            var pin = PinGenerate();
-            var text = string.Format(_localizer["PinGenerated"], pin);
-
-            var resultPin = await _smsExternalServices.SendPin(text, phone);
-
-            return await SaveAuth2FactMobile(userId, phone, pin, resultPin.Messages.FirstOrDefault()?.MessageId);
-        }
-
         public async Task<Auth2FactMobile> SaveAuth2FactMobile(Guid userId, string phone, string pin, string MessageId)
         {
-            var AmbienteSimulado = EnvConstants.NOTIFICATIONS_MOCK;
-
-            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
+            var IsNotificationMock = EnvConstants.NOTIFICATIONS_MOCK;
+            var NotificationMockNumber = EnvConstants.NOTIFICATIONS_MOCK_NUMBER;
+            if ((!string.IsNullOrWhiteSpace(IsNotificationMock) && Convert.ToBoolean(IsNotificationMock)) 
+                    || (!String.IsNullOrWhiteSpace(NotificationMockNumber)) && NotificationMockNumber.Trim() == phone)
                 pin = "1111";
 
             var twoFactDto = new Auth2FactMobileDto

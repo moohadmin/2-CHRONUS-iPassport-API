@@ -2,6 +2,9 @@
 
 namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// Passport Use Create Request
+    /// </summary>
     public class PassportUseCreateRequest
     {
         /// <summary>

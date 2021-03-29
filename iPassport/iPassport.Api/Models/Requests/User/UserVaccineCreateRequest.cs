@@ -1,19 +1,51 @@
-﻿using iPassport.Domain.Enums;
-using System;
+﻿using System;
 
 namespace iPassport.Api.Models.Requests.User
 {
+    /// <summary>
+    /// User Vaccine Create Request
+    /// </summary>
     public class UserVaccineCreateRequest
     {
+        /// <summary>
+        /// Vaccination Date
+        /// </summary>
         public DateTime? VaccinationDate { get; set; }
+
+        /// <summary>
+        /// Dose
+        /// </summary>
         public int? Dose { get; set; }
+
+        /// <summary>
+        /// Vaccine
+        /// </summary>
         public Guid? Vaccine { get; set; }
-        public string UnitName { get; set; }
+
+        /// <summary>
+        /// Batch
+        /// </summary>
         public string Batch { get; set; }
+
+        /// <summary>
+        /// Employee Name
+        /// </summary>
         public string EmployeeName { get; set; }
+
+        /// <summary>
+        /// Employee Cpf
+        /// </summary>
         public string EmployeeCpf { get; set; }
+
+        /// <summary>
+        /// Employee Coren
+        /// </summary>
         public string EmployeeCoren { get; set; }
-        public Guid? City { get; set; }
-        public EHealthUnityType? UnityType { get; set; }
+
+        /// <summary>
+        /// Health Unit Id
+        /// </summary>
+        public Guid HealthUnitId { get; set; }
+                
     }
 }

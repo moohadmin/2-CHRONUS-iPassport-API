@@ -9,13 +9,14 @@ namespace iPassport.Domain.Repositories.Authentication
 {
     public interface IUserRepository
     {
-        Task<Users> FindByPhone(string phone);
-        Task<Users> FindById(Guid id);
+        Task<Users> GetByPhone(string phone);
+        Task<Users> GetById(Guid id);
+        Task<Users> GetLoadedUsersById(Guid id);
         Task Update(Users user);
-        Task<Users> FindByDocument(EDocumentType documentType, string document);
+        Task<Users> GetByDocument(EDocumentType documentType, string document);
         Task<int> GetLoggedCitzenCount();
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
         Task<int> GetLoggedAgentCount();
-        Task<PagedData<Users>> FindCitizensByNameParts(GetByNamePartsPagedFilter filter);
+        Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter);
     }
 }

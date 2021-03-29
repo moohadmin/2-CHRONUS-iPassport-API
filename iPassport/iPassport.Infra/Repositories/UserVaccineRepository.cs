@@ -14,43 +14,26 @@ namespace iPassport.Infra.Repositories
     {
         public UserVaccineRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccines(GetByIdPagedFilter pageFilter)
+        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByUserId(GetByIdPagedFilter pageFilter)
+        {
+            var q = await _DbSet
+               .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
+               .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
+               .Where(v => v.ExclusionDate == null && v.UserDetails.Id == pageFilter.Id)
+               .ToListAsync();
+
+            return GeneratePaggedVaccineDetails(q, pageFilter);
+        }
+
+        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByPassportId(GetByIdPagedFilter pageFilter)
         {
             var q = await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
-                .Where(v => v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
+                .Where(v => v.ExclusionDate == null && v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
                 .ToListAsync();
 
-            var x = q.GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
-            .Select(v => new UserVaccineDetailsDto()
-            {
-                UserId = v.FirstOrDefault().UserId,
-                VaccineId = v.Key.VaccineId,
-                VaccineName = v.Key.Name,
-                RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
-                ImmunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
-                Doses = v.Select(x => new VaccineDoseDto()
-                {
-                    Dose = x.Dose,
-                    VaccinationDate = x.VaccinationDate,
-                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
-                })
-            });
-
-            (int take, int skip) = CalcPageOffset(pageFilter);
-
-            var data = x.Take(take).Skip(skip).ToList();
-            var totalPages = x.Count() > pageFilter.PageSize ? x.Count() / pageFilter.PageSize : 1;
-
-            return new PagedData<UserVaccineDetailsDto>()
-            {
-                PageNumber = pageFilter.PageNumber,
-                PageSize = pageFilter.PageSize,
-                TotalPages = totalPages,
-                TotalRecords = data.Count,
-                Data = data
-            };
+            return GeneratePaggedVaccineDetails(q, pageFilter);
         }
 
         public async Task<int> GetVaccinatedCount(GetVaccinatedCountFilter filter)
@@ -58,7 +41,7 @@ namespace iPassport.Infra.Repositories
             return await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.Vaccine).ThenInclude(v => v.Diseases)
-                .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
+                .Where(v => v.ExclusionDate == null && (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (filter.DiseaseId == null || v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
                     && (filter.DosageCount == 0 ? v.Vaccine.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.RequiredDoses > 1))
@@ -70,7 +53,7 @@ namespace iPassport.Infra.Repositories
             var query = await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.Vaccine).ThenInclude(v => v.Diseases)
-                .Where(v => (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
+                .Where(v => v.ExclusionDate == null && (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (filter.DiseaseId == null || v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
                     && (filter.DosageCount == 0 ? v.Vaccine.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.RequiredDoses > 1))
@@ -91,6 +74,50 @@ namespace iPassport.Infra.Repositories
                 }).OrderBy(v => v.Disease).ToList();
 
             return result;
+        }
+
+        private PagedData<UserVaccineDetailsDto> GeneratePaggedVaccineDetails(IList<UserVaccine> userVaccines, PageFilter pageFilter)
+        {
+            var q = userVaccines.GroupBy(v => new { v.VaccineId, v.Vaccine.Name })
+            .Select(v => new UserVaccineDetailsDto()
+            {
+                UserId = v.FirstOrDefault().UserId,
+                VaccineId = v.Key.VaccineId,
+                VaccineName = v.Key.Name,
+                RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
+                ImmunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
+                Doses = v.Select(x => new VaccineDoseDto()
+                {
+                    Id = x.Id,
+                    Dose = x.Dose,
+                    VaccinationDate = x.VaccinationDate,
+                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
+                }).OrderBy(x => x.VaccinationDate)
+            }).OrderBy(x => x.VaccineName);
+
+            (int take, int skip) = CalcPageOffset(pageFilter);
+
+            var data = q.Take(take).Skip(skip).ToList();
+            
+            int totalPages = 0;
+            if (q.Count() < pageFilter.PageSize)
+            {
+                totalPages = 1;
+            }
+            else
+            {
+                totalPages = q.Count() / pageFilter.PageSize;
+                totalPages = q.Count() % pageFilter.PageSize > 0 ? totalPages + 1 : totalPages;
+            }
+
+            return new PagedData<UserVaccineDetailsDto>()
+            {
+                PageNumber = pageFilter.PageNumber,
+                PageSize = pageFilter.PageSize,
+                TotalPages = totalPages,
+                TotalRecords = data.Count,
+                Data = data
+            };
         }
     }
 }

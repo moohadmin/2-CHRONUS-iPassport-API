@@ -61,6 +61,23 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICityService, CityService>();
 
             services.AddScoped<ICompanyService, CompanyService>();
+
+            services.AddScoped<IHealthUnitService, HealthUnitService>();
+            
+            services.AddScoped<IGenderService, GenderService>();
+
+            services.AddScoped<IUserDiseaseTestService, UserDiseaseTestService>();
+
+            services.AddScoped<IPriorityGroupService, PriorityGroupService>();
+
+            services.AddScoped<IBloodTypeService, BloodTypeService>();
+
+            services.AddScoped<IHumanRaceService, HumanRaceService>();
+
+            services.AddScoped<IImportedFileService, ImportedFileService>();
+
+
+            services.AddScoped<IHealthUnitTypeService, HealthUnitTypeService>();
             #endregion
 
             #region DI Repositories
@@ -101,11 +118,31 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
 
             services.AddScoped<ICompanyRepository, CompanyRepository>();
+
+            services.AddScoped<IHealthUnitRepository, HealthUnitRepository>();
+
+            services.AddScoped<IGenderRepository, GenderRepository>();
+
+            services.AddScoped<IUserDiseaseTestRepository, UserDiseaseTestRepository>();
+
+            services.AddScoped<IPriorityGroupRepository, PriorityGroupRepository>();
+
+            services.AddScoped<IBloodTypeRepository, BloodTypeRepository>();
+
+            services.AddScoped<IHumanRaceRepository, HumanRaceRepository>();
+
+            services.AddScoped<IHealthUnitTypeRepository, HealthUnitTypeRepository>();
+
+            services.AddScoped<IImportedFileDetailsRepository, ImportedFileDetailsRepository>();
+
+            services.AddScoped<IImportedFileRepository, ImportedFileRepository>();
+            
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
 
             #region DI Settings
 
-            // ASP.NET HttpContext dependency
+            /// ASP.NET HttpContext dependency
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #endregion

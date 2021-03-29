@@ -11,15 +11,12 @@ namespace iPassport.Infra.Mappings
             builder.HasKey(k => k.Id);
 
             builder.Property(x => x.AllowAccess)
-                .HasColumnType("bit")
                 .IsRequired();
 
             builder.Property(x => x.Latitude)
-                .HasColumnType("nvarchar(max)")
                 .IsRequired();
 
             builder.Property(x => x.Longitude)
-                .HasColumnType("nvarchar(max)")
                 .IsRequired();
 
             builder.HasOne(x => x.PassportDetails)

@@ -3,8 +3,14 @@ using iPassport.Api.AutoMapper.Mappers;
 
 namespace iPassport.Api.AutoMapper
 {
+    /// <summary>
+    /// Auto Mapper Profile Class
+    /// </summary>
     public class AutoMapperProfile : Profile
     {
+        /// <summary>
+        /// Mapper Class Constructor
+        /// </summary>
         public AutoMapperProfile()
         {
             HealthMapper.Map(this);
@@ -19,6 +25,13 @@ namespace iPassport.Api.AutoMapper
             CityMapper.Map(this);
             CompanyMapper.Map(this);
             AddressMapper.Map(this);
+            HealthUnitMapper.Map(this);
+            GenderMapper.Map(this);
+            UserDiseaseTestMapper.Map(this);
+            PriorityGroupMapper.Map(this);
+            BloodTypeMapper.Map(this);
+            HumanRaceMapper.Map(this);
+            ImportedFileMapper.Map(this);
         }
     }
 }

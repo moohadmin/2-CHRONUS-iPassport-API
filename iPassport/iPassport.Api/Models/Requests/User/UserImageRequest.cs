@@ -1,7 +1,15 @@
-﻿namespace iPassport.Api.Models.Requests
+﻿using Microsoft.AspNetCore.Http;
+
+namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// User Image Request
+    /// </summary>
     public class UserImageRequest
     {
-        public Microsoft.AspNetCore.Http.IFormFile ImageFile { get; set; }
+        /// <summary>
+        /// Image File
+        /// </summary>
+        public IFormFile ImageFile { get; set; }
     }
 }

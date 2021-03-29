@@ -6,8 +6,15 @@ using iPassport.Domain.Entities;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
+    /// <summary>
+    /// Vaccine Mapper Class
+    /// </summary>
     public static class VaccineMapper
     {
+        /// <summary>
+        /// Map Methop
+        /// </summary>
+        /// <param name="profile">Auto Mapper Profile</param>
         public static void Map(Profile profile)
         {
             profile.CreateMap<VaccineDoseDto, VaccineDoseViewModel>();
@@ -17,6 +24,8 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<VaccineManufacturer, VaccineManufacturerViewModel>()
                 .ReverseMap();
 
+            profile.CreateMap<VaccineManufacturerDto, VaccineManufacturerViewModel>();
+
             profile.CreateMap<Disease, DiseaseViewModel>()
                 .ReverseMap();
 
@@ -24,8 +33,11 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.ManufacturerName, act => act.MapFrom(src => src.Manufacturer != null ? src.Manufacturer.Name : null));
 
             profile.CreateMap<UserVaccineCreateRequest, UserVaccineCreateDto>()
+                .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine));
+
+           profile.CreateMap<UserVaccineEditRequest, UserVaccineEditDto>()
                 .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine))
-                .ForMember(des => des.City, act => act.MapFrom(src => src.City));
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
         }
     }
 }

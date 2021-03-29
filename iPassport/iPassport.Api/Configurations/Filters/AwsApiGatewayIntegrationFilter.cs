@@ -93,12 +93,6 @@ namespace iPassport.Api.Configurations.Filters
 
         private void AddApiGatewayCorsHeader(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (operation.RequestBody != null && operation.RequestBody.Content.ContainsKey("multipart/form-data"))
-            {
-                operation.Parameters.Add(new OpenApiParameter { Name = "Content-Type", In = ParameterLocation.Header, Description = "Content-Type", Required = true });
-                operation.Parameters.Add(new OpenApiParameter { Name = "Accept", In = ParameterLocation.Header, Description = "Accept", Required = true });
-            }
-
             foreach (var resp in operation.Responses)
             {
                 resp.Value.Headers.Add("Access-Control-Allow-Origin", new OpenApiHeader { Extensions = new Dictionary<string, IOpenApiExtension> { { "type", new OpenApiString("string") } } });

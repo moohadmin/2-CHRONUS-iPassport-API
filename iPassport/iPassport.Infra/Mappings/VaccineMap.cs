@@ -10,7 +10,7 @@ namespace iPassport.Infra.Mappings
         {
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Name)
+            builder.Property(p => p.Name)                
                 .IsRequired();
 
             builder.Property(p => p.ExpirationTimeInMonths)
@@ -40,6 +40,8 @@ namespace iPassport.Infra.Mappings
             builder.HasOne(c => c.Manufacturer)
                 .WithMany(c => c.Vaccines)
                 .HasForeignKey(c => c.ManufacturerId);
+
+            builder.HasIndex(x => x.Name);
         }
     }
 }

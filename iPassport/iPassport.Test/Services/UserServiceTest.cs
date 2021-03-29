@@ -40,6 +40,16 @@ namespace iPassport.Test.Services
         Mock<ICompanyRepository> _mockCompanyRepository;
         Mock<ICityRepository> _mockCityRepository;
         Mock<IVaccineRepository> _mockVaccineRepository;
+        Mock<IGenderRepository> _mockGenderRepository;
+        Mock<IBloodTypeRepository> _mockBloodTypeRepository;
+        Mock<IHumanRaceRepository> _mockHumanRaceRepository;
+        Mock<IPriorityGroupRepository> _mockPriorityGroupRepository;
+        Mock<IHealthUnitRepository> _mockHealthUnitRepository;
+        Mock<IUserVaccineRepository> _mockUserVaccineRepository;
+        Mock<IUserDiseaseTestRepository> _mockUserDiseaseTestRepository;
+        Mock<IAddressRepository> _mockAddressRepository;
+        Mock<IUnitOfWork> _mockUnitOfWork;
+        Mock<IImportedFileRepository> _mockImportedFileRepository;
 
         [TestInitialize]
         public void Setup()
@@ -55,8 +65,20 @@ namespace iPassport.Test.Services
             _mockCompanyRepository = new Mock<ICompanyRepository>();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockVaccineRepository = new Mock<IVaccineRepository>();
+            _mockGenderRepository = new Mock<IGenderRepository>();
+            _mockBloodTypeRepository = new Mock<IBloodTypeRepository>();
+            _mockHumanRaceRepository = new Mock<IHumanRaceRepository>();
+            _mockPriorityGroupRepository = new Mock<IPriorityGroupRepository>();
+            _mockHealthUnitRepository = new Mock<IHealthUnitRepository>();
+            _mockUserVaccineRepository = new Mock<IUserVaccineRepository>();
+            _mockUserDiseaseTestRepository = new Mock<IUserDiseaseTestRepository>();
+            _mockAddressRepository = new Mock<IAddressRepository>();
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockImportedFileRepository = new();
 
-            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object);
+            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
+                _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object,
+                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object);
         }
 
         [TestMethod]
@@ -223,18 +245,72 @@ namespace iPassport.Test.Services
         public void FindCitizensByNameParts()
         {
             // Arrange
-            var mockRequest = Mock.Of<GetByNamePartsPagedFilter>();
-            _mockUserRepository.Setup(x => x.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()).Result)
+            var mockRequest = Mock.Of<GetCitzenPagedFilter>();
+
+            _mockUserRepository.Setup(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()).Result)
                 .Returns(UserSeed.GetPagedUsers());
 
             // Act
-            var result = _service.FindCitizensByNameParts(mockRequest);
+            var result = _service.GetPaggedCizten(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.FindCitizensByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockUserRepository.Verify(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
 
+        [TestMethod]
+        public void GetCitizenById()
+        {
+            // Arrange
+            var mockRequest = Guid.NewGuid();
+
+            _mockUserRepository.Setup(x => x.GetLoadedUsersById(It.IsAny<Guid>()).Result)
+                .Returns(UserSeed.GetUsers().FirstOrDefault());
+            _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockAddressRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
+
+            // Act
+            var result = _service.GetCitizenById(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetLoadedUsersById(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.GetLoadedUserById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+
+        [TestMethod]
+        public void EditCitizen()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<CitizenEditDto>(x => x.PriorityGroupId == Guid.NewGuid() && x.Address == Mock.Of<AddressEditDto>());
+            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());            
+            _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockPriorityGroupRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(PriorityGroupSeed.Get());
+            _mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<Users>()).Result).Returns(identityResult);
+            _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()).Result).Returns(true);
+            _mockUserVaccineRepository.Setup(x => x.Update(It.IsAny<UserVaccine>()).Result).Returns(true);
+            _mockUserDiseaseTestRepository.Setup(x => x.Delete(It.IsAny<UserDiseaseTest>()).Result).Returns(true);
+            // Act
+            var result = _service.EditCitizen(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.GetLoadedUserById(It.IsAny<Guid>()));
+            _mockAddressRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockPriorityGroupRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<Users>()));
+            _mockRepository.Verify(x => x.Update(It.IsAny<UserDetails>()));
+            _mockUserDiseaseTestRepository.Verify(x => x.Delete(It.IsAny<UserDiseaseTest>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
     }
 }

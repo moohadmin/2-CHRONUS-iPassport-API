@@ -17,11 +17,11 @@ namespace iPassport.Api.Configurations
         {
             using var scope = provider.CreateScope();
 
-            using var context = scope.ServiceProvider.GetRequiredService<iPassportContext>();
-            await context.Database.MigrateAsync();
-
             using var contextIdentity = scope.ServiceProvider.GetRequiredService<PassportIdentityContext>();
             await contextIdentity.Database.MigrateAsync();
+
+            using var context = scope.ServiceProvider.GetRequiredService<iPassportContext>();
+            await context.Database.MigrateAsync();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

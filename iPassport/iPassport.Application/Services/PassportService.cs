@@ -47,13 +47,13 @@ namespace iPassport.Application.Services
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
-            var userDetails = await _userDetailsRepository.GetUserWithVaccine(UserId);
+            var userDetails = await _userDetailsRepository.GetLoadedUserById(UserId);
 
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            if (userDetails.UserVaccines == null || !userDetails.UserVaccines.Any())
-                throw new BusinessException(_localizer["UserVaccineNotFound"]);
+            if ((userDetails.UserVaccines == null || !userDetails.UserVaccines.Any(x => x.ExclusionDate == null)) && (userDetails.UserDiseaseTests == null || !userDetails.UserDiseaseTests.Any()))
+                throw new BusinessException(_localizer["UserVaccinesNotFound"]);
 
             var passport = await _repository.FindByUser(userDetails.Id);
 
@@ -74,7 +74,7 @@ namespace iPassport.Application.Services
             }
 
             var viewModel = _mapper.Map<PassportViewModel>(passport);
-            var authUser = await _userRepository.FindById(UserId);
+            var authUser = await _userRepository.GetById(UserId);
             
             viewModel.UserFullName = authUser.FullName;
             viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
@@ -88,6 +88,12 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
         {
             dto = await ValidPassportToAcess(dto);
+
+            var userDetails = await _userDetailsRepository.GetLoadedUserById(dto.CitizenId);
+
+            if(!userDetails.IsApprovedPassport())
+                throw new BusinessException(_localizer["PassportNotApproved"]);
+            
             dto.AllowAccess = true;
 
             var passportUse = new PassportUse();
@@ -142,17 +148,17 @@ namespace iPassport.Application.Services
             if (passport == null)
                 throw new BusinessException(_localizer["PassportNotFound"]);
             
-            var authUser = await _userRepository.FindById(_accessor.GetCurrentUserId());
+            var authUser = await _userRepository.GetById(_accessor.GetCurrentUserId());
             if(!authUser.IsAgent())
                 throw new BusinessException(_localizer["UserNotAgent"]);
             
-            var passportCitizen = await _userRepository.FindById(passport.UserDetails.Id);
+            var passportCitizen = await _userRepository.GetById(passport.UserDetails.Id);
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;
             viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo);
             viewModel.UserFullName = passportCitizen.FullName;
-            viewModel.Immunized = passport.UserDetails.IsImmunized();
+            viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
 
             return new ResponseApi(true, "Passport para validação",viewModel);
         }

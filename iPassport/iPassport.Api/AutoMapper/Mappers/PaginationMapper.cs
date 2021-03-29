@@ -6,8 +6,15 @@ using iPassport.Domain.Filters;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
+    /// <summary>
+    /// Pagination Mapper Class
+    /// </summary>
     public class PaginationMapper
     {
+        /// <summary>
+        /// Map Method
+        /// </summary>
+        /// <param name="profile">Auto Mapper Profile Instance</param>
         public static void Map(Profile profile)
         {
             profile.CreateMap<PageFilterRequest, PageFilter>();
@@ -17,7 +24,7 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<GetByNamePartsPagedRequest, GetByNamePartsPagedFilter>();
 
-            profile.CreateMap<GetPagedUserVaccinesRequest, GetByIdPagedFilter>()
+            profile.CreateMap<GetPagedUserVaccinesByPassportRequest, GetByIdPagedFilter>()
                     .ForMember(des => des.Id, act => act.MapFrom(src => src.PassportId));
 
             profile.CreateMap<GetPagedStatesByCountryRequest, GetByIdPagedFilter>()
@@ -25,6 +32,11 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<GetPagedCitiesByStateAndNamePartsRequest, GetByIdAndNamePartsPagedFilter>()
                     .ForMember(des => des.Id, act => act.MapFrom(src => src.StateId));
+
+            profile.CreateMap<GetPagedUserVaccinesByPassportRequest, GetByIdPagedFilter>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.PassportId));
+
+            profile.CreateMap<GetCitzenPagedRequest, GetCitzenPagedFilter>();
         }
     }
 }

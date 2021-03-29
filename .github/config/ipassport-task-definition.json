@@ -37,6 +37,10 @@
         {
           "name": "AWS_DEFAULT_REGION",
           "value": "sa-east-1"
+        },
+        {
+          "name": "NOTIFICATIONS_MOCK_NUMBER",
+          "value": "5571991905015"
         }
       ],
       "resourceRequirements": null,

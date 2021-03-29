@@ -2,14 +2,16 @@
 using iPassport.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace iPassport.Domain.Entities.Authentication
 {
     public class Users : IdentityUser<Guid>
     {
         public Users() { }
-        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, string gender, string breed, string bloodType, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid? companyId, int profile)
+        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, Guid? genderId, Guid? humanRaceId, Guid? bloodTypeId, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid? companyId, int profile)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
@@ -18,9 +20,9 @@ namespace iPassport.Domain.Entities.Authentication
             CNS = cns;
             PassportDoc = passportDocument;
             Birthday = birthday;
-            Gender = gender;
-            Breed = breed;
-            BloodType = bloodType;
+            GenderId = genderId;
+            HumanRaceId = humanRaceId;
+            BloodTypeId = bloodTypeId;
             Occupation = occupation;
             Address = address;
             Photo = photo;
@@ -31,6 +33,7 @@ namespace iPassport.Domain.Entities.Authentication
             Profile = profile;
             CompanyId = companyId;
             CreateDate = DateTime.UtcNow;
+            UpdateDate = DateTime.UtcNow;
 
             if (userName == null)
                 UserName = Id.ToString();
@@ -40,14 +43,15 @@ namespace iPassport.Domain.Entities.Authentication
         {
             Id = Guid.NewGuid();
             FullName = fullName;
-            CPF = cpf;           
-            Address = address;            
-            UserName = userName;            
+            CPF = cpf;
+            Address = address;
+            UserName = userName;
             PhoneNumber = mobile;
             Profile = profile;
 
             CompanyId = companyId;
             CreateDate = DateTime.UtcNow;
+            UpdateDate = DateTime.UtcNow;
         }
 
         public bool AcceptTerms { get; set; }
@@ -59,8 +63,17 @@ namespace iPassport.Domain.Entities.Authentication
         public string PassportDoc { get; set; }
         public DateTime Birthday { get; set; }
         public DateTime? LastLogin { get; set; }
+        /// <summary>
+        /// Depreciated must use GenderId
+        /// </summary>
         public string Gender { get; set; }
+        /// <summary>
+        /// Depreciated must use HumanRaceId
+        /// </summary>
         public string Breed { get; set; }
+        /// <summary>
+        /// Depreciated must use BloodTypeId
+        /// </summary>
         public string BloodType { get; set; }
         public string Occupation { get; set; }
         public Guid? AddressId { get; private set; }
@@ -69,16 +82,23 @@ namespace iPassport.Domain.Entities.Authentication
         public int Profile { get; set; }
         public Guid? CompanyId { get; set; }
         public DateTime CreateDate { get; set; }
+        public Guid? HumanRaceId { get; set; }
+        public Guid? GenderId { get; set; }
+        public Guid? BloodTypeId { get; set; }
+
 
         public Address Address { get; set; }
         public Company Company { get; set; }
+        public HumanRace HumanRace { get; set; }
+        public Gender GGender { get; set; }
+        public BloodType BBloodType { get; set; }
 
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
         public bool UserHavePhoto() => !string.IsNullOrWhiteSpace(Photo);
         public void UpdateLastLogin() => LastLogin = DateTime.UtcNow;
-        
+
         public void AddPhoto(string imageUrl)
         {
             if (string.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
@@ -86,22 +106,22 @@ namespace iPassport.Domain.Entities.Authentication
                 Photo = imageUrl;
             }
         }
- 
+
         public void PhotoNameGenerator(UserImageDto dto)
         {
             var extension = Path.GetExtension(dto.ImageFile.FileName);
             dto.FileName = $"{Id}{extension}";
         }
-                
+
         public Users CreateAgent(UserAgentCreateDto dto) =>
-            new Users(dto.FullName, dto.CPF, dto.Address != null ? CreateUserAddress(dto.Address) : null, dto.Username, dto.Mobile, dto.Profile, dto.CompanyId);
-        
+            new Users(dto.FullName, dto.CPF, dto.Address != null ? CreateUserAddress(dto.Address) : null, dto.Username, dto.Mobile, (int)EProfileType.Agent, dto.CompanyId);
+
         private Address CreateUserAddress(AddressCreateDto dto) =>
             new Address().Create(dto);
 
         public bool IsAgent() => Profile == (int)EProfileType.Agent;
         public bool IsCitizen() => Profile == (int)EProfileType.Citizen;
-                
+
         public Users CreateCitizen(CitizenCreateDto dto)
         => new Users(dto.CompleteName,
                 dto.Cpf,
@@ -109,9 +129,9 @@ namespace iPassport.Domain.Entities.Authentication
                 dto.Cns,
                 null,
                 dto.Birthday,
-                dto.Gender,
-                dto.Breed,
-                dto.BloodType, 
+                dto.GenderId,
+                dto.HumanRaceId,
+                dto.BloodTypeId,
                 dto.Occupation,
                 CreateUserAddress(dto.Address),
                 null,
@@ -121,6 +141,46 @@ namespace iPassport.Domain.Entities.Authentication
                 dto.Telephone,
                 dto.CompanyId,
                 (int)EProfileType.Citizen);
-        
+
+        public void ChangeCitizen(CitizenEditDto dto)
+        {
+            SetUpdateDate();
+            Birthday = dto.Birthday;
+            CNS = dto.Cns;
+            FullName = dto.CompleteName;
+            CPF = dto.Cpf;
+            Email = dto.Email;
+            Occupation = dto.Occupation;
+            PhoneNumber = dto.Telephone;
+
+            CompanyId = dto.CompanyId;
+            BloodTypeId = dto.BloodTypeId;
+            GenderId = dto.GenderId;
+            HumanRaceId = dto.HumanRaceId;
+
+            if (AddressId.HasValue)
+                Address.ChangeAddress(dto.Address);
+        }
+
+        public static Users CreateCitizen(UserImportDto dto)
+            => new (dto.FullName,
+                    dto.Cpf,
+                    null,
+                    dto.Cns,
+                    null,
+                    dto.Birthday,
+                    dto.GenderId,
+                    dto.HumanRaceId,
+                    dto.BloodTypeId,
+                    dto.Occupation,
+                    new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District),
+                    null,
+                    null,
+                    null,
+                    dto.Email,
+                    string.Concat(dto.CountryCode, dto.PhoneNumber),
+                    dto.CompanyId,
+                    (int)EProfileType.Citizen);
     }
 }
+

@@ -8,18 +8,34 @@ using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
 {
+    /// <summary>
+    /// Company Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class CompanyController : ControllerBase
     {
+        /// <summary>
+        /// Auto Mapper Property
+        /// </summary>
         private readonly IMapper _mapper;
+
+        /// <summary>
+        /// Company Service Property
+        /// </summary>
         private readonly ICompanyService _service;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="mapper">Auto Mapper Instance</param>
+        /// <param name="service">Company Service Instance</param>
         public CompanyController(IMapper mapper, ICompanyService service)
         {
             _mapper = mapper;
@@ -27,12 +43,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is get the get Companies by name
+        /// This API is responsible for Get paged list of Companies by name.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">Get Company Paged Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Paged Companies list.</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -44,12 +62,14 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API Add City
+        /// This API is responsible for Add Company.
         /// </summary>
-        /// <returns></returns>
-        /// <response code="200">Ok.</response>
+        /// <param name="request">Company Create Request</param>
+        /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
-        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Company Id</returns>
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
@@ -57,6 +77,25 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> Add([FromBody] CompanyCreateRequest request)
         {
             var res = await _service.Add(_mapper.Map<CompanyCreateDto>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for Get Company by Id.
+        /// </summary>
+        /// <param name="id">Company Id</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Company.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetById(Guid id)
+        {
+            var res = await _service.GetById(id);
             return Ok(res);
         }
     }
