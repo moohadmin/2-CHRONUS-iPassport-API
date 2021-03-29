@@ -21,17 +21,17 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Dose"));
 
             RuleFor(x => x.VaccinationDate)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "VaccinationDate"))
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], localizer["VaccinationDate"]))
                 .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.VaccinationDate.HasValue).WithMessage(localizer["VaccinationDateCannotBeHiggerThenActualDate"]);
 
             RuleFor(x => x.Vaccine)
-                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Vaccine"));
+                .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], localizer["Vaccine"]));
 
             RuleFor(x => x.Batch)
-                .SetValidator(new RequiredFieldValidator<string>("Batch", localizer));
+                .SetValidator(new RequiredFieldValidator<string>(localizer["Batch"], localizer));
 
             RuleFor(x => x.HealthUnitId)
-                .SetValidator(new GuidValidator("HealthUnitId", localizer));
+                .SetValidator(new GuidValidator(localizer["HealthUnitId"], localizer));
         }
     }
 }
