@@ -51,9 +51,6 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetImportedFileDetails(Guid fileId)
         {
-            if(await _repository.Find(fileId) == null)
-                throw new BusinessException(_localizer["ImportedFileNotFound"]);
-
             var res = await _importedFileDetailsRepository.GetByFileId(fileId);
             var result = _mapper.Map<IList<ImportedFileDetailsViewModel>>(res);
 

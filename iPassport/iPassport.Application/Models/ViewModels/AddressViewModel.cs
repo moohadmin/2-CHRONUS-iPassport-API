@@ -11,6 +11,7 @@ namespace iPassport.Application.Models.ViewModels
         public Guid? CityId { get; set; }
         public string City { get; set; }
         public Guid? StateId { get; set; }
+        public string StateAcronym { get; set; }
         public string State { get; set; }
         public Guid? CountryId { get; set; }
         public string Country { get; set; }

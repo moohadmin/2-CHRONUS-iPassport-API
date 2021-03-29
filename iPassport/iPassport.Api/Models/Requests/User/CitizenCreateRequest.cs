@@ -47,7 +47,7 @@ namespace iPassport.Api.Models.Requests.User
         /// <summary>
         /// Priority Group Id
         /// </summary>
-        public Guid PriorityGroupId { get; set; }
+        public Guid? PriorityGroupId { get; set; }
 
         /// <summary>
         /// Blood Type Id

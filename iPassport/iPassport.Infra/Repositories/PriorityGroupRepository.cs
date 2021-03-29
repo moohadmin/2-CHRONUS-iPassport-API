@@ -21,6 +21,6 @@ namespace iPassport.Infra.Repositories
         }
 
         public async Task<IList<PriorityGroup>> FindByListName(List<string> listName)
-            => await _DbSet.Where(m => listName.Contains(m.Name.ToUpper())).ToListAsync();
+            => await _DbSet.Where(m => listName.Contains(m.Name.ToUpper())).OrderBy(p => p.Name).ToListAsync();
     }
 }

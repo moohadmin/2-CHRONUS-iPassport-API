@@ -7,14 +7,14 @@ using System;
 namespace iPassport.Api.Models.Validators.Vaccines
 {
     /// <summary>
-    /// UserDiseaseTestCreateRequest Validator Class
+    /// User Disease Test Create Request Validator Class
     /// </summary>
     public class UserDiseaseTestCreateRequestValidator : AbstractValidator<UserDiseaseTestCreateRequest>
     {
         /// <summary>
-        /// UserDiseaseTestCreateRequestValidator Contrutor
+        /// User Disease Test Create Request Validator Contrutor
         /// </summary>
-        /// <param name="localizer"> Resource</param>
+        /// <param name="localizer">Resource</param>
         public UserDiseaseTestCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Result)
@@ -23,12 +23,14 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .WithMessage(string.Format(localizer["RequiredField"], "Result"));
 
             RuleFor(x => x.TestDate)
-                .SetValidator(new RequiredFieldValidator<DateTime>("TestDate", localizer));
+                .NotEmpty()
+                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.TestDate.HasValue).WithMessage(localizer["TestDateCannotBeHiggerThenActualDate"]);
 
             RuleFor(x => x.ResultDate)
                 .NotEmpty()                
                 .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
-                .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"));
+                .WithMessage(string.Format(localizer["RequiredField"], "ResultDate"))
+                .GreaterThanOrEqualTo(x => x.TestDate).When(x => x.ResultDate.HasValue).WithMessage(localizer["TestResultDateCannotBeHiggerThenTestDate"]);
         }
     }
 }

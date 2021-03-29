@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - quality
   - docker
   - deploy
 
@@ -14,7 +15,45 @@ include:
     file: /templates/test/unit/.job-test-unit-dotnet-core-sdk5.yml
   ## exceptions ##
   - project: devops/ship
-    file: /templates/exceptions/.retry-on-system-failures.yml    
+    file: /templates/exceptions/.retry-on-system-failures.yml
+
+quality:
+  extends: .retry-on-system-failures
+  stage: quality
+  image: nosinovacao/dotnet-sonar:21.01.1
+  variables:
+    SONAR_HOST: https://sonar.solutis.digital
+    TEST_COVERAGE_FILE: coverage.opencover.xml
+    BUILD_CONFIG: '-c Debug' 
+  before_script:
+    ### ver snippet https://gitlab.solutis.digital/snippets/24 ###
+    - export SONAR_PROJECT_KEY="$(echo $APP_GROUP-$APP_SUBGROUP-$APP_NAME-$(echo ${CI_COMMIT_REF_NAME} | cut -d'/' -f 1))"
+    - export SONAR_PROJECT_NAME=$(echo "$APP_GROUP $APP_SUBGROUP $APP_NAME [$CI_COMMIT_REF_NAME]")
+    - echo ${SONAR_PROJECT_KEY}
+    - echo ${SONAR_PROJECT_NAME}    
+    - export NUGET_PACKAGES=$(pwd)/packages/
+    - dotnet restore $PROJECT_BASE
+  script: 
+    - dotnet /sonar-scanner/SonarScanner.MSBuild.dll begin 
+        /k:$SONAR_PROJECT_KEY
+        /n:"$SONAR_PROJECT_NAME"
+        /v:${CI_COMMIT_REF_NAME}
+        /d:sonar.host.url=${SONAR_HOST}
+        /d:sonar.login=${SONAR_TOKEN}
+        /d:sonar.coverage.exclusions="**Test*.cs"
+        /d:sonar.cs.opencover.reportsPaths="$PROJECT_BASE/$TEST_COVERAGE_FILE"
+        /d:sonar.projectBaseDir="$(pwd)/$PROJECT_BASE"
+    - dotnet build $PROJECT_BASE $BUILD_CONFIG
+    - dotnet /sonar-scanner/SonarScanner.MSBuild.dll end /d:sonar.login=$SONAR_TOKEN
+  cache: 
+    paths:
+      - packages
+  only:
+    - develop
+    - /^release\/[0-9.]+$/
+    - master
+    - tags
+
 
 .docker:
   extends: .retry-on-system-failures
@@ -98,3 +137,12 @@ deploy:tags:
     CONFIG_DIR: config
   only:
     - tags
+
+deploy:master:
+  extends: .deploy
+  variables:    
+    ENVIRONMENT: test 
+    IMAGE_TAG: ${CI_REGISTRY_IMAGE}:master_${CI_PIPELINE_ID}
+    CONFIG_DIR: config
+  only:
+    - master

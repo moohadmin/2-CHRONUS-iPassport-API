@@ -49,7 +49,7 @@ namespace iPassport.Infra.ExternalServices
         /// <returns></returns>
         public Task<SendPinResponseDto> SendPin(string text, string phone)
         {
-            SendPinResponseDto simulatedSentResponse = PinIntegrationSimulatedSent();
+            SendPinResponseDto simulatedSentResponse = PinIntegrationSimulatedSent(phone);
             if (simulatedSentResponse != null)
                 return Task.FromResult(simulatedSentResponse);
 
@@ -219,11 +219,13 @@ namespace iPassport.Infra.ExternalServices
         /// Mock to Sent Pin Response
         /// </summary>
         /// <returns></returns>
-        private SendPinResponseDto PinIntegrationSimulatedSent()
+        private SendPinResponseDto PinIntegrationSimulatedSent(string phone)
         {
-            var AmbienteSimulado = EnvConstants.NOTIFICATIONS_MOCK;
+            var IsNotificationMock = EnvConstants.NOTIFICATIONS_MOCK;
+            var NotificationMockNumber = EnvConstants.NOTIFICATIONS_MOCK_NUMBER;
 
-            if (!string.IsNullOrWhiteSpace(AmbienteSimulado) && Convert.ToBoolean(AmbienteSimulado))
+            if ((!string.IsNullOrWhiteSpace(IsNotificationMock) && Convert.ToBoolean(IsNotificationMock))
+                || (!String.IsNullOrWhiteSpace(NotificationMockNumber) && NotificationMockNumber.Trim() == phone))
             {
                 return new SendPinResponseDto()
                 {

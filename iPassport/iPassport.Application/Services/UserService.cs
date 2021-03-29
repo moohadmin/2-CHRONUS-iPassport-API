@@ -99,7 +99,7 @@ namespace iPassport.Application.Services
             if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
                 throw new BusinessException(_localizer["HumanRaceNotFound"]);
 
-            if (!dto.PriorityGroupId.HasValue || await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
+            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
                 throw new BusinessException(_localizer["PriorityGroupNotFound"]);
 
             if (dto.Address == null || await _cityRepository.Find(dto.Address.CityId) == null)
@@ -466,7 +466,7 @@ namespace iPassport.Application.Services
             if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
                 throw new BusinessException(_localizer["HumanRaceNotFound"]);
 
-            if (!dto.PriorityGroupId.HasValue || await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
+            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
                 throw new BusinessException(_localizer["PriorityGroupNotFound"]);
 
             if (await _cityRepository.Find(dto.Address.CityId) == null)

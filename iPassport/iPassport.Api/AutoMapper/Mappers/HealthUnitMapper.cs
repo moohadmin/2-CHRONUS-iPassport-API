@@ -26,7 +26,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                  .ForMember(des => des.ResponsiblePersonName, act => act.MapFrom(src => src.ResponsiblePersonName))
                  .ForMember(des => des.ResponsiblePersonPhone, act => act.MapFrom(src => src.ResponsiblePersonPhone))
                  .ForMember(des => des.ResponsiblePersonOccupation, act => act.MapFrom(src => src.ResponsiblePersonOccupation))
-                 .ForMember(des => des.IsActive, act => act.MapFrom(src => !src.DeactivationDate.HasValue))
+                 .ForMember(des => des.IsActive, act => act.MapFrom(src => src.Active))
                  .ForMember(des => des.Type, act => act.MapFrom(src => src.Type))
                  .ForMember(des => des.AddressId, act => act.MapFrom(src => src.AddressId));
             
@@ -40,7 +40,8 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<HealthUnitTypeDto, HealthUnitTypeViewModel>();
 
-            profile.CreateMap<HealthUnitDto, HealthUnitViewModel>();
+            profile.CreateMap<HealthUnitDto, HealthUnitViewModel>()
+                 .ForMember(des => des.IsActive, act => act.MapFrom(src => src.Active));
 
             profile.CreateMap<GetHealthUnitPagedRequest, GetHealthUnitPagedFilter>();
         }

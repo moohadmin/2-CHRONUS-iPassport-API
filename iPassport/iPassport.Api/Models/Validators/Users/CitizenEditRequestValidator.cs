@@ -40,10 +40,6 @@ namespace iPassport.Api.Models.Validators.Users
                 .Length(15).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"))
                 .Must(y => Regex.IsMatch(y, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"));
                        
-            RuleFor(x => x.PriorityGroupId)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "PriorityGroupId"));
-                        
             RuleFor(x => x.Email)
                 .EmailAddress()
                 .When(x => x != null)
@@ -74,7 +70,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .Cascade(CascadeMode.Stop)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], "Birthday"))
                 .SetValidator(new RequiredFieldValidator<DateTime?>("Birthday", localizer))
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(string.Format(localizer["InvalidField"], "Birthday"))
+                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"])
                 .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage(string.Format(localizer["InvalidField"], "Birthday"));
 
             RuleFor(x => x.Test)

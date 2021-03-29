@@ -38,6 +38,10 @@ namespace iPassport.Api.AutoMapper.Mappers
             .ForMember(des => des.CountryId, opt => {
                 opt.PreCondition(src => (src?.City?.State?.Country != null));
                 opt.MapFrom(src => src.City.State.CountryId);
+            })
+            .ForMember(des => des.StateAcronym, opt => {
+                opt.PreCondition(src => (src?.City?.State != null));
+                opt.MapFrom(src => src.City.State.Acronym);
             });
 
             profile.CreateMap<AddressDto, AddressViewModel>()
@@ -54,6 +58,10 @@ namespace iPassport.Api.AutoMapper.Mappers
             .ForMember(des => des.CountryId, opt => {
                 opt.PreCondition(src => (src?.City?.State?.Country != null));
                 opt.MapFrom(src => src.City.State.Country.Id);
+            })
+            .ForMember(des => des.StateAcronym, opt => {
+                opt.PreCondition(src => (src?.City?.State != null));
+                opt.MapFrom(src => src.City.State.Acronym);
             })
             .ReverseMap();
 

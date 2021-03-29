@@ -153,7 +153,7 @@ namespace iPassport.Domain.Entities
 
         public EDiseaseTestStatus GetDiseaseTestStatus(Guid? testId = null)
         {
-            var validTests = UserDiseaseTests?.Where(x => (x.TestDate - DateTime.UtcNow).TotalHours <= Constants.DISEASE_TEST_VALIDATE_IN_HOURS
+            var validTests = UserDiseaseTests?.Where(x => (DateTime.UtcNow - x.TestDate).TotalHours <= Constants.DISEASE_TEST_VALIDATE_IN_HOURS
                                                             && (testId == null || x.Id == testId)).ToList();
 
             if (validTests == null || !validTests.Any())
