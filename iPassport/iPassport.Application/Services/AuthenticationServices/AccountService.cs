@@ -139,7 +139,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            await _auth2FactService.ResendPin(userId, phone);
+            await _auth2FactService.SendPin(userId, phone);
 
             return new ResponseApi(true, _localizer["PinSent"], null);
         }
