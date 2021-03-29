@@ -586,7 +586,7 @@
     <value>Número</value>
   </data>
   <data name="NumberOfDoses" xml:space="preserve">
-    <value>Numero de Doses</value>
+    <value>Número de Doses</value>
   </data>
   <data name="ResultDate" xml:space="preserve">
     <value>Data do Resultado</value>
@@ -595,7 +595,7 @@
     <value>Telefone</value>
   </data>
   <data name="TestResult" xml:space="preserve">
-    <value>Resuldado do Teste</value>
+    <value>Resultado do Teste</value>
   </data>
   <data name="UserId" xml:space="preserve">
     <value>Identificador do Usuário</value>
