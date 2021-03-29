@@ -11,6 +11,7 @@ namespace iPassport.Application.Models.ViewModels
         public bool? Result { get; set; }
         public DateTime TestDate { get; set; }
         public DateTime? ResultDate { get; set; }
+        public DateTime? ValidDate { get; set; }
         public EDiseaseTestStatus Status { get; set; }
     }
 }
