@@ -80,7 +80,7 @@ namespace iPassport.Api.Models.Validators
         {
             RuleFor(x => x.Id)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "AddressId"));
+                .WithMessage(string.Format(localizer["RequiredField"], "Address.Id"));
 
             RuleFor(x => x.Cep)
                 .Must(x => Regex.IsMatch(x, "^[0-9]{8}$"))
