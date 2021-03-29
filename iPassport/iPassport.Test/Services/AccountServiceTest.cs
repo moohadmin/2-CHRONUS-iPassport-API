@@ -149,25 +149,6 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        public void ResendPin_MustReturnOK()
-        {
-            var phone = "test";
-            var userId = Guid.NewGuid();
-
-            // Arrange
-            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
-            _mockAuth2FactService.Setup(r => r.ResendPin(It.IsAny<Guid>(), phone).Result).Returns(Auth2FactMobileSeed.GetAuth2FactMobile());
-
-            // Act
-            var result = _service.ResendPin(phone, userId);
-
-            // Assert
-            _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
-            _mockAuth2FactService.Verify(r => r.ResendPin(It.IsAny<Guid>(), phone));
-            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
-        }
-
-        [TestMethod]
         public void ResetPassword_MustReturnOK()
         {
             var password = "tested";

@@ -296,6 +296,7 @@ namespace iPassport.Test.Services
             _mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<Users>()).Result).Returns(identityResult);
             _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()).Result).Returns(true);
             _mockUserVaccineRepository.Setup(x => x.Update(It.IsAny<UserVaccine>()).Result).Returns(true);
+            _mockUserDiseaseTestRepository.Setup(x => x.Delete(It.IsAny<UserDiseaseTest>()).Result).Returns(true);
             // Act
             var result = _service.EditCitizen(mockRequest);
 
@@ -307,6 +308,7 @@ namespace iPassport.Test.Services
             _mockPriorityGroupRepository.Verify(x => x.Find(It.IsAny<Guid>()));
             _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<Users>()));
             _mockRepository.Verify(x => x.Update(It.IsAny<UserDetails>()));
+            _mockUserDiseaseTestRepository.Verify(x => x.Delete(It.IsAny<UserDiseaseTest>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

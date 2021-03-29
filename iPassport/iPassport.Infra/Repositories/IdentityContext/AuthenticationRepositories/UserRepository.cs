@@ -79,6 +79,18 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             if (filter.DocumentType.HasValue)
                 query = GetUserDocument(query, filter.DocumentType.Value, filter.Document);
 
+            if (filter.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == filter.CompanyId);
+
+            if (filter.CityId.HasValue)
+                query = query.Where(x => x.Address.CityId == filter.CityId);
+
+            if (filter.StateId.HasValue)
+                query = query.Where(x => x.Address.City.StateId == filter.StateId);
+
+            if (filter.CountryId.HasValue)
+                query = query.Where(x => x.Address.City.State.CountryId == filter.CountryId);
+
             query = query.Where(m => m.Profile == (int)EProfileType.Citizen
                               && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower()))
                               && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().StartsWith(filter.Telephone.ToLower())))

@@ -20,7 +20,6 @@ namespace iPassport.Infra.Repositories
                .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
                .Where(v => v.ExclusionDate == null && v.UserDetails.Id == pageFilter.Id)
-               .OrderBy(x => x.Vaccine.Name)
                .ToListAsync();
 
             return GeneratePaggedVaccineDetails(q, pageFilter);
@@ -32,7 +31,6 @@ namespace iPassport.Infra.Repositories
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
                 .Where(v => v.ExclusionDate == null && v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
-                .OrderBy(x => x.Vaccine.Name)
                 .ToListAsync();
 
             return GeneratePaggedVaccineDetails(q, pageFilter);
@@ -94,8 +92,8 @@ namespace iPassport.Infra.Repositories
                     Dose = x.Dose,
                     VaccinationDate = x.VaccinationDate,
                     ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
-                })
-            });
+                }).OrderBy(x => x.VaccinationDate)
+            }).OrderBy(x => x.VaccineName);
 
             (int take, int skip) = CalcPageOffset(pageFilter);
 

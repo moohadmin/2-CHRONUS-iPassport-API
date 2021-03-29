@@ -419,6 +419,14 @@ namespace iPassport.Application.Services
                             throw new BusinessException(_localizer["UserNotUpdated"]);
                     }
                 }
+                else if (currentUserDetails.UserDiseaseTests.Any())
+                {
+                    foreach (var item in currentUserDetails.UserDiseaseTests)
+                    {
+                        if (!await _userDiseaseTestRepository.Delete(item))
+                            throw new BusinessException(_localizer["UserNotUpdated"]);
+                    }
+                }
 
                 _unitOfWork.CommitIdentity();
                 _unitOfWork.CommitPassport();

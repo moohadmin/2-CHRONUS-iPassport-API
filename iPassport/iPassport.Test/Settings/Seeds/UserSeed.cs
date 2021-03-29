@@ -15,6 +15,11 @@ namespace iPassport.Test.Seeds
                 UserVaccines = new List<UserVaccine>()
                 {
                     new UserVaccine(DateTime.UtcNow, 1, Guid.NewGuid(), Guid.NewGuid(), "test", "test", "test", "test", Guid.NewGuid())
+
+                },
+                UserDiseaseTests = new List<UserDiseaseTest>()
+                {
+                    new UserDiseaseTest(Guid.NewGuid(),null,DateTime.UtcNow,null,"PCR")
                 }
             };
 
