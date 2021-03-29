@@ -117,6 +117,9 @@ namespace iPassport.Application.Services
                 {
                     if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
+                                                 
+                    if(dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
+                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
 
@@ -495,6 +498,9 @@ namespace iPassport.Application.Services
 
                     if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
+
+                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
+                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
 
