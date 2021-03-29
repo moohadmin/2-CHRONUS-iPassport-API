@@ -13,5 +13,6 @@ namespace iPassport.Domain.Entities
         }
 
         public string Name { get; private set; }
+        public int Identifyer { get; private set; }
     }
 }

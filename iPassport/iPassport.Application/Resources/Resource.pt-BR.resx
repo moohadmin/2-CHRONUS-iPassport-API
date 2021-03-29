@@ -558,4 +558,7 @@
   <data name="FieldRequired" xml:space="preserve">
     <value>Campo obrigatório.</value>
   </data>
+  <data name="HealthUnitTypeNotFound" xml:space="preserve">
+    <value>Tipo de unidade de saúde não encontrado.</value>
+  </data>
 </root>

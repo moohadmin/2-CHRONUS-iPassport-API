@@ -7,6 +7,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.PassportIdentityContext;
@@ -21,6 +22,7 @@ namespace iPassport.Application.Services
     public class HealthUnitService : IHealthUnitService
     {
         private readonly IHealthUnitRepository _healthUnitRepository;
+        private readonly IHealthUnitTypeRepository _healthUnitTypeRepository;
         private readonly IAddressRepository _addressRepository;
         private readonly ICityRepository _cityRepository;
         private readonly IStringLocalizer<Resource> _localizer;
@@ -28,6 +30,7 @@ namespace iPassport.Application.Services
         private readonly IUnitOfWork _unitOfWork;
 
         public HealthUnitService(IHealthUnitRepository healthUnitRepository,
+                                IHealthUnitTypeRepository healthUnitTypeRepository,
                                 IStringLocalizer<Resource> localizer,
                                 IMapper mapper,
                                 IAddressRepository addressRepository,
@@ -35,6 +38,7 @@ namespace iPassport.Application.Services
                                 IUnitOfWork unitOfWork)
         {
             _healthUnitRepository = healthUnitRepository;
+            _healthUnitTypeRepository = healthUnitTypeRepository;
             _localizer = localizer;
             _mapper = mapper;
             _addressRepository = addressRepository;
@@ -44,10 +48,24 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(HealthUnitCreateDto dto)
         {
-            var city = await _cityRepository.Find(dto.Address.CityId);
-
-            if (city == null)
+            if (await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
+
+            var type = await _healthUnitTypeRepository.Find(dto.TypeId.Value);
+            if (type == null)
+                throw new BusinessException(_localizer["HealthUnitTypeNotFound"]);
+            
+            if(type.Identifyer == (int)EHealthUnitType.Public)
+            {
+                // Ine must be informed when exists cnpj in database
+                if (string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
+                    throw new BusinessException(_localizer["IneRequired"]);
+
+                if (string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj))
+                {
+
+                }
+            }
 
             try
             {
@@ -56,10 +74,6 @@ namespace iPassport.Application.Services
 
                 var address = new Address().Create(dto.Address);
                 await _addressRepository.InsertAsync(address);
-
-                // Ine must be informed when exists cnpj in database
-                if (string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
-                    throw new BusinessException(_localizer["IneRequired"]);
 
                 dto.Address.Id = address.Id;
                 var healthUnit = new HealthUnit().Create(dto);
