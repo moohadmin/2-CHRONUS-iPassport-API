@@ -136,7 +136,7 @@ namespace iPassport.Application.Services
                 var userDetails = new UserDetails().Create(dto);
 
                 await _detailsRepository.InsertAsync(userDetails);
-                
+
                 _unitOfWork.CommitIdentity();
                 _unitOfWork.CommitPassport();
             }
@@ -261,7 +261,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var user = new Users().CreateAgent(dto);
-            
+
 
             try
             {
@@ -331,7 +331,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
-            
+
             GetHealthUnitAddress(citizenDto.Doses);
 
             var citizenDetailsViewModel = _mapper.Map<CitizenDetailsViewModel>(citizenDto);
@@ -376,7 +376,7 @@ namespace iPassport.Application.Services
                             throw new BusinessException(_localizer["UserNotUpdated"]);
                     }
                 }
-                else if(dto.Doses != null)
+                else if (dto.Doses != null)
                 {
                     var toInclude = dto.Doses.Where(x => !currentUserDetails.UserVaccines.Any(y => y.Id == x.Id));
                     var toChange = currentUserDetails.UserVaccines.Where(x => dto.Doses.Any(y => y.Id == x.Id));
@@ -527,7 +527,7 @@ namespace iPassport.Application.Services
                 var loadedDoses = new List<VaccineDoseDto>();
                 x.Doses.ToList().ForEach(y =>
                 {
-                    if(y.HealthUnit != null && y.HealthUnit.Address != null)
+                    if (y.HealthUnit != null && y.HealthUnit.Address != null)
                     {
                         y.HealthUnit.Address = new AddressDto(_addressRepository.FindFullAddress(y.HealthUnit.Address.Id.Value).Result);
                     }
@@ -543,6 +543,9 @@ namespace iPassport.Application.Services
         {
             List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
             ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
+
+            await _importedFileRepository.InsertAsync(importedFile);
+
             importedFile.ImportedFileDetails = GetExtractionErrors(fileData, importedFile.Id);
             ValidateExtractedData(fileData, importedFile);
 
@@ -551,12 +554,12 @@ namespace iPassport.Application.Services
 
             foreach (var data in validData.Where(d => d.IsValid))
             {
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
                 try
                 {
                     Users user = Users.CreateCitizen(data.Result);
-
-                    _unitOfWork.BeginTransactionIdentity();
-                    _unitOfWork.BeginTransactionPassport();
 
                     // Add User in iPassportIdentityContext
                     var result = await _userManager.CreateAsync(user);
@@ -566,7 +569,7 @@ namespace iPassport.Application.Services
                     data.Result.UserId = user.Id;
 
                     // Add Details to User in iPassportContext
-                    UserDetails UserDetail = UserDetails.CreateUserDetail(data.Result);
+                    UserDetails UserDetail = UserDetails.CreateUserDetail(data.Result, importedFile.Id);
                     await _detailsRepository.InsertAsync(UserDetail);
 
                     _unitOfWork.CommitIdentity();
@@ -590,7 +593,7 @@ namespace iPassport.Application.Services
                 }
             }
 
-            await _importedFileRepository.InsertAsync(importedFile);
+            await _importedFileRepository.InsertDetailsAsync(importedFile.ImportedFileDetails);
 
             return;
         }
@@ -747,7 +750,7 @@ namespace iPassport.Application.Services
 
                 v.Result.VaccineIdFirstDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameFirstDose.ToUpper()
                                                                     && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameFirstDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-                
+
                 id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || v.Result.HealthUnityCnpjFirstDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose) || v.Result.HealthUnityIneFirstDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
                 if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose)))
@@ -799,7 +802,7 @@ namespace iPassport.Application.Services
 
                 v.Result.VaccineIdThirdDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameThirdDose.ToUpper()
                                                                     && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-                
+
                 id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
                 if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose)))

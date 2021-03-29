@@ -14,7 +14,7 @@ namespace iPassport.Infra.Repositories
 {
     public class Repository<T> : IRepository<T> where T : Entity
     {
-        private readonly iPassportContext _context;
+        protected readonly iPassportContext _context;
         protected readonly DbSet<T> _DbSet;
 
         public Repository(iPassportContext context)
@@ -38,7 +38,7 @@ namespace iPassport.Infra.Repositories
             }
             catch (DbUpdateException ex)
             {
-                if (ex.InnerException.GetType() == (typeof(PostgresException)))
+                if (ex.InnerException?.GetType() == (typeof(PostgresException)))
                 {
                     var key = ((PostgresException)ex.InnerException).ConstraintName.Split('_').Last();
 
@@ -66,7 +66,7 @@ namespace iPassport.Infra.Repositories
             }
             catch (DbUpdateException ex)
             {
-                if (ex.InnerException.GetType() == (typeof(PostgresException)))
+                if (ex.InnerException?.GetType() == (typeof(PostgresException)))
                 {
                     var key = ((PostgresException)ex.InnerException).ConstraintName.Split('_').Last();
 
