@@ -543,4 +543,7 @@
   <data name="NonstandardField" xml:space="preserve">
     <value>Campo fora do padrão.</value>
   </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Campo obrigatório.</value>
+  </data>
 </root>
