@@ -38,6 +38,13 @@ namespace iPassport.Api.Models.Validators.HealthUnit
 
             RuleFor(x => x.Address)
                 .SetValidator(new AddressValidator(localizer, false));
+
+            RuleFor(x => x.Cnpj)
+                .Must(x => CnpjUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cnpj)).WithMessage(string.Format(localizer["InvalidField"], "CNPJ"));
+
+            RuleFor(x => x.Ine)
+                .MaximumLength(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"))
+                .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"));
         }
     }
 }
