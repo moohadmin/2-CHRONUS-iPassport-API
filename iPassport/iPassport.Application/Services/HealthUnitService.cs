@@ -59,6 +59,9 @@ namespace iPassport.Application.Services
             if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
                 throw new BusinessException(_localizer["IneRequired"]);
 
+            if(type.Identifyer == (int) EHealthUnitType.Private && string.IsNullOrWhiteSpace(dto.Cnpj))
+                throw new BusinessException(string.Format(_localizer["RequiredField"], "CNPJ"));
+
             try
             {
                 _unitOfWork.BeginTransactionIdentity();
@@ -105,8 +108,13 @@ namespace iPassport.Application.Services
             if (type == null)
                 throw new BusinessException(_localizer["HealthUnitTypeNotFound"]);
 
-            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
+            var hasCnpj = await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null;
+
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && )
                 throw new BusinessException(_localizer["IneRequired"]);
+
+            if (type.Identifyer == (int)EHealthUnitType.Private && string.IsNullOrWhiteSpace(dto.Cnpj))
+                throw new BusinessException(string.Format(_localizer["RequiredField"], "CNPJ"));
 
             try
             {

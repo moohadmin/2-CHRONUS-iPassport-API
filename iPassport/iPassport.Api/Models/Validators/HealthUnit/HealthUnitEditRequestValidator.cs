@@ -25,17 +25,6 @@ namespace iPassport.Api.Models.Validators.HealthUnit
             RuleFor(x => x.Name)
                 .SetValidator(new RequiredFieldValidator<string>("Name", localizer));
 
-            //RuleFor(x => x.Cnpj)
-            //    .Cascade(CascadeMode.Stop)
-            //    .SetValidator(new RequiredFieldValidator<string>("Cnpj", localizer)).When(x => string.IsNullOrWhiteSpace(x.Ine))
-            //    .Must(x => CnpjUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cnpj)).WithMessage(string.Format(localizer["InvalidField"], "Cnpj"));
-
-            //RuleFor(x => x.Ine)
-            //    .Cascade(CascadeMode.Stop)
-            //    .SetValidator(new RequiredFieldValidator<string>("Ine", localizer)).When(x => string.IsNullOrWhiteSpace(x.Cnpj))
-            //    .MaximumLength(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"))
-            //    .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"));
-
             RuleFor(x => x.Email)
                 .EmailAddress().WithMessage(string.Format(localizer["InvalidField"], "E-mail")).When(x => !string.IsNullOrWhiteSpace(x.Email));
 
