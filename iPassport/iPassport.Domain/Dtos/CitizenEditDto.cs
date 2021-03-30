@@ -24,5 +24,6 @@ namespace iPassport.Domain.Dtos
         public AddressEditDto Address { get; set; }
         public IList<UserVaccineEditDto> Doses { get; set; }
         public UserDiseaseTestEditDto Test { get; set; }
+        public bool? WasTestPerformed { get; set; }
     }
 }

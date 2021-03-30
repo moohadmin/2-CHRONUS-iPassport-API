@@ -20,7 +20,7 @@ namespace iPassport.Domain.Dtos
             NumberOfDoses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.Count();
             Telephone = authUser.PhoneNumber;
             Birthday = authUser.Birthday;
-            WasTestPerformed = userDetails.UserDiseaseTests?.Any();
+            WasTestPerformed = userDetails.WasTestPerformed;
             Test = userDetails.UserDiseaseTests != null ? new UserDiseaseTestDto(userDetails.UserDiseaseTests?.OrderByDescending(x => x.CreateDate).FirstOrDefault()) : null;
             Address = authUser.Address != null ? new AddressDto(authUser.Address) : null;
             PriorityGroup = userDetails.PPriorityGroup != null ? new PriorityGroupDto(userDetails.PPriorityGroup) : null;

@@ -12,7 +12,7 @@ namespace iPassport.Domain.Entities
         public UserDetails() { }
 
         public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null, bool? wasCovidInfected = null, string bond = null, Guid? priorityGroupId = null,
-            IList<UserDiseaseTest> userDiseaseTests = null) : base()
+            IList<UserDiseaseTest> userDiseaseTests = null, bool? wasTestPerformed = null) : base()
         {
             Id = userId;
 
@@ -33,6 +33,8 @@ namespace iPassport.Domain.Entities
 
             if (userDiseaseTests != null)
                 UserDiseaseTests = userDiseaseTests;
+
+            WasTestPerformed = wasTestPerformed;
         }
 
         public bool? WasCovidInfected { get; private set; }
@@ -45,6 +47,7 @@ namespace iPassport.Domain.Entities
         public Guid? PlanId { get; private set; }
         public Guid? PriorityGroupId { get; private set; }
         public virtual Guid? ImportedFileId { get; set; }
+        public bool? WasTestPerformed { get; private set; }
 
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }
@@ -60,7 +63,7 @@ namespace iPassport.Domain.Entities
 
         public UserDetails Create(CitizenCreateDto dto) =>
             new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected, bond: dto.Bond, priorityGroupId: dto.PriorityGroupId,
-                userDiseaseTests: CreateUserDiseaseTest(dto.Test));
+                userDiseaseTests: CreateUserDiseaseTest(dto.Test), wasTestPerformed: dto.WasTestPerformed );
 
         private IList<UserVaccine> CreateUservaccine(IList<UserVaccineCreateDto> dto)
         {
@@ -175,7 +178,7 @@ namespace iPassport.Domain.Entities
         {
             Bond = dto.Bond;
             WasCovidInfected = dto.WasCovidInfected;
-
+            WasTestPerformed = dto.WasTestPerformed;
             PriorityGroupId = dto.PriorityGroupId;
         }
 
@@ -188,7 +191,7 @@ namespace iPassport.Domain.Entities
                 WasCovidInfected = dto.WasCovidInfectedBool,
                 UserDiseaseTests = dto.WasTestPerformed == "Sim" ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
                 UserVaccines = UserVaccine.CreateListUserVaccine(dto),
-                ImportedFileId = importedFileId
+                ImportedFileId = importedFileId                
             };
     }
 }

@@ -90,7 +90,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.PriorityGroupId, act => act.MapFrom(src => src.PriorityGroupId))                
                 .ForMember(des => des.Telephone, act => act.MapFrom(src => src.Telephone))
                 .ForMember(des => des.WasCovidInfected, act => act.MapFrom(src => src.WasCovidInfected))
-                .ForMember(des => des.Test, act => act.MapFrom(src => src.WasTestPerformed.GetValueOrDefault() ? src.Test : null));
+                .ForMember(des => des.Test, act => act.MapFrom(src => src.WasTestPerformed.GetValueOrDefault() ? src.Test : null))
+                .ForMember(des => des.WasTestPerformed, act => act.MapFrom(src => src.WasTestPerformed));
         }
     }
 }
