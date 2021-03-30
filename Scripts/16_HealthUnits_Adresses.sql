@@ -25,7 +25,7 @@ INSERT INTO public."Adresses"(
 
 INSERT INTO public."Adresses"(
 	"Id", "Description", "Cep", "CityId", "CreateDate", "UpdateDate", "District", "Number")
-	VALUES (uuid_generate_v4(), 'Av Artur Padilha ', '56800000', (select c."Id" from "Cities" c where c."IbgeCode" = '2600104')
+	VALUES (uuid_generate_v4(), 'Av Artur Padilha', '56800000', (select c."Id" from "Cities" c where c."IbgeCode" = '2600104')
 			, timezone('utc', now()), timezone('utc', now()), 'Centro', '537');	
 
 
@@ -143,7 +143,7 @@ INSERT INTO public."HealthUnits"(
 	"TypeId", "AddressId", "CreateDate", "UpdateDate", "Active", "Ine")
 	VALUES (uuid_generate_v4(), 'PSF São Sebastião', null, null, null, null, null, null, 
 			(select "Id" from "HealthUnitTypes" where "Name" = 'Pública'), 
-			(select "Id" from "Adresses" where "Description" = 'Rua Sonia Ricardo S/N'), timezone('utc', now()),
+			(select "Id" from "Adresses" where "Description" = 'Rua Sônia Ricardo S/N'), timezone('utc', now()),
 			timezone('utc', now()), 'true', '2429500'); 	
 		
 			
