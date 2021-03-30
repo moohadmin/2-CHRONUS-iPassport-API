@@ -249,12 +249,15 @@ namespace iPassport.Test.Services
 
             _mockUserRepository.Setup(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()).Result)
                 .Returns(UserSeed.GetPagedUsers());
+            _mockRepository.Setup(x => x.GetImportedUserById(It.IsAny<Guid[]>()).Result)
+                .Returns(UserSeed.GetImportedUserDto());
 
             // Act
             var result = _service.GetPaggedCizten(mockRequest);
 
             // Assert
             _mockUserRepository.Verify(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()));
+            _mockRepository.Verify(x => x.GetImportedUserById(It.IsAny<Guid[]>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

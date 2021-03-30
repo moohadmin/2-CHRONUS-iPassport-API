@@ -117,8 +117,8 @@ namespace iPassport.Application.Services
                 {
                     if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
-                                                 
-                    if(dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
+
+                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
                         throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
@@ -314,8 +314,14 @@ namespace iPassport.Application.Services
         public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
             var res = await _userRepository.GetPaggedCizten(filter);
+            var ImportedInfo = await _detailsRepository.GetImportedUserById(res.Data.Select(x => x.Id).ToArray());
 
             var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
+            result.ToList().ForEach(x =>
+            {
+                var wasImported = ImportedInfo.FirstOrDefault(y => y.UserId == x.Id)?.WasImported;
+                x.WasImported = wasImported.GetValueOrDefault();
+            });
 
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 
