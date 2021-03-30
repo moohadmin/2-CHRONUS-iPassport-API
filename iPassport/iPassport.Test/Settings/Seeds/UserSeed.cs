@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using System;
 using System.Collections.Generic;
@@ -43,5 +44,15 @@ namespace iPassport.Test.Seeds
         {
             return new PagedData<Users>() { Data = GetUsers() };
         }
+
+        public static IList<ImportedUserDto> GetImportedUserDto() =>
+            new List<ImportedUserDto>()
+            {
+                new()
+                {
+                    UserId = Guid.NewGuid(),
+                    WasImported = false
+                }
+            };
     }
 }
