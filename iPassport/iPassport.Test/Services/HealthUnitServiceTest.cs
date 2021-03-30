@@ -24,6 +24,7 @@ namespace iPassport.Test.Services
     public class HealthUnitServiceTest
     {
         Mock<IHealthUnitRepository> _mockRepository;
+        Mock<IHealthUnitTypeRepository> _mockHealthUnitTypeRepository;
         IHealthUnitService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
@@ -36,12 +37,13 @@ namespace iPassport.Test.Services
         {
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<IHealthUnitRepository>();
+            _mockHealthUnitTypeRepository = new Mock<IHealthUnitTypeRepository>();
             _mockAddressRepository = new Mock<IAddressRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            _service = new HealthUnitService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockUnitOfWork.Object);
+            _service = new HealthUnitService(_mockRepository.Object, _mockHealthUnitTypeRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockUnitOfWork.Object);
         }
 
         [TestMethod]
