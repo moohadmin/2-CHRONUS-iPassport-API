@@ -606,7 +606,13 @@
   <data name="Vaccine" xml:space="preserve">
     <value>Vacina</value>
   </data>
-<data name="InvalidVaccineDoseDate" xml:space="preserve">
+  <data name="InvalidVaccineDoseDate" xml:space="preserve">
     <value>A data de vacinação não pode ser anterior à última dose cadastrada. Favor verificar.</value>
+  </data>
+  <data name="EndTime" xml:space="preserve">
+    <value>período final</value>
+  </data>
+  <data name="StartTime" xml:space="preserve">
+    <value>período inicial</value>
   </data>
 </root>
