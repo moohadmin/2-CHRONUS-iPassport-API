@@ -10,11 +10,22 @@ INSERT INTO public."Adresses"(
 	"Id", "Description", "Cep", "CityId", "CreateDate", "UpdateDate", "District", "Number")
 	VALUES (uuid_generate_v4(), 'Avenida Rio Branco', '56800000', (select c."Id" from "Cities" c where c."IbgeCode" = '2600104')
 			, timezone('utc', now()), timezone('utc', now()), 'Centro', '296');
+
+INSERT INTO public."Adresses"(
+	"Id", "Description", "Cep", "CityId", "CreateDate", "UpdateDate", "District", "Number")
+	VALUES (uuid_generate_v4(), 'Rua Dr Roberto Nogueira Lima, 232', '56800000', (select c."Id" from "Cities" c where c."IbgeCode" = '2600104')
+			, timezone('utc', now()), timezone('utc', now()), 'Centro', '232');
+
+
+INSERT INTO public."Adresses"(
+	"Id", "Description", "Cep", "CityId", "CreateDate", "UpdateDate", "District", "Number")
+	VALUES (uuid_generate_v4(), 'Avenida Rio Branco, 296', '56800000', (select c."Id" from "Cities" c where c."IbgeCode" = '2600104')
+			, timezone('utc', now()), timezone('utc', now()), 'Centro', '296');
 			
 
 INSERT INTO public."Adresses"(
 	"Id", "Description", "Cep", "CityId", "CreateDate", "UpdateDate", "District", "Number")
-	VALUES (uuid_generate_v4(), 'Av Artur Padilha ', '56800000', (select c."Id" from "Cities" c where c."IbgeCode" = '2600104')
+	VALUES (uuid_generate_v4(), 'Av Artur Padilha', '56800000', (select c."Id" from "Cities" c where c."IbgeCode" = '2600104')
 			, timezone('utc', now()), timezone('utc', now()), 'Centro', '537');	
 
 
@@ -91,7 +102,7 @@ INSERT INTO public."HealthUnits"(
 	"Id", "Name", "Cnpj", "Email", "ResponsiblePersonName", "ResponsiblePersonPhone", "ResponsiblePersonOccupation", "DeactivationDate",
 	"TypeId", "AddressId", "CreateDate", "UpdateDate", "Active", "Ine")
 	VALUES (uuid_generate_v4(), 'UBS Mandacaru II', '10346096000106', null, null, null, null, null, (select "Id" from "HealthUnitTypes" where "Name" = 'Pública'), 
-			(select "Id" from "Adresses" where "Description" = 'Rua Dr Roberto Nogueira Lima'), timezone('utc', now()),
+			(select "Id" from "Adresses" where "Description" = 'Rua Dr Roberto Nogueira Lima, 232'), timezone('utc', now()),
 			timezone('utc', now()), 'true', '7320647'); 
 			
 			
@@ -107,7 +118,7 @@ INSERT INTO public."HealthUnits"(
 	"TypeId", "AddressId", "CreateDate", "UpdateDate", "Active", "Ine")
 	VALUES (uuid_generate_v4(), 'Central de Regulação Regional de Afogados da Ingazeira', '10346096000106', null, null, null, null, null, 
 			(select "Id" from "HealthUnitTypes" where "Name" = 'Pública'), 
-			(select "Id" from "Adresses" where "Description" = 'Avenida Rio Branco'), timezone('utc', now()),
+			(select "Id" from "Adresses" where "Description" = 'Avenida Rio Branco, 296'), timezone('utc', now()),
 			timezone('utc', now()), 'true', '7129386'); 
 			
 INSERT INTO public."HealthUnits"(
@@ -132,7 +143,7 @@ INSERT INTO public."HealthUnits"(
 	"TypeId", "AddressId", "CreateDate", "UpdateDate", "Active", "Ine")
 	VALUES (uuid_generate_v4(), 'PSF São Sebastião', null, null, null, null, null, null, 
 			(select "Id" from "HealthUnitTypes" where "Name" = 'Pública'), 
-			(select "Id" from "Adresses" where "Description" = 'Rua Sonia Ricardo S/N'), timezone('utc', now()),
+			(select "Id" from "Adresses" where "Description" = 'Rua Sônia Ricardo S/N'), timezone('utc', now()),
 			timezone('utc', now()), 'true', '2429500'); 	
 		
 			

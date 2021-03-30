@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210329130354_Add FK ImportedFileId from UserDatails to ImportedFile")]
+    partial class AddFKImportedFileIdfromUserDatailstoImportedFile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,8 +160,6 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Cnpj");
 
                     b.HasIndex("Ine")
                         .IsUnique();
@@ -407,8 +407,6 @@ namespace iPassport.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name");
-
                     b.ToTable("PriorityGroups");
                 });
 
@@ -587,8 +585,6 @@ namespace iPassport.Infra.Migrations
 
                     b.HasIndex("ManufacturerId");
 
-                    b.HasIndex("Name");
-
                     b.ToTable("Vaccines");
                 });
 
@@ -609,8 +605,6 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name");
 
                     b.ToTable("VaccineManufacturers");
                 });

@@ -1,7 +1,9 @@
 ﻿using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
+using System.Linq;
 
 namespace iPassport.Infra.Repositories
 {
@@ -41,6 +43,9 @@ namespace iPassport.Infra.Repositories
                 _transactionPassport.Rollback();
                 try
                 {
+                    _contextPassport.ChangeTracker.Entries()
+                       .Where(e => e.Entity != null && e.State == EntityState.Added).ToList()
+                       .ForEach(e => e.State = EntityState.Detached);
                     _transactionPassport.Dispose();
                 }
                 catch (Exception)
@@ -70,6 +75,9 @@ namespace iPassport.Infra.Repositories
             if (_transactionIdentity != null)
             {
                 _transactionIdentity.Rollback();
+                _contextIdentityPassport.ChangeTracker.Entries()
+                   .Where(e => e.Entity != null && e.State == EntityState.Added).ToList()
+                   .ForEach(e => e.State = EntityState.Detached);
                 try
                 {
                     _transactionIdentity.Dispose();

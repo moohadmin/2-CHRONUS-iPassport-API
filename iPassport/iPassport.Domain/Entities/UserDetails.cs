@@ -44,6 +44,7 @@ namespace iPassport.Domain.Entities
 
         public Guid? PlanId { get; private set; }
         public Guid? PriorityGroupId { get; private set; }
+        public virtual Guid? ImportedFileId { get; set; }
 
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }
@@ -51,6 +52,8 @@ namespace iPassport.Domain.Entities
 
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
         public virtual IEnumerable<UserDiseaseTest> UserDiseaseTests { get; set; }
+
+        public virtual ImportedFile ImportedFile { get; set; }
 
         public UserDetails Create(UserAgentCreateDto dto) =>
             new UserDetails(dto.UserId);
@@ -176,7 +179,7 @@ namespace iPassport.Domain.Entities
             PriorityGroupId = dto.PriorityGroupId;
         }
 
-        public static UserDetails CreateUserDetail(UserImportDto dto)
+        public static UserDetails CreateUserDetail(UserImportDto dto, Guid importedFileId)
             => new ()
             {
                 Id = dto.UserId,
@@ -184,7 +187,8 @@ namespace iPassport.Domain.Entities
                 PriorityGroupId = dto.PriorityGroupId,
                 WasCovidInfected = dto.WasCovidInfectedBool,
                 UserDiseaseTests = dto.WasTestPerformed == "Sim" ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
-                UserVaccines = UserVaccine.CreateListUserVaccine(dto)
+                UserVaccines = UserVaccine.CreateListUserVaccine(dto),
+                ImportedFileId = importedFileId
             };
     }
 }

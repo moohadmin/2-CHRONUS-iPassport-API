@@ -32,7 +32,7 @@
         },
         {
           "name": "NOTIFICATIONS_MOCK",
-          "value": "true"
+          "value": "false"
         },
         {
           "name": "AWS_DEFAULT_REGION",
@@ -40,7 +40,7 @@
         },
         {
           "name": "NOTIFICATIONS_MOCK_NUMBER",
-          "value": ""
+          "value": "5571991905015"
         }
       ],
       "resourceRequirements": null,

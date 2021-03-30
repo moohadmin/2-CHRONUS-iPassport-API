@@ -3,6 +3,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +19,12 @@ namespace iPassport.Infra.Repositories
                 .Include(y => y.ImportingUser).Include(z => z.ImportedFileDetails).OrderBy(m => m.Name);
 
             return await Paginate(query, filter);
+        }
+
+        public async Task<bool> InsertDetailsAsync(IList<ImportedFileDetails> details)
+        {
+            _context.ImportedFileDetails.AddRange(details);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
