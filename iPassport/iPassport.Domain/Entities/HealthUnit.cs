@@ -52,5 +52,8 @@ namespace iPassport.Domain.Entities
             TypeId = dto.TypeId.Value;
             AddressId = dto.Address.Id;
         }
+
+        public void AddUniqueCode(int uniqueCode) => UniqueCode = uniqueCode;
+        
     }
 }

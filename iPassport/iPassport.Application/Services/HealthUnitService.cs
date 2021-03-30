@@ -54,18 +54,10 @@ namespace iPassport.Application.Services
             var type = await _healthUnitTypeRepository.Find(dto.TypeId.Value);
             if (type == null)
                 throw new BusinessException(_localizer["HealthUnitTypeNotFound"]);
-            
-            if(type.Identifyer == (int)EHealthUnitType.Public)
-            {
-                // Ine must be informed when exists cnpj in database
-                if (string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
-                    throw new BusinessException(_localizer["IneRequired"]);
 
-                if (string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj))
-                {
-
-                }
-            }
+            // Ine must be informed when exists cnpj in database and Health Unit Type is Public 
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
+                throw new BusinessException(_localizer["IneRequired"]);
 
             try
             {
@@ -77,6 +69,10 @@ namespace iPassport.Application.Services
 
                 dto.Address.Id = address.Id;
                 var healthUnit = new HealthUnit().Create(dto);
+
+                // When Health Unit type is public, and Ine and Cnpj is null the unique code must be declared
+                if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj))
+                    healthUnit.AddUniqueCode(await _healthUnitRepository.GetNexUniqueCodeValue());
 
                 await _healthUnitRepository.InsertAsync(healthUnit);
 
@@ -105,7 +101,11 @@ namespace iPassport.Application.Services
             if (unit == null)
                 throw new BusinessException(_localizer["HealthUnitNotFound"]);
 
-            if (string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
+            var type = await _healthUnitTypeRepository.Find(dto.TypeId.Value);
+            if (type == null)
+                throw new BusinessException(_localizer["HealthUnitTypeNotFound"]);
+
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
                 throw new BusinessException(_localizer["IneRequired"]);
 
             try
