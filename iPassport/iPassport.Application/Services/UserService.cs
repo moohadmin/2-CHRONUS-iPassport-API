@@ -318,9 +318,8 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
             result.ToList().ForEach(x =>
-            {
-                var wasImported = ImportedInfo.FirstOrDefault(y => y.UserId == x.Id)?.WasImported;
-                x.WasImported = wasImported.GetValueOrDefault();
+            {                
+                x.WasImported = (ImportedInfo.FirstOrDefault(y => y.UserId == x.Id)?.WasImported).GetValueOrDefault();
             });
 
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
