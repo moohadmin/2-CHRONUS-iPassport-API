@@ -56,11 +56,15 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["HealthUnitTypeNotFound"]);
 
             // Ine must be informed when exists cnpj in database and Health Unit Type is Public 
-            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null)
+            var hasCnpj = await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null;
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && hasCnpj)
                 throw new BusinessException(_localizer["IneRequired"]);
 
-            if(type.Identifyer == (int) EHealthUnitType.Private && string.IsNullOrWhiteSpace(dto.Cnpj))
+            if (type.Identifyer == (int)EHealthUnitType.Private && string.IsNullOrWhiteSpace(dto.Cnpj))
                 throw new BusinessException(string.Format(_localizer["RequiredField"], "CNPJ"));
+
+            if (type.Identifyer == (int)EHealthUnitType.Private && hasCnpj)
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNPJ"));
 
             try
             {
@@ -110,11 +114,15 @@ namespace iPassport.Application.Services
 
             var hasCnpj = await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null;
 
-            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && )
+            // Ine must be informed when exists cnpj in database and Health Unit Type is Public 
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && hasCnpj)
                 throw new BusinessException(_localizer["IneRequired"]);
 
             if (type.Identifyer == (int)EHealthUnitType.Private && string.IsNullOrWhiteSpace(dto.Cnpj))
                 throw new BusinessException(string.Format(_localizer["RequiredField"], "CNPJ"));
+
+            if(type.Identifyer == (int)EHealthUnitType.Private && hasCnpj)
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNPJ"));
 
             try
             {
