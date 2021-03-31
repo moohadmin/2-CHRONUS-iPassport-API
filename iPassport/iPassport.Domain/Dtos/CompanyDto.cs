@@ -5,6 +5,7 @@ namespace iPassport.Domain.Dtos
 {
     public class CompanyDto
     {
+        public CompanyDto() {}
         public CompanyDto(Company company)
         {
             Id = company?.Id;

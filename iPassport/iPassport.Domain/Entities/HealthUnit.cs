@@ -18,6 +18,7 @@ namespace iPassport.Domain.Entities
         public DateTime? DeactivationDate { get; private set; }
         public Guid TypeId { get; private set; }
         public Guid? AddressId { get; private set; }
+        public Guid? CompanyId { get; private set; }
         public bool? Active { get; private set; }
         public int? UniqueCode { get; private set; }
         public virtual HealthUnitType Type { get; set; }
@@ -37,7 +38,8 @@ namespace iPassport.Domain.Entities
                 ResponsiblePersonOccupation = dto.ResponsiblePersonOccupation,
                 TypeId = (Guid)dto.TypeId,
                 AddressId = dto.Address.Id,
-                Active = dto.IsActive
+                Active = dto.IsActive,
+                CompanyId = dto.CompanyId
             };
 
         public void ChangeHealthUnit(HealthUnitEditDto dto)
@@ -51,6 +53,7 @@ namespace iPassport.Domain.Entities
             ResponsiblePersonPhone = dto.ResponsiblePersonPhone;
             TypeId = dto.TypeId.Value;
             AddressId = dto.Address.Id;
+            CompanyId = dto.CompanyId;
         }
 
         public void AddUniqueCode(int uniqueCode) => UniqueCode = uniqueCode;

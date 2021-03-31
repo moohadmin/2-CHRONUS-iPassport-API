@@ -33,7 +33,7 @@ namespace iPassport.Test.Services
         Mock<IAddressRepository> _mockAddressRepository;
         Mock<ICityRepository> _mockCityRepository;
         Mock<IUnitOfWork> _mockUnitOfWork;
-
+        Mock<ICompanyRepository> _mockCompanyRepository;
         Resource _resource;
 
         [TestInitialize]
@@ -46,10 +46,11 @@ namespace iPassport.Test.Services
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockCompanyRepository = new Mock<ICompanyRepository>();
 
             _resource = ResourceFactory.Create();
 
-            _service = new HealthUnitService(_mockRepository.Object, _mockHealthUnitTypeRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockUnitOfWork.Object);
+            _service = new HealthUnitService(_mockRepository.Object, _mockHealthUnitTypeRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockCompanyRepository.Object, _mockUnitOfWork.Object);
         }
 
         [TestMethod]
@@ -150,7 +151,7 @@ namespace iPassport.Test.Services
             var message = _resource.GetMessage("CityNotFound");
 
             // Assert
-            Assert.ThrowsExceptionAsync<BusinessException>(async() => await _service.Add(mockRequest));
+            Assert.ThrowsExceptionAsync<BusinessException>(async() => await _service.Add(mockRequest), message);
         }
 
         [TestMethod]
@@ -166,7 +167,7 @@ namespace iPassport.Test.Services
             var message = _resource.GetMessage("HealthUnitTypeNotFound");
 
             // Assert
-            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest));
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest), message);
         }
 
         [TestMethod]

@@ -55,6 +55,13 @@ namespace iPassport.Application.Models.ViewModels
         /// Health Unit Info Address
         /// </summary>
         public AddressViewModel Address {get; set;}
-
+        /// <summary>
+        /// Company
+        /// </summary>
+        public CompanyViewModel Company { get; set; }
+        /// <summary>
+        /// Unique Code
+        /// </summary>
+        public int? UniqueCode { get; set; }
     }
 }
