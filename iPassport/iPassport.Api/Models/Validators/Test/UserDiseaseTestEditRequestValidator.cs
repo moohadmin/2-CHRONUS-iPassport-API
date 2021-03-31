@@ -24,14 +24,19 @@ namespace iPassport.Api.Models.Validators.Vaccines
 
             RuleFor(x => x.TestDate)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["TestDate"]))
-                .LessThanOrEqualTo(DateTime.UtcNow).When(x => x.TestDate.HasValue).WithMessage(localizer["TestDateCannotBeHiggerThenActualDate"]);
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["TestDate"]));
+            
+            RuleFor(x => x.TestDate)
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .When(x => x.TestDate.HasValue).WithMessage(localizer["TestDateCannotBeHiggerThenActualDate"]);
 
             RuleFor(x => x.ResultDate)
-                .NotEmpty()                
+                .NotEmpty()
                 .When(x => (x.Result.HasValue || x.ResultDate.HasValue))
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["ResultDate"]))
-                .GreaterThanOrEqualTo(x => x.TestDate).When(x => x.ResultDate.HasValue).WithMessage(localizer["TestResultDateCannotBeHiggerThenTestDate"]);
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["ResultDate"]));
+
+            RuleFor(x => x.ResultDate)
+                 .GreaterThanOrEqualTo(x => x.TestDate).When(x => x.ResultDate.HasValue).WithMessage(localizer["TestResultDateCannotBeHiggerThenTestDate"]);
         }
     }
 }

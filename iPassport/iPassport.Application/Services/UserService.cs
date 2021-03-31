@@ -105,7 +105,10 @@ namespace iPassport.Application.Services
             if (dto.Address == null || await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
-            if (dto.Doses != null && dto.Doses.Any())
+            if (dto.Test != null && dto.Test.IsEmpty())
+                    throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
+
+                if (dto.Doses != null && dto.Doses.Any())
             {
                 if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
                     throw new BusinessException(_localizer["VaccineNotFound"]);
@@ -117,8 +120,8 @@ namespace iPassport.Application.Services
                 {
                     if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
-                                                 
-                    if(dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
+
+                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
                         throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
@@ -314,8 +317,13 @@ namespace iPassport.Application.Services
         public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
             var res = await _userRepository.GetPaggedCizten(filter);
+            var ImportedInfo = await _detailsRepository.GetImportedUserById(res.Data.Select(x => x.Id).ToArray());
 
             var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
+            result.ToList().ForEach(x =>
+            {                
+                x.WasImported = (ImportedInfo.FirstOrDefault(y => y.UserId == x.Id)?.WasImported).GetValueOrDefault();
+            });
 
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
 
@@ -407,6 +415,9 @@ namespace iPassport.Application.Services
 
                 if (dto.Test != null)
                 {
+                    if(dto.Test.IsEmpty())
+                        throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
+
                     if (dto.Test.Id.HasValue)
                     {
                         var test = currentUserDetails.UserDiseaseTests.FirstOrDefault(x => x.Id == dto.Test.Id);

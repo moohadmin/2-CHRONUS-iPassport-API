@@ -33,8 +33,13 @@ namespace iPassport.Application.Models.ViewModels
         public string Telephone { get; set; }
 
         /// <summary>
-        /// Status
+        /// Active Status
         /// </summary>
         public bool Status { get; set; }
+
+        /// <summary>
+        /// User was imported
+        /// </summary>
+        public bool WasImported { get; set; }
     }
 }
