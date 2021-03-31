@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using iPassport.Api.Models.Requests;
-using iPassport.Api.Models.Requests.User;
+﻿using iPassport.Api.Models.Requests;
 using iPassport.Application.Models.ViewModels;
-using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
+using AutoM = AutoMapper;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -14,10 +12,10 @@ namespace iPassport.Api.AutoMapper.Mappers
     public static class ImportedFileMapper
     {
         /// <summary>
-        /// Imported File Mapper Map Method
+        /// Map Method
         /// </summary>
-        /// <param name="profile">Auto Mapper Profile</param>
-        public static void Map(Profile profile)
+        /// <param name="profile">Auto Mapper Profile Instance</param>
+        public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<GetImportedFileRequest, GetImportedFileFilter>();
 

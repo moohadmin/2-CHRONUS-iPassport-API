@@ -62,15 +62,13 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> EmailLogin(string email, string password)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userRepository.GetByEmail(email);
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
-            var roles = await _userManager.GetRolesAsync(user);
-
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = await _tokenService.GenerateByEmail(user, roles.FirstOrDefault());
+                var token = await _tokenService.GenerateByEmail(user);
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
