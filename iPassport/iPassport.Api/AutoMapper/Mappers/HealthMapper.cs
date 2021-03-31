@@ -1,12 +1,19 @@
-﻿using AutoMapper;
+﻿using AutoM = AutoMapper;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Entities;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
+    /// <summary>
+    /// Health Mapper Class
+    /// </summary>
     public static class HealthMapper
     {
-        public static void Map(Profile profile)
+        /// <summary>
+        /// Map Method
+        /// </summary>
+        /// <param name="profile">Auto Mapper Profile Instance</param>
+        public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<Health, HealthViewModel>()
                 .ForMember(des => des.HealthId, act => act.MapFrom(src => src.Id))

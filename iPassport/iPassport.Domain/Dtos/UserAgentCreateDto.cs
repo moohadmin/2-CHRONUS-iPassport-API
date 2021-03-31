@@ -13,7 +13,6 @@
         public AddressCreateDto Address { get; set; }
         public System.Guid CompanyId { get; set; }
         public bool PasswordIsValid { get; set; }
-        public int Profile { get; set; }
         public System.Guid UserId { get; set; }
     }
 }

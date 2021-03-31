@@ -7,6 +7,6 @@ namespace iPassport.Domain.Filters
     {
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }        
-        public int Profile { get; set; }
+        public int UserType { get; set; }
     }
 }

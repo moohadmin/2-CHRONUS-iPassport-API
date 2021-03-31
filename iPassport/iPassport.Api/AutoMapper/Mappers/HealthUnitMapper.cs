@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using AutoM = AutoMapper;
 using iPassport.Api.Models.Requests.HealthUnit;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
@@ -13,10 +13,10 @@ namespace iPassport.Api.AutoMapper.Mappers
     public static class HealthUnitMapper
     {
         /// <summary>
-        /// Health Unit Map Method
+        /// Map Method
         /// </summary>
-        /// <param name="profile">Auto Mapper profile</param>
-        public static void Map(Profile profile)
+        /// <param name="profile">Auto Mapper Profile Instance</param>
+        public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<HealthUnit, HealthUnitViewModel>()
                  .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))

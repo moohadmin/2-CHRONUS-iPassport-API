@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using AutoM = AutoMapper;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
@@ -12,10 +12,10 @@ namespace iPassport.Api.AutoMapper.Mappers
     public static class VaccineMapper
     {
         /// <summary>
-        /// Map Methop
+        /// Map Method
         /// </summary>
-        /// <param name="profile">Auto Mapper Profile</param>
-        public static void Map(Profile profile)
+        /// <param name="profile">Auto Mapper Profile Instance</param>
+        public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<VaccineDoseDto, VaccineDoseViewModel>();
 
