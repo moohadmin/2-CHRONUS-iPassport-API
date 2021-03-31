@@ -15,5 +15,6 @@ namespace iPassport.Domain.Dtos
         public Guid? TypeId { get; set; }
         public AddressCreateDto Address { get; set; }
         public bool? IsActive { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 }

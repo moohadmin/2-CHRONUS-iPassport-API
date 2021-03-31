@@ -3,6 +3,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,5 +37,8 @@ namespace iPassport.Infra.Repositories
 
         public async Task<IList<HealthUnit>> FindByCnpjAndIne(List<string> listCnpj, List<string> listIne)
             => await _DbSet.Where(m => listCnpj.Any(l => l == m.Cnpj)).Union(_DbSet.Where(m => listIne.Any(l => l == m.Ine))).ToListAsync();
+
+        public async Task<HealthUnit> GetLoadedById(Guid id) =>
+            await _DbSet.Include(x => x.Type).FirstOrDefaultAsync(x => x.Id == id);
     }
 }
