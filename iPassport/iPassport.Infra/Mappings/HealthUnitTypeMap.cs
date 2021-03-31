@@ -16,6 +16,9 @@ namespace iPassport.Infra.Mappings
             builder.Property(p => p.Name)
                 .IsRequired();
 
+            builder.Property(p => p.Identifyer)
+                .IsRequired();
+
         }
     }
 }

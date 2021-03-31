@@ -20,8 +20,8 @@ namespace iPassport.Domain.Dtos
             NumberOfDoses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.Count();
             Telephone = authUser.PhoneNumber;
             Birthday = authUser.Birthday;
-            WasTestPerformed = userDetails.UserDiseaseTests?.Any();
-            Test = userDetails.UserDiseaseTests != null ? new UserDiseaseTestDto(userDetails.UserDiseaseTests?.OrderByDescending(x => x.CreateDate).FirstOrDefault()) : null;
+            WasTestPerformed = userDetails.WasTestPerformed;
+            Test = userDetails.UserDiseaseTests.Any() ? new UserDiseaseTestDto(userDetails.UserDiseaseTests?.OrderByDescending(x => x.CreateDate).FirstOrDefault()) : null;
             Address = authUser.Address != null ? new AddressDto(authUser.Address) : null;
             PriorityGroup = userDetails.PPriorityGroup != null ? new PriorityGroupDto(userDetails.PPriorityGroup) : null;
             BloodType = authUser.BBloodType != null ? new BloodTypeDto(authUser.BBloodType) : null;
@@ -50,6 +50,8 @@ namespace iPassport.Domain.Dtos
                 }),
                 Manufacturer = v.FirstOrDefault().Vaccine?.Manufacturer != null ? new VaccineManufacturerDto(v.FirstOrDefault().Vaccine.Manufacturer) : null
             }).ToList() : null;
+            ImportedFileName = userDetails.ImportedFile?.Name;
+            ImportedFileDate = userDetails.ImportedFile?.CreateDate;
         }
 
         public string CompleteName { get; set; }
@@ -89,5 +91,8 @@ namespace iPassport.Domain.Dtos
         public bool? WasTestPerformed { get; set; }
 
         public UserDiseaseTestDto Test { get; set; }
+
+        public string ImportedFileName { get; set; }
+        public DateTime? ImportedFileDate { get; set; }
     }
 }

@@ -74,9 +74,16 @@ namespace iPassport.Api.Models.Validators.Users
                 .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage(string.Format(localizer["InvalidField"], localizer["Birthday"]));
 
             RuleFor(x => x.Test)
-                .NotEmpty().When(x => x.WasTestPerformed.GetValueOrDefault())
-                .SetValidator(new UserDiseaseTestEditRequestValidator(localizer))
-                .When(x => x.WasTestPerformed.GetValueOrDefault());
+                .Null()
+                    .When(x => !x.WasTestPerformed.GetValueOrDefault())
+                    .WithMessage(localizer["TestMustBeNull"]);
+
+            RuleFor(y => y.Test)
+                 .NotNull()
+                     .When(x => x.WasTestPerformed.GetValueOrDefault())
+                     .WithMessage(localizer["TestNotMustBeNullOrEmpty"])
+                 .SetValidator(new UserDiseaseTestEditRequestValidator(localizer))
+                     .When(x => x.WasTestPerformed.GetValueOrDefault());                
         }
     }
 }

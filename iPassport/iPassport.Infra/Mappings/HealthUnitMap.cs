@@ -16,6 +16,9 @@ namespace iPassport.Infra.Mappings
             builder.HasIndex(t => t.Ine)
                 .IsUnique();
 
+            builder.HasIndex(t => t.UniqueCode)
+                .IsUnique();
+
             builder.Property(p => p.Name)
                 .IsRequired();
 

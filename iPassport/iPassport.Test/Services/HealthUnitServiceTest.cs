@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -11,6 +12,7 @@ using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using iPassport.Test.Settings.Seeds;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -24,6 +26,7 @@ namespace iPassport.Test.Services
     public class HealthUnitServiceTest
     {
         Mock<IHealthUnitRepository> _mockRepository;
+        Mock<IHealthUnitTypeRepository> _mockHealthUnitTypeRepository;
         IHealthUnitService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
@@ -31,17 +34,22 @@ namespace iPassport.Test.Services
         Mock<ICityRepository> _mockCityRepository;
         Mock<IUnitOfWork> _mockUnitOfWork;
 
+        Resource _resource;
+
         [TestInitialize]
         public void Setup()
         {
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<IHealthUnitRepository>();
+            _mockHealthUnitTypeRepository = new Mock<IHealthUnitTypeRepository>();
             _mockAddressRepository = new Mock<IAddressRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            _service = new HealthUnitService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockUnitOfWork.Object);
+            _resource = ResourceFactory.Create();
+
+            _service = new HealthUnitService(_mockRepository.Object, _mockHealthUnitTypeRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockUnitOfWork.Object);
         }
 
         [TestMethod]
@@ -69,6 +77,7 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<HealthUnit>()).Result).Returns(true);
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockAddressRepository.Setup(x => x.InsertAsync(It.IsAny<Address>()).Result).Returns(true);
+            _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePublic());
 
             // Act
             var result = _service.Add(mockRequest);
@@ -117,6 +126,8 @@ namespace iPassport.Test.Services
 
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
                 .Returns(AddressSeed.Get());
+            
+            _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePublic());
 
             // Act
             var result = _service.Edit(mockRequest);
@@ -125,6 +136,90 @@ namespace iPassport.Test.Services
             _mockRepository.Verify(a => a.Update(It.IsAny<HealthUnit>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void AddMustThrowsCityNotFound()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<HealthUnitCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>() && x.TypeId == Guid.NewGuid());
+
+            // Act
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result);
+
+            var message = _resource.GetMessage("CityNotFound");
+
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async() => await _service.Add(mockRequest));
+        }
+
+        [TestMethod]
+        public void AddMustThrowsHealthUnitTypeNotFound()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<HealthUnitCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>() && x.TypeId == Guid.NewGuid());
+
+            // Act
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result);
+
+            var message = _resource.GetMessage("HealthUnitTypeNotFound");
+
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest));
+        }
+
+        [TestMethod]
+        public void AddMustThrowsIneRequired()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<HealthUnitCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>() 
+                && x.TypeId == Guid.NewGuid() && x.Ine == null);
+
+            // Act
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.GetByCnpj(It.IsAny<string>()).Result).Returns(HealthUnitSeed.GetHealthUnits().FirstOrDefault());
+            _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePublic());
+
+            var message = _resource.GetMessage("IneRequired");
+
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest), message);
+        }
+
+        [TestMethod]
+        public void AddMustThrowsCnpjRequired()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<HealthUnitCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                && x.TypeId == Guid.NewGuid() && x.Cnpj == null);
+
+            // Act
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePrivate());
+
+            var message = string.Format(_resource.GetMessage("RequiredField"), "CNPJ");
+            
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest), message);
+        }
+
+        [TestMethod]
+        public void AddMustThrowsCnpjAlreadyRegistered()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<HealthUnitCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                && x.TypeId == Guid.NewGuid() && x.Cnpj == "10992673000129");
+
+            // Act
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.GetByCnpj(It.IsAny<string>()).Result).Returns(HealthUnitSeed.GetHealthUnits().FirstOrDefault());
+            _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePrivate());
+
+            var message = string.Format(_resource.GetMessage("DataAlreadyRegistered"), "CNPJ");
+
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest), message);
         }
     }
 }

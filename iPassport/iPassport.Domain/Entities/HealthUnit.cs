@@ -19,7 +19,7 @@ namespace iPassport.Domain.Entities
         public Guid TypeId { get; private set; }
         public Guid? AddressId { get; private set; }
         public bool? Active { get; private set; }
-
+        public int? UniqueCode { get; private set; }
         public virtual HealthUnitType Type { get; set; }
         
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
@@ -52,5 +52,8 @@ namespace iPassport.Domain.Entities
             TypeId = dto.TypeId.Value;
             AddressId = dto.Address.Id;
         }
+
+        public void AddUniqueCode(int uniqueCode) => UniqueCode = uniqueCode;
+        
     }
 }
