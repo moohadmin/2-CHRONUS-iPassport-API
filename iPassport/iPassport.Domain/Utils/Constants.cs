@@ -6,5 +6,11 @@
         public const string DISEASE_TEST_NAME = "PCR";
         public const int IMPORT_USER_MAX_DEGREE_OF_PARALLELISM = 10;
         public const string COLUMN_NAME_IMPORT_FILE_TO_RESOURCE = "ColumnNameImportFile";
+
+        public const string CONST_POSITIVO_VALUE = "POSITIVO";
+        public const string CONST_NEGATIVO_VALUE = "NEGATIVO";
+        public const string CONST_SIM_VALUE = "SIM";
+        public const string CONST_NAO_VALUE = "NÃO";
+        public const string CONST_NENHUM_VALUE = "NENHUM";
     }
 }

@@ -615,4 +615,16 @@
   <data name="StartTime" xml:space="preserve">
     <value>período inicial</value>
   </data>
+  <data name="ColumnNameImportFileCep" xml:space="preserve">
+    <value>CEP</value>
+  </data>
+  <data name="FieldMustHaveANumberOfDigits" xml:space="preserve">
+    <value>Este campo deve conter {0} dígitos.</value>
+  </data>
+  <data name="FieldValueInformedIsNotValidFem" xml:space="preserve">
+    <value>A {0} informada é inválida.</value>
+  </data>
+  <data name="FieldValueInformedIsNotValidMasc" xml:space="preserve">
+    <value>O {0} informado é inválido.</value>
+  </data>
 </root>
