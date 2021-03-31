@@ -77,23 +77,19 @@ namespace iPassport.Test.Services
             var email = "teste";
             var Password = "test";
             var token = "6546548955123ugyfgyuyggyu446654654";
-            var userSeed = UserSeed.GetUserDetails();
-            var Roles = new List<string>() { "Role1", "Roles2" };
 
             // Arrange
-            _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
-            _mockUserManager.Setup(x => x.GetRolesAsync(It.IsAny<Users>()).Result).Returns(Roles);
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());            
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
-            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>()).Result).Returns(token);
             
             // Act
             var result = _service.EmailLogin(email, Password);
 
             // Assert
-            _mockUserManager.Verify(x => x.FindByEmailAsync(It.IsAny<string>()));
-            _mockUserManager.Verify(x => x.GetRolesAsync(It.IsAny<Users>()));
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
             _mockUserManager.Verify(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()));
-            _mockTokenService.Verify(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>()));
+            _mockTokenService.Verify(x => x.GenerateByEmail(It.IsAny<Users>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

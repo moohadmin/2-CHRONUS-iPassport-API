@@ -17,6 +17,8 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.HasIndex(d => d.InternationalDocument).IsUnique();
             builder.HasIndex(t => t.PhoneNumber).IsUnique();
 
+            builder.Property(x => x.UserType);
+
             builder.HasOne(x => x.Address)
                 .WithMany()
                 .HasForeignKey(x => x.AddressId);
@@ -39,6 +41,11 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.HasOne(x => x.BBloodType)
                 .WithMany()
                 .HasForeignKey(x => x.BloodTypeId)
+                .IsRequired(false);
+
+            builder.HasOne(x => x.Profile)
+                .WithMany()
+                .HasForeignKey(x => x.ProfileId)
                 .IsRequired(false);
         }
     }

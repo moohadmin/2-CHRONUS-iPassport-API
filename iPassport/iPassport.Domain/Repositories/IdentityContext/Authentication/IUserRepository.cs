@@ -18,5 +18,6 @@ namespace iPassport.Domain.Repositories.Authentication
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
         Task<int> GetLoggedAgentCount();
         Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter);
+        Task<Users> GetByEmail(string email);
     }
 }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using AutoM = AutoMapper;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
@@ -11,10 +11,10 @@ namespace iPassport.Api.AutoMapper.Mappers
     public static class HumanRaceMapper
     {
         /// <summary>
-        /// Human Race Map Method
+        /// Map Method
         /// </summary>
-        /// <param name="profile">Auto Mapper profile</param>
-        public static void Map(Profile profile)
+        /// <param name="profile">Auto Mapper Profile Instance</param>
+        public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<HumanRace, HumanRaceViewModel>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
