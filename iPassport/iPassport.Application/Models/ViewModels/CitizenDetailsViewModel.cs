@@ -42,5 +42,8 @@ namespace iPassport.Application.Models.ViewModels
         public bool? WasTestPerformed { get; set; }
 
         public UserDiseaseTestViewModel Test { get; set; }
+
+        public string ImportedFileName { get; set; }
+        public DateTime? ImportedFileDate { get; set; }
     }
 }
