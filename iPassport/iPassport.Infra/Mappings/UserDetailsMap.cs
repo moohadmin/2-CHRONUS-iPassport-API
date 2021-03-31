@@ -21,6 +21,8 @@ namespace iPassport.Infra.Mappings
             builder.Property(c => c.PriorityGroup);
 
             builder.Property(c => c.ImportedFileId);
+            
+            builder.Property(c => c.WasTestPerformed);
 
             builder.HasOne(c => c.Plan)
                 .WithMany(p => p.Users);
