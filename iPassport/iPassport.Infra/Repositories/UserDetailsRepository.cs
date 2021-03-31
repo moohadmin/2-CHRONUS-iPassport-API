@@ -24,6 +24,7 @@ namespace iPassport.Infra.Repositories
                         .Include(x => x.UserDiseaseTests)
                         .Include(x => x.PPriorityGroup)
                         .Include(x => x.Passport).ThenInclude(x => x.ListPassportDetails)
+                        .Include(x => x.ImportedFile)
                         .Where(x => x.Id == id).FirstOrDefaultAsync();
 
         public async Task<IList<ImportedUserDto>> GetImportedUserById(Guid[] ids)
