@@ -66,5 +66,10 @@ namespace iPassport.Api.Models.Requests.HealthUnit
         /// Is Active?
         /// </summary>
         public bool? IsActive { get; set; }
+
+        /// <summary>
+        /// Company Id
+        /// </summary>
+        public Guid? CompanyId { get; set; }
     }
 }
