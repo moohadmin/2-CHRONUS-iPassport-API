@@ -51,6 +51,9 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(HealthUnitCreateDto dto)
         {
+            if (await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
             if (await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
@@ -104,6 +107,9 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Edit(HealthUnitEditDto dto)
         {
+            if (await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+            
             var address = await _addressRepository.Find(dto.Address.Id);
             if (address == null)
                 throw new BusinessException(_localizer["AddressNotFound"]);
