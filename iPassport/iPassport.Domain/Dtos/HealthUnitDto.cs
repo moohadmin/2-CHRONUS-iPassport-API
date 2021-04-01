@@ -19,6 +19,7 @@ namespace iPassport.Domain.Dtos
             Type = new HealthUnitTypeDto(healthUnit.Type);
             Address = new AddressDto() { Id = healthUnit.AddressId };
             Company = new CompanyDto() { Id = healthUnit.CompanyId };
+            UniqueCode = healthUnit.UniqueCode;
         }
 
         public bool? Active { get; set; }

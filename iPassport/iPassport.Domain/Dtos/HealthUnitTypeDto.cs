@@ -9,9 +9,11 @@ namespace iPassport.Domain.Dtos
         {
             Id = type.Id;
             Name = type.Name;
+            Identifyer = type.Identifyer;
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public int Identifyer { get ;set; }
     }
 }

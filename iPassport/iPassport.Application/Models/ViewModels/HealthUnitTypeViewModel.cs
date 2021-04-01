@@ -14,6 +14,12 @@ namespace iPassport.Application.Models.ViewModels
         /// <summary>
         /// Health unit Type Name
         /// </summary>
-        public string Name { get; set; }       
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Identifyer code
+        /// </summary>
+        public int Identifyer { get; set; }
+
     }
 }
