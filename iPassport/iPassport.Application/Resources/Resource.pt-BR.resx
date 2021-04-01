@@ -615,13 +615,13 @@
   <data name="StartTime" xml:space="preserve">
     <value>período inicial</value>
   </data>
-	<data name="TestMustBeNull" xml:space="preserve">
+  <data name="TestMustBeNull" xml:space="preserve">
     <value>O teste tem que ser nulo</value>
   </data>
-	<data name="TestNotMustBeNullOrEmpty" xml:space="preserve">
+  <data name="TestNotMustBeNullOrEmpty" xml:space="preserve">
     <value>O teste não pode ser nulo ou vazio</value>
   </data>
-	<data name="TestDate" xml:space="preserve">
+  <data name="TestDate" xml:space="preserve">
     <value>Data do Teste</value>
   </data>
   <data name="HealthUnitTypeNotFound" xml:space="preserve">
@@ -653,5 +653,8 @@
   </data>
 	<data name="HealthUnitMustNotBeInsertedToProfile" xml:space="preserve">
     <value> Para o perfil {0} não deve ser inserida a informação da Unidade de Saúde. Favor verificar.</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
+    <value>Perfis de Acesso.</value>
   </data>
 </root>
