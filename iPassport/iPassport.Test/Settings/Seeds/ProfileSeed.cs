@@ -14,5 +14,8 @@ namespace iPassport.Test.Settings.Seeds
                 new Profile("profile test 4", "4"),
                 new Profile("profile test 5", "5")
             };
+
+        public static Profile Get() =>
+                new Profile("profile test 1", "1");
     }
 }

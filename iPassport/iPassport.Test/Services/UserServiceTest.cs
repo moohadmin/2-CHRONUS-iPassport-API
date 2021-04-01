@@ -14,6 +14,7 @@ using iPassport.Domain.Repositories.Authentication;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using iPassport.Test.Settings.Seeds;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -314,6 +315,29 @@ namespace iPassport.Test.Services
             _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<Users>()));
             _mockRepository.Verify(x => x.Update(It.IsAny<UserDetails>()));
             _mockUserDiseaseTestRepository.Verify(x => x.Delete(It.IsAny<UserDiseaseTest>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void AddAdmin()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<AdminCreateDto>(x => x.CompanyId == Guid.NewGuid());
+            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+            _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
+            _mockProfileRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(ProfileSeed.Get());
+            _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(identityResult);
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<UserDetails>()));
+
+            // Act
+            var result = _service.AddAdmin(mockRequest);
+
+            // Assert
+            _mockCompanyRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockProfileRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockUserManager.Verify(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()));
+            _mockRepository.Verify(x => x.InsertAsync(It.IsAny<UserDetails>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
