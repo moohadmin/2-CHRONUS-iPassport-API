@@ -419,5 +419,27 @@ namespace iPassport.Api.Controllers
             await _service.ImportUsers(request.File);
             return Ok();
         }
+
+        /// <summary>
+        /// This API is responsible for add Admin.
+        /// </summary>
+        /// <param name="request">Admin Create Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Admin Id</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpPost("Admin")]
+        public async Task<ActionResult> AddAdmin([FromBody] AdminCreateRequest request)
+        {
+            var res = await _service.AddAdmin(_mapper.Map<AdminCreateDto>(request));
+            return Ok(res);
+        }
+
+
     }
 }
