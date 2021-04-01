@@ -19,7 +19,9 @@ namespace iPassport.Infra.Repositories
             var query = _DbSet.Include(x => x.Type)
                                .Where(m => (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
                                         && (string.IsNullOrWhiteSpace(filter.Cnpj) || m.Cnpj.Contains(filter.Cnpj))
-                                        && (string.IsNullOrWhiteSpace(filter.Ine) || m.Ine.Contains(filter.Ine)))
+                                        && (string.IsNullOrWhiteSpace(filter.Ine) || m.Ine.Contains(filter.Ine))
+                                        && (filter.CompanyId == null|| filter.CompanyId == m.CompanyId)
+                                        && (filter.TypeId == null|| filter.TypeId == m.TypeId))
                                .OrderBy(m => m.Name);
 
             return await Paginate(query, filter);
