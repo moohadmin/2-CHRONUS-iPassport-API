@@ -28,6 +28,7 @@ namespace iPassport.Infra.Repositories
         public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByPassportId(GetByIdPagedFilter pageFilter)
         {
             var q = await _DbSet
+                .Include(v => v.HealthUnit).ThenInclude(v => v.Type)
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
                 .Where(v => v.ExclusionDate == null && v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
@@ -86,12 +87,15 @@ namespace iPassport.Infra.Repositories
                 VaccineName = v.Key.Name,
                 RequiredDoses = v.FirstOrDefault().Vaccine.RequiredDoses,
                 ImmunizationTime = v.FirstOrDefault().Vaccine.ImmunizationTimeInDays,
+                Manufacturer = new VaccineManufacturerDto(v.FirstOrDefault().Vaccine.Manufacturer),
                 Doses = v.Select(x => new VaccineDoseDto()
                 {
                     Id = x.Id,
                     Dose = x.Dose,
                     VaccinationDate = x.VaccinationDate,
-                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths)
+                    ExpirationDate = x.VaccinationDate.AddMonths(x.Vaccine.ExpirationTimeInMonths),
+                    HealthUnit = new HealthUnitDto(x.HealthUnit),
+                    Batch = x.Batch
                 }).OrderBy(x => x.VaccinationDate)
             }).OrderBy(x => x.VaccineName);
 
