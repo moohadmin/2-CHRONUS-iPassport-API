@@ -27,7 +27,7 @@ namespace iPassport.Application.Services
         { 
             var res = _mapper.Map<IList<ProfileViewModel>>(await _profileRepository.FindAll());
 
-            return new ResponseApi(true, _localizer["AccessProfiles"], res);
+            return new ResponseApi(true, _localizer["Profiles"], res);
         }
     }
 }
