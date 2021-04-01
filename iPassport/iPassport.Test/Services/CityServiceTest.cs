@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using iPassport.Api.Models.Requests;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -63,6 +62,7 @@ namespace iPassport.Test.Services
             var mockRequest = Mock.Of<CityCreateDto>();
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<City>()).Result).Returns(true);
             _mockStateRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(StateSeed.GetState());
+
             // Act
             var result = _service.Add(mockRequest);
 
