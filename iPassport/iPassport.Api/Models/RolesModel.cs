@@ -24,10 +24,5 @@
         /// Represents health unity profile
         /// </summary>
         public const string HealthUnit = "healthUnit";
-
-        /// <summary>
-        /// Represents admin and business profile
-        /// </summary>
-        public const string AdminBusiness = "admin, business";
     }
 }
