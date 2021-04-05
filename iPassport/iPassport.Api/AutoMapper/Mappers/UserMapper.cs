@@ -58,7 +58,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Cns, act => act.MapFrom(src => src.Cns))
                 .ForMember(des => des.CompanyId, act => act.MapFrom(src => src.CompanyId.HasValue ? src.CompanyId : null))
                 .ForMember(des => des.Cpf, act => act.MapFrom(src => src.Cpf))
-                .ForMember(des => des.Doses, act => act.MapFrom(src => src.Doses)) //Rever
+                .ForMember(des => des.Doses, act => act.MapFrom(src => src.Doses)) 
                 .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
                 .ForMember(des => des.GenderId, act => act.MapFrom(src => src.GenderId.HasValue ? src.GenderId : null))
                 .ForMember(des => des.HumanRaceId, act => act.MapFrom(src => src.HumanRaceId.HasValue ? src.HumanRaceId : null))
@@ -71,7 +71,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Test, act => act.MapFrom(src => src.Test))
                 .ForMember(des => des.WasTestPerformed, act => act.MapFrom(src => src.WasTestPerformed));
 
-            profile.CreateMap<AdminCreateRequest, AdminCreateDto>();
+            profile.CreateMap<AdminCreateRequest, AdminDto>();
 
             profile.CreateMap<AdminDetailsDto, AdminDetailsViewModel>();
 
@@ -79,6 +79,9 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Company != null ? src.Company.Name : null))
                 .ForMember(des => des.ProfileName, act => act.MapFrom(src => src.Profile != null ? src.Profile.Name : null))
                 .ForMember(des => des.IsActive, act => act.MapFrom(src => !src.DeactivationDate.HasValue));
+
+            profile.CreateMap<AdminEditRequest, AdminDto>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.UserId));
         }
     }
 }

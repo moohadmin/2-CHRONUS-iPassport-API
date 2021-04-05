@@ -2,7 +2,7 @@
 
 namespace iPassport.Domain.Dtos
 {
-    public class AdminCreateDto
+    public class AdminDto
     {
         public Guid? Id { get; set; }
         public string CompleteName { get; set; }
