@@ -480,7 +480,7 @@ namespace iPassport.Application.Services
         {
             await ValidToSaveAdmin(dto);
 
-            Users user = Users.CreateAdmin(dto);
+            Users user = Users.CreateUser(dto);
 
             if (!dto.IsActive.GetValueOrDefault())
                 user.Deactivate(_accessor.GetCurrentUserId());
@@ -617,8 +617,8 @@ namespace iPassport.Application.Services
 
             await ValidToSaveAdmin(dto);
 
-            currentAdminUser.ChangeAmin(dto);           
-            currentAdminUserDetails.ChangeAdmin(dto);
+            currentAdminUser.ChangeUser(dto);           
+            currentAdminUserDetails.ChangeUserDetail(dto);
 
             UserToken currentUserActiveToken = null;
             if (!dto.IsActive.GetValueOrDefault() && currentAdminUser.IsActive())
@@ -630,7 +630,7 @@ namespace iPassport.Application.Services
             }
 
             if (dto.IsActive.GetValueOrDefault() && currentAdminUser.IsInactive())
-                currentAdminUser.Enable();
+                currentAdminUser.Activate();
             
             try
             {

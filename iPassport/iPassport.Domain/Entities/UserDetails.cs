@@ -205,6 +205,6 @@ namespace iPassport.Domain.Entities
             HealthUnitId = dto.HealthUnitId
             };
 
-        public void ChangeAdmin(AdminDto dto) => HealthUnitId = dto.HealthUnitId;
+        public void ChangeUserDetail(AdminDto dto) => HealthUnitId = dto.HealthUnitId;
     }
 }

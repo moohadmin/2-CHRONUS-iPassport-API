@@ -211,7 +211,7 @@ namespace iPassport.Domain.Entities.Authentication
                     dto.CompanyId,
                     (int)EUserType.Citizen);
 
-        public static Users CreateAdmin(AdminDto dto) =>
+        public static Users CreateUser(AdminDto dto) =>
             new(dto.CompleteName
                 , dto.Cpf
                 , dto.Email
@@ -227,7 +227,7 @@ namespace iPassport.Domain.Entities.Authentication
             DeactivationDate = DateTime.UtcNow;
         }
 
-        public void ChangeAmin(AdminDto dto)
+        public void ChangeUser(AdminDto dto)
         {
             SetUpdateDate();
             FullName = dto.CompleteName;
@@ -237,13 +237,11 @@ namespace iPassport.Domain.Entities.Authentication
             CompanyId = dto.CompanyId;
             Occupation = dto.Occupation;
             ProfileId = dto.ProfileId;
-
-            
         }
 
         public bool IsActive() => !DeactivationDate.HasValue;
         public bool IsInactive() => DeactivationDate.HasValue;
-        public void Enable()
+        public void Activate()
         {
             DeactivationUserId = null;
             DeactivationDate = null;
