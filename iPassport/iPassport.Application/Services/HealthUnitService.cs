@@ -25,6 +25,7 @@ namespace iPassport.Application.Services
         private readonly IHealthUnitTypeRepository _healthUnitTypeRepository;
         private readonly IAddressRepository _addressRepository;
         private readonly ICityRepository _cityRepository;
+        private readonly ICompanyRepository _companyRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -35,6 +36,7 @@ namespace iPassport.Application.Services
                                 IMapper mapper,
                                 IAddressRepository addressRepository,
                                 ICityRepository cityRepository,
+                                ICompanyRepository companyRepository,
                                 IUnitOfWork unitOfWork)
         {
             _healthUnitRepository = healthUnitRepository;
@@ -43,11 +45,15 @@ namespace iPassport.Application.Services
             _mapper = mapper;
             _addressRepository = addressRepository;
             _cityRepository = cityRepository;
+            _companyRepository = companyRepository;
             _unitOfWork = unitOfWork;
         }
 
         public async Task<ResponseApi> Add(HealthUnitCreateDto dto)
         {
+            if (await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
             if (await _cityRepository.Find(dto.Address.CityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
@@ -101,6 +107,9 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Edit(HealthUnitEditDto dto)
         {
+            if (await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+            
             var address = await _addressRepository.Find(dto.Address.Id);
             if (address == null)
                 throw new BusinessException(_localizer["AddressNotFound"]);
@@ -122,7 +131,7 @@ namespace iPassport.Application.Services
             if (type.Identifyer == (int)EHealthUnitType.Private && string.IsNullOrWhiteSpace(dto.Cnpj))
                 throw new BusinessException(string.Format(_localizer["RequiredField"], "CNPJ"));
 
-            if(type.Identifyer == (int)EHealthUnitType.Private && hasCnpj)
+            if(unit.Cnpj != dto.Cnpj && type.Identifyer == (int)EHealthUnitType.Private && hasCnpj)
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNPJ"));
 
             try
@@ -150,7 +159,7 @@ namespace iPassport.Application.Services
                 throw;
             }
 
-            return new ResponseApi(true, _localizer["HealthUnitUpdated"], address.Id);
+            return new ResponseApi(true, _localizer["HealthUnitUpdated"], unit.Id);
         }
 
         public async Task<PagedResponseApi> FindByNameParts(GetHealthUnitPagedFilter filter)
@@ -170,13 +179,19 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetById(Guid id)
         {
-            var res = await _healthUnitRepository.Find(id);
+            var res = await _healthUnitRepository.GetLoadedById(id);
             var result = _mapper.Map<HealthUnitViewModel>(res);
 
             if (res.AddressId.HasValue)
             {
                 var resultAddress = await _addressRepository.FindFullAddress(res.AddressId.Value);
                 result.Address = _mapper.Map<AddressViewModel>(resultAddress);
+            }
+
+            if (res.CompanyId.HasValue)
+            {
+                var resultCompany = await _companyRepository.Find(res.CompanyId.Value);
+                result.Company = _mapper.Map<CompanyViewModel>(resultCompany);
             }
 
             return new ResponseApi(true, _localizer["HealthUnits"], result);

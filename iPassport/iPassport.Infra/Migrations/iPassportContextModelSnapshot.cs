@@ -126,6 +126,9 @@ namespace iPassport.Infra.Migrations
                     b.Property<string>("Cnpj")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -433,6 +436,9 @@ namespace iPassport.Infra.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<Guid?>("HealthUnitId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("ImportedFileId")
                         .HasColumnType("uuid");
 
@@ -455,6 +461,8 @@ namespace iPassport.Infra.Migrations
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HealthUnitId");
 
                     b.HasIndex("ImportedFileId");
 
@@ -716,6 +724,10 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
+                    b.HasOne("iPassport.Domain.Entities.HealthUnit", "HealthUnit")
+                        .WithMany()
+                        .HasForeignKey("HealthUnitId");
+
                     b.HasOne("iPassport.Domain.Entities.ImportedFile", "ImportedFile")
                         .WithMany()
                         .HasForeignKey("ImportedFileId");
@@ -727,6 +739,8 @@ namespace iPassport.Infra.Migrations
                     b.HasOne("iPassport.Domain.Entities.PriorityGroup", "PPriorityGroup")
                         .WithMany()
                         .HasForeignKey("PriorityGroupId");
+
+                    b.Navigation("HealthUnit");
 
                     b.Navigation("ImportedFile");
 

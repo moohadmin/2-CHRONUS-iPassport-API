@@ -260,6 +260,12 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<DateTime?>("DeactivationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeactivationUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -317,8 +323,8 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<string>("Photo")
                         .HasColumnType("text");
 
-                    b.Property<int>("Profile")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("ProfileId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("RG")
                         .HasColumnType("text");
@@ -336,6 +342,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<int>("UserType")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
@@ -349,6 +358,8 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .IsUnique();
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("DeactivationUserId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -372,6 +383,8 @@ namespace iPassport.Infra.Migrations.PassportIdentity
 
                     b.HasIndex("PhoneNumber")
                         .IsUnique();
+
+                    b.HasIndex("ProfileId");
 
                     b.HasIndex("RG")
                         .IsUnique();
@@ -548,6 +561,34 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.ToTable("HumanRaces");
                 });
 
+            modelBuilder.Entity("iPassport.Domain.Entities.Profile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("Profiles");
+                });
+
             modelBuilder.Entity("iPassport.Domain.Entities.State", b =>
                 {
                     b.Property<Guid>("Id")
@@ -655,6 +696,10 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .WithMany()
                         .HasForeignKey("CompanyId");
 
+                    b.HasOne("iPassport.Domain.Entities.Authentication.Users", "DeactivationUser")
+                        .WithMany()
+                        .HasForeignKey("DeactivationUserId");
+
                     b.HasOne("iPassport.Domain.Entities.Gender", "GGender")
                         .WithMany()
                         .HasForeignKey("GenderId");
@@ -663,15 +708,23 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .WithMany()
                         .HasForeignKey("HumanRaceId");
 
+                    b.HasOne("iPassport.Domain.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId");
+
                     b.Navigation("Address");
 
                     b.Navigation("BBloodType");
 
                     b.Navigation("Company");
 
+                    b.Navigation("DeactivationUser");
+
                     b.Navigation("GGender");
 
                     b.Navigation("HumanRace");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.City", b =>

@@ -1,8 +1,8 @@
 ﻿namespace iPassport.Domain.Enums
 {
-    public enum EProfileType
+    public enum EUserType
     {
-        NoProfile = 0,
+        Admin = 0,
         Citizen = 1,
         Agent = 2,
     }

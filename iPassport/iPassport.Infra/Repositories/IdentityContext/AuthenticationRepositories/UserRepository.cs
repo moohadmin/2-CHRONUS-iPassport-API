@@ -34,6 +34,11 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                 .Include(x => x.HumanRace)
                 .Where(x => x.Id == id).FirstOrDefaultAsync();
 
+        public async Task<Users> GetByEmail(string email) =>
+           await _context.Users
+               .Include(x => x.Profile)               
+               .Where(x => x.NormalizedEmail == email.ToUpper()).FirstOrDefaultAsync();
+
         public async Task Update(Users user)
         {
             try
@@ -67,10 +72,10 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             return await GetUserDocument(query, documentType, document).FirstOrDefaultAsync();
         }
 
-        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.Profile == (int)filter.Profile).CountAsync();
+        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.UserType == (int)filter.UserType).CountAsync();
 
-        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Citizen && u.LastLogin != null).CountAsync();
-        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.Profile == (int)EProfileType.Agent && u.LastLogin != null).CountAsync();
+        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserType == (int)EUserType.Citizen && u.LastLogin != null).CountAsync();
+        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserType == (int)EUserType.Agent && u.LastLogin != null).CountAsync();
 
         public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
@@ -91,7 +96,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             if (filter.CountryId.HasValue)
                 query = query.Where(x => x.Address.City.State.CountryId == filter.CountryId);
 
-            query = query.Where(m => m.Profile == (int)EProfileType.Citizen
+            query = query.Where(m => m.UserType == (int)EUserType.Citizen
                               && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower()))
                               && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().StartsWith(filter.Telephone.ToLower())))
                       .OrderBy(m => m.FullName);

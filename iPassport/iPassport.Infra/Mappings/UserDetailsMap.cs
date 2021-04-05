@@ -36,6 +36,11 @@ namespace iPassport.Infra.Mappings
                 .WithMany()
                 .HasForeignKey(x => x.ImportedFileId)
                 .IsRequired(false);
+
+            builder.HasOne(c => c.HealthUnit)
+                .WithMany()
+                .HasForeignKey(x => x.HealthUnitId)
+                .IsRequired(false);
         }
     }
 }

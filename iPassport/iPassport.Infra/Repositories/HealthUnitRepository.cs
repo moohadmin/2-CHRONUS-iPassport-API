@@ -3,6 +3,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +19,9 @@ namespace iPassport.Infra.Repositories
             var query = _DbSet.Include(x => x.Type)
                                .Where(m => (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
                                         && (string.IsNullOrWhiteSpace(filter.Cnpj) || m.Cnpj.Contains(filter.Cnpj))
-                                        && (string.IsNullOrWhiteSpace(filter.Ine) || m.Ine.Contains(filter.Ine)))
+                                        && (string.IsNullOrWhiteSpace(filter.Ine) || m.Ine.Contains(filter.Ine))
+                                        && (filter.CompanyId == null|| filter.CompanyId == m.CompanyId)
+                                        && (filter.TypeId == null|| filter.TypeId == m.TypeId))
                                .OrderBy(m => m.Name);
 
             return await Paginate(query, filter);
@@ -33,6 +36,12 @@ namespace iPassport.Infra.Repositories
 
             return currentCode.HasValue ? currentCode.Value + 1 : 1;
         }
+
+        public async Task<IList<HealthUnit>> FindByCnpjAndIne(List<string> listCnpj, List<string> listIne)
+            => await _DbSet.Where(m => listCnpj.Any(l => l == m.Cnpj)).Union(_DbSet.Where(m => listIne.Any(l => l == m.Ine))).ToListAsync();
+
+        public async Task<HealthUnit> GetLoadedById(Guid id) =>
+            await _DbSet.Include(x => x.Type).FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<IList<HealthUnit>> FindByCnpjIneAndCode(List<string> listCnpj, List<string> listIne, List<int?> listCode)
             => await _DbSet.Where(m => listCnpj.Any(l => l == m.Cnpj)).Union(_DbSet.Where(m => listIne.Any(l => l == m.Ine))).Union(_DbSet.Where(m => listCode.Any(l => l == m.UniqueCode))).ToListAsync();

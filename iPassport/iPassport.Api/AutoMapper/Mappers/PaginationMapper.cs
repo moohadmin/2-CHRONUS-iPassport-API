@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using AutoM = AutoMapper;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
@@ -15,7 +15,7 @@ namespace iPassport.Api.AutoMapper.Mappers
         /// Map Method
         /// </summary>
         /// <param name="profile">Auto Mapper Profile Instance</param>
-        public static void Map(Profile profile)
+        public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<PageFilterRequest, PageFilter>();
 
