@@ -30,7 +30,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             await _context.Users
                 .Include(x => x.Profile)
                 .Include(x => x.Company)
-                .FirstOrDefaultAsync(x => x.Id == id && x.Profile.Key == Constants.ADMIN_PROFILE_KEY);
+                .FirstOrDefaultAsync(x => x.Id == id && x.UserType == (int)EUserType.Admin);
 
         public async Task<Users> GetLoadedUsersById(Guid id) =>
             await _context.Users
