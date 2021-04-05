@@ -61,7 +61,7 @@ namespace iPassport.Application.Services
             if (type == null)
                 throw new BusinessException(_localizer["HealthUnitTypeNotFound"]);
 
-            var hasCnpj = await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null;
+            var hasCnpj = dto.Cnpj != null && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null;
 
             // Ine must be informed when exists cnpj in database and Health Unit Type is Public 
             if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && hasCnpj)
@@ -122,7 +122,7 @@ namespace iPassport.Application.Services
             if (type == null)
                 throw new BusinessException(_localizer["HealthUnitTypeNotFound"]);
 
-            var hasCnpj = await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null;
+            var hasCnpj = dto.Cnpj != null && await _healthUnitRepository.GetByCnpj(dto.Cnpj) != null;
 
             // Ine must be informed when exists cnpj in database and Health Unit Type is Public 
             if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && hasCnpj)
