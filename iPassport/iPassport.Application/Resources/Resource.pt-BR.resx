@@ -627,7 +627,34 @@
   <data name="HealthUnitTypeNotFound" xml:space="preserve">
     <value>Tipo de unidade de saúde não encontrado.</value>
   </data>
-  <data name="AccessProfiles" xml:space="preserve">
+	<data name="UserAccessProfileNotFound" xml:space="preserve">
+    <value>O usuário não tem perfil de acesso associado</value>
+  </data>
+    <data name="ProfileNotFound" xml:space="preserve">
+    <value>Perfil de acesso não encontrado</value>
+  </data>
+	<data name="Company" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+	<data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+	<data name="Password" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+	<data name="Profile" xml:space="preserve">
+    <value>Perfil de Acesso</value>
+  </data>
+	<data name="IsActive" xml:space="preserve">
+    <value>Ativo</value>
+  </data>
+	<data name="HealthUnitRequiredToProfile" xml:space="preserve">
+    <value> Para o perfil {0} deve ser inserida a informação da Unidade de Saúde referente. Favor verificar.</value>
+  </data>
+	<data name="HealthUnitMustNotBeInsertedToProfile" xml:space="preserve">
+    <value> Para o perfil {0} não deve ser inserida a informação da Unidade de Saúde. Favor verificar.</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
     <value>Perfis de Acesso.</value>
   </data>
 </root>

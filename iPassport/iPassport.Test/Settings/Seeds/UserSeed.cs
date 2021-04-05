@@ -30,6 +30,14 @@ namespace iPassport.Test.Seeds
         public static Users GetUserAgent() =>
             new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
 
+        public static Users GetUserAdmin()
+        {
+            var user =  new Users("test", "test", "test", "test", Guid.NewGuid(), "Test", Guid.NewGuid(), 0);
+            user.Profile = new("test", "test");
+            return user;
+        }
+           
+
         public static IList<Users> GetUsers()
         {
             return new List<Users>()

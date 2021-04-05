@@ -43,7 +43,7 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.Email)
                 .EmailAddress()
                 .When(x => x != null)
-                .WithMessage(string.Format(localizer["InvalidField"], "E-mail"));
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["Email"]));
 
             RuleFor(x => x.Telephone)
                 .Cascade(CascadeMode.Stop)

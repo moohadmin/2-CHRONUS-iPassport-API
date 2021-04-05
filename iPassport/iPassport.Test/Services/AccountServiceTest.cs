@@ -77,9 +77,9 @@ namespace iPassport.Test.Services
             var email = "teste";
             var Password = "test";
             var token = "6546548955123ugyfgyuyggyu446654654";
-
+            
             // Arrange
-            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());            
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(UserSeed.GetUserAdmin());            
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
             _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>()).Result).Returns(token);
             

@@ -54,11 +54,13 @@ namespace iPassport.Application.Services
         private readonly IAddressRepository _addressRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImportedFileRepository _importedFileRepository;
+        private readonly IProfileRepository _profileRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
             IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository,
             IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository,
-            IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IImportedFileRepository importedFileRepository)
+            IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IImportedFileRepository importedFileRepository
+            , IProfileRepository profileRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -81,6 +83,7 @@ namespace iPassport.Application.Services
             _addressRepository = addressRepository;
             _unitOfWork = unitOfWork;
             _importedFileRepository = importedFileRepository;
+            _profileRepository = profileRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
@@ -471,89 +474,73 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
         }
 
-        public async Task<bool> ValidEditCitizen(CitizenEditDto dto)
+        public async Task<ResponseApi> AddAdmin(AdminCreateDto dto)
         {
-            if (dto.Address == null || await _addressRepository.Find(dto.Address.Id) == null)
-                throw new BusinessException(_localizer["AddressNotFound"]);
-
-            if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
+            if (!dto.CompanyId.HasValue || await _companyRepository.Find(dto.CompanyId.Value) == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            if (dto.GenderId.HasValue && await _genderRepository.Find(dto.GenderId.Value) == null)
-                throw new BusinessException(_localizer["GenderNotFound"]);
+            var Profile = await _profileRepository.Find(dto.profileId.GetValueOrDefault());
+            if (Profile == null)
+                throw new BusinessException(_localizer["ProfileNotFound"]);
 
-            if (dto.BloodTypeId.HasValue && await _bloodTypeRepository.Find(dto.BloodTypeId.Value) == null)
-                throw new BusinessException(_localizer["BloodTypeNotFound"]);
+            if(Profile.Key == Enum.GetName(EProfileKey.healthUnit) 
+                && (!dto.HealthUnitId.HasValue || await _healthUnitRepository.Find(dto.HealthUnitId.Value) == null))
+                throw new BusinessException(String.Format(_localizer["HealthUnitRequiredToProfile"],Profile.Name));
+           
+            if(dto.HealthUnitId.HasValue && Profile.Key != Enum.GetName(EProfileKey.healthUnit))
+                throw new BusinessException(String.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
 
-            if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
-                throw new BusinessException(_localizer["HumanRaceNotFound"]);
 
-            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
-                throw new BusinessException(_localizer["PriorityGroupNotFound"]);
+            Users user = Users.CreateAdmin(dto);
 
-            if (await _cityRepository.Find(dto.Address.CityId) == null)
-                throw new BusinessException(_localizer["CityNotFound"]);
+            if (!dto.IsActive.GetValueOrDefault())
+                user.Disable(_accessor.GetCurrentUserId());
 
-            if (dto.Doses != null && dto.Doses.Any())
+            try
             {
-                if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
-                    throw new BusinessException(_localizer["VaccineNotFound"]);
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
 
-                if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
-                    throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+                /// Add User in iPassportIdentityContext
+                var result = await _userManager.CreateAsync(user, dto.Password);
+                ValidSaveUserIdentityResult(result);
 
-                foreach (var item in dto.Doses)
-                {
-                    if (item.Id.HasValue && await _userVaccineRepository.Find(item.Id.Value) == null)
-                        throw new BusinessException(_localizer["UserVaccineNotFound"]);
+                /// Re-Hidrated UserId to UserDetails
+                dto.Id = user.Id;
 
-                    if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
-                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
+                /// Add Details to User in iPassportContext
+                var userDetails = UserDetails.CreateUserDetail(dto);
 
-                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
-                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
-                }
+                await _detailsRepository.InsertAsync(userDetails);
+
+                _unitOfWork.CommitIdentity();
+                _unitOfWork.CommitPassport();
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                if (ex.ToString().Contains("IX_Users_CNS"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+                if (ex.ToString().Contains("IX_Users_CPF"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+                if (ex.ToString().Contains("IX_Users_RG"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                if (ex.ToString().Contains("IX_Users_Email"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+
+                throw;
+
             }
 
-            if (dto.Test?.Id != null && await _userDiseaseTestRepository.Find(dto.Test.Id.Value) == null)
-                throw new BusinessException(_localizer["UserDiseaseTestsNotFound"]);
-
-            return true;
-        }
-        private void ValidSaveUserIdentityResult(IdentityResult result)
-        {
-            if (!result.Succeeded)
-            {
-                string err = string.Empty;
-
-                foreach (var error in result.Errors)
-                {
-                    err += $"{_localizer[error.Code]}\n";
-                }
-
-                throw new BusinessException(err);
-            }
-        }
-
-        private void GetHealthUnitAddress(IList<UserVaccineDetailsDto> userVaccines)
-        {
-            var loadedUserVaccines = new List<UserVaccineDetailsDto>();
-
-            userVaccines.ToList().ForEach(x =>
-            {
-                var loadedDoses = new List<VaccineDoseDto>();
-                x.Doses.ToList().ForEach(y =>
-                {
-                    if (y.HealthUnit != null && y.HealthUnit.Address != null)
-                    {
-                        y.HealthUnit.Address = new AddressDto(_addressRepository.FindFullAddress(y.HealthUnit.Address.Id.Value).Result);
-                    }
-                    loadedDoses.Add(y);
-                });
-                x.Doses = loadedDoses;
-                loadedUserVaccines.Add(x);
-            });
-            userVaccines = loadedUserVaccines;
+            return new ResponseApi(true, _localizer["UserCreated"], user.Id);
         }
 
         public async Task ImportUsers(IFormFile file)
@@ -614,6 +601,95 @@ namespace iPassport.Application.Services
 
             return;
         }
+
+        #region Private Methods
+        private async Task<bool> ValidEditCitizen(CitizenEditDto dto)
+        {
+            if (dto.Address == null || await _addressRepository.Find(dto.Address.Id) == null)
+                throw new BusinessException(_localizer["AddressNotFound"]);
+
+            if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            if (dto.GenderId.HasValue && await _genderRepository.Find(dto.GenderId.Value) == null)
+                throw new BusinessException(_localizer["GenderNotFound"]);
+
+            if (dto.BloodTypeId.HasValue && await _bloodTypeRepository.Find(dto.BloodTypeId.Value) == null)
+                throw new BusinessException(_localizer["BloodTypeNotFound"]);
+
+            if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
+                throw new BusinessException(_localizer["HumanRaceNotFound"]);
+
+            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
+                throw new BusinessException(_localizer["PriorityGroupNotFound"]);
+
+            if (await _cityRepository.Find(dto.Address.CityId) == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            if (dto.Doses != null && dto.Doses.Any())
+            {
+                if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
+                    throw new BusinessException(_localizer["VaccineNotFound"]);
+
+                if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
+                    throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+
+                foreach (var item in dto.Doses)
+                {
+                    if (item.Id.HasValue && await _userVaccineRepository.Find(item.Id.Value) == null)
+                        throw new BusinessException(_localizer["UserVaccineNotFound"]);
+
+                    if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
+                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
+
+                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
+                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
+                }
+            }
+
+            if (dto.Test?.Id != null && await _userDiseaseTestRepository.Find(dto.Test.Id.Value) == null)
+                throw new BusinessException(_localizer["UserDiseaseTestsNotFound"]);
+
+            return true;
+        }
+
+        private void ValidSaveUserIdentityResult(IdentityResult result)
+        {
+            if (!result.Succeeded)
+            {
+                string err = string.Empty;
+
+                foreach (var error in result.Errors)
+                {
+                    err += $"{_localizer[error.Code]}\n";
+                }
+
+                throw new BusinessException(err);
+            }
+        }
+
+        private void GetHealthUnitAddress(IList<UserVaccineDetailsDto> userVaccines)
+        {
+            var loadedUserVaccines = new List<UserVaccineDetailsDto>();
+
+            userVaccines.ToList().ForEach(x =>
+            {
+                var loadedDoses = new List<VaccineDoseDto>();
+                x.Doses.ToList().ForEach(y =>
+                {
+                    if (y.HealthUnit != null && y.HealthUnit.Address != null)
+                    {
+                        y.HealthUnit.Address = new AddressDto(_addressRepository.FindFullAddress(y.HealthUnit.Address.Id.Value).Result);
+                    }
+                    loadedDoses.Add(y);
+                });
+                x.Doses = loadedDoses;
+                loadedUserVaccines.Add(x);
+            });
+            userVaccines = loadedUserVaccines;
+        }
+
+        
 
         private void ValidateExtractedData(List<CsvMappingResult<UserImportDto>> fileData, ImportedFile importedFile)
         {
@@ -843,6 +919,7 @@ namespace iPassport.Application.Services
                     v.Result.HealthUnityIdThirdDose = id.Value;
                 }
             });
-        }
+        } 
+        #endregion
     }
 }

@@ -48,6 +48,7 @@ namespace iPassport.Domain.Entities
         public Guid? PriorityGroupId { get; private set; }
         public virtual Guid? ImportedFileId { get; set; }
         public bool? WasTestPerformed { get; private set; }
+        public Guid? HealthUnitId { get; private set; }
 
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }
@@ -57,13 +58,15 @@ namespace iPassport.Domain.Entities
         public virtual IEnumerable<UserDiseaseTest> UserDiseaseTests { get; set; }
 
         public virtual ImportedFile ImportedFile { get; set; }
+        public virtual HealthUnit HealthUnit { get; set; }
+
 
         public UserDetails Create(UserAgentCreateDto dto) =>
             new UserDetails(dto.UserId);
 
         public UserDetails Create(CitizenCreateDto dto) =>
             new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected, bond: dto.Bond, priorityGroupId: dto.PriorityGroupId,
-                userDiseaseTests: CreateUserDiseaseTest(dto.Test), wasTestPerformed: dto.WasTestPerformed );
+                userDiseaseTests: CreateUserDiseaseTest(dto.Test), wasTestPerformed: dto.WasTestPerformed);
 
         private IList<UserVaccine> CreateUservaccine(IList<UserVaccineCreateDto> dto)
         {
@@ -183,7 +186,7 @@ namespace iPassport.Domain.Entities
         }
 
         public static UserDetails CreateUserDetail(UserImportDto dto, Guid importedFileId)
-            => new ()
+            => new()
             {
                 Id = dto.UserId,
                 Bond = dto.Bond,
@@ -191,7 +194,14 @@ namespace iPassport.Domain.Entities
                 WasCovidInfected = dto.WasCovidInfectedBool,
                 UserDiseaseTests = dto.WasTestPerformed == "Sim" ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
                 UserVaccines = UserVaccine.CreateListUserVaccine(dto),
-                ImportedFileId = importedFileId                
+                ImportedFileId = importedFileId
+            };
+
+        public static UserDetails CreateUserDetail(AdminCreateDto dto)
+            => new()
+            { 
+            Id = dto.Id.Value,
+            HealthUnitId = dto.HealthUnitId
             };
     }
 }

@@ -71,6 +71,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.WasCovidInfected, act => act.MapFrom(src => src.WasCovidInfected))
                 .ForMember(des => des.Test, act => act.MapFrom(src => src.Test))
                 .ForMember(des => des.WasTestPerformed, act => act.MapFrom(src => src.WasTestPerformed));
+
+            profile.CreateMap<AdminCreateRequest, AdminCreateDto>();
         }
     }
 }

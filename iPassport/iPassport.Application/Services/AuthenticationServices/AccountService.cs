@@ -66,6 +66,9 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
+            if (user.Profile == null)
+                throw new BusinessException(_localizer["UserAccessProfileNotFound"]);
+
             if (await _userManager.CheckPasswordAsync(user, password))
             {
                 var token = await _tokenService.GenerateByEmail(user);
