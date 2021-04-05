@@ -32,7 +32,6 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<Users, UserDetailsViewModel>()
                 .ForMember(des => des.UserId, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.Profile, act => act.MapFrom(src => src.UserType));
-                
 
             profile.CreateMap<UserAgentCreateRequest, UserAgentCreateDto>()
                 .ForMember(des => des.Username, act => act.MapFrom(src => src.Username))
@@ -73,6 +72,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.WasTestPerformed, act => act.MapFrom(src => src.WasTestPerformed));
 
             profile.CreateMap<AdminCreateRequest, AdminCreateDto>();
+            profile.CreateMap<AdminDetailsDto, AdminDetailsViewModel>();
         }
     }
 }

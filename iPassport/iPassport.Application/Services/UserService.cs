@@ -109,9 +109,9 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             if (dto.Test != null && dto.Test.IsEmpty())
-                    throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
+                throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
 
-                if (dto.Doses != null && dto.Doses.Any())
+            if (dto.Doses != null && dto.Doses.Any())
             {
                 if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
                     throw new BusinessException(_localizer["VaccineNotFound"]);
@@ -324,7 +324,7 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
             result.ToList().ForEach(x =>
-            {                
+            {
                 x.WasImported = (ImportedInfo.FirstOrDefault(y => y.UserId == x.Id)?.WasImported).GetValueOrDefault();
             });
 
@@ -418,7 +418,7 @@ namespace iPassport.Application.Services
 
                 if (dto.Test != null)
                 {
-                    if(dto.Test.IsEmpty())
+                    if (dto.Test.IsEmpty())
                         throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
 
                     if (dto.Test.Id.HasValue)
@@ -479,15 +479,15 @@ namespace iPassport.Application.Services
             if (!dto.CompanyId.HasValue || await _companyRepository.Find(dto.CompanyId.Value) == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            var Profile = await _profileRepository.Find(dto.profileId.GetValueOrDefault());
+            var Profile = await _profileRepository.Find(dto.ProfileId.GetValueOrDefault());
             if (Profile == null)
                 throw new BusinessException(_localizer["ProfileNotFound"]);
 
-            if(Profile.Key == Enum.GetName(EProfileKey.healthUnit) 
+            if (Profile.Key == Enum.GetName(EProfileKey.healthUnit)
                 && (!dto.HealthUnitId.HasValue || await _healthUnitRepository.Find(dto.HealthUnitId.Value) == null))
-                throw new BusinessException(String.Format(_localizer["HealthUnitRequiredToProfile"],Profile.Name));
-           
-            if(dto.HealthUnitId.HasValue && Profile.Key != Enum.GetName(EProfileKey.healthUnit))
+                throw new BusinessException(String.Format(_localizer["HealthUnitRequiredToProfile"], Profile.Name));
+
+            if (dto.HealthUnitId.HasValue && Profile.Key != Enum.GetName(EProfileKey.healthUnit))
                 throw new BusinessException(String.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
 
 
@@ -602,6 +602,19 @@ namespace iPassport.Application.Services
             return;
         }
 
+        public async Task<ResponseApi> GetAdminById(Guid id)
+        {
+            var authUser = await _userRepository.GetAdminById(id);
+
+            if (authUser == null)
+                return new ResponseApi(true, _localizer["AdminUser"], null);
+            
+            var details = await _detailsRepository.GetWithHealtUnityById(authUser.Id);
+            var adminDetails = new AdminDetailsDto(authUser, details);
+
+            return new ResponseApi(true, _localizer["AdminUser"], _mapper.Map<AdminDetailsViewModel>(adminDetails));
+        }
+
         #region Private Methods
         private async Task<bool> ValidEditCitizen(CitizenEditDto dto)
         {
@@ -689,7 +702,7 @@ namespace iPassport.Application.Services
             userVaccines = loadedUserVaccines;
         }
 
-        
+
 
         private void ValidateExtractedData(List<CsvMappingResult<UserImportDto>> fileData, ImportedFile importedFile)
         {
@@ -919,7 +932,7 @@ namespace iPassport.Application.Services
                     v.Result.HealthUnityIdThirdDose = id.Value;
                 }
             });
-        } 
+        }
         #endregion
     }
 }

@@ -4,6 +4,7 @@ using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Utils;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -24,6 +25,12 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<Users> GetById(Guid id) =>
             await _context.Users.Where(x => x.Id == id).Include(y => y.Address).FirstOrDefaultAsync();
+
+        public async Task<Users> GetAdminById(Guid id) =>
+            await _context.Users
+                .Include(x => x.Profile)
+                .Include(x => x.Company)
+                .FirstOrDefaultAsync(x => x.Id == id && x.Profile.Key == Constants.ADMIN_PROFILE_KEY);
 
         public async Task<Users> GetLoadedUsersById(Guid id) =>
             await _context.Users

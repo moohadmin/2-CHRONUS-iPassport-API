@@ -66,7 +66,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(localizer["PasswordOutPattern"])
                 .When(y => !string.IsNullOrWhiteSpace(y.Password));
 
-            RuleFor(x => x.profileId)
+            RuleFor(x => x.ProfileId)
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Profile"]));
 
