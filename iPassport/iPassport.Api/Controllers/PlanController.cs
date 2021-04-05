@@ -2,6 +2,7 @@
 using iPassport.Api.Models;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
@@ -53,7 +54,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        [Authorize(Roles = RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> Post([FromBody] PlanCreateRequest request)
         {
             var res = await _service.Add(_mapper.Map<PlanCreateDto>(request));

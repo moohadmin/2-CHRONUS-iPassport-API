@@ -3,6 +3,7 @@ using iPassport.Api.Models;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
@@ -56,8 +57,8 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
+
         public async Task<ActionResult> GetByNameParts([FromQuery] GetByNamePartsPagedRequest request)
         {
             var res = await _service.FindByNameParts(_mapper.Map<GetByNamePartsPagedFilter>(request));
@@ -77,8 +78,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
         public async Task<ActionResult> Add([FromBody] CompanyCreateRequest request)
         {
             var res = await _service.Add(_mapper.Map<CompanyCreateDto>(request));
@@ -98,8 +98,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("{id}")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
         public async Task<ActionResult> GetById(Guid id)
         {
             var res = await _service.GetById(id);

@@ -2,6 +2,7 @@
 using iPassport.Api.Models;
 using iPassport.Api.Models.Requests.HealthUnit;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
@@ -54,9 +55,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
-        [Authorize(Roles = RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
         public async Task<ActionResult> GetByNameParts([FromQuery] GetHealthUnitPagedRequest request)
         {
             var res = await _service.FindByNameParts(_mapper.Map<GetHealthUnitPagedFilter>(request));
@@ -77,8 +76,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
         public async Task<ActionResult> Add([FromBody] HealthUnitCreateRequest request)
         {
             var res = await _service.Add(_mapper.Map<HealthUnitCreateDto>(request));
@@ -98,9 +96,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("{id}")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
-        [Authorize(Roles = RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
         public async Task<ActionResult> GetById(Guid id)
         {
             var res = await _service.GetById(id);
@@ -120,8 +116,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPut]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
         public async Task<ActionResult> Edit([FromBody] HealthUnitEditRequest request)
         {
             var res = await _service.Edit(_mapper.Map<HealthUnitEditDto>(request));

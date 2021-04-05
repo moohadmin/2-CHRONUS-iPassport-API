@@ -2,6 +2,7 @@
 using iPassport.Api.Models;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Filters;
@@ -54,7 +55,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet]
-        [Authorize(Roles = RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> GetByNameInitals([FromQuery] GetByNamePartsPagedRequest request)
         {
             var res = await _service.GetByNameInitals(_mapper.Map<GetByNamePartsPagedFilter>(request));

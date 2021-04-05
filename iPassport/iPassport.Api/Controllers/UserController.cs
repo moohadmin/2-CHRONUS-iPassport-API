@@ -3,6 +3,7 @@ using iPassport.Api.Models;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
@@ -71,8 +72,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpPost("Citizen")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
         public async Task<ActionResult> AddCitizen([FromBody] CitizenCreateRequest request)
         {
             var res = await _service.AddCitizen(_mapper.Map<CitizenCreateDto>(request));
@@ -231,10 +231,11 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("LoggedCitzenCount")]
-        [Authorize(Roles = RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         [Authorize(Roles = RolesModel.Business)]
         [Authorize(Roles = RolesModel.Government)]
         [Authorize(Roles = RolesModel.HealthUnit)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetLoggedCitzenCount()
         {
             var res = await _service.GetLoggedCitzenCount();
@@ -254,10 +255,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("RegisteredUsersCount")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
-        [Authorize(Roles = RolesModel.Government)]
-        [Authorize(Roles = RolesModel.HealthUnit)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetRegisteredUsersCount([FromQuery] GetRegisteredUsersCountRequest request)
         {
             var res = await _service.GetRegisteredUserCount(_mapper.Map<GetRegisteredUserCountFilter>(request));
@@ -277,10 +275,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("LoggedAgentCount")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
-        [Authorize(Roles = RolesModel.Government)]
-        [Authorize(Roles = RolesModel.HealthUnit)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetLoggedAgentCount()
         {
             var res = await _service.GetLoggedAgentCount();
@@ -300,7 +295,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost("Agent")]
-        [Authorize(Roles = RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> AddAgent([FromBody] UserAgentCreateRequest request)
         {
             var res = await _service.AddAgent(_mapper.Map<UserAgentCreateDto>(request));
@@ -320,10 +315,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("Citizen")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
-        [Authorize(Roles = RolesModel.Government)]
-        [Authorize(Roles = RolesModel.HealthUnit)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetCitizenByNameParts([FromQuery] GetCitzenPagedRequest request)
         {
             var res = await _service.GetPaggedCizten(_mapper.Map<GetCitzenPagedFilter>(request));
@@ -387,10 +379,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet("Citizen/{id}")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
-        [Authorize(Roles = RolesModel.Government)]
-        [Authorize(Roles = RolesModel.HealthUnit)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetCitizenById(Guid id)
         {
             var res = await _service.GetCitizenById(id);
@@ -411,9 +400,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpPut("Citizen")]
-        [Authorize(Roles = RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Government)]
-        [Authorize(Roles = RolesModel.HealthUnit)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
         public async Task<ActionResult> EditCitizen([FromBody] CitizenEditRequest request)
         {
             var res = await _service.EditCitizen(_mapper.Map<CitizenEditDto>(request));
@@ -434,7 +421,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpPost("Import")]
-        [Authorize(Roles = RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> ImportUsers([FromForm] UserImportRequest request)
         {
             await _service.ImportUsers(request.File);
@@ -455,7 +442,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpPost("Admin")]
-        [Authorize(Roles = RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> AddAdmin([FromBody] AdminCreateRequest request)
         {
             var res = await _service.AddAdmin(_mapper.Map<AdminCreateDto>(request));
@@ -476,7 +463,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet("Admin/{id}")]
-        [Authorize(Roles = RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> GetAdminById(Guid id)
         {
             var res = await _service.GetAdminById(id);
