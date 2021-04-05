@@ -111,6 +111,20 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             return await Paginate(query, filter);
         }
 
+        public async Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter)
+        {
+            var query = _context.Users
+                .Include(x => x.Company)
+                .Include(x => x.Profile)
+                .Where(x => x.UserType == (int)EUserType.Admin
+                    && (filter.CompanyId == null || filter.CompanyId == x.CompanyId)
+                    && (filter.ProfileId == null || filter.ProfileId == x.ProfileId)
+                    && (filter.Cpf == null || filter.Cpf == x.CPF)
+                    && (filter.Initials == null || x.FullName.ToLower().Contains(filter.Initials.ToLower())));
+
+            return await Paginate(query, filter);
+        }
+
         protected virtual async Task<PagedData<Users>> Paginate(IQueryable<Users> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);

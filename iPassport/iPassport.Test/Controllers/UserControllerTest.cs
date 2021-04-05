@@ -338,6 +338,24 @@ namespace iPassport.Test.Controllers
         }
 
         [TestMethod]
+        public void PaggedUserAdmin_MustReturnOk()
+        {
+            var mockrequest = Mock.Of<GetAdminUserPagedRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()).Result)
+                .Returns(UserSeed.GetPagedAdmins());
+
+            // Act
+            var result = _controller.GetPagedAdmins(mockrequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
         public void EditAdmin_MustReturnOk()
         {
             // Arrange
