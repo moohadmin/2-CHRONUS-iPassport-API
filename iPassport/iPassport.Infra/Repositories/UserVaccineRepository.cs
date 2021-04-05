@@ -17,6 +17,7 @@ namespace iPassport.Infra.Repositories
         public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByUserId(GetByIdPagedFilter pageFilter)
         {
             var q = await _DbSet
+               .Include(v => v.HealthUnit).ThenInclude(y => y.Type)
                .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                .Include(v => v.UserDetails).ThenInclude(d => d.Passport).ThenInclude(p => p.ListPassportDetails)
                .Where(v => v.ExclusionDate == null && v.UserDetails.Id == pageFilter.Id)
