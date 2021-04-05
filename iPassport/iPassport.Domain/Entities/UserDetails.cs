@@ -198,11 +198,13 @@ namespace iPassport.Domain.Entities
                 ImportedFileId = importedFileId
             };
 
-        public static UserDetails CreateUserDetail(AdminCreateDto dto)
+        public static UserDetails CreateUserDetail(AdminDto dto)
             => new()
             { 
             Id = dto.Id.Value,
             HealthUnitId = dto.HealthUnitId
             };
+
+        public void ChangeUserDetail(AdminDto dto) => HealthUnitId = dto.HealthUnitId;
     }
 }

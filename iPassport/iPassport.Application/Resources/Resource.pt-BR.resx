@@ -649,10 +649,10 @@
     <value>Ativo</value>
   </data>
   <data name="HealthUnitRequiredToProfile" xml:space="preserve">
-    <value> Para o perfil {0} deve ser inserida a informação da Unidade de Saúde referente. Favor verificar.</value>
+    <value>Para o perfil {0} deve ser inserida a informação da Unidade de Saúde referente. Favor verificar.</value>
   </data>
   <data name="HealthUnitMustNotBeInsertedToProfile" xml:space="preserve">
-    <value> Para o perfil {0} não deve ser inserida a informação da Unidade de Saúde. Favor verificar.</value>
+    <value>Para o perfil {0} não deve ser inserida a informação da Unidade de Saúde. Favor verificar.</value>
   </data>
   <data name="Profiles" xml:space="preserve">
     <value>Perfis de Acesso.</value>
@@ -692,6 +692,9 @@
   </data>
   <data name="PageSize" xml:space="preserve">
     <value>Tamanho da página</value>
+  </data>
+	<data name="InactiveUser" xml:space="preserve">
+    <value>O usuário se encontra Inativo. Favor verificar.</value>
   </data>
   <data name="InternationalDocument" xml:space="preserve">
     <value>Documento Internacional</value>

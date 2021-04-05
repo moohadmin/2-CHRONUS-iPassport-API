@@ -10,15 +10,19 @@ namespace iPassport.Api.Models.Validators.Users
     /// <summary>
     /// AdminCreateRequestValidator Class
     /// </summary>
-    public class AdminCreateRequestValidator : AbstractValidator<AdminCreateRequest>
+    public class AdminEditRequestValidator : AbstractValidator<AdminEditRequest>
     {
         /// <summary>
         /// AdminCreateRequestValidator Constructor
         /// </summary>
         /// <param name="localizer">Resource</param>
-        public AdminCreateRequestValidator(IStringLocalizer<Resource> localizer)
+        public AdminEditRequestValidator(IStringLocalizer<Resource> localizer)
         {
-             RuleFor(x => x.CompleteName)
+            RuleFor(x => x.UserId)
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["UserId"]));
+
+            RuleFor(x => x.CompleteName)
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["CompleteName"]));
 
@@ -52,17 +56,6 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.CompanyId)
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Company"]));
-                        
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["Password"]));
-
-            RuleFor(x => x.Password)
-                .Must(y => {
-                    return Regex.IsMatch(y, "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$");
-                })
-                .WithMessage(localizer["PasswordOutPattern"])
-                .When(y => !string.IsNullOrWhiteSpace(y.Password));
 
             RuleFor(x => x.ProfileId)
                 .NotEmpty()
