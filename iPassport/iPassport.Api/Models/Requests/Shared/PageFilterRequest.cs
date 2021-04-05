@@ -23,15 +23,5 @@
             this.PageNumber = 1;
             this.PageSize = 10;
         }
-        /// <summary>
-        /// Class constructor
-        /// </summary>
-        /// <param name="pageNumber">Page Number</param>
-        /// <param name="pageSize">Page Size</param>
-        public PageFilterRequest(int pageNumber, int pageSize)
-        {
-            this.PageNumber = pageNumber < 1 ? 1 : pageNumber;
-            this.PageSize = pageSize > 10 ? 10 : pageSize;
-        }
     }
 }

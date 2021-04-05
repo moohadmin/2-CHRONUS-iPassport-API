@@ -11,7 +11,7 @@ namespace iPassport.Api.Models.Requests.User
         /// <summary>
         /// Name
         /// </summary>
-        public string Name { get; set; }
+        public string Initials { get; set; }
         /// <summary>
         /// Cpf
         /// </summary>

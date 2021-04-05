@@ -120,7 +120,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                     && (filter.CompanyId == null || filter.CompanyId == x.CompanyId)
                     && (filter.ProfileId == null || filter.ProfileId == x.ProfileId)
                     && (filter.Cpf == null || filter.Cpf == x.CPF)
-                    && (filter.Name == null || x.FullName.ToLower().Contains(filter.Name.ToLower())));
+                    && (filter.Initials == null || x.FullName.ToLower().Contains(filter.Initials.ToLower())));
 
             return await Paginate(query, filter);
         }
