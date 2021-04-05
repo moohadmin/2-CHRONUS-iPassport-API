@@ -693,4 +693,10 @@
   <data name="PageSize" xml:space="preserve">
     <value>Tamanho da página</value>
   </data>
+  <data name="InternationalDocument" xml:space="preserve">
+    <value>Documento Internacional</value>
+  </data>
+  <data name="PassportDoc" xml:space="preserve">
+    <value>Passaporte</value>
+  </data>
 </root>
