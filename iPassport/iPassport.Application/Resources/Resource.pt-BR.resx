@@ -615,13 +615,13 @@
   <data name="StartTime" xml:space="preserve">
     <value>período inicial</value>
   </data>
-	<data name="TestMustBeNull" xml:space="preserve">
+  <data name="TestMustBeNull" xml:space="preserve">
     <value>O teste tem que ser nulo</value>
   </data>
-	<data name="TestNotMustBeNullOrEmpty" xml:space="preserve">
+  <data name="TestNotMustBeNullOrEmpty" xml:space="preserve">
     <value>O teste não pode ser nulo ou vazio</value>
   </data>
-	<data name="TestDate" xml:space="preserve">
+  <data name="TestDate" xml:space="preserve">
     <value>Data do Teste</value>
   </data>
   <data name="HealthUnitTypeNotFound" xml:space="preserve">
@@ -638,5 +638,17 @@
   </data>
   <data name="FieldValueInformedIsNotValidMasc" xml:space="preserve">
     <value>O {0} informado é inválido.</value>
+  </data>
+  <data name="HelthUnityUniqueCodeDoesntExistsInDataBase" xml:space="preserve">
+    <value>Não existe o cadastro deste código na base.</value>
+  </data>
+  <data name="TestResultDateCannotBeEqualOrLessThenTestDate" xml:space="preserve">
+    <value>A data do resultado não pode ser menor ou igual à data do teste.</value>
+  </data>
+  <data name="TestResultDateCannotBeHiggerThenCurrentDate" xml:space="preserve">
+    <value>A data do resultado não pode ser maior que a data atual.</value>
+  </data>
+  <data name="ImportUsersFileMaxSize" xml:space="preserve">
+    <value>Tamanho do arquivo de importação maior que o máximo permitido: {0} Kb.</value>
   </data>
 </root>

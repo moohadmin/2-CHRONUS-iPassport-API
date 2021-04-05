@@ -12,5 +12,7 @@
         public const string CONST_SIM_VALUE = "SIM";
         public const string CONST_NAO_VALUE = "NÃO";
         public const string CONST_NENHUM_VALUE = "NENHUM";
+
+        public const int MAX_LENGHT_IMPORT_USERS_FILE = 82160; // 80KB
     }
 }
