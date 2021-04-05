@@ -15,5 +15,12 @@ namespace iPassport.Test.Settings.Factories
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
             return new Resource(factory);
         }
+
+        public static IStringLocalizer<Resource> GetStringLocalizer()
+        {
+            var options = Options.Create(new LocalizationOptions());
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            return new StringLocalizer<Resource>(factory);
+        }
     }
 }

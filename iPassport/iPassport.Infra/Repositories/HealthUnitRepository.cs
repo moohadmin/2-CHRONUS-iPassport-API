@@ -42,5 +42,8 @@ namespace iPassport.Infra.Repositories
 
         public async Task<HealthUnit> GetLoadedById(Guid id) =>
             await _DbSet.Include(x => x.Type).FirstOrDefaultAsync(x => x.Id == id);
+
+        public async Task<IList<HealthUnit>> FindByCnpjIneAndCode(List<string> listCnpj, List<string> listIne, List<int?> listCode)
+            => await _DbSet.Where(m => listCnpj.Any(l => l == m.Cnpj)).Union(_DbSet.Where(m => listIne.Any(l => l == m.Ine))).Union(_DbSet.Where(m => listCode.Any(l => l == m.UniqueCode))).ToListAsync();
     }
 }
