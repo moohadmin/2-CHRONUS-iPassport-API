@@ -44,36 +44,40 @@ namespace iPassport.Application.Models.CsvMapper
             MapProperty(32, x => x.EmployeeCorenVaccinationUniqueDose);
             MapProperty(33, x => x.HealthUnityCnpjUniqueDose);
             MapProperty(34, x => x.HealthUnityIneUniqueDose);
+            MapProperty(35, x => x.HealthUnityCodeUniqueDose);
 
-            MapProperty(35, x => x.VaccineNameFirstDose);
-            MapProperty(36, x => x.VaccineManufacturerNameFirstDose);
-            MapProperty(37, x => x.BatchFirstDose);
-            MapProperty(38, x => x.VaccinationDateFirstDose);
-            MapProperty(39, x => x.EmployeeNameVaccinationFirstDose);
-            MapProperty(40, x => x.EmployeeCpfVaccinationFirstDose);
-            MapProperty(41, x => x.EmployeeCorenVaccinationFirstDose);
-            MapProperty(42, x => x.HealthUnityCnpjFirstDose);
-            MapProperty(43, x => x.HealthUnityIneFirstDose);
+            MapProperty(36, x => x.VaccineNameFirstDose);
+            MapProperty(37, x => x.VaccineManufacturerNameFirstDose);
+            MapProperty(38, x => x.BatchFirstDose);
+            MapProperty(39, x => x.VaccinationDateFirstDose);
+            MapProperty(40, x => x.EmployeeNameVaccinationFirstDose);
+            MapProperty(41, x => x.EmployeeCpfVaccinationFirstDose);
+            MapProperty(42, x => x.EmployeeCorenVaccinationFirstDose);
+            MapProperty(43, x => x.HealthUnityCnpjFirstDose);
+            MapProperty(44, x => x.HealthUnityIneFirstDose);
+            MapProperty(45, x => x.HealthUnityCodeFirstDose);
 
-            MapProperty(44, x => x.VaccineNameSecondDose);
-            MapProperty(45, x => x.VaccineManufacturerNameSecondDose);
-            MapProperty(46, x => x.BatchSecondDose);
-            MapProperty(47, x => x.VaccinationDateSecondDose);
-            MapProperty(48, x => x.EmployeeNameVaccinationSecondDose);
-            MapProperty(49, x => x.EmployeeCpfVaccinationSecondDose);
-            MapProperty(50, x => x.EmployeeCorenVaccinationSecondDose);
-            MapProperty(51, x => x.HealthUnityCnpjSecondDose);
-            MapProperty(52, x => x.HealthUnityIneSecondDose);
+            MapProperty(46, x => x.VaccineNameSecondDose);
+            MapProperty(47, x => x.VaccineManufacturerNameSecondDose);
+            MapProperty(48, x => x.BatchSecondDose);
+            MapProperty(49, x => x.VaccinationDateSecondDose);
+            MapProperty(50, x => x.EmployeeNameVaccinationSecondDose);
+            MapProperty(51, x => x.EmployeeCpfVaccinationSecondDose);
+            MapProperty(52, x => x.EmployeeCorenVaccinationSecondDose);
+            MapProperty(53, x => x.HealthUnityCnpjSecondDose);
+            MapProperty(54, x => x.HealthUnityIneSecondDose);
+            MapProperty(55, x => x.HealthUnityCodeSecondDose);
 
-            MapProperty(53, x => x.VaccineNameThirdDose);
-            MapProperty(54, x => x.VaccineManufacturerNameThirdDose);
-            MapProperty(55, x => x.BatchThirdDose);
-            MapProperty(56, x => x.VaccinationDateThirdDose);
-            MapProperty(57, x => x.EmployeeNameVaccinationThirdDose);
-            MapProperty(58, x => x.EmployeeCpfVaccinationThirdDose);
-            MapProperty(59, x => x.EmployeeCorenVaccinationThirdDose);
-            MapProperty(60, x => x.HealthUnityCnpjThirdDose);
-            MapProperty(61, x => x.HealthUnityIneThirdDose);
+            MapProperty(56, x => x.VaccineNameThirdDose);
+            MapProperty(57, x => x.VaccineManufacturerNameThirdDose);
+            MapProperty(58, x => x.BatchThirdDose);
+            MapProperty(59, x => x.VaccinationDateThirdDose);
+            MapProperty(60, x => x.EmployeeNameVaccinationThirdDose);
+            MapProperty(61, x => x.EmployeeCpfVaccinationThirdDose);
+            MapProperty(62, x => x.EmployeeCorenVaccinationThirdDose);
+            MapProperty(63, x => x.HealthUnityCnpjThirdDose);
+            MapProperty(64, x => x.HealthUnityIneThirdDose);
+            MapProperty(65, x => x.HealthUnityCodeThirdDose);
         }
     }
 }
