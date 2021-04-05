@@ -4,7 +4,6 @@ using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.Authentication;
-using iPassport.Domain.Utils;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;

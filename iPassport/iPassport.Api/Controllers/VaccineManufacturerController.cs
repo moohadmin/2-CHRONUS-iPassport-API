@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
 using iPassport.Application.Interfaces;
@@ -53,6 +54,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet]
+        [Authorize(Roles = RolesModel.Admin)]
         public async Task<ActionResult> GetByNameInitals([FromQuery] GetByNamePartsPagedRequest request)
         {
             var res = await _service.GetByNameInitals(_mapper.Map<GetByNamePartsPagedFilter>(request));
