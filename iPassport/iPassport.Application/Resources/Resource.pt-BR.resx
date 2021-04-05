@@ -684,4 +684,13 @@
   <data name="AdminUser" xml:space="preserve">
     <value>Usuário Administrativo</value>
   </data>
+  <data name="AdminUsers" xml:space="preserve">
+    <value>Usuários Administrativos</value>
+  </data>
+  <data name="PageNumber" xml:space="preserve">
+    <value>Numero da página</value>
+  </data>
+  <data name="PageSize" xml:space="preserve">
+    <value>Tamanho da página</value>
+  </data>
 </root>

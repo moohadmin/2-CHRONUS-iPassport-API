@@ -359,5 +359,23 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
+
+        [TestMethod]
+        public void GetPagedAdmins()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<GetAdminUserPagedFilter>();
+
+            _mockUserRepository.Setup(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()).Result)
+                .Returns(UserSeed.GetPagedUsers());
+
+            // Act
+            var result = _service.GetPagedAdmins(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()));
+            Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
     }
 }

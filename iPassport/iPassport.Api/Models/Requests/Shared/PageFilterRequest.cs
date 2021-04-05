@@ -14,5 +14,14 @@
         /// Page Size
         /// </summary>
         public int PageSize { get; set; }
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        public PageFilterRequest()
+        {
+            this.PageNumber = 1;
+            this.PageSize = 10;
+        }
     }
 }
