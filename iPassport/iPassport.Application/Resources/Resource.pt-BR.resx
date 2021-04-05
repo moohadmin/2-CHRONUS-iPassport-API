@@ -696,4 +696,10 @@
 	<data name="InactiveUser" xml:space="preserve">
     <value>O usuário se encontra Inativo. Favor verificar.</value>
   </data>
+  <data name="InternationalDocument" xml:space="preserve">
+    <value>Documento Internacional</value>
+  </data>
+  <data name="PassportDoc" xml:space="preserve">
+    <value>Passaporte</value>
+  </data>
 </root>
