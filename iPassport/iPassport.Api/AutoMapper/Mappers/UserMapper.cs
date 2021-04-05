@@ -72,7 +72,13 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.WasTestPerformed, act => act.MapFrom(src => src.WasTestPerformed));
 
             profile.CreateMap<AdminCreateRequest, AdminCreateDto>();
+
             profile.CreateMap<AdminDetailsDto, AdminDetailsViewModel>();
+
+            profile.CreateMap<Users, AdminUserViewModel>()
+                .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Company != null ? src.Company.Name : null))
+                .ForMember(des => des.ProfileName, act => act.MapFrom(src => src.Profile != null ? src.Profile.Name : null))
+                .ForMember(des => des.IsActive, act => act.MapFrom(src => !src.DeactivationDate.HasValue));
         }
     }
 }

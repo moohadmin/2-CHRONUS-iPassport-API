@@ -25,5 +25,6 @@ namespace iPassport.Application.Interfaces
         Task ImportUsers(IFormFile file);
         Task<ResponseApi> AddAdmin(AdminCreateDto dto);
         Task<ResponseApi> GetAdminById(Guid id);
+        Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter);
     }
 }

@@ -616,6 +616,23 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["AdminUser"], _mapper.Map<AdminDetailsViewModel>(adminDetails));
         }
 
+        public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
+        {
+            var res = await _userRepository.GetPagedAdmins(filter);
+
+            if (res.Data == null)
+                return new PagedResponseApi(true, _localizer["AdminUsers"], 0, 0, 0, 0);
+
+            return new PagedResponseApi(
+                true,
+                _localizer["AdminUsers"],
+                res.PageNumber,
+                res.PageSize,
+                res.TotalPages,
+                res.TotalRecords,
+                _mapper.Map<IList<AdminUserViewModel>>(res.Data));
+        }
+
         #region Private Methods
         private async Task<bool> ValidEditCitizen(CitizenEditDto dto)
         {
