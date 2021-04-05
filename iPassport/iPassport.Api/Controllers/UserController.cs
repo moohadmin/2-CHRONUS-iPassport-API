@@ -459,5 +459,22 @@ namespace iPassport.Api.Controllers
             var res = await _service.GetAdminById(id);
             return Ok(res);
         }
+
+        /// <summary>
+        /// This API is get the get pagged admin users
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Ok.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Admin")]
+        public async Task<ActionResult> GetPagedAdmins([FromQuery] GetAdminUserPagedRequest request)
+        {
+            var res = await _service.GetPagedAdmins(_mapper.Map<GetAdminUserPagedFilter>(request));
+            return Ok(res);
+        }
     }
 }

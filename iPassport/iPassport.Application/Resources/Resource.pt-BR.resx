@@ -684,4 +684,7 @@
   <data name="AdminUser" xml:space="preserve">
     <value>Usuário Administrativo</value>
   </data>
+  <data name="AdminUsers" xml:space="preserve">
+    <value>Usuários Administrativos</value>
+  </data>
 </root>

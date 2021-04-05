@@ -1,4 +1,5 @@
-﻿using iPassport.Application.Models.ViewModels;
+﻿using iPassport.Application.Models.Pagination;
+using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
@@ -77,5 +78,52 @@ namespace iPassport.Test.Seeds
                 Profile = new ProfileViewModel() { Id = Guid.NewGuid() },
                 Telephone = "5571999999999"
             };
+
+        public static PagedResponseApi GetPagedAdmins()
+        {
+            return new PagedResponseApi(
+                true,
+                "test",
+                1,
+                1,
+                10,
+                100,
+                GetAdminUserViewModels()
+            );
+        }
+
+        public static IList<AdminUserViewModel> GetAdminUserViewModels() =>
+            new List<AdminUserViewModel>() {
+                    new AdminUserViewModel()
+                    {
+                        Id = Guid.NewGuid(),
+                        CompanyName = "test",
+                        CompleteName = "test",
+                        Cpf = "00000000000",
+                        IsActive = true,
+                        ProfileName = "test",
+                        Username = "test"
+                    },
+                    new AdminUserViewModel()
+                    {
+                        Id = Guid.NewGuid(),
+                        CompanyName = "test1",
+                        CompleteName = "test1",
+                        Cpf = "000000000001",
+                        IsActive = true,
+                        ProfileName = "test1",
+                        Username = "test1"
+                    },
+                    new AdminUserViewModel()
+                    {
+                        Id = Guid.NewGuid(),
+                        CompanyName = "test2",
+                        CompleteName = "test2",
+                        Cpf = "000000000002",
+                        IsActive = true,
+                        ProfileName = "test2",
+                        Username = "test2"
+                    },
+                };
     }
 }
