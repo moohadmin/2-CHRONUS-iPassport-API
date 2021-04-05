@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Dtos;
+﻿using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using System;
@@ -32,11 +33,10 @@ namespace iPassport.Test.Seeds
 
         public static Users GetUserAdmin()
         {
-            var user =  new Users("test", "test", "test", "test", Guid.NewGuid(), "Test", Guid.NewGuid(), 0);
+            var user = new Users("test", "test", "test", "test", Guid.NewGuid(), "Test", Guid.NewGuid(), 0);
             user.Profile = new("test", "test");
             return user;
         }
-           
 
         public static IList<Users> GetUsers()
         {
@@ -45,7 +45,7 @@ namespace iPassport.Test.Seeds
                 new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2),
                 new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 1)
 
-        };
+            };
         }
 
         public static PagedData<Users> GetPagedUsers()
@@ -61,6 +61,21 @@ namespace iPassport.Test.Seeds
                     UserId = Guid.NewGuid(),
                     WasImported = false
                 }
+            };
+
+        public static AdminDetailsViewModel GetAdminDetails() =>
+            new AdminDetailsViewModel()
+            {
+                Id = Guid.NewGuid(),
+                Company = new CompanyViewModel() { Id = Guid.NewGuid() },
+                CompleteName = "teste",
+                Cpf = "0000000000",
+                Email = "teste@teste.com",
+                HealthUnit = new HealthUnitViewModel() { Id = Guid.NewGuid() },
+                IsActive = true,
+                Occupation = "teste",
+                Profile = new ProfileViewModel() { Id = Guid.NewGuid() },
+                Telephone = "5571999999999"
             };
     }
 }

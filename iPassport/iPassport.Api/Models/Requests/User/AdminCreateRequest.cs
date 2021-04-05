@@ -42,7 +42,7 @@ namespace iPassport.Api.Models.Requests.User
         /// <summary>
         /// Acess Profile Id
         /// </summary>
-        public Guid? profileId { get; set; }
+        public Guid? ProfileId { get; set; }
         /// <summary>
         /// Is User Active
         /// </summary>

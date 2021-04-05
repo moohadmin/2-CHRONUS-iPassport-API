@@ -218,7 +218,7 @@ namespace iPassport.Domain.Entities.Authentication
                 , dto.Telephone
                 , dto.CompanyId.Value
                 , dto.Occupation
-                , dto.profileId
+                , dto.ProfileId
                 , (int)EUserType.Admin);
 
         public void Disable(Guid deactivationUserId)

@@ -1,4 +1,5 @@
 ﻿using iPassport.Application.Models.ViewModels;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using AutoM = AutoMapper;
 
@@ -16,6 +17,7 @@ namespace iPassport.Api.AutoMapper.Mappers
         public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<Profile, ProfileViewModel>();
+            profile.CreateMap<ProfileDto, ProfileViewModel>();
         }
     }
 }

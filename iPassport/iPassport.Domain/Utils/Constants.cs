@@ -14,5 +14,7 @@
         public const string CONST_NENHUM_VALUE = "NENHUM";
 
         public const int MAX_LENGHT_IMPORT_USERS_FILE = 82160; // 80KB
+
+        public const string ADMIN_PROFILE_KEY = "admin";
     }
 }

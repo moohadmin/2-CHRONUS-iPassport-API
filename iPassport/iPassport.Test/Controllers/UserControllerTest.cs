@@ -6,6 +6,7 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
+using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -317,5 +318,24 @@ namespace iPassport.Test.Controllers
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             
         }
+
+        [TestMethod]
+        public void GetAdminById_MustReturnOk()
+        {
+            var mockRequest = Guid.NewGuid();
+
+            // Arrange
+            _mockService.Setup(r => r.GetAdminById(It.IsAny<Guid>()).Result)
+                .Returns(new ResponseApi(true, "test", UserSeed.GetAdminDetails()));
+
+            // Act
+            var result = _controller.GetAdminById(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetAdminById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
     }
 }
