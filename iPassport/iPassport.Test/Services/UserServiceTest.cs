@@ -52,6 +52,7 @@ namespace iPassport.Test.Services
         Mock<IUnitOfWork> _mockUnitOfWork;
         Mock<IImportedFileRepository> _mockImportedFileRepository;
         Mock<IProfileRepository> _mockProfileRepository;
+        Mock<IUserTokenRepository> _mockUserTokenRepository;
 
         [TestInitialize]
         public void Setup()
@@ -78,10 +79,11 @@ namespace iPassport.Test.Services
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockImportedFileRepository = new();
             _mockProfileRepository = new Mock<IProfileRepository>();
+            _mockUserTokenRepository = new Mock<IUserTokenRepository>();
 
             _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
                 _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object,
-                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object, _mockProfileRepository.Object);
+                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object, _mockProfileRepository.Object, _mockUserTokenRepository.Object);
         }
 
         [TestMethod]
@@ -323,7 +325,7 @@ namespace iPassport.Test.Services
         public void AddAdmin()
         {
             // Arrange
-            var mockRequest = Mock.Of<AdminCreateDto>(x => x.CompanyId == Guid.NewGuid());
+            var mockRequest = Mock.Of<AdminDto>(x => x.CompanyId == Guid.NewGuid());
             var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
             _mockProfileRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(ProfileSeed.Get());
@@ -356,6 +358,33 @@ namespace iPassport.Test.Services
 
             // Assert
             _mockUserRepository.Verify(x => x.GetAdminById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void EditAdmin()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<AdminDto>(x => x.CompanyId == Guid.NewGuid() && x.Id == Guid.NewGuid());
+            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAdmin());
+            _mockRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
+            _mockProfileRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(ProfileSeed.Get());
+            _mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<Users>()).Result).Returns(identityResult);
+            _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()).Result).Returns(true);
+
+            // Act
+            var result = _service.EditAdmin(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCompanyRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockProfileRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<Users>()));
+            _mockRepository.Verify(x => x.Update(It.IsAny<UserDetails>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

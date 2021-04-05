@@ -307,13 +307,13 @@ namespace iPassport.Test.Controllers
         {
             // Arrange
             var mockRequest = Mock.Of<AdminCreateRequest>();
-            _mockService.Setup(r => r.AddAdmin(It.IsAny<AdminCreateDto>()));
+            _mockService.Setup(r => r.AddAdmin(It.IsAny<AdminDto>()));
 
             // Act
             var result = _controller.AddAdmin(mockRequest);
 
             // Assert
-            _mockService.Verify(r => r.AddAdmin(It.IsAny<AdminCreateDto>()));
+            _mockService.Verify(r => r.AddAdmin(It.IsAny<AdminDto>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             
@@ -335,6 +335,23 @@ namespace iPassport.Test.Controllers
             _mockService.Verify(r => r.GetAdminById(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void EditAdmin_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<AdminEditRequest>();
+            _mockService.Setup(r => r.EditAdmin(It.IsAny<AdminDto>()));
+
+            // Act
+            var result = _controller.EditAdmin(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.EditAdmin(It.IsAny<AdminDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+
         }
 
     }

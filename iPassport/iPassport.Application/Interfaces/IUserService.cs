@@ -23,7 +23,8 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetCitizenById(Guid id);
         Task<ResponseApi> EditCitizen(CitizenEditDto dto);
         Task ImportUsers(IFormFile file);
-        Task<ResponseApi> AddAdmin(AdminCreateDto dto);
+        Task<ResponseApi> AddAdmin(AdminDto dto);
         Task<ResponseApi> GetAdminById(Guid id);
+        Task<ResponseApi> EditAdmin(AdminDto dto);
     }
 }
