@@ -702,4 +702,16 @@
   <data name="PassportDoc" xml:space="preserve">
     <value>Passaporte</value>
   </data>
+	<data name="ResponsiblePersonPhone" xml:space="preserve">
+    <value>Telefone do Responsável</value>
+  </data>
+	<data name="ResponsiblePersonName" xml:space="preserve">
+    <value>Nome do Responsável</value>
+  </data>
+	<data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+	<data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
 </root>
