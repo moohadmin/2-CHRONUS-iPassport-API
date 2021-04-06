@@ -306,13 +306,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
             }
@@ -462,13 +462,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
             }
@@ -517,13 +517,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
 
@@ -661,13 +661,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
 
@@ -920,13 +920,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose))
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneUniqueDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     else
                     {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneUniqueDose.ToString()], _localizer["HelthUnityUniqueCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeUniqueDose.ToString()], _localizer["HelthUnityUniqueCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
