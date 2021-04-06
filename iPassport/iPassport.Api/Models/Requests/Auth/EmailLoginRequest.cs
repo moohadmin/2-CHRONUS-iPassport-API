@@ -1,5 +1,8 @@
 namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// Email Login Request model 
+    /// </summary>
     public class EmailLoginRequest
     {
         /// <summary>

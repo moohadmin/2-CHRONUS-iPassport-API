@@ -19,7 +19,9 @@ namespace iPassport.Api.Configurations.Filters
     {
         private readonly Logger logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
         private readonly IStringLocalizer<Resource> _localizer;
-        private bool _devEnv;
+        
+        private readonly bool _devEnv;
+        
         /// <summary>
         /// Class Constructor
         /// </summary>

@@ -7,9 +7,21 @@ using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators
 {
+    /// <summary>
+    /// Guid Validator
+    /// </summary>
     public class GuidValidator : AbstractValidator<Guid>
     {
+        /// <summary>
+        /// Class Contructor
+        /// </summary>
         public GuidValidator() { }
+
+        /// <summary>
+        /// Class Contructor
+        /// </summary>
+        /// <param name="fieldName">field name</param>
+        /// <param name="localizer">string localizer</param>
         public GuidValidator(string fieldName, IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x)
@@ -18,8 +30,16 @@ namespace iPassport.Api.Models.Validators
         }
     }
 
+    /// <summary>
+    /// Required Field Validator
+    /// </summary>
     public class RequiredFieldValidator<T> : AbstractValidator<T>
     {
+        /// <summary>
+        /// Class Contructor
+        /// </summary>
+        /// <param name="fieldName">field name</param>
+        /// <param name="localizer">string localizer</param>
         public RequiredFieldValidator(string fieldName, IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x)
@@ -29,18 +49,20 @@ namespace iPassport.Api.Models.Validators
     }
 
     /// <summary>
-    /// AddressValidator Class
+    /// Address Validator Class
     /// </summary>
     public class AddressValidator : AbstractValidator<AddressCreateRequest>
     {
         /// <summary>
-        /// AddressValidator Construtor
+        /// Address Validator Construtor
         /// </summary>
         public AddressValidator() { }
 
         /// <summary>
-        /// AddressValidator Construtor
+        /// Address Validator Construtor
         /// </summary>
+        /// <param name="validateCep">indicator if cep must be validated</param>
+        /// <param name="localizer">string localizer</param>
         public AddressValidator(IStringLocalizer<Resource> localizer, bool validateCep)
         {
             if (validateCep)
@@ -76,6 +98,7 @@ namespace iPassport.Api.Models.Validators
         /// <summary>
         /// AddressValidator Construtor
         /// </summary>
+        /// <param name="localizer">string localizer</param>
         public AddressEditValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Id)

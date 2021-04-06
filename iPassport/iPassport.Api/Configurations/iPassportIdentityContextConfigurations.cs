@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace iPassport.Api.Configurations
 {
+    /// <summary>
+    /// iPassport Identity Context Configurations class
+    /// </summary>
     public static class iPassportIdentityContextConfigurations
     {
         /// <summary>
@@ -14,6 +17,11 @@ namespace iPassport.Api.Configurations
         /// </summary>
         public static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
+        /// <summary>
+        /// Add Identity Data Context Method
+        /// </summary>
+        /// <param name="services">Service Collection</param>
+        /// <returns>Service Collection</returns>
         public static IServiceCollection AddIdentityDataContext(this IServiceCollection services)
         {
             string connection = EnvConstants.DATABASE_CONNECTION_STRING;

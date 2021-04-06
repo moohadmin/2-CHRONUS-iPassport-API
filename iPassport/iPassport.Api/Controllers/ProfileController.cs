@@ -18,12 +18,6 @@ namespace iPassport.Api.Controllers
     [Authorize]
     public class ProfileController : ControllerBase
     {
-
-        /// <summary>
-        /// Auto Mapper Property
-        /// </summary>
-        private readonly IMapper _mapper;
-
         /// <summary>
         /// Profile Service Property
         /// </summary>
@@ -32,11 +26,9 @@ namespace iPassport.Api.Controllers
         /// <summary>
         /// Class Constructor
         /// </summary>
-        /// <param name="mapper">Auto Mapper Instance</param>
         /// <param name="service">Profile Service Instance</param>
-        public ProfileController(IMapper mapper, IProfileService service)
+        public ProfileController(IProfileService service)
         {
-            _mapper = mapper;
             _service = service;
         }
 

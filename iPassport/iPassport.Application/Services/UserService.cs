@@ -156,20 +156,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
+                VerifyUniqueKeyErrors(ex);
 
                 throw;
             }
@@ -299,22 +286,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
-
-                throw;
+                VerifyUniqueKeyErrors(ex);
             }
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
         }
@@ -455,22 +427,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
-
-                throw;
+                VerifyUniqueKeyErrors(ex);
             }
 
             return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
@@ -510,22 +467,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
-
-                throw;
+                VerifyUniqueKeyErrors(ex);
 
             }
 
@@ -654,23 +596,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
-
-                throw;
-
+                VerifyUniqueKeyErrors(ex);
             }
 
             return new ResponseApi(true, _localizer["UserUpdated"], currentAdminUser.Id);
@@ -1041,6 +967,24 @@ namespace iPassport.Application.Services
                 throw new BusinessException(String.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
 
             return true;
+        }
+
+        private void VerifyUniqueKeyErrors(Exception ex)
+        {
+            if (ex.ToString().Contains("IX_Users_CNS"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+            if (ex.ToString().Contains("IX_Users_CPF"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+            if (ex.ToString().Contains("IX_Users_RG"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+            if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
+            if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
+            if (ex.ToString().Contains("IX_Users_Email"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
+            if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
         }
         #endregion
     }

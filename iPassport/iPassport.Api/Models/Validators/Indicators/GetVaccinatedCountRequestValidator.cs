@@ -6,8 +6,15 @@ using System;
 
 namespace iPassport.Api.Models.Validators.Indicators
 {
+    /// <summary>
+    /// Get Vaccinated Count Request Validator
+    /// </summary>
     public class GetVaccinatedCountRequestValidator : AbstractValidator<GetVaccinatedCountRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">string localizer</param>
         public GetVaccinatedCountRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.StartTime)

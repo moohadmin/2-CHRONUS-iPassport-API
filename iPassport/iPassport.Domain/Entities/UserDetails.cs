@@ -101,12 +101,16 @@ namespace iPassport.Domain.Entities
             var vacinnes = UserVaccines.Where(x => x.ExclusionDate == null).Select(x => x.Vaccine).Distinct().ToList();
 
             if (vacinnes == null || !vacinnes.Any())
-                isApproved = false;
-
-            foreach (var vaccine in vacinnes)
             {
-                if (vaccine == null || GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
-                    isApproved = false;
+                isApproved = false;
+            }
+            else
+            {
+                foreach (var vaccine in vacinnes)
+                {
+                    if (vaccine == null || GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
+                        isApproved = false;
+                }
             }
 
             if (!isApproved)
@@ -200,9 +204,9 @@ namespace iPassport.Domain.Entities
 
         public static UserDetails CreateUserDetail(AdminDto dto)
             => new()
-            { 
-            Id = dto.Id.Value,
-            HealthUnitId = dto.HealthUnitId
+            {
+                Id = dto.Id.Value,
+                HealthUnitId = dto.HealthUnitId
             };
 
         public void ChangeUserDetail(AdminDto dto) => HealthUnitId = dto.HealthUnitId;

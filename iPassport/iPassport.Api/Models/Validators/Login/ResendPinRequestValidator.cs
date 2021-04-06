@@ -6,8 +6,15 @@ using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Plans
 {
+    /// <summary>
+    /// Resend Pin Request Validator
+    /// </summary>
     public class ResendPinRequestValidator : AbstractValidator<ResendPinRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">string localizer</param>
         public ResendPinRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.Phone)

@@ -3,7 +3,7 @@
 namespace iPassport.Api.Models.Requests
 {
     /// <summary>
-    /// AddressCreateRequest Class
+    /// Address Create Request Class
     /// </summary>
     public class AddressCreateRequest
     {
