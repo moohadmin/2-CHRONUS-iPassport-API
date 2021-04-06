@@ -163,13 +163,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
             }
