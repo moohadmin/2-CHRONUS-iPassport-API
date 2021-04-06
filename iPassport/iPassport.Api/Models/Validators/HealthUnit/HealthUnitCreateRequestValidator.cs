@@ -45,10 +45,6 @@ namespace iPassport.Api.Models.Validators.HealthUnit
             RuleFor(x => x.Ine)
                 .MaximumLength(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"))
                 .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"));
-
-            RuleFor(x => x.ResponsiblePersonPhone)
-                .NotNull()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["ResponsiblePersonPhone"]));
             
             RuleFor(x => x.ResponsiblePersonPhone)
                 .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
