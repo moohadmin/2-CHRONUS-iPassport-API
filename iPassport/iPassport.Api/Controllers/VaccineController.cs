@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Filters;
@@ -52,6 +54,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("VaccinatedCount")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit, RolesModel.Business)]
         public async Task<ActionResult> GetVaccinatedCount([FromQuery] GetVaccinatedCountRequest request)
         {
             var res = await _service.GetVaccinatedCount(_mapper.Map<GetVaccinatedCountFilter>(request));
@@ -71,6 +74,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("Manufacturer")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
         public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesByManufacuterRequest request)
         {
             var res = await _service.GetByManufacturerId(_mapper.Map<GetByIdAndNamePartsPagedFilter>(request));

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Filters;
@@ -52,6 +54,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> GetByPeriod([FromQuery]GetImportedFileRequest request)
         {
             var res = await _service.FindByPeriod(_mapper.Map<GetImportedFileFilter>(request));
@@ -71,6 +74,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("{id}/Details")]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> GetById(Guid id)
         {
             var res = await _service.GetImportedFileDetails(id);

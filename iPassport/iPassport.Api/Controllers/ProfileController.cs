@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models;
 using iPassport.Api.Models.Responses;
+using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +51,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> GetAll()
         {
             var res = await _service.GetAll();
