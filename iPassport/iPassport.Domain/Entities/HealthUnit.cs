@@ -54,6 +54,8 @@ namespace iPassport.Domain.Entities
             TypeId = dto.TypeId.Value;
             AddressId = dto.Address.Id;
             CompanyId = dto.CompanyId;
+            Active = dto.IsActive;
+            DeactivationDate = dto.IsActive == false ? DateTime.UtcNow : null;
         }
 
         public void AddUniqueCode(int uniqueCode) => UniqueCode = uniqueCode;
