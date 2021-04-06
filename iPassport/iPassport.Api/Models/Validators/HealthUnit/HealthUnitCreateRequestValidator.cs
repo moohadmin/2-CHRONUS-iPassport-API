@@ -20,21 +20,21 @@ namespace iPassport.Api.Models.Validators.HealthUnit
         public HealthUnitCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Name)
-                .SetValidator(new RequiredFieldValidator<string>("Name", localizer));
+                .SetValidator(new RequiredFieldValidator<string>(localizer["Name"], localizer));
 
             RuleFor(x => x.Email)
-                .EmailAddress().WithMessage(string.Format(localizer["InvalidField"], "E-mail")).When(x => !string.IsNullOrWhiteSpace(x.Email));
+                .EmailAddress().WithMessage(string.Format(localizer["InvalidField"], localizer["Email"])).When(x => !string.IsNullOrWhiteSpace(x.Email));
 
             RuleFor(x => x.IsActive)
-                .SetValidator(new RequiredFieldValidator<bool?>("IsActive", localizer));
+                .SetValidator(new RequiredFieldValidator<bool?>(localizer["IsActive"], localizer));
 
             RuleFor(x => x.TypeId)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "TypeId"));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Type"]));
 
             RuleFor(x => x.CompanyId)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "CompanyId"));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Company"]));
 
             RuleFor(x => x.Address)
                 .SetValidator(new AddressValidator(localizer, false));
@@ -45,6 +45,15 @@ namespace iPassport.Api.Models.Validators.HealthUnit
             RuleFor(x => x.Ine)
                 .MaximumLength(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"))
                 .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"));
+            
+            RuleFor(x => x.ResponsiblePersonPhone)
+                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["ResponsiblePersonPhone"]))
+                .When(x => !string.IsNullOrWhiteSpace(x.ResponsiblePersonPhone));
+
+            RuleFor(x => x.ResponsiblePersonName)
+                .NotNull()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["ResponsiblePersonName"]));
         }
     }
 }

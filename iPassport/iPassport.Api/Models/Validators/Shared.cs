@@ -56,7 +56,7 @@ namespace iPassport.Api.Models.Validators
             RuleFor(y => y.Number)
                     .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
                     .When(x => !String.IsNullOrWhiteSpace(x.Number))
-                    .WithMessage(string.Format(localizer["InvalidField"], "Number"));
+                    .WithMessage(string.Format(localizer["InvalidField"], localizer["Number"]));
 
             RuleFor(x => x.CityId)
                 .SetValidator(new GuidValidator("CityId", localizer));

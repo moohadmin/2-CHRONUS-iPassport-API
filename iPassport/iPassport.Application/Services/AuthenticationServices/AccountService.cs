@@ -66,6 +66,9 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
+            if (user.IsInactive())
+                throw new BusinessException(_localizer["InactiveUser"]);
+
             if (user.Profile == null)
                 throw new BusinessException(_localizer["UserAccessProfileNotFound"]);
 

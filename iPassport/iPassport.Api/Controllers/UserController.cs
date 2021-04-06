@@ -445,7 +445,7 @@ namespace iPassport.Api.Controllers
         [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> AddAdmin([FromBody] AdminCreateRequest request)
         {
-            var res = await _service.AddAdmin(_mapper.Map<AdminCreateDto>(request));
+            var res = await _service.AddAdmin(_mapper.Map<AdminDto>(request));
             return Ok(res);
         }
 
@@ -484,6 +484,26 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> GetPagedAdmins([FromQuery] GetAdminUserPagedRequest request)
         {
             var res = await _service.GetPagedAdmins(_mapper.Map<GetAdminUserPagedFilter>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for edit Admin.
+        /// </summary>
+        /// <param name="request">Admin Edit Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Admin Id</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpPut("Admin")]
+        public async Task<ActionResult> EditAdmin([FromBody] AdminEditRequest request)
+        {
+            var res = await _service.EditAdmin(_mapper.Map<AdminDto>(request));
             return Ok(res);
         }
     }

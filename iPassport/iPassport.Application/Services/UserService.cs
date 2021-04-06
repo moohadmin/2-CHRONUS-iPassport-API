@@ -55,12 +55,13 @@ namespace iPassport.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImportedFileRepository _importedFileRepository;
         private readonly IProfileRepository _profileRepository;
+        private readonly IUserTokenRepository _userTokenRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
             IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository,
             IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository,
             IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IImportedFileRepository importedFileRepository
-            , IProfileRepository profileRepository)
+            , IProfileRepository profileRepository, IUserTokenRepository userTokenRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -84,6 +85,7 @@ namespace iPassport.Application.Services
             _unitOfWork = unitOfWork;
             _importedFileRepository = importedFileRepository;
             _profileRepository = profileRepository;
+            _userTokenRepository = userTokenRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
@@ -161,13 +163,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
             }
@@ -304,13 +306,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
             }
@@ -460,13 +462,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
             }
@@ -474,27 +476,14 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
         }
 
-        public async Task<ResponseApi> AddAdmin(AdminCreateDto dto)
+        public async Task<ResponseApi> AddAdmin(AdminDto dto)
         {
-            if (!dto.CompanyId.HasValue || await _companyRepository.Find(dto.CompanyId.Value) == null)
-                throw new BusinessException(_localizer["CompanyNotFound"]);
+            await ValidToSaveAdmin(dto);
 
-            var Profile = await _profileRepository.Find(dto.ProfileId.GetValueOrDefault());
-            if (Profile == null)
-                throw new BusinessException(_localizer["ProfileNotFound"]);
-
-            if (Profile.Key == Enum.GetName(EProfileKey.healthUnit)
-                && (!dto.HealthUnitId.HasValue || await _healthUnitRepository.Find(dto.HealthUnitId.Value) == null))
-                throw new BusinessException(String.Format(_localizer["HealthUnitRequiredToProfile"], Profile.Name));
-
-            if (dto.HealthUnitId.HasValue && Profile.Key != Enum.GetName(EProfileKey.healthUnit))
-                throw new BusinessException(String.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
-
-
-            Users user = Users.CreateAdmin(dto);
+            Users user = Users.CreateUser(dto);
 
             if (!dto.IsActive.GetValueOrDefault())
-                user.Disable(_accessor.GetCurrentUserId());
+                user.Deactivate(_accessor.GetCurrentUserId());
 
             try
             {
@@ -528,13 +517,13 @@ namespace iPassport.Application.Services
                 if (ex.ToString().Contains("IX_Users_RG"))
                     throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
                 if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
                 if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
                 if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
                 if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
 
                 throw;
 
@@ -614,6 +603,77 @@ namespace iPassport.Application.Services
             var adminDetails = new AdminDetailsDto(authUser, details);
 
             return new ResponseApi(true, _localizer["AdminUser"], _mapper.Map<AdminDetailsViewModel>(adminDetails));
+        }
+
+        public async Task<ResponseApi> EditAdmin(AdminDto dto)
+        {
+            var currentAdminUser = await _userRepository.GetById(dto.Id.Value);
+            if (currentAdminUser == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            var currentAdminUserDetails = await _detailsRepository.Find(dto.Id.Value);
+            if (currentAdminUserDetails == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            await ValidToSaveAdmin(dto);
+
+            currentAdminUser.ChangeUser(dto);           
+            currentAdminUserDetails.ChangeUserDetail(dto);
+
+            UserToken currentUserActiveToken = null;
+            if (!dto.IsActive.GetValueOrDefault() && currentAdminUser.IsActive())
+            {
+                currentAdminUser.Deactivate(_accessor.GetCurrentUserId());
+
+                currentUserActiveToken = await _userTokenRepository.GetActive(currentAdminUser.Id);
+                currentUserActiveToken?.Deactivate();
+            }
+
+            if (dto.IsActive.GetValueOrDefault() && currentAdminUser.IsInactive())
+                currentAdminUser.Activate();
+            
+            try
+            {
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
+                var result = await _userManager.UpdateAsync(currentAdminUser);
+                ValidSaveUserIdentityResult(result);
+
+                if (!(await _detailsRepository.Update(currentAdminUserDetails)))
+                    throw new BusinessException(_localizer["UserNotUpdated"]);
+                
+                if(currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
+                    throw new BusinessException(_localizer["UserNotUpdated"]);
+
+                _unitOfWork.CommitIdentity();
+                _unitOfWork.CommitPassport();
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                if (ex.ToString().Contains("IX_Users_CNS"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+                if (ex.ToString().Contains("IX_Users_CPF"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+                if (ex.ToString().Contains("IX_Users_RG"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
+                if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
+                if (ex.ToString().Contains("IX_Users_Email"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
+                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
+
+                throw;
+
+            }
+
+            return new ResponseApi(true, _localizer["UserUpdated"], currentAdminUser.Id);
         }
 
         public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
@@ -860,13 +920,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose))
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneUniqueDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     else
                     {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneUniqueDose.ToString()], _localizer["HelthUnityUniqueCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeUniqueDose.ToString()], _localizer["HelthUnityUniqueCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
@@ -962,6 +1022,25 @@ namespace iPassport.Application.Services
         {
             if (file.Length > Domain.Utils.Constants.MAX_LENGHT_IMPORT_USERS_FILE)
                 throw new BusinessException(string.Format(_localizer["ImportUsersFileMaxSize"], Domain.Utils.Constants.MAX_LENGHT_IMPORT_USERS_FILE / 1024));
+        }
+
+        private async Task<bool> ValidToSaveAdmin(AdminDto dto)
+        {
+            if (!dto.CompanyId.HasValue || await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            var Profile = await _profileRepository.Find(dto.ProfileId.GetValueOrDefault());
+            if (Profile == null)
+                throw new BusinessException(_localizer["ProfileNotFound"]);
+
+            if (Profile.Key == Enum.GetName(EProfileKey.healthUnit)
+                && (!dto.HealthUnitId.HasValue || await _healthUnitRepository.Find(dto.HealthUnitId.Value) == null))
+                throw new BusinessException(String.Format(_localizer["HealthUnitRequiredToProfile"], Profile.Name));
+
+            if (dto.HealthUnitId.HasValue && Profile.Key != Enum.GetName(EProfileKey.healthUnit))
+                throw new BusinessException(String.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
+
+            return true;
         }
         #endregion
     }
