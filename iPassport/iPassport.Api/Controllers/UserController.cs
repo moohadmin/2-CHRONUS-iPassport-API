@@ -231,10 +231,6 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("LoggedCitzenCount")]
-        [AuthorizeRole(RolesModel.Admin)]
-        [Authorize(Roles = RolesModel.Business)]
-        [Authorize(Roles = RolesModel.Government)]
-        [Authorize(Roles = RolesModel.HealthUnit)]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetLoggedCitzenCount()
         {
