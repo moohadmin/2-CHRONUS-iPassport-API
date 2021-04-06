@@ -37,6 +37,6 @@ namespace iPassport.Infra.Repositories
         }
 
         public async Task<UserDetails> GetWithHealtUnityById(Guid id) =>
-            await _DbSet.Include(x => x.HealthUnit).FirstOrDefaultAsync(x => x.Id == id);
+            await _DbSet.Include(x => x.HealthUnit).ThenInclude(h => h.Type).FirstOrDefaultAsync(x => x.Id == id);
     }
 }
