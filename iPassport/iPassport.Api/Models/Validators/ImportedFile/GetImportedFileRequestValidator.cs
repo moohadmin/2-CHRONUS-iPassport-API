@@ -13,7 +13,7 @@ namespace iPassport.Api.Models.Validators.Indicators
         /// <summary>
         /// GetImportedFileRequestValidator contructor
         /// </summary>
-        /// <param name="localizer"> resource</param>
+        /// <param name="localizer">resource</param>
         public GetImportedFileRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.StartTime)

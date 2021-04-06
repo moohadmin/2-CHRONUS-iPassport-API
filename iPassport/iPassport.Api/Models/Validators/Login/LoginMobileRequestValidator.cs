@@ -5,8 +5,15 @@ using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Plans
 {
+    /// <summary>
+    /// Login Mobile Request Validator
+    /// </summary>
     public class LoginMobileRequestValidator : AbstractValidator<LoginMobileRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">string localizer</param>
         public LoginMobileRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.Pin)

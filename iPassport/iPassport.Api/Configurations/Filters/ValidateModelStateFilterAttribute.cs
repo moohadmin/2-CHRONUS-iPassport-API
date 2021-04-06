@@ -6,8 +6,15 @@ using System.Linq;
 
 namespace iPassport.Api.Configurations.Filters
 {
+    /// <summary>
+    /// Validate Model State Filter Attribute class
+    /// </summary>
     public class ValidateModelStateFilterAttribute : ActionFilterAttribute
     {
+        /// <summary>
+        /// On Action Executing
+        /// </summary>
+        /// <param name="context">Action Executing Context</param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (!context.ModelState.IsValid)

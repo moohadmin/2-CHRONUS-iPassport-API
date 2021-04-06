@@ -15,7 +15,7 @@ namespace iPassport.Api.Models.Validators.HealthUnit
         /// <summary>
         /// Class Constructor
         /// </summary>
-        /// <param name="localizer">localizer</param>
+        /// <param name="localizer">string localizer</param>
         public HealthUnitEditRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Id)

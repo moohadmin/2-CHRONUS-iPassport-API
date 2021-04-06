@@ -8,8 +8,15 @@ using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Plans
 {
+    /// <summary>
+    /// Pin Request Validator
+    /// </summary>
     public class PinRequestValidator : AbstractValidator<PinRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">string localizer</param>
         public PinRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.Document)

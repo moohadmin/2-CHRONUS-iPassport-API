@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using iPassport.Api.Models;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
-using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Filters;

@@ -25,7 +25,7 @@ namespace iPassport.Test.Controllers
         {
             _mockService = new Mock<IProfileService>();
             _mapper = AutoMapperFactory.Create();
-            _controller = new ProfileController(_mapper, _mockService.Object);
+            _controller = new ProfileController(_mockService.Object);
         }
 
         [TestMethod]

@@ -7,8 +7,16 @@ using System.Linq;
 
 namespace iPassport.Api.Configurations.Filters
 {
+    /// <summary>
+    /// Aws Api Gateway Cors Integration class
+    /// </summary>
     public class AwsApiGatewayCorsIntegration : IDocumentFilter
     {
+        /// <summary>
+        /// Apply Method
+        /// </summary>
+        /// <param name="swaggerDoc">Open Api Document with swagger documentation</param>
+        /// <param name="context">Document Filter Context</param>
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             var responses = GetResponses();
@@ -116,9 +124,19 @@ namespace iPassport.Api.Configurations.Filters
         }
     }
 
+    /// <summary>
+    /// Custom Open Api Path Item Class
+    /// </summary>
     public class CustomOpenApiPathItem : OpenApiPathItem
     {
+        /// <summary>
+        /// Operations Dictionary
+        /// </summary>
         public new Dictionary<string, OpenApiOperation> Operations { get; set; }
+
+        /// <summary>
+        /// Open Api Responses
+        /// </summary>
         public OpenApiResponses Responses { get; set; }
     }
 }

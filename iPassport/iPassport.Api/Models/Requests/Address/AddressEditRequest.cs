@@ -3,7 +3,7 @@
 namespace iPassport.Api.Models.Requests
 {
     /// <summary>
-    /// AddressEditRequest Class
+    /// Address Edit Request Class
     /// </summary>
     public class AddressEditRequest
     {

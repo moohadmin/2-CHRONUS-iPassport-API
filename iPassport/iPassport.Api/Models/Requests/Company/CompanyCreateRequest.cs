@@ -1,5 +1,8 @@
 ﻿namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// Company Create Request model
+    /// </summary>
     public class CompanyCreateRequest
     {
         /// <summary>

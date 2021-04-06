@@ -1,5 +1,8 @@
 ﻿namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// Country Create Request
+    /// </summary>
     public class CountryCreateRequest
     {
         /// <summary>
