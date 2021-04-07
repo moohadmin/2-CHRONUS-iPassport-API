@@ -852,7 +852,7 @@ namespace iPassport.Application.Services
                     }
                     else
                     {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeUniqueDose.ToString()], _localizer["HelthUnityUniqueCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeUniqueDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
@@ -877,9 +877,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneFirstDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeFirstDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
@@ -904,9 +908,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneSecondDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else 
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeSecondDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
@@ -931,9 +939,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneThirdDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeThirdDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
