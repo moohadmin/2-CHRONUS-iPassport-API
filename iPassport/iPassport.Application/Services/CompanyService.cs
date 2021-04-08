@@ -22,13 +22,15 @@ namespace iPassport.Application.Services
         private readonly ICityRepository _cityRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
+        private readonly ICompanyTypeRepository _companyTypeRepository;
 
-        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICityRepository cityRepository)
+        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICityRepository cityRepository, ICompanyTypeRepository companyTypeRepository)
         {
             _companyRepository = companyRepository;
             _localizer = localizer;
             _mapper = mapper;
             _cityRepository = cityRepository;
+            _companyTypeRepository = companyTypeRepository;
         }
 
         public async Task<ResponseApi> Add(CompanyCreateDto dto)
@@ -62,6 +64,14 @@ namespace iPassport.Application.Services
             var result = _mapper.Map<CompanyViewModel>(res);
 
             return new ResponseApi(true, _localizer["Companiies"], result);
+        }
+
+        public async Task<ResponseApi> GetAllTypes()
+        {
+            var companyTypes = await _companyTypeRepository.FindAll();
+            var companyTypeViewModels = _mapper.Map<IList<CompanyTypeViewModel>>(companyTypes);
+
+            return new ResponseApi(true, _localizer["CompanyTypes"], companyTypeViewModels);
         }
     }
 }

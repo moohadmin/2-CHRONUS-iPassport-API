@@ -142,5 +142,24 @@ namespace iPassport.Api.Controllers
             
             return Ok(new PagedResponseApi(true, "Headquarters Companies", 1, 10, 1, 10, res));
         }
+
+        /// <summary>
+        /// This API Get Company Types
+        /// </summary>
+        /// <returns>List of Company Type</returns>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Types")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
+        public async Task<ActionResult> GetAllTypes()
+        {
+            var res = await _service.GetAllTypes();
+            return Ok(res);
+        }
     }
 }
