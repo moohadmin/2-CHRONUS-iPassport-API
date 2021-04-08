@@ -161,5 +161,34 @@ namespace iPassport.Api.Controllers
             var res = await _service.GetAllTypes();
             return Ok(res);
         }
+
+        /// <summary>
+        /// This API Get Company Segments by Company Type
+        /// </summary>
+        /// <returns>List of Company Type</returns>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Types/{id}/Segments")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
+        public async Task<ActionResult> GetPagedSegmetsByTypeId([FromRoute] Guid id,[FromQuery] PageFilterRequest request)
+        {
+            List<CompanySegmentViewModel> companySegmentViewModels = new List<CompanySegmentViewModel>()
+            {
+            new () {Id = id, Name= "Municipal", Identifyer = 1 },
+            new () {Id = Guid.NewGuid(), Name= "Estadual", Identifyer = 2 },
+            new () {Id = Guid.NewGuid(), Name= "Federal", Identifyer = 3 },
+            new () {Id = Guid.NewGuid(), Name= "Contratante", Identifyer = 4 },
+            new () {Id = Guid.NewGuid(), Name= "Saúde", Identifyer = 5 },
+            }
+            ;
+
+            return Ok(new PagedResponseApi(true, "Seguimentos Da Empresa", 1, 10, 1, 5, companySegmentViewModels));
+        }
+
     }
 }
