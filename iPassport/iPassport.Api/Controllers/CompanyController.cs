@@ -56,7 +56,6 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [Authorize]
         [HttpGet]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
 
@@ -78,7 +77,6 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [Authorize]
         [HttpPost]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
         public async Task<ActionResult> Add([FromBody] CompanyCreateRequest request)
@@ -99,7 +97,6 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [Authorize]
         [HttpGet("{id}")]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
         public async Task<ActionResult> GetById(Guid id)
@@ -119,7 +116,6 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [Authorize]
         [HttpGet("Types")]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
         public async Task<ActionResult> GetAllTypes()
