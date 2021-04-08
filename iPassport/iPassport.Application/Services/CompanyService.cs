@@ -63,6 +63,15 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, _localizer["Companiies"], result);
         }
+
+        public Task<PagedResponseApi> GetHeadquartersCompanies(GetHeadquarterCompanyPagedFilter filter)
+        {
+            var res = await _companyRepository.GetHeadquartersCompanies(filter);
+
+            var result = _mapper.Map<HeadquarterCompanyViewModel>(res);
+
+            return new PagedResponseApi(true, _localizer["Companies"], res.pageNumber, res.pageSize, res.totalPages, res.totalRecords, result);
+        }
     }
 }
 
