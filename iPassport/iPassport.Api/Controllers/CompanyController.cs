@@ -122,7 +122,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("Headquarter")]
-        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
 
         public async Task<ActionResult> GetHeadquartersCompanies([FromQuery] GetHeadquarterCompanyPagedRequest request)
         {
