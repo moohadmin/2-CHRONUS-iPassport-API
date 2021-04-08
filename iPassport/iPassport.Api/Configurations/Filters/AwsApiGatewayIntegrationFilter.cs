@@ -71,23 +71,6 @@ namespace iPassport.Api.Configurations.Filters
                 ["payloadFormatVersion"] = new OpenApiString("1.0")
             };
 
-            var parameters = apiDescription.ParameterDescriptions;
-
-            OpenApiObject requestParameters = new OpenApiObject();
-
-            foreach (var parameter in parameters)
-            {
-                if (BindingSource.Path == parameter.Source)
-                {
-                    requestParameters[$"integration.request.path.{parameter.Name}"] = new OpenApiString($"method.request.path.{parameter.Name}");
-                }
-            }
-
-            if (requestParameters.Count > 0)
-            {
-                integrationObject["requestParameters"] = requestParameters;
-            }
-
             operation.Extensions.Add(INTEGRATION_OBJECT_ATTRIBUTE, integrationObject);
         }
 
