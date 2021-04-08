@@ -80,7 +80,6 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IHealthUnitTypeService, HealthUnitTypeService>();
 
-            services.AddScoped<ICompanyTypeService, CompanyTypeService>();
             #endregion
 
             #region DI Repositories
