@@ -29,6 +29,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.AddressDto, act => act.MapFrom(src => src.Address));
 
             profile.CreateMap<CompanyDto, CompanyViewModel>();
+
+            profile.CreateMap<CompanyType, CompanyTypeViewModel>();
         }
     }
 }
