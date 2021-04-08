@@ -438,7 +438,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpPost("Admin")]
-        [AuthorizeRole(RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
         public async Task<ActionResult> AddAdmin([FromBody] AdminCreateRequest request)
         {
             var res = await _service.AddAdmin(_mapper.Map<AdminDto>(request));
@@ -476,7 +476,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
         [HttpGet("Admin")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
         public async Task<ActionResult> GetPagedAdmins([FromQuery] GetAdminUserPagedRequest request)
         {
             var res = await _service.GetPagedAdmins(_mapper.Map<GetAdminUserPagedFilter>(request));
@@ -497,6 +499,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpPut("Admin")]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> EditAdmin([FromBody] AdminEditRequest request)
         {
             var res = await _service.EditAdmin(_mapper.Map<AdminDto>(request));
