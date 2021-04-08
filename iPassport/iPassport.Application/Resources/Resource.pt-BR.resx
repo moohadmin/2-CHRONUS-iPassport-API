@@ -534,6 +534,30 @@
   <data name="ColumnNameImportFileWasTestPerformed" xml:space="preserve">
     <value>Realizou o teste PCR</value>
   </data>
+	<data name="ColumnNameImportFileHealthUnityCodeUniqueDose" xml:space="preserve">
+    <value>Código da Unidade - Dose Única</value>
+  </data>
+	<data name="ColumnNameImportFileHealthUnityCodeFirstDose" xml:space="preserve">
+    <value>Código da Unidade - Dose I</value>
+  </data>
+	<data name="ColumnNameImportFileHealthUnityCodeSecondDose" xml:space="preserve">
+    <value>Código da Unidade - Dose II</value>
+  </data>
+	<data name="ColumnNameImportFileHealthUnityCodeThirdDose" xml:space="preserve">
+    <value>Código da Unidade - Dose III</value>
+  </data>
+	<data name="ColumnNameImportFileEmployeeCpfVaccinationFirstDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose I</value>
+  </data>
+	<data name="ColumnNameImportFileEmployeeCpfVaccinationUniqueDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose Única</value>
+  </data>
+	<data name="ColumnNameImportFileEmployeeCpfVaccinationSecondDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose II</value>
+  </data>
+	<data name="ColumnNameImportFileEmployeeCpfVaccinationThirdDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose III</value>
+  </data>
   <data name="IneDoesntExistsInDataBase" xml:space="preserve">
     <value>Não existe o cadastro deste INE na base.</value>
   </data>
@@ -669,7 +693,7 @@
   <data name="FieldValueInformedIsNotValidMasc" xml:space="preserve">
     <value>O {0} informado é inválido.</value>
   </data>
-  <data name="HelthUnityUniqueCodeDoesntExistsInDataBase" xml:space="preserve">
+  <data name="HelthUnityCodeDoesntExistsInDataBase" xml:space="preserve">
     <value>Não existe o cadastro deste código na base.</value>
   </data>
   <data name="TestResultDateCannotBeEqualOrLessThenTestDate" xml:space="preserve">

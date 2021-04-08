@@ -748,16 +748,20 @@ namespace iPassport.Application.Services
             var bloodTypes = await _bloodTypeRepository.FindByListName(validData.Select(f => f.Result.BloodType.Trim().ToUpper()).Distinct().ToList());
             var humanRaces = await _humanRaceRepository.FindByListName(validData.Select(f => f.Result.HumanRace.Trim().ToUpper()).Distinct().ToList());
             var cities = await _cityRepository.FindByCityStateAndCountryNames(validData.Select(f => f.Result.City.Trim().ToUpper() + f.Result.State.Trim().ToUpper() + f.Result.Country.Trim().ToUpper()).Distinct().ToList());
+            
             var vaccineFilter = validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => f.Result.VaccineNameUniqueDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameUniqueDose.Trim().ToUpper()).Distinct().ToList();
             vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => f.Result.VaccineNameFirstDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameFirstDose.Trim().ToUpper()).Distinct().ToList());
             vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => f.Result.VaccineNameSecondDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameSecondDose.Trim().ToUpper()).Distinct().ToList());
             vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => f.Result.VaccineNameThirdDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameThirdDose.Trim().ToUpper()).Distinct().ToList());
             var vaccines = await _vaccineRepository.GetByVaccineAndManufacturerNames(vaccineFilter.Distinct().ToList());
+            
             var healthUnityFilter = validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjUniqueDose, Ine = f.Result.HealthUnityIneUniqueDose, UniqueCode = f.Result.HealthUnityCodeUniqueDose }).Distinct().ToList();
             healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjFirstDose, Ine = f.Result.HealthUnityIneFirstDose, UniqueCode = f.Result.HealthUnityCodeFirstDose }).Distinct().ToList());
             healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjSecondDose, Ine = f.Result.HealthUnityIneSecondDose, UniqueCode = f.Result.HealthUnityCodeSecondDose }).Distinct().ToList());
             healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjThirdDose, Ine = f.Result.HealthUnityIneThirdDose, UniqueCode = f.Result.HealthUnityCodeThirdDose }).Distinct().ToList());
-            var healthUnits = await _healthUnitRepository.FindByCnpjIneAndCode(healthUnityFilter.Select(h => h.Cnpj).Distinct().ToList(), healthUnityFilter.Select(h => h.Ine).Distinct().ToList(), healthUnityFilter.Select(h => h.UniqueCode).Distinct().ToList());
+            var healthUnits = await _healthUnitRepository.FindByCnpjIneAndCode(healthUnityFilter.Where(h => !string.IsNullOrWhiteSpace(h.Cnpj)).Select(h => h.Cnpj).Distinct().ToList(),
+                                                                   healthUnityFilter.Where(h => !string.IsNullOrWhiteSpace(h.Ine)).Select(h => h.Ine).Distinct().ToList(),
+                                                                   healthUnityFilter.Where(h => h.UniqueCode.HasValue).Select(h => h.UniqueCode).Distinct().ToList());
 
             Guid? id;
 
@@ -852,7 +856,7 @@ namespace iPassport.Application.Services
                     }
                     else
                     {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeUniqueDose.ToString()], _localizer["HelthUnityUniqueCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeUniqueDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
@@ -867,7 +871,7 @@ namespace iPassport.Application.Services
                 id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || v.Result.HealthUnityCnpjFirstDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose) || v.Result.HealthUnityIneFirstDose == h.Ine)
                                         && (v.Result.HealthUnityCodeFirstDose.HasValue || v.Result.HealthUnityCodeFirstDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose)))
+                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose) || v.Result.HealthUnityCodeFirstDose.HasValue))
                 {
                     if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose))
                     {
@@ -877,9 +881,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneFirstDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeFirstDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
@@ -894,7 +902,7 @@ namespace iPassport.Application.Services
                 id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || v.Result.HealthUnityCnpjSecondDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose) || v.Result.HealthUnityIneSecondDose == h.Ine)
                                         && (v.Result.HealthUnityCodeSecondDose.HasValue || v.Result.HealthUnityCodeSecondDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose)))
+                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose) || v.Result.HealthUnityCodeSecondDose.HasValue))
                 {
                     if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose))
                     {
@@ -904,9 +912,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneSecondDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else 
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeSecondDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }
@@ -921,7 +933,7 @@ namespace iPassport.Application.Services
                 id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)
                                         && (v.Result.HealthUnityCodeThirdDose.HasValue || v.Result.HealthUnityCodeThirdDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose)))
+                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityCodeThirdDose.HasValue))
                 {
                     if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose))
                     {
@@ -931,9 +943,13 @@ namespace iPassport.Application.Services
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose))
                     {
                         importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneThirdDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeThirdDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     }
                     v.Error = new CsvMappingError();
                 }

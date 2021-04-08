@@ -194,7 +194,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
 
             RuleFor(x => x.HealthUnityCodeFirstDose)
                 .NotNull()
-                .NotEmpty()
                 .When(x => x.HasVaccineFirstDoseData && string.IsNullOrWhiteSpace(x.HealthUnityCnpjFirstDose) && string.IsNullOrWhiteSpace(x.HealthUnityIneFirstDose))
                 .WithMessage(localizer["FieldRequired"]);
 
@@ -241,7 +240,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
 
             RuleFor(x => x.HealthUnityCodeSecondDose)
                 .NotNull()
-                .NotEmpty()
                 .When(x => x.HasVaccineSecondDoseData && string.IsNullOrWhiteSpace(x.HealthUnityCnpjSecondDose) && string.IsNullOrWhiteSpace(x.HealthUnityIneSecondDose))
                 .WithMessage(localizer["FieldRequired"]);
 
@@ -286,7 +284,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
 
             RuleFor(x => x.HealthUnityCodeThirdDose)
                 .NotNull()
-                .NotEmpty()
                 .When(x => x.HasVaccineThirdDoseData && string.IsNullOrWhiteSpace(x.HealthUnityCnpjThirdDose) && string.IsNullOrWhiteSpace(x.HealthUnityIneThirdDose))
                 .WithMessage(localizer["FieldRequired"]);
         }
