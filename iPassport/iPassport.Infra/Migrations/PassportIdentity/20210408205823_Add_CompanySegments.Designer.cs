@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210408205823_Add_CompanySegments")]
+    partial class Add_CompanySegments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -469,9 +471,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("SegmentId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -480,8 +479,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.HasIndex("AddressId");
 
                     b.HasIndex("Cnpj");
-
-                    b.HasIndex("SegmentId");
 
                     b.ToTable("Companies");
                 });
@@ -808,13 +805,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .HasForeignKey("AddressId")
                         .IsRequired();
 
-                    b.HasOne("iPassport.Domain.Entities.CompanySegment", "Segment")
-                        .WithMany()
-                        .HasForeignKey("SegmentId");
-
                     b.Navigation("Address");
-
-                    b.Navigation("Segment");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.CompanySegment", b =>

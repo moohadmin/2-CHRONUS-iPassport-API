@@ -5,6 +5,7 @@ using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Application.Models.Pagination;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Test.Seeds;
@@ -89,6 +90,23 @@ namespace iPassport.Test.Controllers
         {
             // Arrange
             _mockService.Setup(r => r.GetAllTypes()).Returns(Task.FromResult(new ResponseApi(true, "Test Success!", null)));
+
+            // Act
+            var result = _controller.GetAllTypes();
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetPagedSegmetsByTypeId_MustReturnOk()
+        {
+            // Arrange
+            var typeId = Guid.NewGuid();
+            var filter = Mock.Of<PageFilter>();
+            _mockService.Setup(r => r.GetSegmetsByTypeId(typeId, filter).Result)
+                .Returns(new PagedResponseApi(true, "Sucess", 1, 10, 1, 10, CompanySegmentSeed.GetAll()));
 
             // Act
             var result = _controller.GetAllTypes();

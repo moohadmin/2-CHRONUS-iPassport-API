@@ -161,6 +161,25 @@ namespace iPassport.Api.Controllers
             var res = await _service.GetAllTypes();
             return Ok(res);
         }
+
+        /// <summary>
+        /// This API Get Company Segments by Company Type
+        /// </summary>
+        /// <returns>List of Company Type</returns>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Types/{id}/Segments")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
+        public async Task<ActionResult> GetPagedSegmetsByTypeId([FromRoute] Guid id,[FromQuery] PageFilterRequest request)
+        {
+            var res = await _service.GetSegmetsByTypeId(id, _mapper.Map<PageFilter>(request));
+            return Ok(res);
+        }
         public async Task<ActionResult> GetHeadquartersCompanies([FromQuery] GetHeadquarterCompanyPagedRequest request) => 
             Ok(await _service.GetHeadquartersCompanies(_mapper.Map<GetHeadquarterCompanyPagedFilter>()));
     }

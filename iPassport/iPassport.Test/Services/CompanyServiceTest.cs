@@ -30,6 +30,7 @@ namespace iPassport.Test.Services
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
         Mock<ICityRepository> _mockCityRepository;
         Mock<ICompanyTypeRepository>  _mockCompanyTypeRepository;
+        Mock<ICompanySegmentRepository> _mockCompanySegmentRepository;
 
         [TestInitialize]
         public void Setup()
@@ -39,8 +40,9 @@ namespace iPassport.Test.Services
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockCompanyTypeRepository = new Mock<ICompanyTypeRepository>();
+            _mockCompanySegmentRepository = new Mock<ICompanySegmentRepository>();
 
-            _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCityRepository.Object, _mockCompanyTypeRepository.Object);
+            _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCityRepository.Object, _mockCompanyTypeRepository.Object, _mockCompanySegmentRepository.Object);
         }
         
         [TestMethod]
@@ -106,6 +108,23 @@ namespace iPassport.Test.Services
             _mockCompanyTypeRepository.Verify(a => a.FindAll(), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsInstanceOfType(result.Result.Data, typeof(IList<CompanyTypeViewModel>));
+        }
+
+        [TestMethod]
+        public void GetSegmetsByTypeId_MustReturnOk()
+        {
+            // Arrange
+            var typeId = Guid.NewGuid();
+            var filter = Mock.Of<PageFilter>();
+            _mockCompanySegmentRepository.Setup(r => r.GetPagedByTypeId(typeId, filter).Result).Returns(CompanySegmentSeed.GetPaged());
+
+            // Act
+            var result = _service.GetSegmetsByTypeId(typeId, filter);
+
+            // Assert
+            _mockCompanySegmentRepository.Verify(a => a.GetPagedByTypeId(typeId, filter), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
+            Assert.IsInstanceOfType(result.Result.Data, typeof(IList<CompanySegmentViewModel>));
         }
     }
 }

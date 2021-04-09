@@ -29,6 +29,11 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .HasForeignKey(x => x.AddressId);
 
             builder.HasIndex(x => x.Cnpj);
+
+            builder.HasOne(x => x.Segment)
+                .WithMany()
+                .HasForeignKey(x => x.SegmentId)
+                .IsRequired(false);
         }
     }
 }

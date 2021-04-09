@@ -15,8 +15,10 @@ namespace iPassport.Domain.Entities
         public string Name { get; private set; }
         public string Cnpj { get; private set; }
         public System.Guid AddressId { get; private set; }
+        public System.Guid? SegmentId { get; private set; }
 
         public Address Address { get; set; }
+        public CompanySegment Segment { get; set; }
 
         public Company Create(CompanyCreateDto dto) => new Company(dto.Name, dto.Cnpj, dto.AddressDto);
         private Address CreateCompanyAddress(AddressCreateDto dto) => new Address().Create(dto);
