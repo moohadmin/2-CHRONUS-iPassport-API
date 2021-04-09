@@ -84,13 +84,13 @@ namespace iPassport.Application.Services
             return new PagedResponseApi(true, _localizer["CompanySegments"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
-        public Task<PagedResponseApi> GetHeadquartersCompanies(GetHeadquarterCompanyPagedFilter filter)
+        public async Task<PagedResponseApi> GetHeadquartersCompanies(GetHeadquarterCompanyFilter filter)
         {
             var res = await _companyRepository.GetHeadquartersCompanies(filter);
 
             var result = _mapper.Map<HeadquarterCompanyViewModel>(res);
 
-            return new PagedResponseApi(true, _localizer["Companies"], res.pageNumber, res.pageSize, res.totalPages, res.totalRecords, result);
+            return new ResponseApi(true, _localizer["Companies"], result);
         }
     }
 }

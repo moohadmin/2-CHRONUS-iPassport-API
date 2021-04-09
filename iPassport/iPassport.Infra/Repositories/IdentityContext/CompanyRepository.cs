@@ -28,9 +28,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
         public async Task<IList<Company>> FindListCnpj(List<string> listCnpj)
             => await _DbSet.Where(m => listCnpj.Contains(m.Cnpj)).ToListAsync();
 
-        public Task<PagedData<Company>> GetHeadquartersCompanies(GetHeadquarterCompanyPagedFilter filter)
+        public Task<PagedData<Company>> GetHeadquartersCompanies(GetHeadquarterCompanyFilter filter)
         {
-            
+            return;
         }
     }
 }

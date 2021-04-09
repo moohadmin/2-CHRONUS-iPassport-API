@@ -4,14 +4,14 @@ namespace iPassport.Api.Models.Requests.Company
 {
 
     /// <summary>
-    /// Get Company Paged Request
+    /// Get Company Request
     /// </summary>
-    public class GetHeadquarterCompanyPagedRequest : PageFilterRequest
+    public class GetHeadquarterCompanyRequest
     {
         /// <summary>
         /// Name Initals / Name Parts
         /// </summary>
-        public string Initials { get; set; }
+        public string Cnpj { get; set; }
 
         /// <summary>
         /// Segment Id
@@ -22,5 +22,10 @@ namespace iPassport.Api.Models.Requests.Company
         /// State Id
         /// </summary>
         public Guid? StateId { get; set; }
+        
+        /// <summary>
+        /// City Id
+        /// </summary>
+        public Guid? CityId { get; set; }
     }
 }

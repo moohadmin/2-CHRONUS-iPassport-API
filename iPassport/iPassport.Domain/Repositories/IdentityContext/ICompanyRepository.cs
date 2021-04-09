@@ -11,6 +11,6 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<PagedData<Company>> FindByNameParts(GetByNamePartsPagedFilter filter);
         Task<Company> GetLoadedCompanyById(Guid id);
         Task<IList<Company>> FindListCnpj(List<string> listCnpj);
-        Task<PagedData<Company>> GetHeadquartersCompanies(GetHeadquarterCompanyPagedFilter filter);
+        Task<PagedData<Company>> GetHeadquartersCompanies(GetHeadquarterCompanyFilter filter);
     }
 }
