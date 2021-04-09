@@ -31,6 +31,8 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<CompanyDto, CompanyViewModel>();
 
             profile.CreateMap<CompanyType, CompanyTypeViewModel>();
+
+            profile.CreateMap<CompanySegment, CompanySegmentViewModel>();
         }
     }
 }

@@ -741,4 +741,7 @@
 	<data name="CompanyTypes" xml:space="preserve">
     <value>Tipos de Empresa</value>
   </data>
+	<data name="CompanySegments" xml:space="preserve">
+    <value>Segmentos de Empresa</value>
+  </data>
 </root>
