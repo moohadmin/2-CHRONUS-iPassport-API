@@ -177,18 +177,8 @@ namespace iPassport.Api.Controllers
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
         public async Task<ActionResult> GetPagedSegmetsByTypeId([FromRoute] Guid id,[FromQuery] PageFilterRequest request)
         {
-            List<CompanySegmentViewModel> companySegmentViewModels = new List<CompanySegmentViewModel>()
-            {
-            new () {Id = id, Name= "Municipal", Identifyer = 1 },
-            new () {Id = Guid.NewGuid(), Name= "Estadual", Identifyer = 2 },
-            new () {Id = Guid.NewGuid(), Name= "Federal", Identifyer = 3 },
-            new () {Id = Guid.NewGuid(), Name= "Contratante", Identifyer = 4 },
-            new () {Id = Guid.NewGuid(), Name= "Saúde", Identifyer = 5 },
-            }
-            ;
-
-            return Ok(new PagedResponseApi(true, "Seguimentos Da Empresa", 1, 10, 1, 5, companySegmentViewModels));
+            var res = await _service.GetSegmetsByTypeId(id, _mapper.Map<PageFilter>(request));
+            return Ok(res);
         }
-
     }
 }

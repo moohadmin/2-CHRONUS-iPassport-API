@@ -23,14 +23,16 @@ namespace iPassport.Application.Services
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
         private readonly ICompanyTypeRepository _companyTypeRepository;
+        private readonly ICompanySegmentRepository _companySegmentRepository;
 
-        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICityRepository cityRepository, ICompanyTypeRepository companyTypeRepository)
+        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICityRepository cityRepository, ICompanyTypeRepository companyTypeRepository, ICompanySegmentRepository companySegmentRepository)
         {
             _companyRepository = companyRepository;
             _localizer = localizer;
             _mapper = mapper;
             _cityRepository = cityRepository;
             _companyTypeRepository = companyTypeRepository;
+            _companySegmentRepository = companySegmentRepository;
         }
 
         public async Task<ResponseApi> Add(CompanyCreateDto dto)
@@ -72,6 +74,14 @@ namespace iPassport.Application.Services
             var companyTypeViewModels = _mapper.Map<IList<CompanyTypeViewModel>>(companyTypes);
 
             return new ResponseApi(true, _localizer["CompanyTypes"], companyTypeViewModels);
+        }
+
+        public async Task<PagedResponseApi> GetSegmetsByTypeId(Guid TypeId, PageFilter filter)
+        {
+            var res  = await _companySegmentRepository.GetPagedByTypeId(TypeId, filter);
+            var result = _mapper.Map<IList<CompanySegmentViewModel>>(res.Data);
+
+            return new PagedResponseApi(true, _localizer["CompanySegments"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
     }
 }
