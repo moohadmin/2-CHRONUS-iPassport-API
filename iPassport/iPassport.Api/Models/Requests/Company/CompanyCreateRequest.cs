@@ -37,22 +37,9 @@ namespace iPassport.Api.Models.Requests
         /// </summary>
         public Guid? ParentId { get; set; }
         /// <summary>
-        /// Responsible Person Name
+        /// Company Responsable
         /// </summary>
-        public string ResponsiblePersonName { get; set; }
-        /// <summary>
-        /// Responsible Person Occupation
-        /// </summary>
-        public string ResponsiblePersonOccupation { get; set; }
-        /// <summary>
-        /// Responsible Person Email
-        /// </summary>
-        public string ResponsiblePersonEmail { get; set; }
-        //TODO Txai Ver se téra telefone fixo tbm
-        /// <summary>
-        /// Responsible Person Phone
-        /// </summary>
-        public string ResponsiblePersonPhone { get; set; }
+        public CompanyResponsibleCreateRequest Responsible { get; set; }
         /// <summary>
         /// Company Is Active
         /// </summary>
