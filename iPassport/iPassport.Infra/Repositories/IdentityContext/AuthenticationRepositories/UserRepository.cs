@@ -104,7 +104,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
             query = query.Where(m => m.UserType == (int)EUserType.Citizen
                               && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower()))
-                              && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().StartsWith(filter.Telephone.ToLower())))
+                              && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().Contains(filter.Telephone.ToLower())))
                       .OrderBy(m => m.FullName);
 
             return await Paginate(query, filter);
