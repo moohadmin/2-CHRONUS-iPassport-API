@@ -38,7 +38,7 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> Add(CompanyCreateDto dto)
         {
             var city = await _cityRepository.Find(dto.AddressDto.CityId);
-            if(city == null)
+            if (city == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var company = new Company().Create(dto);
@@ -78,19 +78,26 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> GetSegmetsByTypeId(Guid TypeId, PageFilter filter)
         {
-            var res  = await _companySegmentRepository.GetPagedByTypeId(TypeId, filter);
+            var res = await _companySegmentRepository.GetPagedByTypeId(TypeId, filter);
             var result = _mapper.Map<IList<CompanySegmentViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["CompanySegments"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
-        public async Task<PagedResponseApi> GetHeadquartersCompanies(GetHeadquarterCompanyFilter filter)
+        public async Task<ResponseApi> GetHeadquartersCompanies(GetHeadquarterCompanyFilter filter)
         {
-            var res = await _companyRepository.GetHeadquartersCompanies(filter);
+            IList<HeadquarterCompanyViewModel> res = null;
 
-            var result = _mapper.Map<HeadquarterCompanyViewModel>(res);
+            if (filter.IsPrivate()) 
+                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPrivateHeadquarters(filter.Cnpj, (int)filter.SegmentIdentifyer));
 
-            return new ResponseApi(true, _localizer["Companies"], result);
+            else if (filter.IsPublicMunicipal()) 
+                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(filter.LocalityId.Value));
+
+            else if (filter.IsPublicState()) 
+                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicAndStateHeadquarters(filter.LocalityId.Value));
+
+            return new ResponseApi(true, _localizer["Companies"], res);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Enums;
+using System;
 
 namespace iPassport.Api.Models.Requests.Company
 {
@@ -14,9 +15,9 @@ namespace iPassport.Api.Models.Requests.Company
         public string Cnpj { get; set; }
 
         /// <summary>
-        /// Segment Id
+        /// Segment Identifyer
         /// </summary>
-        public Guid? SegmentId { get; set; }
+        public ECompanySegmentType SegmentIdentifyer { get; set; }
 
         /// <summary>
         /// State Id
