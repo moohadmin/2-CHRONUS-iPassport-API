@@ -62,7 +62,7 @@ namespace iPassport.Api.Configurations.Filters
                 context.HttpContext.Response.StatusCode = statusCode;
                 context.Result = new JsonResult(new BussinessExceptionResponse
                 (
-                    string.Format(_localizer["DataAlreadyRegistered"], ((UniqueKeyException)context.Exception).Key)
+                    new List<string>() { string.Format(_localizer["DataAlreadyRegistered"], ((UniqueKeyException)context.Exception).Key) }
                 ));
 
                 LogError(context.Exception);
