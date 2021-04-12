@@ -3,6 +3,7 @@ using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Domain.Filters;
+using iPassport.Api.Models.Requests.Company;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -39,6 +40,8 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<GetCitzenPagedRequest, GetCitzenPagedFilter>();
             
             profile.CreateMap<GetAdminUserPagedRequest, GetAdminUserPagedFilter>();
+
+            profile.CreateMap<GetCompaniesPagedRequest, GetCompaniesPagedFilter>();
         }
     }
 }

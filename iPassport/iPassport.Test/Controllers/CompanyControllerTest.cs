@@ -39,16 +39,16 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetByNameParts_MustReturnOk()
         {
-            var mockRequest = Mock.Of<GetByNamePartsPagedRequest>();
+            var mockRequest = Mock.Of<GetCompaniesPagedRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Setup(r => r.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>()));
 
             // Act
             var result = _controller.GetByNameParts(mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Verify(a => a.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

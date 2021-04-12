@@ -17,8 +17,9 @@ namespace iPassport.Domain.Entities
         public string Cnpj { get; private set; }
         public Guid AddressId { get; private set; }
         public Guid? SegmentId { get; private set; }
-        public Guid? ParentId { get; set; }
-        
+        // TODO: ADD PARENT ID
+        //public Guid? ParentId { get; set; }
+
         public Address Address { get; set; }
         public CompanySegment Segment { get; set; }
 
