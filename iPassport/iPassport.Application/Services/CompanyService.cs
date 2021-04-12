@@ -52,7 +52,7 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["CompanyCreated"], company.Id);
         }
 
-        public async Task<PagedResponseApi> FindByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedResponseApi> FindByNameParts(GetCompaniesPagedFilter filter)
         {
             var res = await _companyRepository.FindByNameParts(filter);
 
