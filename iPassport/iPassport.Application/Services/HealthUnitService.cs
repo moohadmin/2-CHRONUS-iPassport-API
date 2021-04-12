@@ -110,7 +110,8 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Edit(HealthUnitEditDto dto)
         {
-            if (await _companyRepository.Find(dto.CompanyId.Value) == null)
+            var company = await _companyRepository.Find(dto.CompanyId.Value);
+            if (company == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
             
             var address = await _addressRepository.Find(dto.Address.Id);
@@ -137,6 +138,10 @@ namespace iPassport.Application.Services
             if(unit.Cnpj != dto.Cnpj && type.Identifyer == (int)EHealthUnitType.Private && hasCnpj)
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNPJ"));
 
+            // When Health Unit type is public, and Ine and Cnpj is null the unique code must be declared
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj) && !unit.UniqueCode.HasValue)
+                unit.AddUniqueCode(await _healthUnitRepository.GetNexUniqueCodeValue());
+
             try
             {
                 address.ChangeAddress(dto.Address);
@@ -162,7 +167,16 @@ namespace iPassport.Application.Services
                 throw;
             }
 
-            return new ResponseApi(true, _localizer["HealthUnitUpdated"], unit.Id);
+            return new ResponseApi(true, _localizer["HealthUnitUpdated"], await GetUpdatedViewModel(unit, address.Id, company));
+        }
+
+        private async Task<HealthUnitViewModel> GetUpdatedViewModel(HealthUnit updatedUnit, Guid addressId, Company company)
+        {
+            updatedUnit.Type = await _healthUnitTypeRepository.Find(updatedUnit.TypeId);
+            var result = _mapper.Map<HealthUnitViewModel>(updatedUnit);
+            result.Address = _mapper.Map<AddressViewModel>(await _addressRepository.FindFullAddress(addressId));
+            result.Company = _mapper.Map<CompanyViewModel>(company);
+            return result;
         }
 
         public async Task<PagedResponseApi> FindByNameParts(GetHealthUnitPagedFilter filter)
