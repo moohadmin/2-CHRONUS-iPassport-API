@@ -112,9 +112,9 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is responsible for Get paged list of Headquarters Companies by name.
+        /// This API is responsible for Get list of Headquarters Companies by cnpj.
         /// </summary>
-        /// <param name="request">Get Headquarter Company Paged Request</param>
+        /// <param name="request">Get Headquarter Company Request</param>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
@@ -125,25 +125,8 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("Headquarter")]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
-
-        public async Task<ActionResult> GetHeadquartersCompanies([FromQuery] GetHeadquarterCompanyPagedRequest request)
-        {
-
-            var res = new List<HeadquarterCompanyViewModel>() { 
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "94802367000172", Name = "Empresa 1"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "66364363000114", Name = "Empresa 2"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "32412148000120", Name = "Empresa 3"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "88400978000191", Name = "Empresa 4"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "35044227000113", Name = "Empresa 5"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "11397374000109", Name = "Empresa 6"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "37655229000174", Name = "Empresa 7"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "55358824000120", Name = "Empresa 8"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "07178740000161", Name = "Empresa 9"},
-                new HeadquarterCompanyViewModel() { Id = Guid.NewGuid(), Cnpj = "29617892000156", Name = "Empresa 10"},
-            };
-            
-            return Ok(new PagedResponseApi(true, "Headquarters Companies", 1, 10, 1, 10, res));
-        }
+        public async Task<ActionResult> GetHeadquartersCompanies([FromQuery] GetHeadquarterCompanyRequest request) =>
+            Ok(await _service.GetHeadquartersCompanies(_mapper.Map<GetHeadquarterCompanyFilter>(request)));
 
         /// <summary>
         /// This API Get Company Types
@@ -181,6 +164,6 @@ namespace iPassport.Api.Controllers
         {
             var res = await _service.GetSegmetsByTypeId(id, _mapper.Map<PageFilter>(request));
             return Ok(res);
-        }
+        }   
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -7,6 +8,7 @@ using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
@@ -29,8 +31,9 @@ namespace iPassport.Test.Services
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
         Mock<ICityRepository> _mockCityRepository;
-        Mock<ICompanyTypeRepository>  _mockCompanyTypeRepository;
+        Mock<ICompanyTypeRepository> _mockCompanyTypeRepository;
         Mock<ICompanySegmentRepository> _mockCompanySegmentRepository;
+        Resource _resource;
 
         [TestInitialize]
         public void Setup()
@@ -43,8 +46,9 @@ namespace iPassport.Test.Services
             _mockCompanySegmentRepository = new Mock<ICompanySegmentRepository>();
 
             _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCityRepository.Object, _mockCompanyTypeRepository.Object, _mockCompanySegmentRepository.Object);
+            _resource = ResourceFactory.Create();
         }
-        
+
         [TestMethod]
         public void FindByNameParts_MustReturnOk()
         {
@@ -125,6 +129,101 @@ namespace iPassport.Test.Services
             _mockCompanySegmentRepository.Verify(a => a.GetPagedByTypeId(typeId, filter), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsInstanceOfType(result.Result.Data, typeof(IList<CompanySegmentViewModel>));
+        }
+
+        [TestMethod]
+        public void GetHeadquartersCompanies_Private()
+        {
+            var mockRequest = Mock.Of<GetHeadquarterCompanyFilter>(x => x.CompanyTypeId == Guid.NewGuid() && x.Cnpj == "0000000" && x.SegmentId == Guid.NewGuid());
+
+            // Arrange
+            _mockCompanyTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(new CompanyType("test", (int)ECompanyType.Private));
+            _mockCompanySegmentRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(new CompanySegment("test", (int)ECompanySegmentType.Contractor, Guid.NewGuid()));
+            _mockRepository.Setup(x => x.GetPrivateHeadquarters(It.IsAny<string>(), It.IsAny<int>()).Result).Returns(CompanySeed.GetCompanies());
+
+            // Act
+            var result = _service.GetHeadquartersCompanies(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.GetPrivateHeadquarters(It.IsAny<string>(), It.IsAny<int>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void GetHeadquartersCompanies_GovermentMunicipal()
+        {
+            var mockRequest = Mock.Of<GetHeadquarterCompanyFilter>(x => x.CompanyTypeId == Guid.NewGuid() && x.SegmentId == Guid.NewGuid() && x.LocalityId == Guid.NewGuid());
+
+            // Arrange
+            _mockCompanyTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(new CompanyType("test", (int)ECompanyType.Government));
+            _mockCompanySegmentRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(new CompanySegment("test", (int)ECompanySegmentType.Municipal, Guid.NewGuid()));
+            _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetCompanies());
+
+            // Act
+            var result = _service.GetHeadquartersCompanies(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.GetPublicMunicipalHeadquarters(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void GetHeadquartersCompanies_GovermentState()
+        {
+            var mockRequest = Mock.Of<GetHeadquarterCompanyFilter>(x => x.CompanyTypeId == Guid.NewGuid() && x.SegmentId == Guid.NewGuid() && x.LocalityId == Guid.NewGuid());
+
+            // Arrange
+            _mockCompanyTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(new CompanyType("test", (int)ECompanyType.Government));
+            _mockCompanySegmentRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(new CompanySegment("test", (int)ECompanySegmentType.State, Guid.NewGuid()));
+
+            _mockRepository.Setup(x => x.GetPublicStateHeadquarters(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetCompanies());
+
+            // Act
+            var result = _service.GetHeadquartersCompanies(mockRequest);
+
+            // Assert
+            _mockRepository.Verify(a => a.GetPublicStateHeadquarters(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("A1234567")]
+        [DataRow("1234567")]
+        public void GetHeadquartersCompanies_CnpjInvalid(string cnpj)
+        {
+            var mockRequest = Mock.Of<GetHeadquarterCompanyFilter>(x => x.CompanyTypeId == Guid.NewGuid() && x.Cnpj == cnpj && x.SegmentId == Guid.NewGuid());
+
+            // Arrange
+            _mockCompanyTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
+                .Returns(new CompanyType("test", (int)ECompanyType.Private));
+            
+            _mockCompanySegmentRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
+                .Returns(new CompanySegment("test", (int)ECompanySegmentType.Contractor, Guid.NewGuid()));
+
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.GetHeadquartersCompanies(mockRequest),
+                _resource.GetMessage("CnpjRequiredForPrivateCompany"));
+        }
+
+        [TestMethod]
+        public void GetHeadquartersCompanies_LocationIdNull()
+        {
+            var mockRequest = Mock.Of<GetHeadquarterCompanyFilter>(x => x.CompanyTypeId == Guid.NewGuid() && x.SegmentId == Guid.NewGuid() && x.LocalityId == null);
+
+            // Arrange
+            _mockCompanyTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
+                .Returns(new CompanyType("test", (int)ECompanyType.Government));
+            
+            _mockCompanySegmentRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result)
+                .Returns(new CompanySegment("test", (int)ECompanySegmentType.State, Guid.NewGuid()));
+
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.GetHeadquartersCompanies(mockRequest),
+                string.Format(_resource.GetMessage("RequiredField"), _resource.GetMessage("Locality")));
         }
     }
 }

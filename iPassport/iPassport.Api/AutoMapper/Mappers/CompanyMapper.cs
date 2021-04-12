@@ -3,6 +3,8 @@ using iPassport.Api.Models.Requests;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Api.Models.Requests.Company;
+using iPassport.Domain.Filters;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -33,6 +35,10 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<CompanyType, CompanyTypeViewModel>();
 
             profile.CreateMap<CompanySegment, CompanySegmentViewModel>();
+
+            profile.CreateMap<Company, HeadquarterCompanyViewModel>();
+
+            profile.CreateMap<GetHeadquarterCompanyRequest, GetHeadquarterCompanyFilter>();
         }
     }
 }
