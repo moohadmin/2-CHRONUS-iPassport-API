@@ -95,7 +95,7 @@ namespace iPassport.Application.Services
                 res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(filter.LocalityId.Value));
 
             else if (filter.IsPublicState()) 
-                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicAndStateHeadquarters(filter.LocalityId.Value));
+                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicStateHeadquarters(filter.LocalityId.Value));
 
             return new ResponseApi(true, _localizer["Companies"], res);
         }

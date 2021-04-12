@@ -10,23 +10,20 @@ namespace iPassport.Api.Models.Requests.Company
     public class GetHeadquarterCompanyRequest
     {
         /// <summary>
-        /// Name Initals / Name Parts
+        /// Cnpj Initals
         /// </summary>
         public string Cnpj { get; set; }
-
         /// <summary>
         /// Segment Identifyer
         /// </summary>
-        public ECompanySegmentType SegmentIdentifyer { get; set; }
-
+        public ECompanySegmentType? SegmentIdentifyer { get; set; }
         /// <summary>
-        /// State Id
+        /// Company Type Identifyer
         /// </summary>
-        public Guid? StateId { get; set; }
-        
+        public ECompanyType? CompanyTypeIdentifyer { get; set; }
         /// <summary>
-        /// City Id
+        /// Locality Id
         /// </summary>
-        public Guid? CityId { get; set; }
+        public Guid? LocalityId { get; set; }
     }
 }
