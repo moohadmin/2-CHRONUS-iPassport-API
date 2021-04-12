@@ -26,6 +26,7 @@ namespace iPassport.Infra.Contexts
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<CompanyType> CompanyTypes { get; set; }
         public DbSet<CompanySegment> CompanySegments { get; set; }
+        public DbSet<CompanyResponsible> CompanyResponsibles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -68,6 +69,8 @@ namespace iPassport.Infra.Contexts
             builder.ApplyConfiguration(new CompanyTypeMap());
 
             builder.ApplyConfiguration(new CompanySegmentMap());
+
+            builder.ApplyConfiguration(new CompanyResponsibleMap());
 
             //To avoid delete cascade.
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

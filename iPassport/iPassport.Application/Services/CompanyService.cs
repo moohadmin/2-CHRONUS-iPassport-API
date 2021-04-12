@@ -39,11 +39,9 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(CompanyCreateDto dto)
         {
-            var city = await _cityRepository.Find(dto.AddressDto.CityId);
-            if (city == null)
-                throw new BusinessException(_localizer["CityNotFound"]);
+            await ValidateToSave(dto);
 
-            var company = new Company().Create(dto);
+            var company = Company.Create(dto);
 
             var result = await _companyRepository.InsertAsync(company);
             if (!result)
@@ -114,6 +112,23 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, _localizer["Companies"], res);
         }
+
+        #region Private
+        private async Task<bool> ValidateToSave(CompanyCreateDto dto)
+        {
+            if (dto.Address == null)
+                throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["Address"]));
+
+            if (await _cityRepository.Find(dto.Address.CityId) == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            var segment = await _companySegmentRepository.Find(dto.SegmentId);
+            if(segment == null)
+                throw new BusinessException(_localizer["SegmentNotFound"]);
+
+            return true;
+        }
+        #endregion
     }
 }
 

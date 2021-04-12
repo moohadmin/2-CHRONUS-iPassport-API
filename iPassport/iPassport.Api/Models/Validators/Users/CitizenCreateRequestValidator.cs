@@ -23,8 +23,12 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.CompleteName)
                 .SetValidator(new RequiredFieldValidator<string>(localizer["CompleteName"], localizer));
 
+            RuleFor(s => s.Address)
+                .NotNull()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Address"]));
+
             RuleFor(x => x.Address)
-                .SetValidator(new AddressValidator(localizer, false));
+                .SetValidator(new AddressValidator(localizer));
 
             RuleFor(x => x.Birthday)
                 .Cascade(CascadeMode.Stop)

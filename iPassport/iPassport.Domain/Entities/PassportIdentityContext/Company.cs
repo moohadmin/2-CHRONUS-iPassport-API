@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities.Authentication;
 using System;
 
 namespace iPassport.Domain.Entities
@@ -6,23 +7,61 @@ namespace iPassport.Domain.Entities
     public class Company : Entity
     {
         public Company() { }
-        public Company(string name, string cnpj, AddressCreateDto addressDto)
+        public Company(string name, string tradeName, string cnpj, AddressCreateDto addressDto, Guid? segmentId, bool? isHeadquarters,
+            Guid? parentId, CompanyResponsibleCreateDto responsible)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Cnpj = cnpj;
+            TradeName = tradeName;
+            Cnpj = cnpj;          
             Address = CreateCompanyAddress(addressDto);
+            SegmentId = segmentId;
+            IsHeadquarters = isHeadquarters;
+            ParentId = parentId;
+            if(responsible != null)
+                Responsible = CreateResponsible(Id, responsible);
         }
+
         public string Name { get; private set; }
+        public string TradeName { get; private set; }
         public string Cnpj { get; private set; }
         public Guid AddressId { get; private set; }
         public Guid? SegmentId { get; private set; }
-        public Guid? ParentId { get; set; }
-        
+        public bool? IsHeadquarters { get; private set; }
+        public Guid? ParentId { get; private set; }
+        public Guid? ResponsibleId { get; private set; }
+        public DateTime? DeactivationDate { get; set; }
+        public Guid? DeactivationUserId { get; set; }
+
         public Address Address { get; set; }
         public CompanySegment Segment { get; set; }
+        public Company ParentCompany { get; set; }
+        public CompanyResponsible Responsible { get; set; }
+        public Users DeactivationUser { get; set; }
 
-        public Company Create(CompanyCreateDto dto) => new Company(dto.Name, dto.Cnpj, dto.AddressDto);
+
+        public static Company Create(CompanyCreateDto dto) 
+                => new Company(dto.Name, dto.TradeName, dto.Cnpj, dto.Address, dto.SegmentId, dto.IsHeadquarters, dto.ParentId, dto.Responsible);
+
         private Address CreateCompanyAddress(AddressCreateDto dto) => new Address().Create(dto);
+        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleCreateDto dto)
+        {
+            dto.CompanyId = companyId;
+            return CompanyResponsible.Create(dto);
+        }
+        
+
+        public void Deactivate(Guid deactivationUserId)
+        {
+            DeactivationUserId = deactivationUserId;
+            DeactivationDate = DateTime.UtcNow;
+        }
+        public void Activate()
+        {
+            DeactivationUserId = null;
+            DeactivationDate = null;
+        }
+        public bool IsActive() => !DeactivationDate.HasValue;
+        public bool IsInactive() => DeactivationDate.HasValue;
     }
 }

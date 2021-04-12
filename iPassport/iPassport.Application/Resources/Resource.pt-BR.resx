@@ -759,4 +759,22 @@
   <data name="Locality" xml:space="preserve">
     <value>Localidade</value>
   </data>
+	<data name="Segment" xml:space="preserve">
+    <value>Segmento</value>
+  </data>
+	<data name="Responsible" xml:space="preserve">
+    <value>Responsável</value>
+  </data>
+	<data name="ResponsiblePersonLandline" xml:space="preserve">
+    <value>Telefone do Responsável (Fixo)</value>
+  </data>
+	<data name="ResponsiblePersonMobilePhone" xml:space="preserve">
+    <value>Telefone do Responsável (Celular)</value>
+  </data>
+	<data name="SegmentNotFound" xml:space="preserve">
+    <value>Segmento não encontrado.</value>
+  </data>
+	<data name="ResponsiblePersonEmail" xml:space="preserve">
+    <value>E-mail do Responsável</value>
+  </data>
 </root>

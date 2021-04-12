@@ -36,8 +36,12 @@ namespace iPassport.Api.Models.Validators.HealthUnit
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Company"]));
 
+            RuleFor(s => s.Address)
+                .NotNull()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Address"]));
+
             RuleFor(x => x.Address)
-                .SetValidator(new AddressValidator(localizer, false));
+                .SetValidator(new AddressValidator(localizer));
 
             RuleFor(x => x.Cnpj)
                 .Must(x => CnpjUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cnpj)).WithMessage(string.Format(localizer["InvalidField"], "CNPJ"));
