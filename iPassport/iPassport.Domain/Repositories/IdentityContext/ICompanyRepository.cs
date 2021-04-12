@@ -8,8 +8,11 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
 {
     public interface ICompanyRepository : IIdentityBaseRepository<Company>
     {
-        Task<PagedData<Company>> FindByNameParts(GetByNamePartsPagedFilter filter);
+        Task<PagedData<Company>> FindByNameParts(GetCompaniesPagedFilter filter);
         Task<Company> GetLoadedCompanyById(Guid id);
         Task<IList<Company>> FindListCnpj(List<string> listCnpj);
+        Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType);
+        Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId);
+        Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId);
     }
 }

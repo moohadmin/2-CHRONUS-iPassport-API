@@ -1,9 +1,9 @@
 ﻿namespace iPassport.Domain.Enums
 {
-    public enum ECompanySegment
+    public enum ECompanySegmentType
     {
         #region GovernmentType
-        Municpial = 1,
+        Municipal = 1,
         State = 2,
         Federal = 3,
         #endregion

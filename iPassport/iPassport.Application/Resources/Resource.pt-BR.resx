@@ -747,4 +747,16 @@
   <data name="VaccineInvalidPeriodSecondDose" xml:space="preserve">
     <value>Somente é permitido o lançamento da 2ª dose da {0} no período entre {1} e {2} dias, após aplicação da 1ª dose.</value>
   </data>
+  <data name="CnpjRequiredForPrivateCompany" xml:space="preserve">
+    <value>Os 8 primeiros números do Cnpj são necessários para realizar a pesquisa</value>
+  </data>
+  <data name="CompanySegmentType" xml:space="preserve">
+    <value>Segmento da Empresa</value>
+  </data>
+  <data name="CompanyType" xml:space="preserve">
+    <value>Tipo de Empresa</value>
+  </data>
+  <data name="Locality" xml:space="preserve">
+    <value>Localidade</value>
+  </data>
 </root>

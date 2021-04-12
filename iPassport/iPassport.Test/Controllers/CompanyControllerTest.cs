@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Company;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
+using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Test.Seeds;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Controllers
@@ -36,16 +39,16 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetByNameParts_MustReturnOk()
         {
-            var mockRequest = Mock.Of<GetByNamePartsPagedRequest>();
+            var mockRequest = Mock.Of<GetCompaniesPagedRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Setup(r => r.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>()));
 
             // Act
             var result = _controller.GetByNameParts(mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockService.Verify(a => a.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
@@ -112,6 +115,24 @@ namespace iPassport.Test.Controllers
             var result = _controller.GetAllTypes();
 
             // Assert
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void GetHeadquartersCompanies_MustReturnOk()
+        {
+            var mockRequest = Mock.Of<GetHeadquarterCompanyRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.GetHeadquartersCompanies(It.IsAny<GetHeadquarterCompanyFilter>()))
+                .Returns(Task.FromResult(new ResponseApi(true, "Test Success!", _mapper.Map<IList<HeadquarterCompanyViewModel>>(CompanySeed.GetCompanies()))));
+
+            // Act
+            var result = _controller.GetHeadquartersCompanies(mockRequest);
+
+            // Assert
+            _mockService.Verify(a => a.GetHeadquartersCompanies(It.IsAny<GetHeadquarterCompanyFilter>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

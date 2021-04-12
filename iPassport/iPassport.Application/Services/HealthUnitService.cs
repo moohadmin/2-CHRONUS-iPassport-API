@@ -73,6 +73,9 @@ namespace iPassport.Application.Services
             if (type.Identifyer == (int)EHealthUnitType.Private && hasCnpj)
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNPJ"));
 
+            if (dto.Ine != null && await _healthUnitRepository.GetByIne(dto.Ine) != null)
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "INE"));
+
             try
             {
                 _unitOfWork.BeginTransactionIdentity();
