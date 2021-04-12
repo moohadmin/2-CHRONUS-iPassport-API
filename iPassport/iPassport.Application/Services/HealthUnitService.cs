@@ -134,6 +134,10 @@ namespace iPassport.Application.Services
             if(unit.Cnpj != dto.Cnpj && type.Identifyer == (int)EHealthUnitType.Private && hasCnpj)
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNPJ"));
 
+            // When Health Unit type is public, and Ine and Cnpj is null the unique code must be declared
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj))
+                unit.AddUniqueCode(await _healthUnitRepository.GetNexUniqueCodeValue());
+
             try
             {
                 address.ChangeAddress(dto.Address);
