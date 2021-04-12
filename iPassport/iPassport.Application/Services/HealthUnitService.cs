@@ -139,7 +139,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNPJ"));
 
             // When Health Unit type is public, and Ine and Cnpj is null the unique code must be declared
-            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj))
+            if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj) && string.IsNullOrWhiteSpace(unit.UniqueCode))
                 unit.AddUniqueCode(await _healthUnitRepository.GetNexUniqueCodeValue());
 
             try
