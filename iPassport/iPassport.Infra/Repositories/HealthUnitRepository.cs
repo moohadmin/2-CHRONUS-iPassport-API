@@ -30,6 +30,9 @@ namespace iPassport.Infra.Repositories
         public async Task<HealthUnit> GetByCnpj(string cnpj) =>
             await _DbSet.FirstOrDefaultAsync(x => x.Cnpj == cnpj);
 
+        public async Task<HealthUnit> GetByIne(string ine) =>
+            await _DbSet.FirstOrDefaultAsync(x => x.Ine == ine);
+
         public async Task<int> GetNexUniqueCodeValue()
         {
             var currentCode = await _DbSet.Where(x => x.UniqueCode != null).MaxAsync(x => x.UniqueCode);
