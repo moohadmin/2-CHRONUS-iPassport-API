@@ -10,6 +10,7 @@ namespace iPassport.Domain.Repositories
     {
         Task<PagedData<HealthUnit>> GetPagedHealthUnits(GetHealthUnitPagedFilter filter);
         Task<HealthUnit> GetByCnpj(string cnpj);
+        Task<HealthUnit> GetByIne(string ine);
         Task<IList<HealthUnit>> FindByCnpjIneAndCode(List<string> listCnpj, List<string> listIne, List<int?> listCode);
         Task<int> GetNexUniqueCodeValue();
         Task<HealthUnit> GetLoadedById(Guid id);
