@@ -99,7 +99,7 @@ namespace iPassport.Application.Services
                 if (filter.LocalityId == null && companyType.Identifyer == (int)ECompanyType.Government)
                     throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["Locality"]));
                 
-                if (string.IsNullOrWhiteSpace(filter.Cnpj) || filter.Cnpj.Length != 8 || !Regex.IsMatch(filter.Cnpj, "^[0-9]+$"))
+                if (companyType.Identifyer == (int)ECompanyType.Private && (string.IsNullOrWhiteSpace(filter.Cnpj) || filter.Cnpj.Length != 8 || !Regex.IsMatch(filter.Cnpj, "^[0-9]+$")))
                     throw new BusinessException(_localizer["CnpjRequiredForPrivateCompany"]);
 
                 if (companyType.Identifyer == (int)ECompanyType.Private)
