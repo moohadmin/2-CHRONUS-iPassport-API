@@ -534,28 +534,28 @@
   <data name="ColumnNameImportFileWasTestPerformed" xml:space="preserve">
     <value>Realizou o teste PCR</value>
   </data>
-	<data name="ColumnNameImportFileHealthUnityCodeUniqueDose" xml:space="preserve">
+  <data name="ColumnNameImportFileHealthUnityCodeUniqueDose" xml:space="preserve">
     <value>Código da Unidade - Dose Única</value>
   </data>
-	<data name="ColumnNameImportFileHealthUnityCodeFirstDose" xml:space="preserve">
+  <data name="ColumnNameImportFileHealthUnityCodeFirstDose" xml:space="preserve">
     <value>Código da Unidade - Dose I</value>
   </data>
-	<data name="ColumnNameImportFileHealthUnityCodeSecondDose" xml:space="preserve">
+  <data name="ColumnNameImportFileHealthUnityCodeSecondDose" xml:space="preserve">
     <value>Código da Unidade - Dose II</value>
   </data>
-	<data name="ColumnNameImportFileHealthUnityCodeThirdDose" xml:space="preserve">
+  <data name="ColumnNameImportFileHealthUnityCodeThirdDose" xml:space="preserve">
     <value>Código da Unidade - Dose III</value>
   </data>
-	<data name="ColumnNameImportFileEmployeeCpfVaccinationFirstDose" xml:space="preserve">
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationFirstDose" xml:space="preserve">
     <value>CPF Prof Aplicou Vacina - Dose I</value>
   </data>
-	<data name="ColumnNameImportFileEmployeeCpfVaccinationUniqueDose" xml:space="preserve">
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationUniqueDose" xml:space="preserve">
     <value>CPF Prof Aplicou Vacina - Dose Única</value>
   </data>
-	<data name="ColumnNameImportFileEmployeeCpfVaccinationSecondDose" xml:space="preserve">
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationSecondDose" xml:space="preserve">
     <value>CPF Prof Aplicou Vacina - Dose II</value>
   </data>
-	<data name="ColumnNameImportFileEmployeeCpfVaccinationThirdDose" xml:space="preserve">
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationThirdDose" xml:space="preserve">
     <value>CPF Prof Aplicou Vacina - Dose III</value>
   </data>
   <data name="IneDoesntExistsInDataBase" xml:space="preserve">
@@ -717,7 +717,7 @@
   <data name="PageSize" xml:space="preserve">
     <value>Tamanho da página</value>
   </data>
-	<data name="InactiveUser" xml:space="preserve">
+  <data name="InactiveUser" xml:space="preserve">
     <value>O usuário se encontra Inativo. Favor verificar.</value>
   </data>
   <data name="InternationalDocument" xml:space="preserve">
@@ -726,22 +726,25 @@
   <data name="PassportDoc" xml:space="preserve">
     <value>Passaporte</value>
   </data>
-	<data name="ResponsiblePersonPhone" xml:space="preserve">
+  <data name="ResponsiblePersonPhone" xml:space="preserve">
     <value>Telefone do Responsável</value>
   </data>
-	<data name="ResponsiblePersonName" xml:space="preserve">
+  <data name="ResponsiblePersonName" xml:space="preserve">
     <value>Nome do Responsável</value>
   </data>
-	<data name="Type" xml:space="preserve">
+  <data name="Type" xml:space="preserve">
     <value>Tipo</value>
   </data>
-	<data name="Name" xml:space="preserve">
+  <data name="Name" xml:space="preserve">
     <value>Nome</value>
   </data>
-	<data name="CompanyTypes" xml:space="preserve">
+  <data name="CompanyTypes" xml:space="preserve">
     <value>Tipos de Empresa</value>
   </data>
-	<data name="CompanySegments" xml:space="preserve">
+  <data name="CompanySegments" xml:space="preserve">
     <value>Segmentos de Empresa</value>
+  </data>
+  <data name="VaccineInvalidPeriodSecondDose" xml:space="preserve">
+    <value>Somente é permitido o lançamento da 2ª dose da {0} no período entre {1} e {2} dias, após aplicação da 1ª dose.</value>
   </data>
 </root>

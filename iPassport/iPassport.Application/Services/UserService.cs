@@ -115,11 +115,10 @@ namespace iPassport.Application.Services
 
             if (dto.Doses != null && dto.Doses.Any())
             {
-                if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
-                    throw new BusinessException(_localizer["VaccineNotFound"]);
-
                 if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
                     throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+
+                await ValidateVaccineDates(dto.Doses);
 
                 foreach (var item in dto.Doses)
                 {
@@ -370,6 +369,9 @@ namespace iPassport.Application.Services
                     var toChange = currentUserDetails.UserVaccines.Where(x => dto.Doses.Any(y => y.Id == x.Id));
                     var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id));
 
+                    await ValidateVaccineDates(toInclude);
+                    await ValidateVaccineDates(dto.Doses.Where(x => currentUserDetails.UserVaccines.Any(y => y.Id == x.Id)));
+
                     foreach (var item in currentUserDetails.UserVaccines.Where(x => !x.ExclusionDate.HasValue))
                     {
                         if (toChange.Any(x => x.Id == item.Id))
@@ -431,6 +433,21 @@ namespace iPassport.Application.Services
             }
 
             return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
+        }
+
+        private async Task ValidateVaccineDates(IEnumerable<UserVaccineAbstractDto> doses)
+        {
+            var vaccine = await _vaccineRepository.Find(doses.FirstOrDefault().VaccineId);
+
+            if (vaccine == null)
+                throw new BusinessException(_localizer["VaccineNotFound"]);
+
+            if (doses.Any(d => d.Dose == 2)
+                && (doses.Where(d => d.Dose == 2).Select(d => d.VaccinationDate).First().Subtract(doses.Where(d => d.Dose == 1).Select(d => d.VaccinationDate).First()).TotalDays > vaccine.MaxTimeNextDose
+                    || doses.Where(d => d.Dose == 2).Select(d => d.VaccinationDate).First().Subtract(doses.Where(d => d.Dose == 1).Select(d => d.VaccinationDate).First()).TotalDays < vaccine.MinTimeNextDose))
+            {
+                throw new BusinessException(string.Format(_localizer["VaccineInvalidPeriodSecondDose"], vaccine.Name, vaccine.MinTimeNextDose, vaccine.MaxTimeNextDose));
+            }
         }
 
         public async Task<ResponseApi> AddAdmin(AdminDto dto)
