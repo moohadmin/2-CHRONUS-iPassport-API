@@ -2,7 +2,7 @@
 
 namespace iPassport.Domain.Dtos
 {
-    public class UserVaccineAbstractDto
+    public abstract class UserVaccineAbstractDto
     {
         public DateTime VaccinationDate { get; set; }
         public int Dose { get; set; }
