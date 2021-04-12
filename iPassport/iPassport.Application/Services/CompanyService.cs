@@ -7,11 +7,13 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services
@@ -88,14 +90,27 @@ namespace iPassport.Application.Services
         {
             IList<HeadquarterCompanyViewModel> res = null;
 
-            if (filter.IsPrivate()) 
-                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPrivateHeadquarters(filter.Cnpj, (int)filter.SegmentIdentifyer));
+            var companyType = await _companyTypeRepository.Find(filter.CompanyTypeId);
+            var companySegment = await _companySegmentRepository.Find(filter.SegmentId);
 
-            else if (filter.IsPublicMunicipal()) 
-                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(filter.LocalityId.Value));
+            if (companyType != null && companySegment != null)
+            {
 
-            else if (filter.IsPublicState()) 
-                res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicStateHeadquarters(filter.LocalityId.Value));
+                if (filter.LocalityId == null && companyType.Identifyer == (int)ECompanyType.Government)
+                    throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["Locality"]));
+                
+                if (string.IsNullOrWhiteSpace(filter.Cnpj) || filter.Cnpj.Length != 8 || !Regex.IsMatch(filter.Cnpj, "^[0-9]+$"))
+                    throw new BusinessException(_localizer["CnpjRequiredForPrivateCompany"]);
+
+                if (companyType.Identifyer == (int)ECompanyType.Private)
+                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPrivateHeadquarters(filter.Cnpj, companySegment.Identifyer));
+
+                else if (companyType.Identifyer == (int)ECompanyType.Government && companySegment.Identifyer == (int)ECompanySegmentType.Municipal)
+                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(filter.LocalityId.Value));
+
+                else if (companyType.Identifyer == (int)ECompanyType.Government && companySegment.Identifyer == (int)ECompanySegmentType.State)
+                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicStateHeadquarters(filter.LocalityId.Value));
+            }
 
             return new ResponseApi(true, _localizer["Companies"], res);
         }

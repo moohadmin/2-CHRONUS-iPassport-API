@@ -14,13 +14,13 @@ namespace iPassport.Api.Models.Requests.Company
         /// </summary>
         public string Cnpj { get; set; }
         /// <summary>
-        /// Segment Identifyer
+        /// Segment Id
         /// </summary>
-        public ECompanySegmentType? SegmentIdentifyer { get; set; }
+        public Guid? SegmentId { get; set; }
         /// <summary>
-        /// Company Type Identifyer
+        /// Company Type Id
         /// </summary>
-        public ECompanyType? CompanyTypeIdentifyer { get; set; }
+        public Guid? CompanyTypeId { get; set; }
         /// <summary>
         /// Locality Id
         /// </summary>
