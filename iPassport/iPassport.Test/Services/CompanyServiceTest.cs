@@ -134,7 +134,7 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void GetHeadquartersCompanies_Private()
         {
-            var mockRequest = Mock.Of<GetHeadquarterCompanyFilter>(x => x.CompanyTypeId == Guid.NewGuid() && x.Cnpj == "0000000" && x.SegmentId == Guid.NewGuid());
+            var mockRequest = Mock.Of<GetHeadquarterCompanyFilter>(x => x.CompanyTypeId == Guid.NewGuid() && x.Cnpj == "00000000" && x.SegmentId == Guid.NewGuid());
 
             // Arrange
             _mockCompanyTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(new CompanyType("test", (int)ECompanyType.Private));
