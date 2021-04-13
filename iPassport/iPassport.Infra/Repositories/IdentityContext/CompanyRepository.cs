@@ -74,5 +74,18 @@ namespace iPassport.Infra.Repositories.IdentityContext
                 && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal
                 && x.Address.City.StateId == stateId);
 
+        public async Task<bool> HasSameSegmentAndLocaleGovernment(Guid localId, ECompanySegmentType segmentType)
+        {
+            return segmentType switch
+            {
+                ECompanySegmentType.Municipal => await _DbSet.AnyAsync(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal && x.Address.CityId == localId),
+                ECompanySegmentType.State => await _DbSet.AnyAsync(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == (int)ECompanySegmentType.State && x.Address.City.StateId == localId),
+                ECompanySegmentType.Federal => await _DbSet.AnyAsync(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == (int)ECompanySegmentType.Federal && x.Address.City.State.CountryId == localId),
+                _ => false,
+            };
+        }
+
+        public async Task<bool> CnpjAlreadyRegistered(string cnpj)
+            => await _DbSet.AnyAsync(x => x.Cnpj.Equals(cnpj));
     }
 }

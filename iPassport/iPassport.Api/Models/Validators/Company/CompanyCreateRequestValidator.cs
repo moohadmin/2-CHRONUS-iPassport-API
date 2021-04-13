@@ -26,7 +26,7 @@ namespace iPassport.Api.Models.Validators.Plans
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], "CNPJ"));
             
-            RuleFor(x => x.Cnpj)
+            RuleFor(x => x.Cnpj).Cascade(CascadeMode.Stop)
                  .Must(x => Regex.IsMatch(x, "^[0-9]{14}$")).WithMessage(string.Format(localizer["InvalidField"], "CNPJ"))
                  .Must(x => CnpjUtils.Valid(x)).WithMessage(string.Format(localizer["InvalidField"], "Cnpj"))
                  .When(y => !string.IsNullOrWhiteSpace(y.Cnpj));
