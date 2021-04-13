@@ -77,10 +77,6 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<CompanyViewModel>(res);
 
-            //TODO: ADD PARENT ID                
-            //(if res.ParentId != null)
-            //    result.Parent = _mapper.Map<CompanyViewModel>(await _companyRepository.Find(res.ParentId));
-
             return new ResponseApi(true, _localizer["Companies"], result);
         }
 
@@ -109,7 +105,6 @@ namespace iPassport.Application.Services
 
             if (companyType != null && companySegment != null)
             {
-
                 if (filter.LocalityId == null && companyType.Identifyer == (int)ECompanyType.Government)
                     throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["Locality"]));
                 

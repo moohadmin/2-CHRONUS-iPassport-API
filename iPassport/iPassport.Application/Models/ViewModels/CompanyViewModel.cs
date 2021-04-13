@@ -16,6 +16,10 @@ namespace iPassport.Application.Models.ViewModels
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Trade Name
+        /// </summary>
+        public string TradeName { get; set; }
+        /// <summary>
         /// Company CNPJ
         /// </summary>
         public string Cnpj { get; set; }
@@ -34,6 +38,18 @@ namespace iPassport.Application.Models.ViewModels
         /// <summary>
         /// Parent Company
         /// </summary>
-        public CompanyViewModel Parent { get; set; }
+        public CompanyViewModel ParentCompany { get; set; }
+        /// <summary>
+        /// Company responsible
+        /// </summary>
+        public CompanyResponsibleViewModel Responsible { get; set; }
+        /// <summary>
+        /// Deactivation User
+        /// </summary>
+        public UserViewModel DeactivationUser { get; set; }
+        /// <summary>
+        /// Active
+        /// </summary>
+        public bool Active { get; set; }
     }
 }
