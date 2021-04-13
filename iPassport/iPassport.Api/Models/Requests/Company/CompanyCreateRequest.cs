@@ -21,8 +21,7 @@ namespace iPassport.Api.Models.Requests
         public string Cnpj { get; set; }
         /// <summary>
         /// Company Address
-        /// </summary>
-        //TODO Txai Ajustar Validação da cidade
+        /// </summary>        
         public AddressCreateRequest Address { get; set; }
         /// <summary>
         /// Company Segment
@@ -37,7 +36,7 @@ namespace iPassport.Api.Models.Requests
         /// </summary>
         public Guid? ParentId { get; set; }
         /// <summary>
-        /// Company Responsable
+        /// Company Responsible
         /// </summary>
         public CompanyResponsibleCreateRequest Responsible { get; set; }
         /// <summary>

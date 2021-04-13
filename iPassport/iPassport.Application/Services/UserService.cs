@@ -137,7 +137,7 @@ namespace iPassport.Application.Services
 
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 /// Re-Hidrated UserId to UserDetails
                 dto.Id = user.Id;
@@ -267,7 +267,7 @@ namespace iPassport.Application.Services
 
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user, dto.Password);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 /// Re-Hidrated UserId to UserDetails
                 dto.UserId = user.Id;
@@ -336,7 +336,7 @@ namespace iPassport.Application.Services
             if (currentUserDetails == null)
                 throw new BusinessException(_localizer["CitizenNotFound"]);
 
-            await ValidEditCitizen(dto);
+            await ValidateEditCitizen(dto);
 
             try
             {
@@ -347,7 +347,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.BeginTransactionPassport();
 
                 var result = await _userManager.UpdateAsync(currentUser);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 if (!(await _detailsRepository.Update(currentUserDetails)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
@@ -452,7 +452,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddAdmin(AdminDto dto)
         {
-            await ValidToSaveAdmin(dto);
+            await ValidateToSaveAdmin(dto);
 
             Users user = Users.CreateUser(dto);
 
@@ -466,7 +466,7 @@ namespace iPassport.Application.Services
 
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user, dto.Password);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 /// Re-Hidrated UserId to UserDetails
                 dto.Id = user.Id;
@@ -516,7 +516,7 @@ namespace iPassport.Application.Services
 
                     // Add User in iPassportIdentityContext
                     var result = await _userManager.CreateAsync(user);
-                    ValidSaveUserIdentityResult(result);
+                    ValidateSaveUserIdentityResult(result);
 
                     // Re-Hidrated UserId to UserDetails
                     data.Result.UserId = user.Id;
@@ -574,7 +574,7 @@ namespace iPassport.Application.Services
             if (currentAdminUserDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            await ValidToSaveAdmin(dto);
+            await ValidateToSaveAdmin(dto);
 
             currentAdminUser.ChangeUser(dto);           
             currentAdminUserDetails.ChangeUserDetail(dto);
@@ -597,7 +597,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.BeginTransactionPassport();
 
                 var result = await _userManager.UpdateAsync(currentAdminUser);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 if (!(await _detailsRepository.Update(currentAdminUserDetails)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
@@ -637,7 +637,7 @@ namespace iPassport.Application.Services
         }
 
         #region Private Methods
-        private async Task<bool> ValidEditCitizen(CitizenEditDto dto)
+        private async Task<bool> ValidateEditCitizen(CitizenEditDto dto)
         {
             if (dto.Address == null || await _addressRepository.Find(dto.Address.Id) == null)
                 throw new BusinessException(_localizer["AddressNotFound"]);
@@ -687,7 +687,7 @@ namespace iPassport.Application.Services
             return true;
         }
 
-        private void ValidSaveUserIdentityResult(IdentityResult result)
+        private void ValidateSaveUserIdentityResult(IdentityResult result)
         {
             if (!result.Succeeded)
             {
@@ -1042,7 +1042,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(string.Format(_localizer["ImportUsersFileMaxSize"], Domain.Utils.Constants.MAX_LENGHT_IMPORT_USERS_FILE / 1024));
         }
 
-        private async Task<bool> ValidToSaveAdmin(AdminDto dto)
+        private async Task<bool> ValidateToSaveAdmin(AdminDto dto)
         {
             if (!dto.CompanyId.HasValue || await _companyRepository.Find(dto.CompanyId.Value) == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);

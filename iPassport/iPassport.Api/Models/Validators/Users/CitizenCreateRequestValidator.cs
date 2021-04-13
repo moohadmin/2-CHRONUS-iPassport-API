@@ -23,8 +23,12 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.CompleteName)
                 .SetValidator(new RequiredFieldValidator<string>(localizer["CompleteName"], localizer));
 
+            RuleFor(s => s.Address)
+                .NotNull()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Address"]));
+
             RuleFor(x => x.Address)
-                .SetValidator(new AddressValidator(localizer, false));
+                .SetValidator(new AddressValidator(localizer));
 
             RuleFor(x => x.Birthday)
                 .Cascade(CascadeMode.Stop)
@@ -53,13 +57,8 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.Telephone)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y =>
-                {
-                    return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13);
-                })
-                .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Telephone"]))
+                .Must(y => PhoneNumberUtils.ValidMobile(y))
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]));
 
             RuleFor(x => x.NumberOfDoses)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Enums;
+using System;
 
 namespace iPassport.Domain.Entities
 {
@@ -15,5 +16,8 @@ namespace iPassport.Domain.Entities
 
         public string Name { get; private set; }
         public int Identifyer { get; private set; }
+
+        public bool IsPrivate() => Identifyer == (int)ECompanyType.Private;
+        public bool IsGovernment() => Identifyer == (int)ECompanyType.Government;
     }
 }

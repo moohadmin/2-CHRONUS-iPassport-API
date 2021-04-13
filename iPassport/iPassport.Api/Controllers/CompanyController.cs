@@ -85,9 +85,8 @@ namespace iPassport.Api.Controllers
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
         public async Task<ActionResult> Add([FromBody] CompanyCreateRequest request)
         {
-            //var res = await _service.Add(_mapper.Map<CompanyCreateDto>(request));
-            var serviceResponseMock = new CompanyCreateResponseViewModel() { Id = Guid.NewGuid(), CanAssociate = request.IsHeadquarters.GetValueOrDefault() };
-            var res = new ResponseApi(true, "Mock Create Company", serviceResponseMock);
+            var res = await _service.Add(_mapper.Map<CompanyCreateDto>(request));
+            
             return Ok(res);
         }
 

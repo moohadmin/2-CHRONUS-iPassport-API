@@ -32,9 +32,12 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
         public async Task<Company> GetLoadedCompanyById(Guid id) =>
             await _DbSet
-                    .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
-                    .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
-                    .FirstOrDefaultAsync(x => x.Id == id);
+            .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+            .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
+            .Include(x => x.ParentCompany)
+            .Include(x => x.Responsible)
+            .Include(x => x.DeactivationUser)
+            .FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<IList<Company>> FindListCnpj(List<string> listCnpj)
             => await _DbSet.Where(m => listCnpj.Contains(m.Cnpj)).ToListAsync();
@@ -43,8 +46,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
             await GetLoadedHeadquarters().Where(x => x.Cnpj.StartsWith(cnpj)
                             && x.Segment.Identifyer == segmentType
                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Private
-            //TODO: ADD PARENT ID                
-            /*&& x.ParentId == null*/).ToListAsync();
+                            && x.ParentId == null).ToListAsync();
 
         public async Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId) =>
             await GetLoadedHeadquarters().Where(x => (x.Segment.Identifyer == (int)ECompanySegmentType.State
@@ -59,5 +61,18 @@ namespace iPassport.Infra.Repositories.IdentityContext
         private IQueryable<Company> GetLoadedHeadquarters() =>
             _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                   .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
+
+        public async Task<bool> HasBranchCompanyToAssociateInFederal(Guid countryId) =>
+            await _DbSet.AnyAsync(x => x.ParentId == null
+                && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
+                && (x.Segment.Identifyer == (int)ECompanySegmentType.State || x.Segment.Identifyer == (int)ECompanySegmentType.Municipal)
+                && x.Address.City.State.CountryId == countryId);
+
+        public async Task<bool> HasBranchCompanyToAssociateInState(Guid stateId) =>
+            await _DbSet.AnyAsync(x => x.ParentId == null
+                && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
+                && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal
+                && x.Address.City.StateId == stateId);
+
     }
 }

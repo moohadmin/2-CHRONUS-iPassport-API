@@ -8,7 +8,11 @@ namespace iPassport.Test.Seeds
     public static class CitySeed
     {
         public static City Get() => new City("Salvador", 123, Guid.NewGuid(), 10);
-
+        public static City GetLoaded() {
+            var LoadedCity = new City("Salvador", 123, Guid.NewGuid(), 10);
+            LoadedCity.State = StateSeed.GetState();
+            return LoadedCity;
+        } 
 
         public static IList<City> GetCities()
         {
