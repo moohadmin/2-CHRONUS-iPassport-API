@@ -83,6 +83,8 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<AdminEditRequest, AdminDto>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.UserId));
+
+            profile.CreateMap<Users, UserViewModel>();
         }
     }
 }
