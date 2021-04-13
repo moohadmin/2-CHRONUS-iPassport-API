@@ -46,6 +46,9 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<GetHeadquarterCompanyRequest, GetHeadquarterCompanyFilter>();
 
             profile.CreateMap<CompanyResponsibleCreateRequest, CompanyResponsibleCreateDto>();
+
+            profile.CreateMap<Company, CompanyCreateResponseViewModel>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
         }
     }
 }

@@ -25,5 +25,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
         public async Task<IList<City>> FindByCityStateAndCountryNames(List<string> filter)
             => await _DbSet.Include(c => c.State).ThenInclude(s => s.Country)
                 .Where(m => filter.Any(f => f == m.Name.ToUpper() + m.State.Name.ToUpper() + m.State.Country.Name.ToUpper())).ToListAsync();
+
+        public async Task<City> FindLoadedById(System.Guid id) => await _DbSet.Include(x => x.State).ThenInclude(y => y.Country).Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 }

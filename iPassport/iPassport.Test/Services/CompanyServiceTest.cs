@@ -14,6 +14,7 @@ using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -34,6 +35,7 @@ namespace iPassport.Test.Services
         Mock<ICompanyTypeRepository> _mockCompanyTypeRepository;
         Mock<ICompanySegmentRepository> _mockCompanySegmentRepository;
         Resource _resource;
+        IHttpContextAccessor _accessor;
 
         [TestInitialize]
         public void Setup()
@@ -44,8 +46,8 @@ namespace iPassport.Test.Services
             _mockCityRepository = new Mock<ICityRepository>();
             _mockCompanyTypeRepository = new Mock<ICompanyTypeRepository>();
             _mockCompanySegmentRepository = new Mock<ICompanySegmentRepository>();
-
-            _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCityRepository.Object, _mockCompanyTypeRepository.Object, _mockCompanySegmentRepository.Object);
+            _accessor = HttpContextAccessorFactory.Create();
+            _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCityRepository.Object, _mockCompanyTypeRepository.Object, _mockCompanySegmentRepository.Object, _accessor);
             _resource = ResourceFactory.Create();
         }
 

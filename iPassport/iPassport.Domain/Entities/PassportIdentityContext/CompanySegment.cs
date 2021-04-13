@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Enums;
+using System;
 
 namespace iPassport.Domain.Entities
 {
@@ -19,5 +20,11 @@ namespace iPassport.Domain.Entities
         public Guid CompanyTypeId { get; private set; }
 
         public CompanyType CompanyType { get; set; }
+
+        public bool IsPrivateType() => CompanyType.IsPrivate();
+        public bool IsGovernmentType() => CompanyType.IsGovernment();
+        public bool IsMunicipal() => Identifyer == (int)ECompanySegmentType.Municipal;
+        public bool IsState() => Identifyer == (int)ECompanySegmentType.State;
+        public bool IsFederal() => Identifyer == (int)ECompanySegmentType.Federal;
     }
 }
