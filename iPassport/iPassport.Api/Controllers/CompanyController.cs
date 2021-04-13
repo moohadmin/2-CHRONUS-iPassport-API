@@ -63,9 +63,9 @@ namespace iPassport.Api.Controllers
         [HttpGet]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
 
-        public async Task<ActionResult> GetByNameParts([FromQuery] GetByNamePartsPagedRequest request)
+        public async Task<ActionResult> GetByNameParts([FromQuery] GetCompaniesPagedRequest request)
         {
-            var res = await _service.FindByNameParts(_mapper.Map<GetByNamePartsPagedFilter>(request));
+            var res = await _service.FindByNameParts(_mapper.Map<GetCompaniesPagedFilter>(request));
             return Ok(res);
         }
 

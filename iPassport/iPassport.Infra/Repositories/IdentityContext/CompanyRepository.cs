@@ -15,9 +15,17 @@ namespace iPassport.Infra.Repositories.IdentityContext
     {
         public CompanyRepository(PassportIdentityContext context) : base(context) { }
 
-        public async Task<PagedData<Company>> FindByNameParts(GetByNamePartsPagedFilter filter)
+        public async Task<PagedData<Company>> FindByNameParts(GetCompaniesPagedFilter filter)
         {
-            var query = _DbSet.Where(m => string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower())).OrderBy(m => m.Name);
+            var query = _DbSet
+                    .Include(x => x.Address)
+                    .Include(x => x.Segment)
+                    .Where(m => (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
+                                && (filter.CityId == null || m.Address.CityId == filter.CityId)
+                                && (filter.Cnpj == null || m.Cnpj == filter.Cnpj)
+                                && (filter.SegmentId == null || m.SegmentId == filter.SegmentId)
+                                && (filter.TypeId == null || m.Segment.CompanyTypeId == filter.TypeId))
+                    .OrderBy(m => m.Name);
 
             return await Paginate(query, filter);
         }
