@@ -9,5 +9,7 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
     {
         Task<PagedData<City>> FindByStateAndNameParts(GetByIdAndNamePartsPagedFilter filter);
         Task<IList<City>> FindByCityStateAndCountryNames(List<string> filter);
+
+        Task<City> FindLoadedById(System.Guid id);
     }
 }

@@ -26,9 +26,14 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj));
 
             profile.CreateMap<CompanyCreateRequest, CompanyCreateDto>()
-                .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj))
                 .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
-                .ForMember(des => des.AddressDto, act => act.MapFrom(src => src.Address));
+                .ForMember(des => des.TradeName, act => act.MapFrom(src => src.TradeName))
+                .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj))
+                .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
+                .ForMember(des => des.SegmentId, act => act.MapFrom(src => src.SegmentId))
+                .ForMember(des => des.IsHeadquarters, act => act.MapFrom(src => src.IsHeadquarters))
+                .ForMember(des => des.Responsible, act => act.MapFrom(src => src.Responsible))                
+                .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive));
 
             profile.CreateMap<CompanyDto, CompanyViewModel>();
 
@@ -39,6 +44,11 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<Company, HeadquarterCompanyViewModel>();
 
             profile.CreateMap<GetHeadquarterCompanyRequest, GetHeadquarterCompanyFilter>();
+
+            profile.CreateMap<CompanyResponsibleCreateRequest, CompanyResponsibleCreateDto>();
+
+            profile.CreateMap<Company, CompanyCreateResponseViewModel>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
         }
     }
 }

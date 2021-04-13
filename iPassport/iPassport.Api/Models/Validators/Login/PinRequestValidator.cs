@@ -66,12 +66,8 @@ namespace iPassport.Api.Models.Validators.Plans
             RuleFor(s => s.Phone)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                    .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y => {
-                        return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13); 
-                        })
-                    .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
+                    .WithMessage(string.Format(localizer["RequiredField"], localizer["Telephone"]))                
+                .Must(y => PhoneNumberUtils.ValidMobile(y))
                     .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]));
 
             RuleFor(x => x.Doctype)

@@ -61,27 +61,23 @@ namespace iPassport.Api.Models.Validators
         /// <summary>
         /// Address Validator Construtor
         /// </summary>
-        /// <param name="validateCep">indicator if cep must be validated</param>
         /// <param name="localizer">string localizer</param>
-        public AddressValidator(IStringLocalizer<Resource> localizer, bool validateCep)
+        public AddressValidator(IStringLocalizer<Resource> localizer)
         {
-            if (validateCep)
-            {
-                RuleFor(x => x.Cep).Cascade(CascadeMode.Stop)
-                    .NotEmpty().WithMessage(string.Format(localizer["InvalidField"], "Cep"))
-                    .SetValidator(new RequiredFieldValidator<string>("Cep", localizer))
-                    .Must(x => Regex.IsMatch(x, "^[0-9]{8}$")).WithMessage(string.Format(localizer["InvalidField"], "Cep"));
 
-                RuleFor(x => x.Description).SetValidator(new RequiredFieldValidator<string>("Description", localizer));
-            }
+            RuleFor(x => x.Cep)
+                .Must(x => Regex.IsMatch(x, "^[0-9]{8}$"))
+                .When(x => !string.IsNullOrWhiteSpace(x.Cep))
+                .WithMessage(string.Format(localizer["InvalidField"], "Cep"));
 
             RuleFor(y => y.Number)
                     .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
-                    .When(x => !String.IsNullOrWhiteSpace(x.Number))
+                    .When(x => !string.IsNullOrWhiteSpace(x.Number))
                     .WithMessage(string.Format(localizer["InvalidField"], localizer["Number"]));
 
             RuleFor(x => x.CityId)
-                .SetValidator(new GuidValidator("CityId", localizer));
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["CityId"]));
         }
     }
 
@@ -112,7 +108,7 @@ namespace iPassport.Api.Models.Validators
 
             RuleFor(y => y.Number)
                     .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
-                    .When(x => !String.IsNullOrWhiteSpace(x.Number))
+                    .When(x => !string.IsNullOrWhiteSpace(x.Number))
                     .WithMessage(string.Format(localizer["InvalidField"], localizer["Number"]));
 
             RuleFor(x => x.CityId)

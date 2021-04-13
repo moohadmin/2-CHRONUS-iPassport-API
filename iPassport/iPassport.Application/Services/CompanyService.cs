@@ -10,11 +10,15 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using iPassport.Application.Extensions;
 
 namespace iPassport.Application.Services
 {
@@ -26,8 +30,10 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
         private readonly ICompanyTypeRepository _companyTypeRepository;
         private readonly ICompanySegmentRepository _companySegmentRepository;
+        private readonly IHttpContextAccessor _accessor;
 
-        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICityRepository cityRepository, ICompanyTypeRepository companyTypeRepository, ICompanySegmentRepository companySegmentRepository)
+        public CompanyService(ICompanyRepository companyRepository, IStringLocalizer<Resource> localizer, IMapper mapper, ICityRepository cityRepository, ICompanyTypeRepository companyTypeRepository, ICompanySegmentRepository companySegmentRepository
+            ,IHttpContextAccessor accessor)
         {
             _companyRepository = companyRepository;
             _localizer = localizer;
@@ -35,21 +41,25 @@ namespace iPassport.Application.Services
             _cityRepository = cityRepository;
             _companyTypeRepository = companyTypeRepository;
             _companySegmentRepository = companySegmentRepository;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi> Add(CompanyCreateDto dto)
         {
-            var city = await _cityRepository.Find(dto.AddressDto.CityId);
-            if (city == null)
-                throw new BusinessException(_localizer["CityNotFound"]);
+            await ValidateToSave(dto);
 
-            var company = new Company().Create(dto);
+            var company = Company.Create(dto);
+            if (!dto.IsActive.Value)
+                company.Deactivate(_accessor.GetCurrentUserId());
 
             var result = await _companyRepository.InsertAsync(company);
             if (!result)
                 throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-            return new ResponseApi(true, _localizer["CompanyCreated"], company.Id);
+            var responseViewModel = _mapper.Map<CompanyCreateResponseViewModel>(company);
+            responseViewModel.CanAssociate = await HasBranchCompanyToAssociate(company.Id);
+
+            return new ResponseApi(true, _localizer["CompanyCreated"], responseViewModel);
         }
 
         public async Task<PagedResponseApi> FindByNameParts(GetCompaniesPagedFilter filter)
@@ -114,6 +124,113 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, _localizer["Companies"], res);
         }
+
+        #region Private
+        private async Task<bool> ValidateToSave(CompanyCreateDto dto)
+        {
+            if (dto.IsActive == null)
+                throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["IsActive"]));
+
+            await ValidateAddress(dto);
+            await ValidateSegment(dto);
+
+            return true;
+        }
+        private async Task<bool> ValidateAddress(CompanyCreateDto dto)
+        {
+            if (dto.Address == null)
+                throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["Address"]));
+            if (await _cityRepository.Find(dto.Address.CityId) == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            return true;
+        }
+        private async Task<bool> ValidateSegment(CompanyCreateDto dto)
+        {
+            var segment = await _companySegmentRepository.GetLoaded(dto.SegmentId);
+            if (segment == null)
+                throw new BusinessException(_localizer["SegmentNotFound"]);
+
+            await ValidatePrivateSegment(dto, segment);
+            await ValidateGovernmentSegment(dto, segment);
+
+            return true;
+        }
+        private async Task<bool> ValidatePrivateSegment(CompanyCreateDto dto, CompanySegment segment)
+        {
+            if (segment.IsPrivateType())
+            {
+                if (!dto.IsHeadquarters.HasValue)
+                    throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["IsHeadquarters"]));
+
+                if (!dto.IsHeadquarters.Value)
+                {
+                    if (!dto.ParentId.HasValue)
+                        throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["ParentId"]));
+
+                    var headquarter = await _companyRepository.GetLoadedCompanyById(dto.ParentId.Value);
+
+                    if (headquarter == null || headquarter.DeactivationDate.HasValue ||!headquarter.IsPrivateHeadquarters())
+                        throw new BusinessException(_localizer["HeadquarterNotFoundOrNotValid"]);
+
+                    if (!CnpjUtils.Valid(dto.Cnpj) || !headquarter.BranchCompanyCnpjIsValid(dto.Cnpj))
+                        throw new BusinessException(_localizer["BranchCnpjNotValid"]);
+                }
+                else if (dto.ParentId.HasValue)
+                    throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
+                
+            }
+            return true;
+        }
+        private async Task<bool> ValidateGovernmentSegment(CompanyCreateDto dto, CompanySegment segment)
+        {
+            if (segment.IsGovernmentType())
+            {
+                if ( dto.IsHeadquarters.HasValue)
+                    throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["IsHeadquarters"])); 
+
+                if(!(segment.IsMunicipal() || segment.IsState()))
+                {
+                    if (dto.ParentId.HasValue)
+                        throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
+                }
+                else
+                {
+                    IList<Company> canBeParentCompanies;
+                    var city = await _cityRepository.FindLoadedById(dto.Address.CityId);
+                    if (segment.IsMunicipal())
+                        canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId);
+                    else
+                        canBeParentCompanies = await _companyRepository.GetPublicStateHeadquarters(city.State.CountryId);
+
+                    if (canBeParentCompanies.Any())
+                    {
+                        if(!dto.ParentId.HasValue)
+                            throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["ParentId"]));
+
+                        if (canBeParentCompanies.FirstOrDefault(x => x.Id == dto.ParentId.Value && !x.DeactivationDate.HasValue) == null)
+                            throw new BusinessException(_localizer["HeadquarterNotFoundOrNotValid"]);
+                    }else if (dto.ParentId.HasValue)
+                        throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
+                }
+            }
+
+            return true;
+        }
+        private async Task<bool> HasBranchCompanyToAssociate(Guid companyId)
+        {
+            var company = await _companyRepository.GetLoadedCompanyById(companyId);
+            if(company != null)
+            {
+                if (company.IsFederalGovernment())
+                    return await _companyRepository.HasBranchCompanyToAssociateInFederal(company.Address.City.State.CountryId);
+                if (company.IsStateGovernment())
+                    return await _companyRepository.HasBranchCompanyToAssociateInState(company.Address.City.StateId);
+            }
+
+            return false;
+        }
+        #endregion
     }
 }
 

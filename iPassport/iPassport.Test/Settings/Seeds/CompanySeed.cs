@@ -7,7 +7,7 @@ namespace iPassport.Test.Seeds
 {
     public static class CompanySeed
     {
-        public static Company Get() => new Company("Company1", "00560551000100", GetAddress());
+        public static Company Get() => new Company("Company1", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), null, Guid.NewGuid(), null);
 
         private static AddressCreateDto GetAddress() => new AddressCreateDto
         {
@@ -19,15 +19,23 @@ namespace iPassport.Test.Seeds
         {
             return new List<Company>()
             {
-                new Company("Company1", "00560551000100", GetAddress()),
-                new Company("Company2", "81851354000141", GetAddress()),
-                new Company("Company3", "48387095000174", GetAddress())
+                new Company("Company2","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null),
+                new Company("Company3","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null),
+                new Company("Company4","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null),
+                new Company("Company5","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null)
             };
         }
 
         public static PagedData<Company> GetPaged()
         {
             return new PagedData<Company>() { Data = GetCompanies() };
+        }
+        public static Company GetHealthType()
+        {
+            var healthCompany = new Company("Company1", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), true, Guid.NewGuid(), null);
+            healthCompany.Segment = CompanySegmentSeed.GetHealthType();
+
+            return healthCompany;
         }
     }
 }

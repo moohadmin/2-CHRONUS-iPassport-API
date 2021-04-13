@@ -8,5 +8,7 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
     public interface ICompanySegmentRepository : IIdentityBaseRepository<CompanySegment>
     {
         Task<PagedData<CompanySegment>> GetPagedByTypeId(Guid id, PageFilter filter);
+
+        Task<CompanySegment> GetLoaded(Guid id);
     }
 }

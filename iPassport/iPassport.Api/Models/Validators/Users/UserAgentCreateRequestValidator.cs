@@ -30,12 +30,8 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.Mobile)
                 .Cascade(CascadeMode.Stop)
                .NotEmpty()
-                   .WithMessage(string.Format(localizer["InvalidField"], "Mobile"))
-               .Must(y => {
-                   return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13);
-               })
-                    .WithMessage(string.Format(localizer["InvalidField"], "Mobile"))
-                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
+                   .WithMessage(string.Format(localizer["RequiredField"], "Mobile"))
+               .Must(y => PhoneNumberUtils.ValidMobile(y))
                     .WithMessage(string.Format(localizer["InvalidField"], "Mobile"));
 
             RuleFor(x => x.Username)

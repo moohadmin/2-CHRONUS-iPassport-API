@@ -44,12 +44,8 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["Email"]))
                 .When(y => !string.IsNullOrWhiteSpace(y.Email));                
 
-            RuleFor(x => x.Telephone)                
-                .Must(y =>
-                {
-                    return !y.StartsWith("55") 
-                        || (Regex.IsMatch(y, "^[0-9]{13}$") && y.Substring(4, 1).Equals("9"));
-                })
+            RuleFor(x => x.Telephone)
+                .Must(y => PhoneNumberUtils.ValidMobile(y))
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
                 .When(y => !string.IsNullOrWhiteSpace(y.Telephone));
 

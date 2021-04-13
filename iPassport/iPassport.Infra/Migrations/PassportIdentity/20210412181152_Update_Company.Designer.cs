@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210412181152_Update_Company")]
+    partial class Update_Company
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -481,6 +483,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ResponsibleId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("SegmentId")
                         .HasColumnType("uuid");
 
@@ -502,6 +507,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
 
                     b.HasIndex("ParentId");
 
+                    b.HasIndex("ResponsibleId")
+                        .IsUnique();
+
                     b.HasIndex("SegmentId");
 
                     b.ToTable("Companies");
@@ -510,6 +518,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
             modelBuilder.Entity("iPassport.Domain.Entities.CompanyResponsible", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateDate")
@@ -869,6 +878,10 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .WithMany()
                         .HasForeignKey("ParentId");
 
+                    b.HasOne("iPassport.Domain.Entities.CompanyResponsible", "Responsible")
+                        .WithOne()
+                        .HasForeignKey("iPassport.Domain.Entities.Company", "ResponsibleId");
+
                     b.HasOne("iPassport.Domain.Entities.CompanySegment", "Segment")
                         .WithMany()
                         .HasForeignKey("SegmentId");
@@ -879,17 +892,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
 
                     b.Navigation("ParentCompany");
 
+                    b.Navigation("Responsible");
+
                     b.Navigation("Segment");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.CompanyResponsible", b =>
-                {
-                    b.HasOne("iPassport.Domain.Entities.Company", "Company")
-                        .WithOne("Responsible")
-                        .HasForeignKey("iPassport.Domain.Entities.CompanyResponsible", "Id")
-                        .IsRequired();
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.CompanySegment", b =>
@@ -910,11 +915,6 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .IsRequired();
 
                     b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("iPassport.Domain.Entities.Company", b =>
-                {
-                    b.Navigation("Responsible");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Country", b =>
