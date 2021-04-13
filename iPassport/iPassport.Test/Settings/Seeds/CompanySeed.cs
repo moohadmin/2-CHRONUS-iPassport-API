@@ -30,5 +30,12 @@ namespace iPassport.Test.Seeds
         {
             return new PagedData<Company>() { Data = GetCompanies() };
         }
+        public static Company GetHealthType()
+        {
+            var healthCompany = new Company("Company1", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), true, Guid.NewGuid(), null);
+            healthCompany.Segment = CompanySegmentSeed.GetHealthType();
+
+            return healthCompany;
+        }
     }
 }

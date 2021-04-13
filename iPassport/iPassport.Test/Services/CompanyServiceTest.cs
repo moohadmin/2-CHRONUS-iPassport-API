@@ -30,25 +30,26 @@ namespace iPassport.Test.Services
         Mock<ICompanyRepository> _mockRepository;
         ICompanyService _service;
         IMapper _mapper;
-        Mock<IStringLocalizer<Resource>> _mockLocalizer;
+        IStringLocalizer<Resource> _localizer;
         Mock<ICityRepository> _mockCityRepository;
         Mock<ICompanyTypeRepository> _mockCompanyTypeRepository;
         Mock<ICompanySegmentRepository> _mockCompanySegmentRepository;
         Resource _resource;
         IHttpContextAccessor _accessor;
-
+        
         [TestInitialize]
         public void Setup()
         {
+            _resource = ResourceFactory.Create();
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<ICompanyRepository>();
-            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _localizer = ResourceFactory.GetStringLocalizer();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockCompanyTypeRepository = new Mock<ICompanyTypeRepository>();
             _mockCompanySegmentRepository = new Mock<ICompanySegmentRepository>();
             _accessor = HttpContextAccessorFactory.Create();
-            _service = new CompanyService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCityRepository.Object, _mockCompanyTypeRepository.Object, _mockCompanySegmentRepository.Object, _accessor);
-            _resource = ResourceFactory.Create();
+            _service = new CompanyService(_mockRepository.Object, _localizer, _mapper, _mockCityRepository.Object, _mockCompanyTypeRepository.Object, _mockCompanySegmentRepository.Object, _accessor);
+            
         }
 
         [TestMethod]
@@ -67,23 +68,7 @@ namespace iPassport.Test.Services
             Assert.IsNotNull(result.Result.Data);
         }
 
-        //[TestMethod]
-        //public void Add_MustReturnOk()
-        //{
-        //    // Arrange
-        //    var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>());
-        //    _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
-        //    _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
-
-        //    // Act
-        //    var result = _service.Add(mockRequest);
-
-        //    // Assert
-        //    _mockRepository.Verify(a => a.InsertAsync(It.IsAny<Company>()));
-        //    _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
-        //    Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
-        //    Assert.IsNotNull(result.Result.Data);
-        //}
+        
 
         [TestMethod]
         public void GetById_MustReturnOk()
@@ -227,5 +212,78 @@ namespace iPassport.Test.Services
             Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.GetHeadquartersCompanies(mockRequest),
                 string.Format(_resource.GetMessage("RequiredField"), _resource.GetMessage("Locality")));
         }
+
+
+        #region AddMethod
+        [TestMethod]
+        public void Add_MustHaveIsActiveValue()
+        {
+            //Arrage
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.IsActive == null);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["RequiredField"], _localizer["IsActive"]), ex.Message);
+        }
+        [TestMethod]
+        public void Add_MustHaveAddress()
+        {
+            //Arrage
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.IsActive == false);
+
+            //Assert
+            var ex =  Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+           Assert.AreEqual(string.Format(_localizer["RequiredField"], _localizer["Address"]), ex.Message);
+        }
+        [TestMethod]
+        public void Add_MustFoundCity()
+        {
+            //Arrage
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.IsActive == false && x.Address == Mock.Of<AddressCreateDto>());
+
+            //Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(_localizer["CityNotFound"], ex.Message);
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+        }
+        [TestMethod]
+        public void Add_MustFoundSegment()
+        {
+            //Arrage
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.IsActive == false && x.Address == Mock.Of<AddressCreateDto>());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+
+            //Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(_localizer["SegmentNotFound"], ex.Message);
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCompanySegmentRepository.Verify(x => x.GetLoaded(It.IsAny<Guid>()));
+        }
+        [TestMethod]
+        public void Add_PrivateType_SegmentHealth_HeadQuarter_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == true && x.ParentId == null);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetHealthType());
+
+            // Act
+            var result = _service.Add(mockRequest);
+
+            // Assert
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.InsertAsync(It.IsAny<Company>()));
+            _mockCompanySegmentRepository.Verify(x => x.GetLoaded(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.GetLoadedCompanyById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.AreEqual(true, result.Result.Success);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(CompanyCreateResponseViewModel));
+        }
+        #endregion
+
+
     }
 }

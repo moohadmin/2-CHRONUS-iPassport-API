@@ -29,7 +29,6 @@ namespace iPassport.Domain.Entities
         public Guid? SegmentId { get; private set; }
         public bool? IsHeadquarters { get; private set; }
         public Guid? ParentId { get; private set; }
-        public Guid? ResponsibleId { get; private set; }
         public DateTime? DeactivationDate { get; set; }
         public Guid? DeactivationUserId { get; set; }
 

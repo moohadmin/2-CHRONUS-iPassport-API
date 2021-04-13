@@ -48,10 +48,6 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .HasForeignKey(x => x.ParentId)
                 .IsRequired(false);
 
-            builder.HasOne(x => x.Responsible)
-                .WithOne()                
-                .IsRequired(false);
-
             builder.HasOne(x => x.DeactivationUser)
                 .WithMany()
                 .HasForeignKey(x => x.DeactivationUserId)

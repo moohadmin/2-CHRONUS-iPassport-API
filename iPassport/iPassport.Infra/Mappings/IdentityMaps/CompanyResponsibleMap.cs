@@ -28,6 +28,11 @@ namespace iPassport.Infra.Mappings.IdentityMaps
 
             builder.Property(x => x.CreateDate)
                 .IsRequired();
+
+            builder.HasOne(x => x.Company)
+                .WithOne(y => y.Responsible)
+                .HasForeignKey<CompanyResponsible>(z => z.Id)
+                .IsRequired(true);
         }
     }
 }

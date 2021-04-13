@@ -21,6 +21,7 @@ namespace iPassport.Domain.Entities
         public string Email { get; private set; }
         public string MobilePhone { get; private set; }
         public string Landline { get; private set; }
+        public Company Company { get; set; }
 
         public static CompanyResponsible Create(CompanyResponsibleCreateDto dto) =>
             new(dto.CompanyId.Value
