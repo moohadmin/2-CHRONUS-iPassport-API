@@ -67,7 +67,11 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<CompanyViewModel>(res);
 
-            return new ResponseApi(true, _localizer["Companiies"], result);
+            //TODO: ADD PARENT ID                
+            //(if res.ParentId != null)
+            //    result.Parent = _mapper.Map<CompanyViewModel>(await _companyRepository.Find(res.ParentId));
+
+            return new ResponseApi(true, _localizer["Companies"], result);
         }
 
         public async Task<ResponseApi> GetAllTypes()

@@ -23,10 +23,17 @@ namespace iPassport.Application.Models.ViewModels
         /// Address Id
         /// </summary>
         public Guid AddressId { get; set; }
-
         /// <summary>
         /// Address
         /// </summary>
         public AddressViewModel Address { get; set; }
+        /// <summary>
+        /// Company Segment
+        /// </summary>
+        public CompanySegmentViewModel Segment { get; set; }
+        /// <summary>
+        /// Parent Company
+        /// </summary>
+        public CompanyViewModel Parent { get; set; }
     }
 }

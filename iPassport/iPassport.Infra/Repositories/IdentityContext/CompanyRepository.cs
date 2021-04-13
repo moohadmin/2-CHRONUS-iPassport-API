@@ -31,7 +31,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
         }
 
         public async Task<Company> GetLoadedCompanyById(Guid id) =>
-            await _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+            await _DbSet
+                    .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+                    .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
                     .FirstOrDefaultAsync(x => x.Id == id);
 
         public async Task<IList<Company>> FindListCnpj(List<string> listCnpj)
