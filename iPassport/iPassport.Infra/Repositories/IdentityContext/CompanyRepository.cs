@@ -75,13 +75,18 @@ namespace iPassport.Infra.Repositories.IdentityContext
                   .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
         public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
         {
-            return segmentType switch
+            var segmentIdentifyer = (int)segmentType;
+            var query = _DbSet.Where(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == segmentIdentifyer);
+
+             query = segmentType switch
             {
-                ECompanySegmentType.Municipal => await _DbSet.AnyAsync(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal && x.Address.CityId == localId),
-                ECompanySegmentType.State => await _DbSet.AnyAsync(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == (int)ECompanySegmentType.State && x.Address.City.StateId == localId),
-                ECompanySegmentType.Federal => await _DbSet.AnyAsync(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == (int)ECompanySegmentType.Federal && x.Address.City.State.CountryId == localId),
-                _ => false,
+                ECompanySegmentType.Municipal => query.Where(x => x.Address.CityId == localId),
+                ECompanySegmentType.State => query.Where(x => x.Address.City.StateId == localId),
+                ECompanySegmentType.Federal => query.Where(x => x.Address.City.State.CountryId == localId),
+                _ => query,
             };
+
+            return await query.AnyAsync();
         }
 
         public async Task<bool> CnpjAlreadyRegistered(string cnpj)

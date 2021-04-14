@@ -203,7 +203,7 @@ namespace iPassport.Application.Services
                 }
                 else
                 {
-                    IList<Company> canBeParentCompanies;
+                    IList<Company> canBeParentCompanies = new List<Company>();
                     if (segment.IsMunicipal())
                     {
                         if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.Id, ECompanySegmentType.Municipal))
@@ -211,7 +211,7 @@ namespace iPassport.Application.Services
 
                         canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId);
                     }
-                    else
+                    else if(segment.IsState())
                     {
                         if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.StateId, ECompanySegmentType.State))
                             throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["State"]));
