@@ -19,6 +19,10 @@ namespace iPassport.Application.Models.ViewModels
         /// Segment's Identifyer
         /// </summary>
         public int Identifyer { get; set; }
+        /// <summary>
+        /// Company Type
+        /// </summary>
+        public CompanyTypeViewModel CompanyType { get; set; }
         
     }
 }

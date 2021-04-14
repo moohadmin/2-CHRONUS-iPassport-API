@@ -103,7 +103,7 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<CompanyViewModel>(res);
 
-            return new ResponseApi(true, _localizer["Companiies"], result);
+            return new ResponseApi(true, _localizer["Companies"], result);
         }
 
         public async Task<ResponseApi> GetAllTypes()

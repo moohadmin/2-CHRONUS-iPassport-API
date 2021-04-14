@@ -20,10 +20,7 @@ namespace iPassport.Api.AutoMapper.Mappers
         public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<Company, CompanyViewModel>()
-                .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
-                .ForMember(des => des.AddressId, act => act.MapFrom(src => src.AddressId))
-                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
-                .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj));
+                .ForMember(des => des.Active, act => act.MapFrom(src => src.IsActive()));
 
             profile.CreateMap<CompanyCreateRequest, CompanyCreateDto>()
                 .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
@@ -49,6 +46,8 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<Company, CompanyCreateResponseViewModel>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
+
+            profile.CreateMap<CompanyResponsible, CompanyResponsibleViewModel>();
         }
     }
 }

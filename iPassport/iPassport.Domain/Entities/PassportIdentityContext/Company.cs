@@ -13,12 +13,12 @@ namespace iPassport.Domain.Entities
             Id = Guid.NewGuid();
             Name = name;
             TradeName = tradeName;
-            Cnpj = cnpj;          
+            Cnpj = cnpj;
             Address = CreateCompanyAddress(addressDto);
             SegmentId = segmentId;
             IsHeadquarters = isHeadquarters;
             ParentId = parentId;
-            if(responsible != null)
+            if (responsible != null)
                 Responsible = CreateResponsible(Id, responsible);
         }
 
@@ -38,8 +38,7 @@ namespace iPassport.Domain.Entities
         public CompanyResponsible Responsible { get; set; }
         public Users DeactivationUser { get; set; }
 
-
-        public static Company Create(CompanyCreateDto dto) 
+        public static Company Create(CompanyCreateDto dto)
                 => new Company(dto.Name, dto.TradeName, dto.Cnpj, dto.Address, dto.SegmentId, dto.IsHeadquarters, dto.ParentId, dto.Responsible);
 
         private Address CreateCompanyAddress(AddressAbstractDto dto) => new Address().Create(dto);
@@ -60,7 +59,7 @@ namespace iPassport.Domain.Entities
             dto.CompanyId = companyId;
             return CompanyResponsible.Create(dto);
         }
-        
+
         public void Deactivate(Guid deactivationUserId)
         {
             DeactivationUserId = deactivationUserId;
@@ -75,7 +74,7 @@ namespace iPassport.Domain.Entities
         public bool IsInactive() => DeactivationDate.HasValue;
         public bool IsPrivateHeadquarters() => IsHeadquarters.GetValueOrDefault() && Segment.CompanyType.IsPrivate();
         public bool BranchCompanyCnpjIsValid(string cnpj)
-            => Cnpj.Substring(0,8) == cnpj.Substring(0,8);
+            => Cnpj.Substring(0, 8) == cnpj.Substring(0, 8);
         public bool IsStateGovernment() => Segment.IsState() && Segment.IsGovernmentType();
         public bool IsFederalGovernment() => Segment.IsFederal() && Segment.IsGovernmentType();
     }
