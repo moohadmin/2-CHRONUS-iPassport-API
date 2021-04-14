@@ -226,6 +226,17 @@ namespace iPassport.Test.Services
             Assert.AreEqual(string.Format(_localizer["RequiredField"], _localizer["IsActive"]), ex.Message);
         }
         [TestMethod]
+        public void Add_NotSaveDuplicateCnpj()
+        {
+            //Arrage
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.IsActive == true);
+            _mockRepository.Setup(x => x.CnpjAlreadyRegistered(It.IsAny<string>()).Result).Returns(true);
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Cnpj"])), ex.Message);
+            _mockRepository.Verify(x => x.CnpjAlreadyRegistered(It.IsAny<string>()));
+        }
+        [TestMethod]
         public void Add_MustHaveAddress()
         {
             //Arrage
@@ -260,30 +271,280 @@ namespace iPassport.Test.Services
             _mockCompanySegmentRepository.Verify(x => x.GetLoaded(It.IsAny<Guid>()));
         }
         [TestMethod]
-        public void Add_PrivateType_SegmentHealth_HeadQuarter_MustReturnOk()
+        public void Add_PrivateType_MustHaveIsHeadquartersValue()
         {
             // Arrange
             var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
-                    && x.IsActive == true && x.IsHeadquarters == true && x.ParentId == null);
+                    && x.IsActive == true && x.IsHeadquarters == null);
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());
-            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetHealthType());
-
-            // Act
-            var result = _service.Add(mockRequest);
+            
 
             // Assert
-            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
-            _mockRepository.Verify(x => x.InsertAsync(It.IsAny<Company>()));
-            _mockCompanySegmentRepository.Verify(x => x.GetLoaded(It.IsAny<Guid>()));
-            _mockRepository.Verify(x => x.GetLoadedCompanyById(It.IsAny<Guid>()));
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["RequiredField"], _localizer["IsHeadquarters"]), ex.Message);
+                        
+        }
+        [TestMethod]
+        public void Add_PrivateType_Headquarter_MustNotHaveParentIdValue()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == true && x.ParentId == Guid.NewGuid());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]), ex.Message);
+
+        }
+        [TestMethod]
+        public void Add_PrivateType_BranchCompany_MustHaveParentIdValue()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == false && x.ParentId == null);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["RequiredField"], _localizer["ParentId"]), ex.Message);
+
+        }
+        [TestMethod]
+        [DataRow(null, null, null, null)]
+        [DataRow(false, ECompanyType.Private, true, ECompanySegmentType.Health)]
+        [DataRow(true, ECompanyType.Private, false, ECompanySegmentType.Health)]
+        [DataRow(true, ECompanyType.Government, true, ECompanySegmentType.Municipal)]
+        [DataRow(true, ECompanyType.Private, true, ECompanySegmentType.Contractor)]
+        public void Add_PrivateType_BranchCompany_MustBeValidHeadquarter(bool? Isheadquarter, ECompanyType? type, bool? isActive, ECompanySegmentType? segmentType)
+        {
+            // Arrange
+            var headquarterReturn = CompanySeed.Get(Isheadquarter, type, isActive, segmentType);
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == false && x.ParentId == Guid.NewGuid());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());
+            if(headquarterReturn!=null)
+                _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(headquarterReturn);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(_localizer["HeadquarterNotFoundOrNotValid"], ex.Message);
+
+        }
+
+        [TestMethod]
+        [DataRow("66379676000106")]
+        [DataRow("45913289000178")]
+        [DataRow("4591328")]
+        public void Add_PrivateType_BranchCompany_MustBeValidBranchCnpj(string cnpj)
+        {
+            // Arrange
+            var HeadquarterCpf = "66379676000146";
+            var headquarterName = "EmpresaMatriz";
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == false && x.ParentId == Guid.NewGuid() 
+                    && x.Cnpj == cnpj);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());            
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get(true,ECompanyType.Private,true, ECompanySegmentType.Health,HeadquarterCpf,headquarterName));
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["BranchCnpjNotValid"], headquarterName), ex.Message);
+        }
+        [TestMethod]
+        public void Add_GovernmentType_MustNotHaveIsHeadquartersValue()
+        {
+            // Arrange
+            var governmentSegment = CompanySegmentSeed.GetMunicipalType();
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == false);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(governmentSegment);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["FieldMustBeNull"], _localizer["IsHeadquarters"]), ex.Message);
+        }
+        [TestMethod]
+        public void Add_GovernmentType_FederalSegment_MustNotHaveParentIdValue()
+        {
+            // Arrange
+            var federalSegment = CompanySegmentSeed.GetFederalType();
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == null && x.ParentId == Guid.NewGuid());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(federalSegment);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]), ex.Message);
+        }
+        [TestMethod]
+        [DataRow(ECompanySegmentType.Federal, "Country")]
+        [DataRow(ECompanySegmentType.State, "State")]
+        [DataRow(ECompanySegmentType.Municipal, "City")]
+        public void Add_GovernmentType_MustNotHaveSameLocaleCompany(ECompanySegmentType segmentType, string messagePart)
+        {
+            // Arrange
+            var segment = CompanySegmentSeed.Get(segmentType);
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == null && x.ParentId == null);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(true);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer[messagePart]), ex.Message);
+        }
+        [TestMethod]        
+        [DataRow(ECompanySegmentType.State)]
+        [DataRow(ECompanySegmentType.Municipal)]
+        public void Add_GovernmentType_StateOrMunicipalSegments_WithoutCandidateParentCompany_MustNotHaveParentId(ECompanySegmentType segmentType)
+        {
+            // Arrange
+            var segment = CompanySegmentSeed.Get(segmentType);
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == null && x.ParentId == Guid.NewGuid());
+
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            if (ECompanySegmentType.Municipal == segmentType)
+                _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
+            else
+                _mockRepository.Setup(x => x.GetPublicStateHeadquarters(It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]), ex.Message);
+        }
+        [TestMethod]
+        [DataRow(ECompanySegmentType.State)]
+        [DataRow(ECompanySegmentType.Municipal)]
+        public void Add_GovernmentType_StateOrMunicipalSegments_WithoutCandidateParentCompanyActive_MustNotHaveParentId(ECompanySegmentType segmentType)
+        {
+            // Arrange
+            var segment = CompanySegmentSeed.Get(segmentType);
+            var candidateParentCompany = CompanySeed.GetCompanies(false);
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == null && x.ParentId == Guid.NewGuid());
+
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            if (ECompanySegmentType.Municipal == segmentType)
+                _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>()).Result).Returns(candidateParentCompany);
+            else
+                _mockRepository.Setup(x => x.GetPublicStateHeadquarters(It.IsAny<Guid>()).Result).Returns(candidateParentCompany);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]), ex.Message);
+        }
+        [TestMethod]
+        [DataRow(ECompanySegmentType.State)]
+        [DataRow(ECompanySegmentType.Municipal)]
+        public void Add_GovernmentType_StateOrMunicipalSegments_MustHaveParentId_In_CandidateParentCompanies(ECompanySegmentType segmentType)
+        {
+            // Arrange
+            var segment = CompanySegmentSeed.Get(segmentType);
+            var candidateParentCompany = CompanySeed.GetCompanies(true);
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == null && x.ParentId == Guid.Empty);
+
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            if (ECompanySegmentType.Municipal == segmentType)
+                _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>()).Result).Returns(candidateParentCompany);
+            else
+                _mockRepository.Setup(x => x.GetPublicStateHeadquarters(It.IsAny<Guid>()).Result).Returns(candidateParentCompany);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(_localizer["HeadquarterNotFoundOrNotValid"], ex.Message);
+        }
+        [TestMethod]
+        [DataRow(ECompanySegmentType.Contractor,true)]
+        [DataRow(ECompanySegmentType.Contractor,false)]
+        public void Add_WhenNotSave_MustReturnError(ECompanySegmentType segmentType, bool IsActive)
+        {
+            // Arrange
+            var segment = CompanySegmentSeed.Get(segmentType);            
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == IsActive && x.IsHeadquarters == true && x.ParentId == null);
+
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(false);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
+            Assert.AreEqual(_localizer["OperationNotPerformed"], ex.Message);
+        }
+
+        [TestMethod]
+        [DataRow(ECompanySegmentType.Federal,null)]
+        [DataRow(ECompanySegmentType.State,null)]
+        [DataRow(ECompanySegmentType.Municipal, null)]
+        [DataRow(ECompanySegmentType.Health,true)]
+        [DataRow(ECompanySegmentType.Contractor, true)]
+        public void Add_MustReturnOk(ECompanySegmentType segmentType, bool? isHeadquarters )
+        {
+            // Arrange
+            var segment = CompanySegmentSeed.Get(segmentType);
+            var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
+                    && x.IsActive == true && x.IsHeadquarters == isHeadquarters && x.ParentId == null);
+
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result)
+                    .Returns(CompanySeed.Get(isHeadquarters, null, true, segmentType));
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
+            
+            if(ECompanySegmentType.Federal == segmentType)
+                _mockRepository.Setup(x => x.HasBranchCompanyToAssociateInFederal(It.IsAny<Guid>()).Result).Returns(true);
+            else if (ECompanySegmentType.Municipal == segmentType)
+                _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
+            else if(ECompanySegmentType.State == segmentType)
+            {
+                _mockRepository.Setup(x => x.GetPublicStateHeadquarters(It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
+                _mockRepository.Setup(x => x.HasBranchCompanyToAssociateInState(It.IsAny<Guid>()).Result).Returns(false);
+            }
+                
+            //Act
+            var result = _service.Add(mockRequest);
+
+            // Assert            
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.AreEqual(true, result.Result.Success);
             Assert.IsInstanceOfType(result.Result.Data, typeof(CompanyCreateResponseViewModel));
+            
         }
+
         #endregion
-
-
     }
 }

@@ -74,7 +74,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
                 && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal
                 && x.Address.City.StateId == stateId);
 
-        public async Task<bool> HasSameSegmentAndLocaleGovernment(Guid localId, ECompanySegmentType segmentType)
+        public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
         {
             return segmentType switch
             {

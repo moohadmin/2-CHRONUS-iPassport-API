@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -15,14 +16,25 @@ namespace iPassport.Test.Seeds
             CityId = Guid.NewGuid(),
             Description = "Description"
         };
-        public static IList<Company> GetCompanies()
+        public static IList<Company> GetCompanies(bool active = true)
         {
+            var company2 = new Company("Company2", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), null, Guid.NewGuid(), null);
+            var company3 = new Company("Company3", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), null, Guid.NewGuid(), null);
+            var company4 = new Company("Company4", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), null, Guid.NewGuid(), null);
+            var company5 = new Company("Company5", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), null, Guid.NewGuid(), null);
+            if (!active)
+            {
+                company2.Deactivate(Guid.NewGuid());
+                company3.Deactivate(Guid.NewGuid());
+                company4.Deactivate(Guid.NewGuid());
+                company5.Deactivate(Guid.NewGuid());
+            }
             return new List<Company>()
             {
-                new Company("Company2","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null),
-                new Company("Company3","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null),
-                new Company("Company4","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null),
-                new Company("Company5","TradeName" ,"00560551000100", GetAddress(), Guid.NewGuid(), null,Guid.NewGuid(),null)
+               company2,
+               company3,
+               company4,
+               company5
             };
         }
 
@@ -30,12 +42,48 @@ namespace iPassport.Test.Seeds
         {
             return new PagedData<Company>() { Data = GetCompanies() };
         }
-        public static Company GetHealthType()
+        
+        public static Company Get(bool? Isheadquarter, ECompanyType? type, bool? isActive, ECompanySegmentType? segment = null, string cnpj = "01948981000166", string name = "Company1")
         {
-            var healthCompany = new Company("Company1", "TradeName", "00560551000100", GetAddress(), Guid.NewGuid(), true, Guid.NewGuid(), null);
-            healthCompany.Segment = CompanySegmentSeed.GetHealthType();
+            if (!Isheadquarter.HasValue && !type.HasValue && !isActive.HasValue)
+                return null;
 
-            return healthCompany;
+            var company = new Company(name, "TradeName", cnpj, GetAddress(), Guid.NewGuid(), Isheadquarter, Guid.NewGuid(), null);
+            if(segment != null)
+            {
+                company.Segment = segment.Value switch
+                {
+                    ECompanySegmentType.Municipal => CompanySegmentSeed.GetMunicipalType(),
+                    ECompanySegmentType.Health => CompanySegmentSeed.GetHealthType(),
+                    ECompanySegmentType.Contractor => CompanySegmentSeed.GetContractorType(),
+                    ECompanySegmentType.Federal => CompanySegmentSeed.GetFederalType(),
+                    ECompanySegmentType.State => CompanySegmentSeed.GetStateType(),
+                    _ => null,
+                };
+            }
+            else
+            {
+                switch (type)
+                {
+                    case ECompanyType.Government:
+                        company.Segment = CompanySegmentSeed.GetMunicipalType();
+                        break;
+                    case ECompanyType.Private:
+                        company.Segment = CompanySegmentSeed.GetHealthType();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+            if (!isActive.GetValueOrDefault())
+                company.Deactivate(Guid.NewGuid());
+
+            company.Address = AddressSeed.GetLoaded();
+
+            return company;
         }
+        
+
     }
 }
