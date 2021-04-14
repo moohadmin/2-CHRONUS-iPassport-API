@@ -41,11 +41,11 @@ namespace iPassport.Domain.Entities
         public static Company Create(CompanyCreateDto dto)
                 => new Company(dto.Name, dto.TradeName, dto.Cnpj, dto.Address, dto.SegmentId, dto.IsHeadquarters, dto.ParentId, dto.Responsible);
 
-        private Address CreateCompanyAddress(AddressAbstractDto dto) => new Address().Create(dto);
+        private Address CreateCompanyAddress(AddressCreateDto dto) => new Address().Create(dto);
 
         public void ChangeCompany(CompanyEditDto dto)
         {
-            Address = CreateCompanyAddress(dto.Address);
+            Address.ChangeAddress(dto.Address);
             Cnpj = dto.Cnpj;
             Name = dto.Name;
             ParentId = dto.ParentId;

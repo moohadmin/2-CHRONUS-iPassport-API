@@ -12,7 +12,5 @@ namespace iPassport.Domain.Dtos
         public Guid? ParentId { get; set; }
         public bool? IsActive { get; set; }
 
-        public virtual AddressAbstractDto Address { get; set; }
-
     }
 }

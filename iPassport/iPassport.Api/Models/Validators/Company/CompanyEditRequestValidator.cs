@@ -29,16 +29,17 @@ namespace iPassport.Api.Models.Validators.Company
 
             RuleFor(x => x.Cnpj)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "CNPJ"));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Cnpj"]));
 
-            RuleFor(x => x.Cnpj)
-                 .Must(x => Regex.IsMatch(x, "^[0-9]{14}$")).WithMessage(string.Format(localizer["InvalidField"], "CNPJ"))
-                 .Must(x => CnpjUtils.Valid(x)).WithMessage(string.Format(localizer["InvalidField"], "Cnpj"))
+            RuleFor(x => x.Cnpj).Cascade(CascadeMode.Stop)
+                 .Must(x => Regex.IsMatch(x, "^[0-9]{14}$")).WithMessage(string.Format(localizer["InvalidField"], localizer["Cnpj"]))
+                 .Must(x => CnpjUtils.Valid(x)).WithMessage(string.Format(localizer["InvalidField"], localizer["Cnpj"]))
                  .When(y => !string.IsNullOrWhiteSpace(y.Cnpj));
 
             RuleFor(s => s.Address)
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Address"]));
+
             RuleFor(s => s.Address)
                 .SetValidator(new AddressEditValidator(localizer))
                 .When(x => x.Address != null);
@@ -50,7 +51,6 @@ namespace iPassport.Api.Models.Validators.Company
             RuleFor(s => s.Responsible)
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Responsible"]));
-            
             RuleFor(s => s.Responsible)
                 .SetValidator(new CompanyResponsibleEditRequestValidator(localizer))
                 .When(x => x.Responsible != null);

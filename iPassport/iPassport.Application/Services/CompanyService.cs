@@ -31,6 +31,7 @@ namespace iPassport.Application.Services
         private readonly ICompanyTypeRepository _companyTypeRepository;
         private readonly ICompanySegmentRepository _companySegmentRepository;
         private readonly IStateRepository _stateRepository;
+        private readonly IAddressRepository _addressRepository;
         private readonly IHttpContextAccessor _accessor;
 
         public CompanyService(
@@ -40,6 +41,7 @@ namespace iPassport.Application.Services
             ICityRepository cityRepository,
             ICompanyTypeRepository companyTypeRepository,
             IStateRepository stateRepository,
+            IAddressRepository addressRepository,
             ICompanySegmentRepository companySegmentRepository,
             IHttpContextAccessor accessor)
         {
@@ -49,13 +51,14 @@ namespace iPassport.Application.Services
             _cityRepository = cityRepository;
             _companyTypeRepository = companyTypeRepository;
             _stateRepository = stateRepository;
+            _addressRepository = addressRepository;
             _companySegmentRepository = companySegmentRepository;
             _accessor = accessor;
         }
 
         public async Task<ResponseApi> Add(CompanyCreateDto dto)
         {
-            await ValidateToSave(dto);
+            await ValidateToSave(dto, dto.Address.CityId);
 
             var company = Company.Create(dto);
             if (!dto.IsActive.Value)
@@ -77,7 +80,7 @@ namespace iPassport.Application.Services
             if (company == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            await ValidateToSave(dto);
+            await ValidateToSave(dto, dto.Address.CityId, dto.Address.Id);
 
             company.ChangeCompany(dto);
 
@@ -147,7 +150,6 @@ namespace iPassport.Application.Services
                 {
                     var state = await _stateRepository.Find(filter.LocalityId.Value);
                     res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(state.Id, state.CountryId));
-
                 }
 
                 else if (companyType.Identifyer == (int)ECompanyType.Government && companySegment.Identifyer == (int)ECompanySegmentType.State)
@@ -158,35 +160,39 @@ namespace iPassport.Application.Services
         }
 
         #region Private
-        private async Task<bool> ValidateToSave(CompanyAbstractDto dto)
+        private async Task<bool> ValidateToSave(CompanyAbstractDto dto, Guid cityId, Guid? addressId = null)
         {
             if (dto.IsActive == null)
                 throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["IsActive"]));
 
-            await ValidateAddress(dto);
-            await ValidateSegment(dto);
+            if(await _companyRepository.CnpjAlreadyRegistered(dto.Cnpj))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Cnpj"]));
+
+            await ValidateAddress(cityId, addressId);
+            await ValidateSegment(dto, cityId);
 
             return true;
         }
 
-        private async Task<bool> ValidateAddress(CompanyAbstractDto dto)
+        private async Task<bool> ValidateAddress(Guid cityId, Guid? addressId = null)
         {
-            if (dto.Address == null)
+            if (addressId != null && await _addressRepository.Find(addressId.Value) == null)
                 throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["Address"]));
-            if (await _cityRepository.Find(dto.Address.CityId) == null)
+            
+            if (await _cityRepository.Find(cityId) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             return true;
         }
 
-        private async Task<bool> ValidateSegment(CompanyAbstractDto dto)
+        private async Task<bool> ValidateSegment(CompanyAbstractDto dto, Guid cityId)
         {
             var segment = await _companySegmentRepository.GetLoaded(dto.SegmentId);
             if (segment == null)
                 throw new BusinessException(_localizer["SegmentNotFound"]);
 
             await ValidatePrivateSegment(dto, segment);
-            await ValidateGovernmentSegment(dto, segment);
+            await ValidateGovernmentSegment(dto, segment, cityId);
 
             return true;
         }
@@ -205,11 +211,11 @@ namespace iPassport.Application.Services
 
                     var headquarter = await _companyRepository.GetLoadedCompanyById(dto.ParentId.Value);
 
-                    if (headquarter == null || headquarter.DeactivationDate.HasValue || !headquarter.IsPrivateHeadquarters())
+                    if (headquarter == null || headquarter.DeactivationDate.HasValue ||!headquarter.IsPrivateHeadquarters() || headquarter.Segment.Identifyer != segment.Identifyer)
                         throw new BusinessException(_localizer["HeadquarterNotFoundOrNotValid"]);
 
                     if (!CnpjUtils.Valid(dto.Cnpj) || !headquarter.BranchCompanyCnpjIsValid(dto.Cnpj))
-                        throw new BusinessException(_localizer["BranchCnpjNotValid"]);
+                        throw new BusinessException(string.Format(_localizer["BranchCnpjNotValid"], headquarter.Name));
                 }
                 else if (dto.ParentId.HasValue)
                     throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
@@ -218,33 +224,47 @@ namespace iPassport.Application.Services
             return true;
         }
 
-        private async Task<bool> ValidateGovernmentSegment(CompanyAbstractDto dto, CompanySegment segment)
+        private async Task<bool> ValidateGovernmentSegment(CompanyAbstractDto dto, CompanySegment segment, Guid cityId)
         {
             if (segment.IsGovernmentType())
             {
                 if (dto.IsHeadquarters.HasValue)
                     throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["IsHeadquarters"]));
 
-                if (!(segment.IsMunicipal() || segment.IsState()))
+                var city = await _cityRepository.FindLoadedById(cityId);
+
+                if (segment.IsFederal())
                 {
                     if (dto.ParentId.HasValue)
                         throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
+
+                    if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.State.CountryId, ECompanySegmentType.Federal))
+                        throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"],_localizer["Country"]));
                 }
                 else
                 {
-                    IList<Company> canBeParentCompanies;
-                    var city = await _cityRepository.FindLoadedById(dto.Address.CityId);
+                    IList<Company> canBeParentCompanies = new List<Company>();
                     if (segment.IsMunicipal())
-                        canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId, city.State.CountryId);
-                    else
-                        canBeParentCompanies = await _companyRepository.GetPublicStateHeadquarters(city.State.CountryId);
+                    {
+                        if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.Id, ECompanySegmentType.Municipal))
+                            throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["City"]));
 
-                    if (canBeParentCompanies.Any())
+                        canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId, city.State.CountryId);
+                    }
+                    else if(segment.IsState())
+                    {
+                        if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.StateId, ECompanySegmentType.State))
+                            throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["State"]));
+
+                        canBeParentCompanies = await _companyRepository.GetPublicStateHeadquarters(city.State.CountryId);
+                    }
+
+                    if (canBeParentCompanies.Any(x => !x.DeactivationDate.HasValue))
                     {
                         if (!dto.ParentId.HasValue)
                             throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["ParentId"]));
 
-                        if (canBeParentCompanies.FirstOrDefault(x => x.Id == dto.ParentId.Value && !x.DeactivationDate.HasValue) == null)
+                        if (canBeParentCompanies.FirstOrDefault(x => x.Id == dto.ParentId.Value) == null)
                             throw new BusinessException(_localizer["HeadquarterNotFoundOrNotValid"]);
                     }
                     else if (dto.ParentId.HasValue)

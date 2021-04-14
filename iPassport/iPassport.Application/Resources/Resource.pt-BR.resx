@@ -787,9 +787,21 @@
     <value>Identificador da Empresa Matriz</value>
   </data>
 	<data name="BranchCnpjNotValid" xml:space="preserve">
-    <value>O CNPJ informado no cadastro não se refere a um CNPJ filial da 'informação inserida para o campo Empresa Matriz</value>
+    <value>O CNPJ informado no cadastro não se refere a um CNPJ filial da {0}</value>
   </data>
 	<data name="HeadquarterNotFoundOrNotValid" xml:space="preserve">
     <value>Empresa matriz não encontrada ou inválida.</value>
+  </data>
+	<data name="CompanyAlreadyRegisteredToSegmentAndLocal" xml:space="preserve">
+    <value>Já existe empresa cadastrada com esse segmento nesse {0}</value>
+  </data>
+	<data name="City" xml:space="preserve">
+    <value>Cidade</value>
+  </data>
+	<data name="State" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+	<data name="Cnpj" xml:space="preserve">
+    <value>CNPJ</value>
   </data>
 </root>
