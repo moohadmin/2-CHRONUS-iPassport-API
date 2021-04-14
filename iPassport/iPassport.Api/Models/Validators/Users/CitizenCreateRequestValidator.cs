@@ -34,7 +34,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .Cascade(CascadeMode.Stop)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], localizer["Birthday"]))
                 .SetValidator(new RequiredFieldValidator<DateTime?>(localizer["Birthday"], localizer))
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"])
+                .Must(x => x.Value.Date <= DateTime.UtcNow.Date).WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"])
                 .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage(string.Format(localizer["InvalidField"], localizer["Birthday"]));
 
             RuleFor(x => x.Cpf)
