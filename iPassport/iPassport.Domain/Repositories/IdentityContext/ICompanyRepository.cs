@@ -12,7 +12,7 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<Company> GetLoadedCompanyById(Guid id);
         Task<IList<Company>> FindListCnpj(List<string> listCnpj);
         Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType);
-        Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId);
+        Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId, Guid countryId);
         Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId);
         Task<bool> HasBranchCompanyToAssociateInFederal(Guid countryId);
         Task<bool> HasBranchCompanyToAssociateInState(Guid stateId);

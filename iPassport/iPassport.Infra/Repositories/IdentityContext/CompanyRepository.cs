@@ -48,10 +48,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Private
                             && x.ParentId == null).ToListAsync();
 
-        public async Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId) =>
-            await GetLoadedHeadquarters().Where(x => (x.Segment.Identifyer == (int)ECompanySegmentType.State
-                                                        || x.Segment.Identifyer == (int)ECompanySegmentType.Federal)
-                            && x.Address.City.StateId == stateId).ToListAsync();
+        public async Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId, Guid countryId) =>
+            await GetLoadedHeadquarters().Where(x => (x.Segment.Identifyer == (int)ECompanySegmentType.State && x.Address.City.StateId == stateId)
+                                                     || (x.Segment.Identifyer == (int)ECompanySegmentType.Federal && x.Address.City.State.CountryId == countryId)).ToListAsync();
 
         public async Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId) =>
             await GetLoadedHeadquarters().Where(x => x.Segment.Identifyer == (int)ECompanySegmentType.Federal

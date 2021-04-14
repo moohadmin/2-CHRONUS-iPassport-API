@@ -30,6 +30,7 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
         private readonly ICompanyTypeRepository _companyTypeRepository;
         private readonly ICompanySegmentRepository _companySegmentRepository;
+        private readonly IStateRepository _stateRepository;
         private readonly IHttpContextAccessor _accessor;
 
         public CompanyService(
@@ -38,6 +39,7 @@ namespace iPassport.Application.Services
             IMapper mapper,
             ICityRepository cityRepository,
             ICompanyTypeRepository companyTypeRepository,
+            IStateRepository stateRepository,
             ICompanySegmentRepository companySegmentRepository,
             IHttpContextAccessor accessor)
         {
@@ -46,6 +48,7 @@ namespace iPassport.Application.Services
             _mapper = mapper;
             _cityRepository = cityRepository;
             _companyTypeRepository = companyTypeRepository;
+            _stateRepository = stateRepository;
             _companySegmentRepository = companySegmentRepository;
             _accessor = accessor;
         }
@@ -141,7 +144,11 @@ namespace iPassport.Application.Services
                     res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPrivateHeadquarters(filter.Cnpj, companySegment.Identifyer));
 
                 else if (companyType.Identifyer == (int)ECompanyType.Government && companySegment.Identifyer == (int)ECompanySegmentType.Municipal)
-                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(filter.LocalityId.Value));
+                {
+                    var state = await _stateRepository.Find(filter.LocalityId.Value);
+                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(state.Id, state.CountryId));
+
+                }
 
                 else if (companyType.Identifyer == (int)ECompanyType.Government && companySegment.Identifyer == (int)ECompanySegmentType.State)
                     res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicStateHeadquarters(filter.LocalityId.Value));
@@ -228,7 +235,7 @@ namespace iPassport.Application.Services
                     IList<Company> canBeParentCompanies;
                     var city = await _cityRepository.FindLoadedById(dto.Address.CityId);
                     if (segment.IsMunicipal())
-                        canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId);
+                        canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId, city.State.CountryId);
                     else
                         canBeParentCompanies = await _companyRepository.GetPublicStateHeadquarters(city.State.CountryId);
 
