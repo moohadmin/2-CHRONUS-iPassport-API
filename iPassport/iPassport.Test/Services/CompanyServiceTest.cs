@@ -556,7 +556,7 @@ namespace iPassport.Test.Services
             // Arrange
             var segment = CompanySegmentSeed.Get(segmentType);
             var mockRequest = Mock.Of<CompanyEditDto>(x => x.Id == Guid.NewGuid()
-                    && x.Responsible == Mock.Of<CompanyResponsibleEditDto>(y => y.CompanyId == x.Id)
+                    && x.Responsible == Mock.Of<CompanyResponsibleDto>(y => y.CompanyId == x.Id)
                     && x.Address == Mock.Of<AddressEditDto>(z => z.Id == Guid.NewGuid()) 
                     && x.IsActive == true 
                     && x.IsHeadquarters == isHeadquarters 

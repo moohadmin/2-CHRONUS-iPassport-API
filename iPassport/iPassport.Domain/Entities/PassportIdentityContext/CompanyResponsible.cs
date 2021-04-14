@@ -23,7 +23,7 @@ namespace iPassport.Domain.Entities
         public string Landline { get; private set; }
         public Company Company { get; set; }
 
-        public static CompanyResponsible Create(CompanyResponsibleCreateDto dto) =>
+        public static CompanyResponsible Create(CompanyResponsibleDto dto) =>
             new(dto.CompanyId.Value
                 , dto.Name
                 , dto.Occupation
@@ -31,7 +31,7 @@ namespace iPassport.Domain.Entities
                 , dto.MobilePhone
                 , dto.Landline);
 
-        public void ChangeResponsible(CompanyResponsibleEditDto dto)
+        public void ChangeResponsible(CompanyResponsibleDto dto)
         {
             Name = dto.Name;
             Occupation = dto.Occupation;

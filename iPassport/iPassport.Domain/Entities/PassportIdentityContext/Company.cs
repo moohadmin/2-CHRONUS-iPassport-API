@@ -8,7 +8,7 @@ namespace iPassport.Domain.Entities
     {
         public Company() { }
         public Company(string name, string tradeName, string cnpj, AddressCreateDto addressDto, Guid? segmentId, bool? isHeadquarters,
-            Guid? parentId, CompanyResponsibleCreateDto responsible)
+            Guid? parentId, CompanyResponsibleDto responsible)
         {
             Id = Guid.NewGuid();
             Name = name;
@@ -55,7 +55,7 @@ namespace iPassport.Domain.Entities
             TradeName = dto.TradeName;
         }
 
-        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleCreateDto dto)
+        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleDto dto)
         {
             dto.CompanyId = companyId;
             return CompanyResponsible.Create(dto);
