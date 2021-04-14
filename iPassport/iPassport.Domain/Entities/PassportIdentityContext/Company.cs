@@ -42,14 +42,25 @@ namespace iPassport.Domain.Entities
         public static Company Create(CompanyCreateDto dto) 
                 => new Company(dto.Name, dto.TradeName, dto.Cnpj, dto.Address, dto.SegmentId, dto.IsHeadquarters, dto.ParentId, dto.Responsible);
 
-        private Address CreateCompanyAddress(AddressCreateDto dto) => new Address().Create(dto);
-        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleCreateDto dto)
+        private Address CreateCompanyAddress(AddressAbstractDto dto) => new Address().Create(dto);
+
+        public void ChangeCompany(CompanyEditDto dto)
+        {
+            Address = CreateCompanyAddress(dto.Address);
+            Cnpj = dto.Cnpj;
+            Name = dto.Name;
+            ParentId = dto.ParentId;
+            Responsible = CreateResponsible(Id, dto.Responsible);
+            SegmentId = dto.SegmentId;
+            TradeName = dto.TradeName;
+        }
+
+        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleAbstractDto dto)
         {
             dto.CompanyId = companyId;
             return CompanyResponsible.Create(dto);
         }
         
-
         public void Deactivate(Guid deactivationUserId)
         {
             DeactivationUserId = deactivationUserId;
@@ -67,6 +78,5 @@ namespace iPassport.Domain.Entities
             => Cnpj.Substring(0,8) == cnpj.Substring(0,8);
         public bool IsStateGovernment() => Segment.IsState() && Segment.IsGovernmentType();
         public bool IsFederalGovernment() => Segment.IsFederal() && Segment.IsGovernmentType();
-
     }
 }

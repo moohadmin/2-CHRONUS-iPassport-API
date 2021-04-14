@@ -23,7 +23,7 @@ namespace iPassport.Domain.Entities
         public string Landline { get; private set; }
         public Company Company { get; set; }
 
-        public static CompanyResponsible Create(CompanyResponsibleCreateDto dto) =>
+        public static CompanyResponsible Create(CompanyResponsibleAbstractDto dto) =>
             new(dto.CompanyId.Value
                 , dto.Name
                 , dto.Occupation

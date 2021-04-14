@@ -1,22 +1,26 @@
 ﻿using FluentValidation;
-using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Company;
 using iPassport.Application.Resources;
 using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
 
-namespace iPassport.Api.Models.Validators.Plans
+namespace iPassport.Api.Models.Validators.Company
 {
     /// <summary>
-    /// Company Responsible Request Validator
+    /// Company Responsible Edit Request Validator
     /// </summary>
-    public class CompanyResponsibleRequestValidator : AbstractValidator<CompanyResponsibleCreateRequest>
+    public class CompanyResponsibleEditRequestValidator : AbstractValidator<CompanyResponsibleEditRequest>
     {
         /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="localizer">String localizer</param>
-        public CompanyResponsibleRequestValidator(IStringLocalizer<Resource> localizer)
+        public CompanyResponsibleEditRequestValidator(IStringLocalizer<Resource> localizer)
         {
+            RuleFor(x => x.Id)
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], "Id"));
+
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Name"]));
@@ -28,7 +32,7 @@ namespace iPassport.Api.Models.Validators.Plans
 
             RuleFor(x => x.MobilePhone)
                 .Must(y => PhoneNumberUtils.ValidMobile(y))
-                .WithMessage(string.Format(localizer["InvalidField"], localizer["ResponsiblePersonMobilePhone"]))                
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["ResponsiblePersonMobilePhone"]))
                 .When(x => !string.IsNullOrWhiteSpace(x.MobilePhone));
 
             RuleFor(x => x.Landline)
