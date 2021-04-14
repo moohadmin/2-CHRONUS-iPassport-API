@@ -42,7 +42,7 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.Email)
                 .EmailAddress()
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["Email"]))
-                .When(y => !string.IsNullOrWhiteSpace(y.Email));                
+                .When(y => !string.IsNullOrWhiteSpace(y.Email));
 
             RuleFor(x => x.Telephone)
                 .Must(y => PhoneNumberUtils.ValidMobile(y))
@@ -52,6 +52,13 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.CompanyId)
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Company"]));
+
+            RuleFor(x => x.Password)
+                .Must(y => {
+                    return Regex.IsMatch(y, "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$");
+                })
+                .WithMessage(localizer["PasswordOutPattern"])
+                .When(y => !string.IsNullOrWhiteSpace(y.Password));
 
             RuleFor(x => x.ProfileId)
                 .NotEmpty()

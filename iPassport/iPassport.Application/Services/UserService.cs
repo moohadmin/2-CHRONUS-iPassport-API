@@ -576,7 +576,7 @@ namespace iPassport.Application.Services
 
             await ValidateToSaveAdmin(dto);
 
-            currentAdminUser.ChangeUser(dto);           
+            currentAdminUser.ChangeUser(dto);
             currentAdminUserDetails.ChangeUserDetail(dto);
 
             UserToken currentUserActiveToken = null;
@@ -597,6 +597,10 @@ namespace iPassport.Application.Services
                 _unitOfWork.BeginTransactionPassport();
 
                 var result = await _userManager.UpdateAsync(currentAdminUser);
+
+                if(!string.IsNullOrEmpty(dto.Password))
+                    await ChangeUserPassword(currentAdminUser, dto.Password);
+
                 ValidateSaveUserIdentityResult(result);
 
                 if (!(await _detailsRepository.Update(currentAdminUserDetails)))
@@ -617,6 +621,15 @@ namespace iPassport.Application.Services
             }
 
             return new ResponseApi(true, _localizer["UserUpdated"], currentAdminUser.Id);
+        }
+
+        private async Task ChangeUserPassword(Users user, string password)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var changeResult = await _userManager.ResetPasswordAsync(user, token, password);
+
+            if (!changeResult.Succeeded)
+                throw new BusinessException(_localizer["PasswordChangeError"]);
         }
 
         public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
