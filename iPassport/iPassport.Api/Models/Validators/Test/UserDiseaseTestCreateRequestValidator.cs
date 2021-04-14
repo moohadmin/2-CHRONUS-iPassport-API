@@ -37,6 +37,10 @@ namespace iPassport.Api.Models.Validators.Vaccines
 
             RuleFor(x => x.ResultDate)
                  .GreaterThanOrEqualTo(x => x.TestDate).When(x => x.ResultDate.HasValue).WithMessage(localizer["TestResultDateCannotBeHiggerThenTestDate"]);
+
+            RuleFor(x => x.ResultDate)
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .When(x => x.ResultDate.HasValue).WithMessage(localizer["TestResultDateCannotBeHiggerThenCurrentDate"]);
         }
     }
 }
