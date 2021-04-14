@@ -30,7 +30,8 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(x => x.CreateDate)
                 .IsRequired();
 
-            builder.HasIndex(x => x.Cnpj);
+            builder.HasIndex(x => x.Cnpj)
+                .IsUnique();
 
             builder.HasIndex(x => x.Name);
 

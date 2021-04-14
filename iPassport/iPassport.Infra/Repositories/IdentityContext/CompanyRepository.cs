@@ -73,5 +73,23 @@ namespace iPassport.Infra.Repositories.IdentityContext
         private IQueryable<Company> GetLoadedHeadquarters() =>
             _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                   .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
+        public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
+        {
+            var segmentIdentifyer = (int)segmentType;
+            var query = _DbSet.Where(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == segmentIdentifyer);
+
+             query = segmentType switch
+            {
+                ECompanySegmentType.Municipal => query.Where(x => x.Address.CityId == localId),
+                ECompanySegmentType.State => query.Where(x => x.Address.City.StateId == localId),
+                ECompanySegmentType.Federal => query.Where(x => x.Address.City.State.CountryId == localId),
+                _ => query,
+            };
+
+            return await query.AnyAsync();
+        }
+
+        public async Task<bool> CnpjAlreadyRegistered(string cnpj)
+            => await _DbSet.AnyAsync(x => x.Cnpj.Equals(cnpj));
     }
 }

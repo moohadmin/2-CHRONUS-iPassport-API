@@ -24,7 +24,7 @@ namespace iPassport.Domain.Utils
         {
             if (!CommonPhoneNumberValid(landNumber))
                 return false;
-            if (landNumber.StartsWith("55") && (landNumber.Length < 12 || landNumber.Substring(2, 2).Equals("00")))
+            if (landNumber.StartsWith("55") && (landNumber.Length != 12 || landNumber.Substring(2, 2).Equals("00")))
                 return false;
 
             return true;
