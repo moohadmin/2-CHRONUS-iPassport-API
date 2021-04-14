@@ -626,7 +626,10 @@ namespace iPassport.Application.Services
         private async Task ChangeUserPassword(Users user, string password)
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            await _userManager.ResetPasswordAsync(user, token, password);
+            var changeResult = await _userManager.ResetPasswordAsync(user, token, password);
+
+            if (!changeResult.Succeeded)
+                throw new BusinessException(_localizer["PasswordChangeError"]);
         }
 
         public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
