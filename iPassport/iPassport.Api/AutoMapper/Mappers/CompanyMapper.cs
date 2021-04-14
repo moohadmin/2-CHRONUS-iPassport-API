@@ -32,6 +32,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Responsible, act => act.MapFrom(src => src.Responsible))                
                 .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive));
 
+            profile.CreateMap<CompanyEditRequest, CompanyEditDto>();
+
             profile.CreateMap<CompanyDto, CompanyViewModel>();
 
             profile.CreateMap<CompanyType, CompanyTypeViewModel>();
@@ -43,6 +45,8 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<GetHeadquarterCompanyRequest, GetHeadquarterCompanyFilter>();
 
             profile.CreateMap<CompanyResponsibleCreateRequest, CompanyResponsibleCreateDto>();
+            
+            profile.CreateMap<CompanyResponsibleEditRequest, CompanyResponsibleEditDto>();
 
             profile.CreateMap<Company, CompanyCreateResponseViewModel>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));

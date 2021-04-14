@@ -46,15 +46,16 @@ namespace iPassport.Domain.Entities
         public void ChangeCompany(CompanyEditDto dto)
         {
             Address.ChangeAddress(dto.Address);
+            Responsible?.ChangeResponsible(dto.Responsible);
+
             Cnpj = dto.Cnpj;
             Name = dto.Name;
             ParentId = dto.ParentId;
-            Responsible = CreateResponsible(Id, dto.Responsible);
             SegmentId = dto.SegmentId;
             TradeName = dto.TradeName;
         }
 
-        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleAbstractDto dto)
+        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleCreateDto dto)
         {
             dto.CompanyId = companyId;
             return CompanyResponsible.Create(dto);
@@ -65,11 +66,13 @@ namespace iPassport.Domain.Entities
             DeactivationUserId = deactivationUserId;
             DeactivationDate = DateTime.UtcNow;
         }
+
         public void Activate()
         {
             DeactivationUserId = null;
             DeactivationDate = null;
         }
+
         public bool IsActive() => !DeactivationDate.HasValue;
         public bool IsInactive() => DeactivationDate.HasValue;
         public bool IsPrivateHeadquarters() => IsHeadquarters.GetValueOrDefault() && Segment.CompanyType.IsPrivate();

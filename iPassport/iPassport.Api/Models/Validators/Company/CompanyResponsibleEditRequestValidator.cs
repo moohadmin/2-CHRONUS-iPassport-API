@@ -23,7 +23,7 @@ namespace iPassport.Api.Models.Validators.Company
 
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["Name"]));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["ResponsiblePersonName"]));
 
             RuleFor(x => x.Email)
                 .EmailAddress()

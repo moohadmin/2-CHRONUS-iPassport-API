@@ -71,7 +71,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
         private IQueryable<Company> GetLoadedHeadquarters() =>
             _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
-                  .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
+                  .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
+                  .Where(x => x.DeactivationDate == null);
+
         public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
         {
             var segmentIdentifyer = (int)segmentType;
