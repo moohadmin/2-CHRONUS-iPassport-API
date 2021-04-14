@@ -5,7 +5,7 @@ using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
 using System.Text.RegularExpressions;
 
-namespace iPassport.Api.Models.Validators.Plans
+namespace iPassport.Api.Models.Validators.Company
 {
     /// <summary>
     /// Company Create Request Validator
@@ -24,11 +24,11 @@ namespace iPassport.Api.Models.Validators.Plans
 
             RuleFor(x => x.Cnpj)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "CNPJ"));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Cnpj"]));
             
-            RuleFor(x => x.Cnpj)
-                 .Must(x => Regex.IsMatch(x, "^[0-9]{14}$")).WithMessage(string.Format(localizer["InvalidField"], "CNPJ"))
-                 .Must(x => CnpjUtils.Valid(x)).WithMessage(string.Format(localizer["InvalidField"], "Cnpj"))
+            RuleFor(x => x.Cnpj).Cascade(CascadeMode.Stop)
+                 .Must(x => Regex.IsMatch(x, "^[0-9]{14}$")).WithMessage(string.Format(localizer["InvalidField"], localizer["Cnpj"]))
+                 .Must(x => CnpjUtils.Valid(x)).WithMessage(string.Format(localizer["InvalidField"], localizer["Cnpj"]))
                  .When(y => !string.IsNullOrWhiteSpace(y.Cnpj));
 
             RuleFor(s => s.Address)

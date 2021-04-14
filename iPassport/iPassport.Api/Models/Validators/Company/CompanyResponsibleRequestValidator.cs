@@ -4,7 +4,7 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
 
-namespace iPassport.Api.Models.Validators.Plans
+namespace iPassport.Api.Models.Validators.Company
 {
     /// <summary>
     /// Company Responsible Request Validator
@@ -19,7 +19,7 @@ namespace iPassport.Api.Models.Validators.Plans
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["Name"]));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["ResponsiblePersonName"]));
 
             RuleFor(x => x.Email)
                 .EmailAddress()

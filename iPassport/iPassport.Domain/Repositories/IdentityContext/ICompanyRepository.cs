@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using System;
 using System.Collections.Generic;
@@ -16,5 +17,7 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId);
         Task<bool> HasBranchCompanyToAssociateInFederal(Guid countryId);
         Task<bool> HasBranchCompanyToAssociateInState(Guid stateId);
+        Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType);
+        Task<bool> CnpjAlreadyRegistered(string cnpj);
     }
 }
