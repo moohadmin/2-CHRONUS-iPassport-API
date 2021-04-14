@@ -33,7 +33,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
         public async Task<Company> GetLoadedCompanyById(Guid id) =>
             await _DbSet
             .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
-            .Include(x=> x.Segment).ThenInclude(x => x.CompanyType)        
+            .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
             .Include(x => x.ParentCompany)
             .Include(x => x.Responsible)
             .Include(x => x.DeactivationUser)
@@ -58,13 +58,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
                             && x.Address.City.State.CountryId == countryId
                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government).ToListAsync();
 
-        private IQueryable<Company> GetLoadedHeadquarters() =>
-            _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
-                  .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
-
-        public async Task<bool> HasBranchCompanyToAssociateInFederal(Guid countryId) => 
+        public async Task<bool> HasBranchCompanyToAssociateInFederal(Guid countryId) =>
             await _DbSet.AnyAsync(x => x.ParentId == null
-                && x.Segment.CompanyType.Identifyer == (int) ECompanyType.Government
+                && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
                 && (x.Segment.Identifyer == (int)ECompanySegmentType.State || x.Segment.Identifyer == (int)ECompanySegmentType.Municipal)
                 && x.Address.City.State.CountryId == countryId);
 
@@ -74,6 +70,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
                 && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal
                 && x.Address.City.StateId == stateId);
 
+        private IQueryable<Company> GetLoadedHeadquarters() =>
+            _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+                  .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
         public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
         {
             return segmentType switch

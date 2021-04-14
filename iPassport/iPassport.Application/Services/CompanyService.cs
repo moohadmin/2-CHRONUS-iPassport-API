@@ -77,7 +77,7 @@ namespace iPassport.Application.Services
 
             var result = _mapper.Map<CompanyViewModel>(res);
 
-            return new ResponseApi(true, _localizer["Companiies"], result);
+            return new ResponseApi(true, _localizer["Companies"], result);
         }
 
         public async Task<ResponseApi> GetAllTypes()
@@ -105,7 +105,6 @@ namespace iPassport.Application.Services
 
             if (companyType != null && companySegment != null)
             {
-
                 if (filter.LocalityId == null && companyType.Identifyer == (int)ECompanyType.Government)
                     throw new BusinessException(string.Format(_localizer["RequiredField"], _localizer["Locality"]));
                 
