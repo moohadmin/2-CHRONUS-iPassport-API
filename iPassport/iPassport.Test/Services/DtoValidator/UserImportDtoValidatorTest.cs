@@ -168,11 +168,11 @@ namespace iPassport.Test.Services.DtoValidator
     //    public void EmailInvalid()
     //    {
     //        // Act
-    //        var validationResult = _validator.Validate(UserImportDtoSeed.UserImportDtoWithInvalidEmail());
+    //       var validationResult = _validator.Validate(UserImportDtoSeed.UserImportDtoWithInvalidEmail());
 
     //        // Assert
     //        Assert.AreEqual(validationResult.Errors.Count(), 1);
-    //        Assert.AreEqual(validationResult.Errors.First().ErrorMessage, string.Format(resource.GetMessage("FieldInvalid"), resource.GetMessage("ColumnNameImportFileEmail")));
+    //        Assert.AreEqual(validationResult.Errors.First().ErrorMessage, resource.GetMessage("NonstandardField"));
     //        Assert.AreEqual(validationResult.Errors.First().PropertyName, "Email");
     //    }
 

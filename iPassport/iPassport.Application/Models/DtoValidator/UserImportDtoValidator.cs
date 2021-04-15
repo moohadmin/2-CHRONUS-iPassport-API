@@ -52,7 +52,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
             RuleFor(x => x.Email)
                 .EmailAddress()
                 .When(x => !string.IsNullOrWhiteSpace(x.Email))
-                .WithMessage(string.Format(localizer["FieldInvalid"], localizer["ColumnNameImportFileEmail"]));
+                .WithMessage(localizer["NonstandardField"]);
 
             RuleFor(x => x.Cep)
                 .Length(8)

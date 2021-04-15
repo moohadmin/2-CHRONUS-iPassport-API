@@ -896,7 +896,7 @@ namespace iPassport.Application.Services
 
                 Guid? id = healthUnits.Where(h => (string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjUniqueDose) || mappingResult.Result.HealthUnityCnpjUniqueDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneUniqueDose) || mappingResult.Result.HealthUnityIneUniqueDose == h.Ine)
-                                        && (mappingResult.Result.HealthUnityCodeUniqueDose.HasValue || mappingResult.Result.HealthUnityCodeUniqueDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
+                                        && (!mappingResult.Result.HealthUnityCodeUniqueDose.HasValue || mappingResult.Result.HealthUnityCodeUniqueDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
 
                 if (id == Guid.Empty && (!string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjUniqueDose) || !string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneUniqueDose) || mappingResult.Result.HealthUnityCodeUniqueDose.HasValue))
                 {
@@ -939,7 +939,7 @@ namespace iPassport.Application.Services
 
                 Guid? id = healthUnits.Where(h => (string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjFirstDose) || mappingResult.Result.HealthUnityCnpjFirstDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneFirstDose) || mappingResult.Result.HealthUnityIneFirstDose == h.Ine)
-                                        && (mappingResult.Result.HealthUnityCodeFirstDose.HasValue || mappingResult.Result.HealthUnityCodeFirstDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
+                                        && (!mappingResult.Result.HealthUnityCodeFirstDose.HasValue || mappingResult.Result.HealthUnityCodeFirstDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
                 if (id == Guid.Empty && (!string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjFirstDose) || !string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneFirstDose) || mappingResult.Result.HealthUnityCodeFirstDose.HasValue))
                 {
                     if (!string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjFirstDose) && !string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneFirstDose))
@@ -981,7 +981,7 @@ namespace iPassport.Application.Services
 
                 Guid? id = healthUnits.Where(h => (string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjSecondDose) || mappingResult.Result.HealthUnityCnpjSecondDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneSecondDose) || mappingResult.Result.HealthUnityIneSecondDose == h.Ine)
-                                        && (mappingResult.Result.HealthUnityCodeSecondDose.HasValue || mappingResult.Result.HealthUnityCodeSecondDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
+                                        && (!mappingResult.Result.HealthUnityCodeSecondDose.HasValue || mappingResult.Result.HealthUnityCodeSecondDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
                 if (id == Guid.Empty && (!string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjSecondDose) || !string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneSecondDose) || mappingResult.Result.HealthUnityCodeSecondDose.HasValue))
                 {
                     if (!string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjSecondDose) && !string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneSecondDose))
@@ -1023,7 +1023,7 @@ namespace iPassport.Application.Services
 
                 Guid? id = healthUnits.Where(h => (string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjThirdDose) || mappingResult.Result.HealthUnityCnpjThirdDose == h.Cnpj)
                                         && (string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneThirdDose) || mappingResult.Result.HealthUnityIneThirdDose == h.Ine)
-                                        && (mappingResult.Result.HealthUnityCodeThirdDose.HasValue || mappingResult.Result.HealthUnityCodeThirdDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
+                                        && (!mappingResult.Result.HealthUnityCodeThirdDose.HasValue || mappingResult.Result.HealthUnityCodeThirdDose == h.UniqueCode)).Select(h => h.Id).SingleOrDefault();
                 if (id == Guid.Empty && (!string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjThirdDose) || !string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneThirdDose) || mappingResult.Result.HealthUnityCodeThirdDose.HasValue))
                 {
                     if (!string.IsNullOrEmpty(mappingResult.Result.HealthUnityCnpjThirdDose) && !string.IsNullOrEmpty(mappingResult.Result.HealthUnityIneThirdDose))
