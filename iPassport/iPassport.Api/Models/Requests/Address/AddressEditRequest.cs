@@ -8,7 +8,7 @@ namespace iPassport.Api.Models.Requests
     public class AddressEditRequest
     {
         /// <summary>
-        /// AddressId
+        /// Address Id
         /// </summary>
         public Guid? Id { get; set; }
         /// <summary>
@@ -28,7 +28,7 @@ namespace iPassport.Api.Models.Requests
         /// </summary>
         public string District { get; set; }
         /// <summary>
-        /// CityId
+        /// City Id
         /// </summary>
         public Guid CityId { get; set; }
     }

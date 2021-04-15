@@ -1,4 +1,5 @@
 ﻿using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Company;
 using iPassport.Api.Models.Validators.Company;
 using iPassport.Application.Resources;
 using iPassport.Test.Settings.Factories;
@@ -9,9 +10,9 @@ using System.Linq;
 namespace iPassport.Test.Controllers.Validator
 {
     [TestClass]
-    public class CompanyCreateRequestValidatorTest
+    public class CompanyEditRequestValidatorTest
     {
-        CompanyCreateRequestValidator _validator;
+        CompanyEditRequestValidator _validator;
         public Resource resource { get; private set; }
 
         [TestInitialize]
@@ -25,13 +26,15 @@ namespace iPassport.Test.Controllers.Validator
         public void Success()
         {
             Assert.IsTrue(_validator.Validate(
-                new CompanyCreateRequest()
+                new CompanyEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Teste",
                     TradeName = "TradeName",
                     Cnpj = "59850374000149",
-                    Address = new AddressCreateRequest()
+                    Address = new AddressEditRequest()
                     {
+                        Id = Guid.NewGuid(),
                         Description = "Description",
                         Number = "10",
                         Cep = "43700000",
@@ -41,8 +44,9 @@ namespace iPassport.Test.Controllers.Validator
                     SegmentId = Guid.NewGuid(),
                     IsHeadquarters = false,
                     ParentId = Guid.NewGuid(),
-                    Responsible = new CompanyResponsibleCreateRequest()
+                    Responsible = new CompanyResponsibleEditRequest()
                     {
+                        Id = Guid.NewGuid(),
                         Name = "Responsible Name",
                         Occupation = "Occupation",
                         Email = "teste@teste.com",
@@ -60,13 +64,15 @@ namespace iPassport.Test.Controllers.Validator
         public void RequiredName(string name)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = name,
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -76,8 +82,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -104,13 +111,15 @@ namespace iPassport.Test.Controllers.Validator
         public void RequiredCnpj(string name)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = name,
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -120,8 +129,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -159,13 +169,15 @@ namespace iPassport.Test.Controllers.Validator
         public void InvalidCnpj(string name)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = name,
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -175,8 +187,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -196,12 +209,13 @@ namespace iPassport.Test.Controllers.Validator
             Assert.AreEqual(expetedMessage, validationResult.Errors.Single().ErrorMessage);
         }
 
-        [TestMethod]        
+        [TestMethod]
         public void RequiredAddress()
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "90662086000100",
@@ -209,8 +223,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -231,61 +246,22 @@ namespace iPassport.Test.Controllers.Validator
         }
 
         [TestMethod]
-        public void RequiredAddressCityId()
-        {
-            //Arrange
-            var seed = new CompanyCreateRequest()
-            {
-                Name = "Teste",
-                TradeName = "TradeName",
-                Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
-                {
-                    Description = "Description",
-                    Number = "10",
-                    Cep = "43700000",
-                    District = "District",
-                    CityId = null
-                },
-                SegmentId = Guid.NewGuid(),
-                IsHeadquarters = false,
-                ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
-                {
-                    Name = "Responsible Name",
-                    Occupation = "Occupation",
-                    Email = "teste@teste.com",
-                    MobilePhone = "5571986865544",
-                    Landline = "557133335555"
-                },
-                IsActive = true
-            };
-
-            // Act
-            var validationResult = _validator.Validate(seed);
-
-            var expetedMessage = string.Format(resource.GetMessage("RequiredField"), resource.GetMessage("CityId"));
-
-            // Assert
-            Assert.AreEqual(1, validationResult.Errors.Count());
-            Assert.AreEqual(expetedMessage, validationResult.Errors.Single().ErrorMessage);
-        }
-
-        [TestMethod]        
         [DataRow("text")]
         [DataRow("45as55bb")]
         [DataRow("43.700-000")]
-        [DataRow("4370000")]        
-        public void ValidAddressCep(string cep)
+        [DataRow("4370000")]
+        public void InvalidAddressCep(string cep)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = cep,
@@ -295,8 +271,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -324,13 +301,15 @@ namespace iPassport.Test.Controllers.Validator
         public void ValidAddressNumber(string number)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = number,
                     Cep = "43700000",
@@ -340,8 +319,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -361,17 +341,19 @@ namespace iPassport.Test.Controllers.Validator
             Assert.AreEqual(expetedMessage, validationResult.Errors.Single().ErrorMessage);
         }
 
-        [TestMethod]        
+        [TestMethod]
         public void RequiredSegmentId()
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -381,8 +363,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = null,
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -406,13 +389,15 @@ namespace iPassport.Test.Controllers.Validator
         public void RequiredIsActive()
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -422,8 +407,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Responsible Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -447,13 +433,15 @@ namespace iPassport.Test.Controllers.Validator
         public void RequiredResponsible()
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -484,13 +472,15 @@ namespace iPassport.Test.Controllers.Validator
         public void RequiredResponsibleName(string name)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -500,9 +490,10 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
                     Name = name,
+                    Id = Guid.NewGuid(),
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
                     MobilePhone = "5571986865544",
@@ -529,13 +520,15 @@ namespace iPassport.Test.Controllers.Validator
         public void ValidResponsibleEmail(string email)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -545,8 +538,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Name",
                     Occupation = "Occupation",
                     Email = email,
@@ -579,13 +573,15 @@ namespace iPassport.Test.Controllers.Validator
         public void ValidResponsibleMobileNumber(string mobileNumber)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -595,8 +591,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -629,13 +626,15 @@ namespace iPassport.Test.Controllers.Validator
         public void ValidResponsibleLandline(string landlineNumber)
         {
             //Arrange
-            var seed = new CompanyCreateRequest()
+            var seed = new CompanyEditRequest()
             {
+                Id = Guid.NewGuid(),
                 Name = "Teste",
                 TradeName = "TradeName",
                 Cnpj = "59850374000149",
-                Address = new AddressCreateRequest()
+                Address = new AddressEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Description",
                     Number = "10",
                     Cep = "43700000",
@@ -645,8 +644,9 @@ namespace iPassport.Test.Controllers.Validator
                 SegmentId = Guid.NewGuid(),
                 IsHeadquarters = false,
                 ParentId = Guid.NewGuid(),
-                Responsible = new CompanyResponsibleCreateRequest()
+                Responsible = new CompanyResponsibleEditRequest()
                 {
+                    Id = Guid.NewGuid(),
                     Name = "Name",
                     Occupation = "Occupation",
                     Email = "teste@teste.com",
@@ -667,4 +667,3 @@ namespace iPassport.Test.Controllers.Validator
         }
     }
 }
-
