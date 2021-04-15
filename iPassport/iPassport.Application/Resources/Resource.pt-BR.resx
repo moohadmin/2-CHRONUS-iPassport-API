@@ -804,4 +804,7 @@
 	<data name="Cnpj" xml:space="preserve">
     <value>CNPJ</value>
   </data>
+	<data name="SubsidiariesCandidatesCompanies" xml:space="preserve">
+    <value>Empresas Candidatas</value>
+  </data>
 </root>

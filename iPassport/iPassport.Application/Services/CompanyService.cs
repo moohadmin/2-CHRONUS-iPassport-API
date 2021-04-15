@@ -88,9 +88,10 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["CompanyTypes"], companyTypeViewModels);
         }
 
-        public async Task<PagedResponseApi> GetSegmetsByTypeId(Guid TypeId, PageFilter filter)
+        public async Task<PagedResponseApi> GetSegmetsByTypeId(Guid typeId, PageFilter filter)
         {
-            var res = await _companySegmentRepository.GetPagedByTypeId(TypeId, filter);
+            var res = await _companySegmentRepository.GetPagedByTypeId(typeId, filter);
+            
             var result = _mapper.Map<IList<CompanySegmentViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["CompanySegments"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
@@ -122,6 +123,20 @@ namespace iPassport.Application.Services
             }
 
             return new ResponseApi(true, _localizer["Companies"], res);
+        }
+
+        public async Task<PagedResponseApi> GetSubsidiariesCandidatesPaged(Guid parentId, PageFilter filter)
+        {
+            var company = await _companyRepository.GetLoadedCompanyById(parentId);
+            ValidateParentCompanyToAssociate(company);
+
+            PagedData<Company> pagedCandidates = await GetSubsidiariesCandidatesToGovernmentPaged(company, filter);
+
+            var responseViewModel = _mapper.Map<CompanySubsidiaryCandidateResponseViewModel>(company);
+            var result = _mapper.Map<IList<CompanySubsidiaryCandidateViewModel>>(pagedCandidates.Data);
+            responseViewModel.Candidates = result;
+
+            return new PagedResponseApi(true, _localizer["SubsidiariesCandidatesCompanies"], pagedCandidates.PageNumber, pagedCandidates.PageSize, pagedCandidates.TotalPages, pagedCandidates.TotalRecords, responseViewModel);
         }
 
         #region Private
@@ -236,16 +251,34 @@ namespace iPassport.Application.Services
         private async Task<bool> HasBranchCompanyToAssociate(Guid companyId)
         {
             var company = await _companyRepository.GetLoadedCompanyById(companyId);
-            if(company != null)
+            if(company != null && company.IsActive())
             {
                 if (company.IsFederalGovernment())
-                    return await _companyRepository.HasBranchCompanyToAssociateInFederal(company.Address.City.State.CountryId);
+                    return await _companyRepository.HasSubsidiariesCandidatesToFederalGovernment(company.Address.City.State.CountryId);
                 if (company.IsStateGovernment())
-                    return await _companyRepository.HasBranchCompanyToAssociateInState(company.Address.City.StateId);
+                    return await _companyRepository.HasSubsidiariesCandidatesToStateGovernment(company.Address.City.StateId);
             }
 
             return false;
         }
+        private void ValidateParentCompanyToAssociate(Company company)
+        {
+            if (company == null
+                || !company.IsActive()
+                || company.Segment == null
+                || (!company.IsFederalGovernment() && !company.IsStateGovernment())
+                || (company.Address == null))
+                throw new BusinessException(_localizer["HeadquarterNotFoundOrNotValid"]);
+        }
+
+        private async Task<PagedData<Company>> GetSubsidiariesCandidatesToGovernmentPaged(Company company, PageFilter filter)
+        {
+            if (company.IsFederalGovernment())
+                return await _companyRepository.GetSubsidiariesCandidatesToFederalGovernmentPaged(company.Address.City.State.CountryId, filter);
+            else
+                return await _companyRepository.GetSubsidiariesCandidatesToStateGovernmentPaged(company.Address.City.StateId, filter);
+        }
+
         #endregion
     }
 }

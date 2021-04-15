@@ -58,21 +58,12 @@ namespace iPassport.Infra.Repositories.IdentityContext
                             && x.Address.City.State.CountryId == countryId
                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government).ToListAsync();
 
-        public async Task<bool> HasBranchCompanyToAssociateInFederal(Guid countryId) =>
-            await _DbSet.AnyAsync(x => x.ParentId == null
-                && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
-                && (x.Segment.Identifyer == (int)ECompanySegmentType.State || x.Segment.Identifyer == (int)ECompanySegmentType.Municipal)
-                && x.Address.City.State.CountryId == countryId);
+        public async Task<bool> HasSubsidiariesCandidatesToFederalGovernment(Guid countryId) =>
+            await QuerySubsidiariesCandidatesToFederalGovernment(countryId).AnyAsync();
 
-        public async Task<bool> HasBranchCompanyToAssociateInState(Guid stateId) =>
-            await _DbSet.AnyAsync(x => x.ParentId == null
-                && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
-                && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal
-                && x.Address.City.StateId == stateId);
+        public async Task<bool> HasSubsidiariesCandidatesToStateGovernment(Guid stateId) =>
+            await QuerySubsidiariesCandidatesToStateGovernment(stateId).AnyAsync();
 
-        private IQueryable<Company> GetLoadedHeadquarters() =>
-            _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
-                  .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
         public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
         {
             var segmentIdentifyer = (int)segmentType;
@@ -91,5 +82,31 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
         public async Task<bool> CnpjAlreadyRegistered(string cnpj)
             => await _DbSet.AnyAsync(x => x.Cnpj.Equals(cnpj));
+
+        public async Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter)
+            => await Paginate(QuerySubsidiariesCandidatesToFederalGovernment(countryId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
+        
+            
+        public async Task<PagedData<Company>> GetSubsidiariesCandidatesToStateGovernmentPaged(Guid stateId, PageFilter filter)
+            => await Paginate(QuerySubsidiariesCandidatesToStateGovernment(stateId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
+
+        #region Private
+        private IQueryable<Company> GetLoadedHeadquarters() =>
+            _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+                  .Include(x => x.Segment).ThenInclude(x => x.CompanyType);
+
+        private IQueryable<Company> QuerySubsidiariesCandidatesToFederalGovernment(Guid countryId) =>
+            _DbSet.Where(x => x.ParentId == null && x.DeactivationDate == null
+                                && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
+                                && x.Address.City.State.CountryId == countryId
+                                && (x.Segment.Identifyer == (int)ECompanySegmentType.State
+                                    || x.Segment.Identifyer == (int)ECompanySegmentType.Municipal));
+
+        private IQueryable<Company> QuerySubsidiariesCandidatesToStateGovernment(Guid stateId) =>
+            _DbSet.Where(x => x.ParentId == null && x.DeactivationDate == null
+                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
+                             && x.Address.City.StateId == stateId
+                             && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
+        #endregion
     }
 }

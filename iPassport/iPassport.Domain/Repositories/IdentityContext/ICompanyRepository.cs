@@ -15,9 +15,11 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType);
         Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId);
         Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId);
-        Task<bool> HasBranchCompanyToAssociateInFederal(Guid countryId);
-        Task<bool> HasBranchCompanyToAssociateInState(Guid stateId);
+        Task<bool> HasSubsidiariesCandidatesToFederalGovernment(Guid countryId);
+        Task<bool> HasSubsidiariesCandidatesToStateGovernment(Guid stateId);
         Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType);
         Task<bool> CnpjAlreadyRegistered(string cnpj);
+        Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter);
+        Task<PagedData<Company>> GetSubsidiariesCandidatesToStateGovernmentPaged(Guid stateId,PageFilter filter);
     }
 }
