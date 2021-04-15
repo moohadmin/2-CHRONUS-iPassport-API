@@ -11,9 +11,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
     {
         public UserImportDtoValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.FullName).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.FullName)
                 .NotEmpty()
                 .WithMessage(localizer["FieldRequired"]);
 
@@ -21,10 +19,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .LessThanOrEqualTo(DateTime.UtcNow)
                 .WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"]);
 
-            RuleFor(x => x.Cpf).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .When(x => string.IsNullOrWhiteSpace(x.Cns))
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.Cpf)
                 .NotEmpty()
                 .When(x => string.IsNullOrWhiteSpace(x.Cns))
                 .WithMessage(localizer["FieldRequired"]);
@@ -40,10 +35,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
                     .When(x => !string.IsNullOrWhiteSpace(x.Cpf))
                     .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
-            RuleFor(x => x.Cns).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .When(x => string.IsNullOrWhiteSpace(x.Cpf))
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.Cns)
                 .NotEmpty()
                 .When(x => string.IsNullOrWhiteSpace(x.Cpf))
                 .WithMessage(localizer["FieldRequired"]);
@@ -67,35 +59,25 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .When(x => !string.IsNullOrWhiteSpace(x.Cep))
                 .WithMessage(string.Format(localizer["FieldMustHaveANumberOfDigits"], 8));
 
-            RuleFor(x => x.City).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.City)
                 .NotEmpty()
                 .WithMessage(localizer["FieldRequired"]);
 
-            RuleFor(x => x.State).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.State)
                 .NotEmpty()
                 .WithMessage(localizer["FieldRequired"]);
 
-            RuleFor(x => x.Country).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.Country)
                 .NotEmpty()
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.WasCovidInfected).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .WithMessage(localizer["FieldRequired"])
                 .NotEmpty()
                 .WithMessage(localizer["FieldRequired"])
                 .Must(x => x.ToUpper() == Constants.CONST_SIM_VALUE || x.ToUpper() == Constants.CONST_NAO_VALUE || x.ToUpper() == Constants.CONST_NENHUM_VALUE)
                 .WithMessage(localizer["NonstandardField"]);
 
-            RuleFor(x => x.WasTestPerformed).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.WasTestPerformed)
                 .NotEmpty()
                 .WithMessage(localizer["FieldRequired"]);
 
@@ -114,10 +96,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .When(x => x.TestDate.HasValue)
                 .WithMessage(localizer["TestDateCannotBeHiggerThenActualDate"]);
 
-            RuleFor(x => x.Result).Cascade(CascadeMode.Stop)
-                .NotNull()
-                .When(x => !string.IsNullOrWhiteSpace(x.WasTestPerformed) && x.WasTestPerformed.ToUpper() == Constants.CONST_SIM_VALUE)
-                .WithMessage(localizer["FieldRequired"])
+            RuleFor(x => x.Result)
                 .NotEmpty()
                 .When(x => !string.IsNullOrWhiteSpace(x.WasTestPerformed) && x.WasTestPerformed.ToUpper() == Constants.CONST_SIM_VALUE)
                 .WithMessage(localizer["FieldRequired"]);
@@ -145,19 +124,16 @@ namespace iPassport.Domain.Dtos.DtoValidator
             // VACCINE UNIQUE DOSE
 
             RuleFor(x => x.VaccineNameUniqueDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineUniqueDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.VaccineManufacturerNameUniqueDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineUniqueDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.BatchUniqueDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineUniqueDoseData)
                 .WithMessage(localizer["FieldRequired"]);
@@ -183,7 +159,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityCnpjUniqueDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineUniqueDoseData && string.IsNullOrWhiteSpace(x.HealthUnityIneUniqueDose) && !x.HealthUnityCodeUniqueDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
@@ -194,7 +169,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityIneUniqueDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineUniqueDoseData && string.IsNullOrWhiteSpace(x.HealthUnityCnpjUniqueDose) && !x.HealthUnityCodeUniqueDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
@@ -207,19 +181,16 @@ namespace iPassport.Domain.Dtos.DtoValidator
             // VACCINE FIRST DOSE
 
             RuleFor(x => x.VaccineNameFirstDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineFirstDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.VaccineManufacturerNameFirstDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineFirstDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.BatchFirstDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineFirstDoseData)
                 .WithMessage(localizer["FieldRequired"]);
@@ -245,7 +216,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityCnpjFirstDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineFirstDoseData && string.IsNullOrWhiteSpace(x.HealthUnityIneFirstDose) && !x.HealthUnityCodeFirstDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
@@ -256,7 +226,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityIneFirstDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineFirstDoseData && string.IsNullOrWhiteSpace(x.HealthUnityCnpjFirstDose) && !x.HealthUnityCodeFirstDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
@@ -269,19 +238,16 @@ namespace iPassport.Domain.Dtos.DtoValidator
             // VACCINE SECOND DOSE
 
             RuleFor(x => x.VaccineNameSecondDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineSecondDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.VaccineManufacturerNameSecondDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineSecondDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.BatchSecondDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineSecondDoseData)
                 .WithMessage(localizer["FieldRequired"]);
@@ -303,7 +269,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityCnpjSecondDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineSecondDoseData && string.IsNullOrWhiteSpace(x.HealthUnityIneSecondDose) && !x.HealthUnityCodeSecondDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
@@ -314,7 +279,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityIneSecondDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineSecondDoseData && string.IsNullOrWhiteSpace(x.HealthUnityCnpjSecondDose) && !x.HealthUnityCodeSecondDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
@@ -327,19 +291,16 @@ namespace iPassport.Domain.Dtos.DtoValidator
             // VACCINE THIRD DOSE
 
             RuleFor(x => x.VaccineNameThirdDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineThirdDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.VaccineManufacturerNameThirdDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineThirdDoseData)
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.BatchThirdDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineThirdDoseData)
                 .WithMessage(localizer["FieldRequired"]);
@@ -365,7 +326,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityCnpjThirdDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineThirdDoseData && string.IsNullOrWhiteSpace(x.HealthUnityIneThirdDose) && !x.HealthUnityCodeThirdDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
@@ -376,7 +336,6 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(string.Format(localizer["FieldValueInformedIsNotValidMasc"], localizer["ColumnNameImportFileCpf"]));
 
             RuleFor(x => x.HealthUnityIneThirdDose)
-                .NotNull()
                 .NotEmpty()
                 .When(x => x.HasVaccineThirdDoseData && string.IsNullOrWhiteSpace(x.HealthUnityCnpjThirdDose) && !x.HealthUnityCodeThirdDose.HasValue)
                 .WithMessage(localizer["FieldRequired"]);
