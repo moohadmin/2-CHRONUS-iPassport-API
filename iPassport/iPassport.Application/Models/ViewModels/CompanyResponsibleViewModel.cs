@@ -1,7 +1,10 @@
-﻿namespace iPassport.Application.Models.ViewModels
+﻿using System;
+
+namespace iPassport.Application.Models.ViewModels
 {
     public class CompanyResponsibleViewModel
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Occupation { get; set; }
         public string Email { get; set; }

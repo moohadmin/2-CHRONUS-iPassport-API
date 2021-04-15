@@ -1,8 +1,10 @@
-﻿namespace iPassport.Domain.Dtos
+﻿using System;
+
+namespace iPassport.Domain.Dtos
 {
-    public class CompanyResponsibleCreateDto
+    public class CompanyResponsibleDto
     {
-        public System.Guid? CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
         public string Name { get; set; }
         public string Occupation { get; set; }
         public string Email { get; set; }

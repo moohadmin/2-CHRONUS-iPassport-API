@@ -2,19 +2,15 @@
 using iPassport.Api.Models;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.Company;
-using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Responses;
 using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
-using iPassport.Application.Models.Pagination;
-using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Api.Controllers
@@ -87,6 +83,27 @@ namespace iPassport.Api.Controllers
         {
             var res = await _service.Add(_mapper.Map<CompanyCreateDto>(request));
             
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for Edit Company.
+        /// </summary>
+        /// <param name="request">Company Edit Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Company Id</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPut]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
+        public async Task<ActionResult> Edit([FromBody] CompanyEditRequest request)
+        {
+            var res = await _service.Edit(_mapper.Map<CompanyEditDto>(request));
+
             return Ok(res);
         }
 
