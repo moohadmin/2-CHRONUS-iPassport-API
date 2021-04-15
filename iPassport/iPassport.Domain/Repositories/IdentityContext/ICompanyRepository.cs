@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using System;
@@ -9,7 +10,7 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
 {
     public interface ICompanyRepository : IIdentityBaseRepository<Company>
     {
-        Task<PagedData<Company>> FindByNameParts(GetCompaniesPagedFilter filter);
+        Task<PagedData<CompanyAssociatedDto>> FindByNameParts(GetCompaniesPagedFilter filter);
         Task<Company> GetLoadedCompanyById(Guid id);
         Task<IList<Company>> FindListCnpj(List<string> listCnpj);
         Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType);

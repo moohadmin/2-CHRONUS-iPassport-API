@@ -64,6 +64,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj))
                 .ForMember(des => des.Segment, act => act.MapFrom(src => src.Segment == null ? null : src.Segment.Name));
 
+            profile.CreateMap<CompanySegmentDto, CompanySegmentViewModel>();
+            profile.CreateMap<CompanyAssociatedDto, CompanyViewModel>();
         }
     }
 }

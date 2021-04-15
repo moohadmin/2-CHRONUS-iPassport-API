@@ -37,6 +37,15 @@ namespace iPassport.Test.Seeds
                company5
             };
         }
+        public static IList<CompanyAssociatedDto> GetCompanyDtos()
+        => new List<CompanyAssociatedDto>()
+            {
+               new (Get(),true),
+               new (Get(),true),
+               new (Get(),true),
+               new (Get(),true)
+            };
+        
 
         public static PagedData<Company> GetPaged()
         {
@@ -72,7 +81,11 @@ namespace iPassport.Test.Seeds
 
             return company;
         }
-        
+
+        public static PagedData<CompanyAssociatedDto> GetPagedDto()
+        {
+            return new PagedData<CompanyAssociatedDto>() { Data = GetCompanyDtos() };
+        }
 
     }
 }
