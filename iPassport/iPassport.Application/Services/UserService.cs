@@ -118,7 +118,7 @@ namespace iPassport.Application.Services
                 if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
                     throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
 
-                await ValidateVaccineDates(dto.Doses);
+                ValidateVaccineDates(dto.Doses);
 
                 foreach (var item in dto.Doses)
                 {
@@ -369,8 +369,8 @@ namespace iPassport.Application.Services
                     var toChange = currentUserDetails.UserVaccines.Where(x => dto.Doses.Any(y => y.Id == x.Id));
                     var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id));
 
-                    await ValidateVaccineDates(toInclude);
-                    await ValidateVaccineDates(dto.Doses.Where(x => currentUserDetails.UserVaccines.Any(y => y.Id == x.Id)));
+                    ValidateVaccineDates(toInclude);
+                    ValidateVaccineDates(dto.Doses.Where(x => currentUserDetails.UserVaccines.Any(y => y.Id == x.Id)));
 
                     foreach (var item in currentUserDetails.UserVaccines.Where(x => !x.ExclusionDate.HasValue))
                     {
@@ -424,30 +424,40 @@ namespace iPassport.Application.Services
                 _unitOfWork.CommitIdentity();
                 _unitOfWork.CommitPassport();
             }
+            catch (BusinessException)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+                
+                throw;
+            }
             catch (Exception ex)
             {
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
                 VerifyUniqueKeyErrors(ex);
+
+                throw;
             }
 
             return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
         }
 
-        private async Task ValidateVaccineDates(IEnumerable<UserVaccineAbstractDto> doses)
+        private void ValidateVaccineDates(IEnumerable<UserVaccineAbstractDto> doses)
         {
-            var vaccine = await _vaccineRepository.Find(doses.FirstOrDefault().VaccineId);
+            var listDoses = doses.OrderBy(x => x.Dose).ToList();
 
-            if (vaccine == null)
-                throw new BusinessException(_localizer["VaccineNotFound"]);
+            if (listDoses.Any(x => doses.Any(y => y.Dose != x.Dose && y.VaccinationDate.Date == x.VaccinationDate.Date)))
+                throw new BusinessException(_localizer["VaccineDoseDateCannoteBeEquals"]);
 
-            if (doses.Any(d => d.Dose == 2)
-                && (doses.Where(d => d.Dose == 2).Select(d => d.VaccinationDate).First().Subtract(doses.Where(d => d.Dose == 1).Select(d => d.VaccinationDate).First()).TotalDays > vaccine.MaxTimeNextDose
-                    || doses.Where(d => d.Dose == 2).Select(d => d.VaccinationDate).First().Subtract(doses.Where(d => d.Dose == 1).Select(d => d.VaccinationDate).First()).TotalDays < vaccine.MinTimeNextDose))
+            listDoses.ForEach(x =>
             {
-                throw new BusinessException(string.Format(_localizer["VaccineInvalidPeriodSecondDose"], vaccine.Name, vaccine.MinTimeNextDose, vaccine.MaxTimeNextDose));
-            }
+                var nextIndex = listDoses.IndexOf(x) <= listDoses.IndexOf(listDoses.Last()) ? listDoses.IndexOf(x) + 1 : listDoses.IndexOf(x);
+
+                if (listDoses.Find(y => listDoses.IndexOf(y) == nextIndex)?.VaccinationDate.Date <= x.VaccinationDate.Date)
+                    throw new BusinessException(_localizer["VaccineNextDoseDateCannoteBeLowerToPrevious"]);
+            });
         }
 
         public async Task<ResponseApi> AddAdmin(AdminDto dto)
@@ -557,7 +567,7 @@ namespace iPassport.Application.Services
 
             if (authUser == null)
                 return new ResponseApi(true, _localizer["AdminUser"], null);
-            
+
             var details = await _detailsRepository.GetWithHealtUnityById(authUser.Id);
             var adminDetails = new AdminDetailsDto(authUser, details);
 
@@ -590,7 +600,7 @@ namespace iPassport.Application.Services
 
             if (dto.IsActive.GetValueOrDefault() && currentAdminUser.IsInactive())
                 currentAdminUser.Activate();
-            
+
             try
             {
                 _unitOfWork.BeginTransactionIdentity();
@@ -598,15 +608,15 @@ namespace iPassport.Application.Services
 
                 var result = await _userManager.UpdateAsync(currentAdminUser);
 
-                if(!string.IsNullOrEmpty(dto.Password))
+                if (!string.IsNullOrEmpty(dto.Password))
                     await ChangeUserPassword(currentAdminUser, dto.Password);
 
                 ValidateSaveUserIdentityResult(result);
 
                 if (!(await _detailsRepository.Update(currentAdminUserDetails)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
-                
-                if(currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
+
+                if (currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
 
                 _unitOfWork.CommitIdentity();
@@ -688,9 +698,6 @@ namespace iPassport.Application.Services
 
                     if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
-
-                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
-                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
 
@@ -1066,10 +1073,10 @@ namespace iPassport.Application.Services
 
             if (Profile.Key == Enum.GetName(EProfileKey.healthUnit)
                 && (!dto.HealthUnitId.HasValue || await _healthUnitRepository.Find(dto.HealthUnitId.Value) == null))
-                throw new BusinessException(String.Format(_localizer["HealthUnitRequiredToProfile"], Profile.Name));
+                throw new BusinessException(string.Format(_localizer["HealthUnitRequiredToProfile"], Profile.Name));
 
             if (dto.HealthUnitId.HasValue && Profile.Key != Enum.GetName(EProfileKey.healthUnit))
-                throw new BusinessException(String.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
+                throw new BusinessException(string.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
 
             return true;
         }
