@@ -15,5 +15,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetAllTypes();
         Task<ResponseApi> GetHeadquartersCompanies(GetHeadquarterCompanyFilter filter);
         Task<PagedResponseApi> GetSegmetsByTypeId(Guid TypeId, PageFilter filter);
+        Task<ResponseApi> Edit(CompanyEditDto dto);
     }
 }

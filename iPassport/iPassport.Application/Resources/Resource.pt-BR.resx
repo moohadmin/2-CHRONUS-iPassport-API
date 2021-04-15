@@ -807,4 +807,7 @@
   <data name="PasswordChangeError" xml:space="preserve">
     <value>Erro ao alterar a senha do usuário.</value>
   </data>
+  <data name="CompanyEdited" xml:space="preserve">
+    <value>Empresa Editada com sucesso!</value>
+  </data>
 </root>

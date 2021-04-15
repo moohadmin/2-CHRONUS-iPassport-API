@@ -8,7 +8,7 @@ namespace iPassport.Domain.Entities
     {
         public Company() { }
         public Company(string name, string tradeName, string cnpj, AddressCreateDto addressDto, Guid? segmentId, bool? isHeadquarters,
-            Guid? parentId, CompanyResponsibleCreateDto responsible)
+            Guid? parentId, CompanyResponsibleDto responsible)
         {
             Id = Guid.NewGuid();
             Name = name;
@@ -42,7 +42,20 @@ namespace iPassport.Domain.Entities
                 => new Company(dto.Name, dto.TradeName, dto.Cnpj, dto.Address, dto.SegmentId, dto.IsHeadquarters, dto.ParentId, dto.Responsible);
 
         private Address CreateCompanyAddress(AddressCreateDto dto) => new Address().Create(dto);
-        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleCreateDto dto)
+
+        public void ChangeCompany(CompanyEditDto dto)
+        {
+            Address.ChangeAddress(dto.Address);
+            Responsible?.ChangeResponsible(dto.Responsible);
+
+            Cnpj = dto.Cnpj;
+            Name = dto.Name;
+            ParentId = dto.ParentId;
+            SegmentId = dto.SegmentId;
+            TradeName = dto.TradeName;
+        }
+
+        private CompanyResponsible CreateResponsible(Guid companyId, CompanyResponsibleDto dto)
         {
             dto.CompanyId = companyId;
             return CompanyResponsible.Create(dto);
@@ -53,11 +66,13 @@ namespace iPassport.Domain.Entities
             DeactivationUserId = deactivationUserId;
             DeactivationDate = DateTime.UtcNow;
         }
+
         public void Activate()
         {
             DeactivationUserId = null;
             DeactivationDate = null;
         }
+
         public bool IsActive() => !DeactivationDate.HasValue;
         public bool IsInactive() => DeactivationDate.HasValue;
         public bool IsPrivateHeadquarters() => IsHeadquarters.GetValueOrDefault() && Segment.CompanyType.IsPrivate();
