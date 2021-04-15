@@ -6,6 +6,5 @@ namespace iPassport.Domain.Dtos
     {
         public Guid Id { get; set; }
         public AddressEditDto Address { get; set; }
-        public CompanyResponsibleDto Responsible { get; set; }
     }
 }

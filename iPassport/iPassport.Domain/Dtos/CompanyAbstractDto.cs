@@ -11,6 +11,6 @@ namespace iPassport.Domain.Dtos
         public bool? IsHeadquarters { get; set; }
         public Guid? ParentId { get; set; }
         public bool? IsActive { get; set; }
-
+        public CompanyResponsibleDto Responsible { get; set; }
     }
 }
