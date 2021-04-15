@@ -639,7 +639,7 @@
   <data name="StartTime" xml:space="preserve">
     <value>período inicial</value>
   </data>
-	<data name="TestMustBeNull" xml:space="preserve">
+  <data name="TestMustBeNull" xml:space="preserve">
     <value>O teste tem que ser nulo</value>
   </data>
   <data name="TestNotMustBeNullOrEmpty" xml:space="preserve">
@@ -759,50 +759,53 @@
   <data name="Locality" xml:space="preserve">
     <value>Localidade</value>
   </data>
-	<data name="Segment" xml:space="preserve">
+  <data name="Segment" xml:space="preserve">
     <value>Segmento</value>
   </data>
-	<data name="Responsible" xml:space="preserve">
+  <data name="Responsible" xml:space="preserve">
     <value>Responsável</value>
   </data>
-	<data name="ResponsiblePersonLandline" xml:space="preserve">
+  <data name="ResponsiblePersonLandline" xml:space="preserve">
     <value>Telefone do Responsável (Fixo)</value>
   </data>
-	<data name="ResponsiblePersonMobilePhone" xml:space="preserve">
+  <data name="ResponsiblePersonMobilePhone" xml:space="preserve">
     <value>Telefone do Responsável (Celular)</value>
   </data>
-	<data name="SegmentNotFound" xml:space="preserve">
+  <data name="SegmentNotFound" xml:space="preserve">
     <value>Segmento não encontrado.</value>
   </data>
-	<data name="ResponsiblePersonEmail" xml:space="preserve">
+  <data name="ResponsiblePersonEmail" xml:space="preserve">
     <value>E-mail do Responsável</value>
   </data>
-	<data name="IsHeadquarters" xml:space="preserve">
+  <data name="IsHeadquarters" xml:space="preserve">
     <value>Hierarquia</value>
   </data>
-	<data name="FieldMustBeNull" xml:space="preserve">
+  <data name="FieldMustBeNull" xml:space="preserve">
     <value>O campo {0} tem que ser nulo</value>
   </data>
-	<data name="ParentId" xml:space="preserve">
+  <data name="ParentId" xml:space="preserve">
     <value>Identificador da Empresa Matriz</value>
   </data>
-	<data name="BranchCnpjNotValid" xml:space="preserve">
+  <data name="BranchCnpjNotValid" xml:space="preserve">
     <value>O CNPJ informado no cadastro não se refere a um CNPJ filial da {0}</value>
   </data>
-	<data name="HeadquarterNotFoundOrNotValid" xml:space="preserve">
+  <data name="HeadquarterNotFoundOrNotValid" xml:space="preserve">
     <value>Empresa matriz não encontrada ou inválida.</value>
   </data>
-	<data name="CompanyAlreadyRegisteredToSegmentAndLocal" xml:space="preserve">
+  <data name="CompanyAlreadyRegisteredToSegmentAndLocal" xml:space="preserve">
     <value>Já existe empresa cadastrada com esse segmento nesse {0}</value>
   </data>
-	<data name="City" xml:space="preserve">
+  <data name="City" xml:space="preserve">
     <value>Cidade</value>
   </data>
-	<data name="State" xml:space="preserve">
+  <data name="State" xml:space="preserve">
     <value>Estado</value>
   </data>
-	<data name="Cnpj" xml:space="preserve">
+  <data name="Cnpj" xml:space="preserve">
     <value>CNPJ</value>
+  </data>
+  <data name="PasswordChangeError" xml:space="preserve">
+    <value>Erro ao alterar a senha do usuário.</value>
   </data>
 	<data name="SubsidiariesCandidatesCompanies" xml:space="preserve">
     <value>Empresas Candidatas</value>

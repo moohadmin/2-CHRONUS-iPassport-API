@@ -40,6 +40,10 @@ namespace iPassport.Api.Models.Requests.User
         /// </summary>
         public string Occupation { get; set; }
         /// <summary>
+        /// Password
+        /// </summary>
+        public string Password { get; set; }
+        /// <summary>
         /// Acess Profile Id
         /// </summary>
         public Guid? ProfileId { get; set; }
