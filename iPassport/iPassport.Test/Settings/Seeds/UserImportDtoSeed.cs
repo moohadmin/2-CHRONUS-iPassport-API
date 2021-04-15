@@ -20,7 +20,7 @@ namespace iPassport.Test.Settings.Seeds
                 BloodType = "A+",
                 HumanRace = "Indígena",
                 CountryCode = 55,
-                PhoneNumber = 912345678,
+                PhoneNumber = 71912345678,
                 Email = "fullname@email.com",
                 Cep = "01310000",
                 Address = "Av. Paulista",
@@ -97,6 +97,36 @@ namespace iPassport.Test.Settings.Seeds
             return user;
         }
 
+        public static UserImportDto UserImportDtoWithCpfAndNulls()
+        {
+            var user = UserImportDtoComplete();
+            user.Cpf = null;
+            user.Cns = null;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCpfAndCnsEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.Cpf = string.Empty;
+            user.Cns = string.Empty;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCpfLowLenght()
+        {
+            var user = UserImportDtoComplete();
+            user.Cpf = user.Cpf[0..^1];
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCnsLowLenght()
+        {
+            var user = UserImportDtoComplete();
+            user.Cns = user.Cns[0..^1];
+            return user;
+        }
+
         public static UserImportDto UserImportDtoWithCpfNull()
         {
             var user = UserImportDtoComplete();
@@ -111,10 +141,172 @@ namespace iPassport.Test.Settings.Seeds
             return user;
         }
 
-        public static UserImportDto UserImportDtoWithCpfLowLenght()
+        public static UserImportDto UserImportDtoWithCnsNull()
         {
             var user = UserImportDtoComplete();
-            user.Cpf = user.Cpf[0..^1];
+            user.Cns = null;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCnsEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.Cns = string.Empty;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithPhoneNumberLowLenght()
+        {
+            var user = UserImportDtoComplete();
+            user.PhoneNumber = 719123456;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithInvalidEmail()
+        {
+            var user = UserImportDtoComplete();
+            user.Email = "emailTest";
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCepLowLenght()
+        {
+            var user = UserImportDtoComplete();
+            user.Cep = "123456";
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCityNull()
+        {
+            var user = UserImportDtoComplete();
+            user.City = null;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCityEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.City = string.Empty;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithStateNull()
+        {
+            var user = UserImportDtoComplete();
+            user.State = null;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithStateEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.State = string.Empty;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCountryNull()
+        {
+            var user = UserImportDtoComplete();
+            user.Country = null;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithCountryEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.Country = string.Empty;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithWasCovidInfectedNull()
+        {
+            var user = UserImportDtoComplete();
+            user.WasCovidInfected = null;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithWasCovidInfectedEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.WasCovidInfected = string.Empty;
+            return user;
+        }
+
+        public static UserImportDto UserImportDtoWithWasCovidInfectedInvalidValue()
+        {
+            var user = UserImportDtoComplete();
+            user.WasCovidInfected = "TESTE";
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithWasTestPerformedNull()
+        {
+            var user = UserImportDtoComplete();
+            user.WasTestPerformed = null;
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithWasTestPerformedEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.WasTestPerformed = string.Empty;
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithWasTestPerformedInvalidValue()
+        {
+            var user = UserImportDtoComplete();
+            user.WasTestPerformed = "TESTE";
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithTestDateNullAndWasTestPerformed()
+        {
+            var user = UserImportDtoComplete();
+            user.WasTestPerformed = "Sim";
+            user.TestDate = null;
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithTestDateHigherThenCurrentDate()
+        {
+            var user = UserImportDtoComplete();
+            user.TestDate = DateTime.UtcNow.AddDays(1);
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithResultNull()
+        {
+            var user = UserImportDtoComplete();
+            user.Result = null;
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithResultEmpty()
+        {
+            var user = UserImportDtoComplete();
+            user.Result = string.Empty;
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithResultNonstandardValue()
+        {
+            var user = UserImportDtoComplete();
+            user.Result = "TESTE";
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithResultDateNullAndResultHasValue()
+        {
+            var user = UserImportDtoComplete();
+            user.ResultDate = null;
+            return user;
+        }
+
+        internal static UserImportDto UserImportDtoWithResultDateHigherThenCurrentDate()
+        {
+            var user = UserImportDtoComplete();
+            user.ResultDate = DateTime.UtcNow.AddDays(1);
             return user;
         }
     }
