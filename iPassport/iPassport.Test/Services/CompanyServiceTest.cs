@@ -315,15 +315,15 @@ namespace iPassport.Test.Services
 
         }
         [TestMethod]
-        [DataRow(null, null, null, null)]
-        [DataRow(false, ECompanyType.Private, true, ECompanySegmentType.Health)]
-        [DataRow(true, ECompanyType.Private, false, ECompanySegmentType.Health)]
-        [DataRow(true, ECompanyType.Government, true, ECompanySegmentType.Municipal)]
-        [DataRow(true, ECompanyType.Private, true, ECompanySegmentType.Contractor)]
-        public void Add_PrivateType_BranchCompany_MustBeValidHeadquarter(bool? Isheadquarter, ECompanyType? type, bool? isActive, ECompanySegmentType? segmentType)
+        [DataRow(null,  null, null)]
+        [DataRow(false,true, ECompanySegmentType.Health)]
+        [DataRow(true,false, ECompanySegmentType.Health)]
+        [DataRow(true,true, ECompanySegmentType.Municipal)]
+        [DataRow(true,true, ECompanySegmentType.Contractor)]
+        public void Add_PrivateType_BranchCompany_MustBeValidHeadquarter(bool? Isheadquarter,  bool? isActive, ECompanySegmentType? segmentType)
         {
             // Arrange
-            var headquarterReturn = CompanySeed.Get(Isheadquarter, type, isActive, segmentType);
+            var headquarterReturn = CompanySeed.Get(Isheadquarter, isActive, segmentType);
             var mockRequest = Mock.Of<CompanyCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>()
                     && x.IsActive == true && x.IsHeadquarters == false && x.ParentId == Guid.NewGuid());
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
@@ -352,8 +352,8 @@ namespace iPassport.Test.Services
                     && x.Cnpj == cnpj);
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
-            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());
-            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get(true, ECompanyType.Private, true, ECompanySegmentType.Health, HeadquarterCpf, headquarterName));
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());            
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get(true,true, ECompanySegmentType.Health,HeadquarterCpf,headquarterName));
 
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
@@ -519,18 +519,18 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result)
-                    .Returns(CompanySeed.Get(isHeadquarters, null, true, segmentType));
+                    .Returns(CompanySeed.Get(isHeadquarters, true, segmentType));
             _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
-
-            if (ECompanySegmentType.Federal == segmentType)
-                _mockRepository.Setup(x => x.HasBranchCompanyToAssociateInFederal(It.IsAny<Guid>()).Result).Returns(true);
+            
+            if(ECompanySegmentType.Federal == segmentType)
+                _mockRepository.Setup(x => x.HasSubsidiariesCandidatesToFederalGovernment(It.IsAny<Guid>()).Result).Returns(true);
             else if (ECompanySegmentType.Municipal == segmentType)
                 _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>(), It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
             else if (ECompanySegmentType.State == segmentType)
             {
                 _mockRepository.Setup(x => x.GetPublicStateHeadquarters(It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
-                _mockRepository.Setup(x => x.HasBranchCompanyToAssociateInState(It.IsAny<Guid>()).Result).Returns(false);
+                _mockRepository.Setup(x => x.HasSubsidiariesCandidatesToStateGovernment(It.IsAny<Guid>()).Result).Returns(false);
             }
 
             //Act
@@ -566,18 +566,18 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(x => x.Update(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result)
-                    .Returns(CompanySeed.Get(isHeadquarters, null, true, segmentType));
+                    .Returns(CompanySeed.Get(isHeadquarters, true, segmentType));
             _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
 
             if (ECompanySegmentType.Federal == segmentType)
-                _mockRepository.Setup(x => x.HasBranchCompanyToAssociateInFederal(It.IsAny<Guid>()).Result).Returns(true);
+                _mockRepository.Setup(x => x.HasSubsidiariesCandidatesToFederalGovernment(It.IsAny<Guid>()).Result).Returns(true);
             else if (ECompanySegmentType.Municipal == segmentType)
                 _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>(), It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
             else if (ECompanySegmentType.State == segmentType)
             {
                 _mockRepository.Setup(x => x.GetPublicStateHeadquarters(It.IsAny<Guid>()).Result).Returns(Mock.Of<List<Company>>());
-                _mockRepository.Setup(x => x.HasBranchCompanyToAssociateInState(It.IsAny<Guid>()).Result).Returns(false);
+                _mockRepository.Setup(x => x.HasSubsidiariesCandidatesToStateGovernment(It.IsAny<Guid>()).Result).Returns(false);
             }
 
             //Act
@@ -587,6 +587,59 @@ namespace iPassport.Test.Services
             _mockRepository.Verify(x => x.Update(It.IsAny<Company>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.AreEqual(true, result.Result.Success);
+        }
+
+        [TestMethod]
+        [DataRow(null, null, null)]
+        [DataRow(false, ECompanySegmentType.State, true)]
+        [DataRow(false, ECompanySegmentType.Federal, true)]
+        [DataRow(true, ECompanySegmentType.State, false)]
+        [DataRow(true, ECompanySegmentType.Federal, false)]
+        [DataRow(true, null, true)]
+        [DataRow(true, ECompanySegmentType.Municipal, true)]
+        [DataRow(true, ECompanySegmentType.Contractor, true)]
+        [DataRow(true, ECompanySegmentType.Health, true)]
+        public void GetSubsidiariesCandidatesPaged_MustBeValidParent(bool? isActive, ECompanySegmentType? segment, bool? hasAddress )
+        {
+            // Arrange
+            var mockFilter = Mock.Of<PageFilter>();
+            var parentCompany = CompanySeed.Get(null, isActive, segment, default, default, hasAddress);
+            
+            if(parentCompany != null)
+                _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(parentCompany);
+            
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.GetSubsidiariesCandidatesPaged(Guid.NewGuid(), mockFilter)).Result;
+            Assert.AreEqual(_localizer["HeadquarterNotFoundOrNotValid"], ex.Message);
+        }
+
+        [TestMethod]
+        [DataRow(true, ECompanySegmentType.State)]
+        [DataRow(true, ECompanySegmentType.Federal)]
+        public void GetSubsidiariesCandidatesPaged_MustReturnOK(bool? isActive, ECompanySegmentType? segment)
+        {
+            // Arrange
+            var mockFilter = Mock.Of<PageFilter>();
+            var parentCompany = CompanySeed.Get(null, isActive, segment);
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(parentCompany);
+            _mockRepository.Setup(x => x.GetSubsidiariesCandidatesToFederalGovernmentPaged(It.IsAny<Guid>(),mockFilter).Result).Returns(CompanySeed.GetPaged());
+            _mockRepository.Setup(x => x.GetSubsidiariesCandidatesToStateGovernmentPaged(It.IsAny<Guid>(), mockFilter).Result).Returns(CompanySeed.GetPaged());
+
+            //Act
+            var result = _service.GetSubsidiariesCandidatesPaged(Guid.NewGuid(), mockFilter);
+
+
+            // Assert
+            _mockRepository.Verify(x => x.GetLoadedCompanyById(It.IsAny<Guid>()));
+            if (segment == ECompanySegmentType.State)
+                _mockRepository.Verify(x => x.GetSubsidiariesCandidatesToStateGovernmentPaged(It.IsAny<Guid>(), mockFilter));
+            else
+                _mockRepository.Verify(x => x.GetSubsidiariesCandidatesToFederalGovernmentPaged(It.IsAny<Guid>(), mockFilter));
+            Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
+            Assert.AreEqual(true, result.Result.Success);
+            Assert.AreEqual(_localizer["SubsidiariesCandidatesCompanies"], result.Result.Message);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(CompanySubsidiaryCandidateResponseViewModel));
         }
     }
 }

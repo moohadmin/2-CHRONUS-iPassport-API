@@ -14,7 +14,8 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetById(Guid id);
         Task<ResponseApi> GetAllTypes();
         Task<ResponseApi> GetHeadquartersCompanies(GetHeadquarterCompanyFilter filter);
-        Task<PagedResponseApi> GetSegmetsByTypeId(Guid TypeId, PageFilter filter);
-        Task<ResponseApi> Edit(CompanyEditDto dto);
+        Task<PagedResponseApi> GetSegmetsByTypeId(Guid typeId, PageFilter filter);
+        Task<ResponseApi> Edit(CompanyEditDto dto);        
+        Task<PagedResponseApi> GetSubsidiariesCandidatesPaged(Guid parentId, PageFilter filter);
     }
 }
