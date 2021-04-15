@@ -196,8 +196,8 @@ namespace iPassport.Domain.Entities
                 Bond = dto.Bond,
                 PriorityGroupId = dto.PriorityGroupId,
                 WasCovidInfected = dto.WasCovidInfectedBool,
-                WasTestPerformed = dto.WasTestPerformed == Constants.CONST_NENHUM_VALUE ? null : dto.WasTestPerformed == Constants.CONST_SIM_VALUE,
-                UserDiseaseTests = dto.WasTestPerformed == Constants.CONST_SIM_VALUE ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
+                WasTestPerformed = dto.WasTestPerformed.ToUpper() == Constants.CONST_NENHUM_VALUE ? null : dto.WasTestPerformed.ToUpper() == Constants.CONST_SIM_VALUE,
+                UserDiseaseTests = dto.WasTestPerformed.ToUpper() == Constants.CONST_SIM_VALUE ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
                 UserVaccines = UserVaccine.CreateListUserVaccine(dto),
                 ImportedFileId = importedFileId
             };
