@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -21,6 +22,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,7 +39,6 @@ namespace iPassport.Test.Services
         Mock<UserManager<Users>> _mockUserManager;
         IHttpContextAccessor _accessor;
         Mock<IStorageExternalService> _externalStorageService;
-        Mock<IStringLocalizer<Resource>> _mockLocalizer;
         Mock<ICompanyRepository> _mockCompanyRepository;
         Mock<ICityRepository> _mockCityRepository;
         Mock<IVaccineRepository> _mockVaccineRepository;
@@ -53,10 +54,12 @@ namespace iPassport.Test.Services
         Mock<IImportedFileRepository> _mockImportedFileRepository;
         Mock<IProfileRepository> _mockProfileRepository;
         Mock<IUserTokenRepository> _mockUserTokenRepository;
+        Resource _resource;
 
         [TestInitialize]
         public void Setup()
         {
+            _resource = ResourceFactory.Create();
             _mapper = AutoMapperFactory.Create();
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepository = new Mock<IUserDetailsRepository>();
@@ -64,7 +67,6 @@ namespace iPassport.Test.Services
             _planMockRepository = new Mock<IPlanRepository>();
             _externalStorageService = new Mock<IStorageExternalService>();
             _mockUserManager = UserManagerFactory.CreateMock();
-            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCompanyRepository = new Mock<ICompanyRepository>();
             _mockCityRepository = new Mock<ICityRepository>();
             _mockVaccineRepository = new Mock<IVaccineRepository>();
@@ -81,7 +83,7 @@ namespace iPassport.Test.Services
             _mockProfileRepository = new Mock<IProfileRepository>();
             _mockUserTokenRepository = new Mock<IUserTokenRepository>();
 
-            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, _mockLocalizer.Object, _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
+            _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, ResourceFactory.GetStringLocalizer(), _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
                 _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object,
                 _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object, _mockProfileRepository.Object, _mockUserTokenRepository.Object);
         }
@@ -131,7 +133,7 @@ namespace iPassport.Test.Services
         public void GetCurrentUser()
         {
             var detailsSeed = UserSeed.GetUserDetails();
-            
+
             // Arrange
             _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
 
@@ -161,7 +163,7 @@ namespace iPassport.Test.Services
             var result = _service.AddUserImage(mockRequest);
 
             // Assert
-            _externalStorageService.Verify(a => a.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()), Times.Once);          
+            _externalStorageService.Verify(a => a.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(string));
@@ -296,7 +298,7 @@ namespace iPassport.Test.Services
             var mockRequest = Mock.Of<CitizenEditDto>(x => x.PriorityGroupId == Guid.NewGuid() && x.Address == Mock.Of<AddressEditDto>());
             var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
 
-            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());            
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
@@ -405,6 +407,51 @@ namespace iPassport.Test.Services
             _mockRepository.Verify(x => x.Update(It.IsAny<UserDetails>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        [DataRow("2021-02-15T17:03:34.832Z", "2021-02-15T17:03:34.832Z")]
+        [DataRow("2021-02-15T17:03:34.832Z", "2021-02-14T17:03:34.832Z")]
+        public void EditCitizen_invalidDosesDate(string dateString1, string dateString2)
+        {
+            var date1 = DateTime.Parse(dateString1);
+            var date2 = DateTime.Parse(dateString2);
+
+            // Arrange
+            var mockRequest = Mock.Of<CitizenEditDto>(x =>
+                x.PriorityGroupId == Guid.NewGuid()
+                && x.Address == Mock.Of<AddressEditDto>()
+                && x.NumberOfDoses == 2
+                && x.Doses == new List<UserVaccineEditDto>()
+                {
+                    Mock.Of<UserVaccineEditDto>(y => y.Dose == 1 && y.VaccinationDate == date1),
+                    Mock.Of<UserVaccineEditDto>(y => y.Dose == 2 && y.VaccinationDate == date2),
+
+                });
+
+            // Act
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
+            _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockPriorityGroupRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(PriorityGroupSeed.Get());
+            _mockVaccineRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(VaccineSeed.GetVaccines().FirstOrDefault());
+            _mockHealthUnitRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitSeed.GetHealthUnit());
+            _mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<Users>()).Result).Returns(Mock.Of<IdentityResult>(x => x.Succeeded));
+            _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()).Result).Returns(true);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EditCitizen(mockRequest)).Result;
+            string message;
+
+            if (date1.Date == date2.Date)
+                message = _resource.GetMessage("VaccineDoseDateCannoteBeEquals");
+
+            else
+            {
+                message = _resource.GetMessage("VaccineNextDoseDateCannoteBeLowerToPrevious");
+            }
+            Assert.AreEqual(message, ex.Message);
         }
     }
 }

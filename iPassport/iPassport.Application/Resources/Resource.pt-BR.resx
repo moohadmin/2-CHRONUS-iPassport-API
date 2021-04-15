@@ -630,9 +630,6 @@
   <data name="Vaccine" xml:space="preserve">
     <value>Vacina</value>
   </data>
-  <data name="InvalidVaccineDoseDate" xml:space="preserve">
-    <value>A data de vacinação não pode ser anterior à última dose cadastrada. Favor verificar.</value>
-  </data>
   <data name="EndTime" xml:space="preserve">
     <value>período final</value>
   </data>
@@ -744,8 +741,8 @@
   <data name="CompanySegments" xml:space="preserve">
     <value>Segmentos de Empresa</value>
   </data>
-  <data name="VaccineInvalidPeriodSecondDose" xml:space="preserve">
-    <value>Somente é permitido o lançamento da 2ª dose da {0} no período entre {1} e {2} dias, após aplicação da 1ª dose.</value>
+  <data name="VaccineDoseDateCannoteBeEquals" xml:space="preserve">
+    <value>A data de vacinação entre as doses não podem ser iguais</value>
   </data>
   <data name="CnpjRequiredForPrivateCompany" xml:space="preserve">
     <value>Os 8 primeiros números do Cnpj são necessários para realizar a pesquisa</value>
@@ -810,7 +807,10 @@
   <data name="CompanyEdited" xml:space="preserve">
     <value>Empresa Editada com sucesso!</value>
   </data>
-	<data name="SubsidiariesCandidatesCompanies" xml:space="preserve">
+  <data name="SubsidiariesCandidatesCompanies" xml:space="preserve">
     <value>Empresas Candidatas</value>
+  </data>
+  <data name="VaccineNextDoseDateCannoteBeLowerToPrevious" xml:space="preserve">
+    <value>A data da próxima dose não pode ser menor que sua anterior.</value>
   </data>
 </root>

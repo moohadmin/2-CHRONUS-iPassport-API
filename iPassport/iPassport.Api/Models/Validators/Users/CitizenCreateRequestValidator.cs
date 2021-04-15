@@ -65,8 +65,9 @@ namespace iPassport.Api.Models.Validators.Users
                 .Must(x => x >= 0).WithMessage(string.Format(localizer["RequiredField"], localizer["NumberOfDoses"]));
 
             RuleForEach(x => x.Doses)
-                .Cascade(CascadeMode.Stop)
-                .NotNull().When(x => x.NumberOfDoses > 0).WithMessage(string.Format(localizer["RequiredField"], "Doses"))
+                .NotNull().When(x => x.NumberOfDoses > 0).WithMessage(string.Format(localizer["RequiredField"], "Doses"));
+            
+            RuleForEach(x => x.Doses)
                 .SetValidator(new UserVaccineCreateRequestValidator(localizer)).When(x => x.NumberOfDoses > 0);
 
             RuleFor(x => x.Email)
