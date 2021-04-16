@@ -68,7 +68,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var user = await ValidateUserToEmailLogin(email);
             var userDetails = await ValidateUserDetailsToEmailLogin(user.Id);
-            var healthunitAddress = await _addressRepository.FindFullAddress(userDetails.HealthUnitId.GetValueOrDefault());
+            var healthunitAddress = await _addressRepository.FindFullAddress(userDetails.HealthUnit.AddressId.GetValueOrDefault());
 
             ValidateProfileDataToToken(user, userDetails, healthunitAddress);
 
@@ -193,7 +193,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         }
         private async Task<UserDetails> ValidateUserDetailsToEmailLogin(Guid userId)
         {
-            var userDetails = await _userDetailsRepository.GetByUserId(userId);
+            var userDetails = await _userDetailsRepository.GetWithHealtUnityById(userId);
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
