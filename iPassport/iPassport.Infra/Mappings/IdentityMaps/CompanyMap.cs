@@ -45,7 +45,7 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .IsRequired(false);
 
             builder.HasOne(x => x.ParentCompany)
-                .WithMany()
+                .WithMany(x => x.Subsidiaries)
                 .HasForeignKey(x => x.ParentId)
                 .IsRequired(false);
 

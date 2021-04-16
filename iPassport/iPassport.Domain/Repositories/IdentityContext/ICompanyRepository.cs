@@ -22,5 +22,7 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<bool> CnpjAlreadyRegistered(string cnpj);
         Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter);
         Task<PagedData<Company>> GetSubsidiariesCandidatesToStateGovernmentPaged(Guid stateId,PageFilter filter);
+        Task<IList<Company>> GetSubsidiariesCandidatesToStateGovernment(Guid stateId, IEnumerable<Guid> candidates);
+        Task<IList<Company>> GetSubsidiariesCandidatesToFederalGovernment(Guid countryId, IEnumerable<Guid> candidates);
     }
 }
