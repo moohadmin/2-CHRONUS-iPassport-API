@@ -3,6 +3,8 @@ using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Models;
 using iPassport.Application.Resources;
+using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
@@ -11,7 +13,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Application.Services.AuthenticationServices
@@ -62,19 +63,15 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> EmailLogin(string email, string password)
         {
-            var user = await _userRepository.GetByEmail(email);
-            if (user == null)
-                throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
+            var user = await ValidateUserToEmailLogin(email);
+            var userDetails = await ValidateUserDetailsToEmailLogin(user.Id);
+            ValidateProfileDataToToken(user, userDetails);
 
-            if (user.IsInactive())
-                throw new BusinessException(_localizer["InactiveUser"]);
-
-            if (user.Profile == null)
-                throw new BusinessException(_localizer["UserAccessProfileNotFound"]);
+            var tokenData = GetTokenProfileData(user, userDetails);
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = await _tokenService.GenerateByEmail(user);
+                var token = await _tokenService.GenerateByEmail(user, tokenData.CompanyId, tokenData.CityId, tokenData.StateId, tokenData.CountryId, tokenData.HealthUnityId);
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
@@ -173,5 +170,73 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             return new ResponseApi(true, _localizer["Loggedout"]);
         }
+
+        #region Private
+        private async Task<Users> ValidateUserToEmailLogin(string email)
+        {
+            var user = await _userRepository.GetByEmail(email);
+            if (user == null)
+                throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
+
+            if (user.IsInactive())
+                throw new BusinessException(_localizer["InactiveUser"]);
+
+            if (user.Profile == null)
+                throw new BusinessException(_localizer["UserAccessProfileNotFound"]);
+
+            return user;
+        }
+        private async Task<UserDetails> ValidateUserDetailsToEmailLogin(Guid userId)
+        {
+            var userDetails = await _userDetailsRepository.GetByUserId(userId);
+            if (userDetails == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            return userDetails;
+        }
+        private void ValidateProfileDataToToken(Users user, UserDetails UserDetails)
+        {
+            if(!user.Profile.IsAdmin())
+            {
+                if (user.Company == null)
+                    throw new BusinessException(_localizer["CompanyNotFound"]);
+
+                if (!user.Company.IsActive())
+                    throw new BusinessException(_localizer["InactiveUserCompany"]);
+                
+                if (!user.Profile.IsBusiness())
+                {
+                    if (user.Company.Address == null)
+                        throw new BusinessException(_localizer["AddressNotFound"]);
+                    
+                    if(user.Profile.IsHealthUnit() && !UserDetails.HealthUnitId.HasValue)
+                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
+                }
+            }
+        }
+        private TokenProfileDataDto GetTokenProfileData(Users user, UserDetails UserDetails)
+        =>
+          new()
+          {
+              CompanyId = GetCompanyId(user),
+              CityId = GetCityId(user),
+              StateId = GetStateId(user),
+              CountryId = GetCountryId(user),
+              HealthUnityId = GetHealthUnityId(UserDetails, user.Profile)
+          };
+
+        private string GetCompanyId(Users user)
+            => user.Profile.IsBusiness() ? user.CompanyId.ToString() : "";
+        private string GetCityId(Users user)
+            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.CityId.ToString() : "";
+        private string GetStateId(Users user)
+            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.City.StateId.ToString() : "";
+        private string GetCountryId(Users user)
+            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.City.State.CountryId.ToString() : "";
+        private string GetHealthUnityId(UserDetails UserDetails, Profile profile)
+            => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : "";
+
+
+        #endregion
     }
 }
