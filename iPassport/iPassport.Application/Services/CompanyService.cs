@@ -191,8 +191,8 @@ namespace iPassport.Application.Services
             company.AddSubsidiaries(subs.ToList());
             
             await _companyRepository.Update(company);
-
-            return new ResponseApi(true, _localizer["SubsidiariesCompaniesAssociated"], company.Id);
+            
+            return new ResponseApi(true, _localizer["SubsidiariesCompaniesAssociated"], new AssociatedSubsidiariesViewModel() { AssociatedCount = subs.Count(), ParentName = company.Name });
         }
 
         #region Private
