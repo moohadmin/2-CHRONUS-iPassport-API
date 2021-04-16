@@ -1,5 +1,6 @@
 ﻿using iPassport.Application.Exceptions;
 using iPassport.Domain.Dtos;
+using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System;
@@ -30,16 +31,16 @@ namespace iPassport.Application.Extensions
             new AccessControlDTO
             {
                 Profile = GetCurrentUserProfile(context),
-                CityId = GetCurrentUserGuidClaim(context, "CityId"),
-                StateId = GetCurrentUserGuidClaim(context, "StateId"),
-                CountryId = GetCurrentUserGuidClaim(context, "CountryId"),
-                HealthUnityId = GetCurrentUserGuidClaim(context, "HealthUnityId"),
-                CompanyId = GetCurrentUserGuidClaim(context, "CompanyId")
+                CityId = GetCurrentUserGuidClaim(context, Constants.TOKEN_CLAIM_CITY_ID),
+                StateId = GetCurrentUserGuidClaim(context, Constants.TOKEN_CLAIM_STATE_ID),
+                CountryId = GetCurrentUserGuidClaim(context, Constants.TOKEN_CLAIM_COUNTRY_ID),
+                HealthUnityId = GetCurrentUserGuidClaim(context, Constants.TOKEN_CLAIM_HEALTH_UNITY_ID),
+                CompanyId = GetCurrentUserGuidClaim(context, Constants.TOKEN_CLAIM_COMPANY_ID)
             };
 
         private static Guid GetUserId(ClaimsPrincipal user)
         {
-            var userId = user.FindFirst("UserId");
+            var userId = user.FindFirst(Constants.TOKEN_CLAIM_USER_ID);
 
             if (userId == null)
                 throw new BusinessException("Usuário não encontrado");
