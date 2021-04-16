@@ -641,5 +641,47 @@ namespace iPassport.Test.Services
             Assert.AreEqual(_localizer["SubsidiariesCandidatesCompanies"], result.Result.Message);
             Assert.IsInstanceOfType(result.Result.Data, typeof(CompanySubsidiaryCandidateResponseViewModel));
         }
+
+        [TestMethod]
+        [DataRow(false, true, ECompanySegmentType.State)]
+        [DataRow(true, true, ECompanySegmentType.State)]
+        [DataRow(false, true, ECompanySegmentType.Federal)]
+        [DataRow(true, true, ECompanySegmentType.Federal)]
+        public void AssociateSubsidiaries(bool associateAll, bool isActive, ECompanySegmentType? segment)
+        {
+            //Arrange
+            List<Guid> mockSubs = null;
+            if (!associateAll)
+                mockSubs = new List<Guid>()
+                {
+                    Guid.NewGuid(),
+                    Guid.NewGuid(),
+                    Guid.NewGuid(),
+                    Guid.NewGuid(),
+                };
+
+            var mockRequest = Mock.Of<AssociateSubsidiariesDto>(x => x.AssociateAll == associateAll && x.ParentId == Guid.NewGuid() && x.Subsidiaries == mockSubs);
+            var parentCompany = CompanySeed.Get(null, isActive, segment);
+            
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(parentCompany);
+            _mockRepository.Setup(x => x.GetSubsidiariesCandidatesToFederalGovernment(It.IsAny<Guid>(), It.IsAny<List<Guid>>()).Result).Returns(CompanySeed.GetCompanies());
+            _mockRepository.Setup(x => x.GetSubsidiariesCandidatesToStateGovernment(It.IsAny<Guid>(), It.IsAny<List<Guid>>()).Result).Returns(CompanySeed.GetCompanies());
+            _mockRepository.Setup(x => x.Update(It.IsAny<Company>()).Result).Returns(true);
+            
+            //Act
+            var result = _service.AssociateSubsidiaries(mockRequest);
+
+            //Assert
+            if (segment == ECompanySegmentType.State)
+                _mockRepository.Verify(x => x.GetSubsidiariesCandidatesToStateGovernment(It.IsAny<Guid>(), It.IsAny<List<Guid>>()));
+            else
+                _mockRepository.Verify(x => x.GetSubsidiariesCandidatesToFederalGovernment(It.IsAny<Guid>(), It.IsAny<List<Guid>>()));
+
+            _mockRepository.Verify(x => x.Update(It.IsAny<Company>()));
+            _mockRepository.Verify(x => x.GetLoadedCompanyById(It.IsAny<Guid>()));
+            
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.AreEqual(true, result.Result.Success);
+        }
     }
 }

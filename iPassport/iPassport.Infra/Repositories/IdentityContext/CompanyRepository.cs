@@ -46,6 +46,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
             .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
             .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
             .Include(x => x.ParentCompany)
+            .Include(x => x.Subsidiaries)
             .Include(x => x.Responsible)
             .Include(x => x.DeactivationUser)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -95,10 +96,21 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
         public async Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter)
             => await Paginate(QuerySubsidiariesCandidatesToFederalGovernment(countryId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
-        
-            
+
+        public async Task<IList<Company>> GetSubsidiariesCandidatesToFederalGovernment(Guid countryId, IEnumerable<Guid> candidates)
+            => await QuerySubsidiariesCandidatesToFederalGovernment(countryId)
+                            .Where(x => (candidates == null || !candidates.Any()) || candidates.Contains(x.Id))
+                            .OrderBy(m => m.Name)
+                            .ToListAsync();
+
         public async Task<PagedData<Company>> GetSubsidiariesCandidatesToStateGovernmentPaged(Guid stateId, PageFilter filter)
             => await Paginate(QuerySubsidiariesCandidatesToStateGovernment(stateId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
+
+        public async Task<IList<Company>> GetSubsidiariesCandidatesToStateGovernment(Guid stateId, IEnumerable<Guid> candidates)
+            => await QuerySubsidiariesCandidatesToStateGovernment(stateId)
+                            .Where(x => (candidates == null || !candidates.Any()) || candidates.Contains(x.Id))
+                            .OrderBy(m => m.Name)
+                            .ToListAsync();
 
         #region Private
         private IQueryable<Company> GetLoadedHeadquarters() =>

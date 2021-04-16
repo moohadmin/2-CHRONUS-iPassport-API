@@ -2,8 +2,6 @@
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
 using iPassport.Api.Models.Requests.Company;
-using iPassport.Api.Models.Requests.Shared;
-using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -137,19 +135,19 @@ namespace iPassport.Test.Controllers
         }
 
         [TestMethod]
-        public void GetHeadquartersCompanies_MustReturnOk()
+        public void AddSubs_MustReturnOk()
         {
-            var mockRequest = Mock.Of<GetHeadquarterCompanyRequest>();
+            var mockRequest = Mock.Of<AssociateSubsidiariesRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.GetHeadquartersCompanies(It.IsAny<GetHeadquarterCompanyFilter>()))
-                .Returns(Task.FromResult(new ResponseApi(true, "Test Success!", _mapper.Map<IList<HeadquarterCompanyViewModel>>(CompanySeed.GetCompanies()))));
+            _mockService.Setup(r => r.AssociateSubsidiaries(It.IsAny<AssociateSubsidiariesDto>()))
+                .Returns(Task.FromResult(new ResponseApi(true, "Test Success!", It.IsAny<IList<Guid>>())));
 
             // Act
-            var result = _controller.GetHeadquartersCompanies(mockRequest);
+            var result = _controller.PostSubsidiaries(Guid.NewGuid(), mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.GetHeadquartersCompanies(It.IsAny<GetHeadquarterCompanyFilter>()));
+            _mockService.Verify(a => a.AssociateSubsidiaries(It.IsAny<AssociateSubsidiariesDto>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
