@@ -208,8 +208,11 @@ namespace iPassport.Application.Services.AuthenticationServices
                 {
                     if (user.Company.Address == null)
                         throw new BusinessException(_localizer["AddressNotFound"]);
-                    
-                    if(user.Profile.IsHealthUnit() && !UserDetails.HealthUnitId.HasValue)
+
+                    if (user.Company.Segment == null)
+                        throw new BusinessException(_localizer["SegmentNotFound"]);
+
+                    if (user.Profile.IsHealthUnit() && !UserDetails.HealthUnitId.HasValue)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
                 }
             }
@@ -228,11 +231,11 @@ namespace iPassport.Application.Services.AuthenticationServices
         private string GetCompanyId(Users user)
             => user.Profile.IsBusiness() ? user.CompanyId.ToString() : "";
         private string GetCityId(Users user)
-            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.CityId.ToString() : "";
+            => ((user.Profile.IsGovernment() && user.Company.IsMunicipalGovernment()) || user.Profile.IsHealthUnit()) ? user.Company.Address.CityId.ToString() : "";
         private string GetStateId(Users user)
-            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.City.StateId.ToString() : "";
+            => ((user.Profile.IsGovernment() && user.Company.IsStateGovernment()) || user.Profile.IsHealthUnit()) ? user.Company.Address.City.StateId.ToString() : "";
         private string GetCountryId(Users user)
-            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.City.State.CountryId.ToString() : "";
+            => ((user.Profile.IsGovernment() && user.Company.IsFederalGovernment()) || user.Profile.IsHealthUnit()) ? user.Company.Address.City.State.CountryId.ToString() : "";
         private string GetHealthUnityId(UserDetails UserDetails, Profile profile)
             => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : "";
 

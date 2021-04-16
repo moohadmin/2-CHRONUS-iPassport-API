@@ -233,6 +233,28 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
+        [DataRow(EProfileKey.healthUnit)]
+        [DataRow(EProfileKey.government)]
+        public void EmailLogin_ProfileData_CompanyMustHaveSegment(EProfileKey profile)
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            var userDetails = UserSeed.GetUserDetails();
+            user.Profile = ProfileSeed.Get(profile);
+            user.Company.Segment = null;
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["SegmentNotFound"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+        }
+
+        [TestMethod]
         [DataRow(EProfileKey.healthUnit)]        
         public void EmailLogin_ProfileData_MustHaveHealthUnitId(EProfileKey profile)
         {
@@ -241,7 +263,7 @@ namespace iPassport.Test.Services
             var user = UserSeed.GetUserAdmin();
             var userDetails = UserSeed.GetUserDetails();
             user.Profile = ProfileSeed.Get(profile);
-            
+            user.Company = CompanySeed.Get(null, true, ECompanySegmentType.Health);
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
             _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);

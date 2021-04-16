@@ -80,5 +80,6 @@ namespace iPassport.Domain.Entities
             => Cnpj.Substring(0, 8) == cnpj.Substring(0, 8);
         public bool IsStateGovernment() => Segment.IsState() && Segment.IsGovernmentType();
         public bool IsFederalGovernment() => Segment.IsFederal() && Segment.IsGovernmentType();
+        public bool IsMunicipalGovernment() => Segment.IsMunicipal() && Segment.IsGovernmentType();
     }
 }
