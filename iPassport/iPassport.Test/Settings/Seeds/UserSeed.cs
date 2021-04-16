@@ -36,6 +36,7 @@ namespace iPassport.Test.Seeds
         {
             var user = new Users("test", "test", "test", "test", Guid.NewGuid(), "Test", Guid.NewGuid(), 0);
             user.Profile = new("Administrativo", "admin");
+            user.Company = CompanySeed.Get();
             return user;
         }
 

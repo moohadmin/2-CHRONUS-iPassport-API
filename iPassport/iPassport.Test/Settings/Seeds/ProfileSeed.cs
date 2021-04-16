@@ -1,4 +1,6 @@
 ﻿using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace iPassport.Test.Settings.Seeds
@@ -17,5 +19,8 @@ namespace iPassport.Test.Settings.Seeds
 
         public static Profile Get() =>
                 new Profile("profile test 1", "1");
+
+        public static Profile Get(EProfileKey profile) =>
+            new(Enum.GetName(profile), Enum.GetName(profile));
     }
 }

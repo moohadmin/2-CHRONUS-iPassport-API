@@ -1,4 +1,5 @@
-﻿using iPassport.Application.Interfaces.Authentication;
+﻿using iPassport.Application.Exceptions;
+using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Models;
 using iPassport.Application.Resources;
 using iPassport.Application.Services.AuthenticationServices;
@@ -8,6 +9,7 @@ using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using iPassport.Test.Settings.Seeds;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -30,6 +32,7 @@ namespace iPassport.Test.Services
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
         IAccountService _service;
         Mock<IUserDetailsRepository> _mockUserDetailsRepository;
+        IStringLocalizer<Resource> _localizer;
 
         [TestInitialize]
         public void Setup()
@@ -41,8 +44,9 @@ namespace iPassport.Test.Services
             _mockAuth2FactService = new Mock<IAuth2FactService>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockUserDetailsRepository = new Mock<IUserDetailsRepository>();
+            _localizer = ResourceFactory.GetStringLocalizer();
 
-            _service = new AccountService( _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _mockLocalizer.Object, _mockUserDetailsRepository.Object);
+            _service = new AccountService( _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _localizer, _mockUserDetailsRepository.Object);
         }
 
         [TestMethod]
@@ -94,6 +98,159 @@ namespace iPassport.Test.Services
             _mockUserDetailsRepository.Verify(x => x.GetByUserId(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void EmailLogin_User_MustFindUser()
+        {
+            var email = "teste";
+            var Password = "test";
+            
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["UserOrPasswordInvalid"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+        }
+
+        [TestMethod]
+        public void EmailLogin_User_MustBeActiveUser()
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            user.Deactivate(Guid.NewGuid());
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["InactiveUser"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+        }
+
+        [TestMethod]
+        public void EmailLogin_User_MustHaveProfile()
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            user.Profile = null;
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["UserAccessProfileNotFound"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+        }
+
+        [TestMethod]
+        public void EmailLogin_UserDetails_MustFindUserDetails()
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["UserNotFound"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+        }
+
+        [TestMethod]
+        [DataRow(EProfileKey.business)]
+        [DataRow(EProfileKey.healthUnit)]
+        [DataRow(EProfileKey.government)]
+        public void EmailLogin_ProfileData_CompanyMustFound(EProfileKey profile)
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            var userDetails = UserSeed.GetUserDetails();
+            user.Profile = ProfileSeed.Get(profile);
+            user.Company = null;
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["CompanyNotFound"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+        }
+
+        [TestMethod]
+        [DataRow(EProfileKey.business)]
+        [DataRow(EProfileKey.healthUnit)]
+        [DataRow(EProfileKey.government)]
+        public void EmailLogin_ProfileData_CompanyMustBeActive(EProfileKey profile)
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            var userDetails = UserSeed.GetUserDetails();
+            user.Profile = ProfileSeed.Get(profile);
+            user.Company.Deactivate(Guid.NewGuid());
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["InactiveUserCompany"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+        }
+
+        [TestMethod]
+        [DataRow(EProfileKey.healthUnit)]
+        [DataRow(EProfileKey.government)]
+        public void EmailLogin_ProfileData_CompanyMustHaveAddress(EProfileKey profile)
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            var userDetails = UserSeed.GetUserDetails();
+            user.Profile = ProfileSeed.Get(profile);
+            user.Company.Address = null;
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["AddressNotFound"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+        }
+
+        [TestMethod]
+        [DataRow(EProfileKey.healthUnit)]        
+        public void EmailLogin_ProfileData_MustHaveHealthUnitId(EProfileKey profile)
+        {
+            var email = "teste";
+            var Password = "test";
+            var user = UserSeed.GetUserAdmin();
+            var userDetails = UserSeed.GetUserDetails();
+            user.Profile = ProfileSeed.Get(profile);
+            
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["HealthUnitNotFound"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
         }
 
         [TestMethod]
