@@ -42,7 +42,8 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<Users> GetByEmail(string email) =>
            await _context.Users
-               .Include(x => x.Profile)               
+                .Include(x => x.Profile)
+                .Include(x => x.Company).ThenInclude(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State)
                .Where(x => x.NormalizedEmail == email.ToUpper()).FirstOrDefaultAsync();
 
         public async Task Update(Users user)
