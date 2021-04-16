@@ -813,4 +813,7 @@
   <data name="VaccineNextDoseDateCannoteBeLowerToPrevious" xml:space="preserve">
     <value>A data da próxima dose não pode ser menor que a data da dose anterior.</value>
   </data>
+	<data name="InactiveUserCompany" xml:space="preserve">
+    <value>A empresa do usuário se encontra Inativa. Favor verificar.</value>
+  </data>
 </root>

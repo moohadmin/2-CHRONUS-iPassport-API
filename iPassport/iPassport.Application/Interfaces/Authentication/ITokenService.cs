@@ -6,7 +6,7 @@ namespace iPassport.Application.Interfaces.Authentication
     public interface ITokenService
     {
         Task<string> GenerateBasic(Users user, bool hasPlan);
-        Task<string> GenerateByEmail(Users user);
+        Task<string> GenerateByEmail(Users user, string CompanyId, string CityId, string StateId, string CountryId, string HealthUnityId);
         Task<bool> IsCurrentActiveToken();
         Task DeactivateCurrentAsync();
         Task<bool> IsActiveAsync(string token);
