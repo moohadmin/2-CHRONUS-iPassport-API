@@ -35,7 +35,7 @@ namespace iPassport.Test.Services
             _mockStateRepository = new Mock<IStateRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
 
-            _service = new CityService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockStateRepository.Object);
+            _service = new CityService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockStateRepository.Object, null);
         }
 
         [TestMethod]
