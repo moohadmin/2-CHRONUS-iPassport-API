@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
@@ -15,9 +16,10 @@ namespace iPassport.Infra.Repositories.IdentityContext
     {
         public CompanyRepository(PassportIdentityContext context) : base(context) { }
 
-        public async Task<PagedData<Company>> FindByNameParts(GetCompaniesPagedFilter filter)
+        public async Task<PagedData<CompanyAssociatedDto>> FindByNameParts(GetCompaniesPagedFilter filter)
         {
-            var query = _DbSet
+            var query = 
+                _DbSet
                     .Include(x => x.Address)
                     .Include(x => x.Segment)
                     .Where(m => (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
@@ -25,9 +27,18 @@ namespace iPassport.Infra.Repositories.IdentityContext
                                 && (filter.Cnpj == null || m.Cnpj == filter.Cnpj)
                                 && (filter.SegmentId == null || m.SegmentId == filter.SegmentId)
                                 && (filter.TypeId == null || m.Segment.CompanyTypeId == filter.TypeId))
-                    .OrderBy(m => m.Name);
+                    .OrderBy(m => m.Name)
+                    .Select(x => 
+                        new CompanyAssociatedDto(x, 
+                            x.DeactivationDate == null &&
+                                (x.Segment.Identifyer == (int)ECompanySegmentType.Federal 
+                                    || x.Segment.Identifyer == (int)ECompanySegmentType.State) 
+                            && (x.Segment.Identifyer == (int)ECompanySegmentType.Federal ?
+                           QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.State.CountryId == x.Address.City.State.CountryId)
+                                    : QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.StateId == x.Address.City.StateId))
+                            ));
 
-            return await Paginate(query, filter);
+            return await PaginateCompanyDto(query, filter);
         }
 
         public async Task<Company> GetLoadedCompanyById(Guid id) =>
@@ -96,17 +107,38 @@ namespace iPassport.Infra.Repositories.IdentityContext
                   .Where(x => x.DeactivationDate == null);
 
         private IQueryable<Company> QuerySubsidiariesCandidatesToFederalGovernment(Guid countryId) =>
-            _DbSet.Where(x => x.ParentId == null && x.DeactivationDate == null
-                                && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
-                                && x.Address.City.State.CountryId == countryId
-                                && (x.Segment.Identifyer == (int)ECompanySegmentType.State
-                                    || x.Segment.Identifyer == (int)ECompanySegmentType.Municipal));
-
+            QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.State.CountryId == countryId);
+       
         private IQueryable<Company> QuerySubsidiariesCandidatesToStateGovernment(Guid stateId) =>
+            QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.StateId == stateId);
+
+        private IQueryable<Company> QuerySubsidiariesCandidatesToGovernment() 
+            =>
             _DbSet.Where(x => x.ParentId == null && x.DeactivationDate == null
-                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government
-                             && x.Address.City.StateId == stateId
+                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government                             
                              && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
+
+        private async Task<PagedData<CompanyAssociatedDto>> PaginateCompanyDto(IQueryable<CompanyAssociatedDto> dbSet, PageFilter filter)
+        {
+            (int take, int skip) = CalcPageOffset(filter);
+            var dataCount = await dbSet.CountAsync();
+
+            var data = await dbSet.Take(take).Skip(skip).ToListAsync();
+
+            int totalPages = 0;
+            if (dataCount < filter.PageSize)
+            {
+                totalPages = 1;
+            }
+            else
+            {
+                totalPages = dataCount / filter.PageSize;
+                totalPages = dataCount % filter.PageSize > 0 ? totalPages + 1 : totalPages;
+            }
+
+            return new PagedData<CompanyAssociatedDto>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = dataCount, Data = data };
+        }
+
         #endregion
     }
 }

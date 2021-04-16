@@ -97,7 +97,7 @@ namespace iPassport.Application.Services
         public async Task<PagedResponseApi> FindByNameParts(GetCompaniesPagedFilter filter)
         {
             var res = await _companyRepository.FindByNameParts(filter);
-
+            
             var result = _mapper.Map<IList<CompanyViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["Companies"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
