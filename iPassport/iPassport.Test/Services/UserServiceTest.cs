@@ -254,7 +254,7 @@ namespace iPassport.Test.Services
             // Arrange
             var mockRequest = Mock.Of<GetCitzenPagedFilter>();
 
-            _mockUserRepository.Setup(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()).Result)
+            _mockUserRepository.Setup(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>(), Mock.Of<AccessControlDTO>()).Result)
                 .Returns(UserSeed.GetPagedUsers());
             _mockRepository.Setup(x => x.GetImportedUserById(It.IsAny<Guid[]>()).Result)
                 .Returns(UserSeed.GetImportedUserDto());
@@ -263,7 +263,7 @@ namespace iPassport.Test.Services
             var result = _service.GetPaggedCizten(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()));
+            _mockUserRepository.Verify(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>(), Mock.Of<AccessControlDTO>()));
             _mockRepository.Verify(x => x.GetImportedUserById(It.IsAny<Guid[]>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);

@@ -3,10 +3,13 @@ using iPassport.Application.Interfaces.Authentication;
 using iPassport.Application.Models;
 using iPassport.Application.Resources;
 using iPassport.Application.Services.AuthenticationServices;
+using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
@@ -33,6 +36,7 @@ namespace iPassport.Test.Services
         IAccountService _service;
         Mock<IUserDetailsRepository> _mockUserDetailsRepository;
         IStringLocalizer<Resource> _localizer;
+        Mock<IAddressRepository> _mockAddressRepository;
 
         [TestInitialize]
         public void Setup()
@@ -45,8 +49,8 @@ namespace iPassport.Test.Services
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockUserDetailsRepository = new Mock<IUserDetailsRepository>();
             _localizer = ResourceFactory.GetStringLocalizer();
-
-            _service = new AccountService( _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _localizer, _mockUserDetailsRepository.Object);
+            _mockAddressRepository = new Mock<IAddressRepository>();
+            _service = new AccountService( _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _localizer, _mockUserDetailsRepository.Object, _mockAddressRepository.Object);
         }
 
         [TestMethod]
@@ -218,9 +222,10 @@ namespace iPassport.Test.Services
             var email = "teste";
             var Password = "test";
             var user = UserSeed.GetUserAdmin();
-            var userDetails = UserSeed.GetUserDetails();
+            var userDetails = UserDetails.CreateUserDetail(Mock.Of<AdminDto>(x => x.Id == Guid.NewGuid() && x.HealthUnitId == Guid.NewGuid()));
             user.Profile = ProfileSeed.Get(profile);
             user.Company.Address = null;
+            
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
             _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
@@ -233,14 +238,13 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        [DataRow(EProfileKey.healthUnit)]
         [DataRow(EProfileKey.government)]
         public void EmailLogin_ProfileData_CompanyMustHaveSegment(EProfileKey profile)
         {
             var email = "teste";
             var Password = "test";
             var user = UserSeed.GetUserAdmin();
-            var userDetails = UserSeed.GetUserDetails();
+            var userDetails = UserDetails.CreateUserDetail(Mock.Of<AdminDto>(x => x.Id == Guid.NewGuid() && x.HealthUnitId == Guid.NewGuid()));
             user.Profile = ProfileSeed.Get(profile);
             user.Company.Segment = null;
             // Arrange
