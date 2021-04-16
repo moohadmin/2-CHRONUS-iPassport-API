@@ -214,7 +214,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 }
             }
         }
-        private TokenCredentiaisDto GetTokenProfileData(Users user, UserDetails UserDetails)
+        private TokenProfileDataDto GetTokenProfileData(Users user, UserDetails UserDetails)
         =>
           new()
           {

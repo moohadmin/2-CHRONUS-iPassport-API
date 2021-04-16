@@ -1,6 +1,6 @@
 ﻿namespace iPassport.Domain.Dtos
 {
-    public class TokenCredentiaisDto
+    public class TokenProfileDataDto
     {
         public string CompanyId { get; set; }
         public string CityId { get; set; }
