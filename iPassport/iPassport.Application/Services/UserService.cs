@@ -107,7 +107,9 @@ namespace iPassport.Application.Services
             if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
                 throw new BusinessException(_localizer["PriorityGroupNotFound"]);
 
-            if (dto.Address == null || await _cityRepository.Find(dto.Address.CityId) == null)
+            var citizenCity = await _cityRepository.FindLoadedById(dto.Address.CityId);
+
+            if (dto.Address == null || citizenCity == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             if (dto.Test != null && dto.Test.IsEmpty())
@@ -129,6 +131,8 @@ namespace iPassport.Application.Services
                         throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
+
+            ValidateAddCitizenPermission(citizenCity);
 
             try
             {
@@ -160,6 +164,16 @@ namespace iPassport.Application.Services
                 throw;
             }
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
+        }
+
+        private void ValidateAddCitizenPermission(City citizenCity)
+        {
+            var acessControll = _accessor.GetAccessControlDTO();
+            if ((acessControll.Profile == EProfileKey.government.ToString()) &&
+                ((acessControll.CityId.HasValue && acessControll.CityId.Value != citizenCity.Id) ||
+                    (acessControll.StateId.HasValue && acessControll.StateId.Value != citizenCity?.StateId) ||
+                    (acessControll.CountryId.HasValue && acessControll.CountryId.Value != citizenCity?.State.CountryId)))
+                throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis"]);
         }
 
         public async Task<ResponseApi> GetCurrentUser()
