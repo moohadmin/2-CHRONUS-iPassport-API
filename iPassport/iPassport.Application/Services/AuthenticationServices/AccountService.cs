@@ -68,7 +68,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var user = await ValidateUserToEmailLogin(email);
             var userDetails = await ValidateUserDetailsToEmailLogin(user.Id);
-            var healthunitAddress = await _addressRepository.FindFullAddress(userDetails.HealthUnit.AddressId.GetValueOrDefault());
+            var healthunitAddress = await _addressRepository.FindFullAddress(userDetails.HealthUnit == null ? Guid.Empty : userDetails.HealthUnit.AddressId.GetValueOrDefault());
 
             ValidateProfileDataToToken(user, userDetails, healthunitAddress);
 
