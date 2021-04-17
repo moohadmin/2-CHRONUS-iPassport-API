@@ -25,6 +25,12 @@ namespace iPassport.Domain.Entities
         
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
 
+        public HealthUnit(Guid id, Guid addressId)
+        {
+            this.Id = id;
+            this.AddressId = addressId;
+        }
+
         public HealthUnit Create(HealthUnitCreateDto dto) =>
             new HealthUnit()
             {

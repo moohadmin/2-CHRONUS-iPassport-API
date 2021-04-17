@@ -292,7 +292,13 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
-            var res = await _userRepository.GetPaggedCizten(filter);
+            var accessControl = _accessor.GetAccessControlDTO();
+            
+            if (accessControl.Profile == EProfileKey.healthUnit.ToString())
+                accessControl.FilterIds = await _detailsRepository.GetVaccinatedUsersWithHealtUnityById(accessControl.HealthUnityId.GetValueOrDefault());
+
+            var res = await _userRepository.GetPaggedCizten(filter, accessControl);
+            
             var ImportedInfo = await _detailsRepository.GetImportedUserById(res.Data.Select(x => x.Id).ToArray());
 
             var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);

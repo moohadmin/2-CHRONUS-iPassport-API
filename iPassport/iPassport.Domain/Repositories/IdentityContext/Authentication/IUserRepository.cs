@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
@@ -17,7 +18,7 @@ namespace iPassport.Domain.Repositories.Authentication
         Task<int> GetLoggedCitzenCount();
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
         Task<int> GetLoggedAgentCount();
-        Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter);
+        Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter, AccessControlDTO dto);
         Task<Users> GetByEmail(string email);
         Task<Users> GetAdminById(Guid id);
         Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter);

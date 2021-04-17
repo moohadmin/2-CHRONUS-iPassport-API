@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace iPassport.Domain.Dtos
 {
@@ -14,5 +10,6 @@ namespace iPassport.Domain.Dtos
         public Guid? StateId { get; set; }
         public Guid? CountryId { get; set; }
         public Guid? HealthUnityId { get; set; }
+        public Guid[] FilterIds { get; set; }
     }
 }
