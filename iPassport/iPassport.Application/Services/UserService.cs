@@ -166,16 +166,6 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
         }
 
-        private void ValidateAddCitizenPermission(City citizenCity)
-        {
-            var acessControll = _accessor.GetAccessControlDTO();
-            if ((acessControll.Profile == EProfileKey.government.ToString()) &&
-                ((acessControll.CityId.HasValue && acessControll.CityId.Value != citizenCity.Id) ||
-                    (acessControll.StateId.HasValue && acessControll.StateId.Value != citizenCity?.StateId) ||
-                    (acessControll.CountryId.HasValue && acessControll.CountryId.Value != citizenCity?.State.CountryId)))
-                throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis"]);
-        }
-
         public async Task<ResponseApi> GetCurrentUser()
         {
             var userId = _accessor.GetCurrentUserId();
@@ -1118,6 +1108,17 @@ namespace iPassport.Application.Services
             if (ex.ToString().Contains("IX_Users_PhoneNumber"))
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
         }
+
+        private void ValidateAddCitizenPermission(City citizenCity)
+        {
+            var acessControll = _accessor.GetAccessControlDTO();
+            if ((acessControll.Profile == EProfileKey.government.ToString()) &&
+                ((acessControll.CityId.HasValue && acessControll.CityId.Value != citizenCity.Id) ||
+                    (acessControll.StateId.HasValue && acessControll.StateId.Value != citizenCity?.StateId) ||
+                    (acessControll.CountryId.HasValue && acessControll.CountryId.Value != citizenCity?.State.CountryId)))
+                throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis"]);
+        }
+
         #endregion
     }
 }
