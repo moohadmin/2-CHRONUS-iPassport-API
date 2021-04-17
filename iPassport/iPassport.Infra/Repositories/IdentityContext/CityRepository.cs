@@ -31,6 +31,10 @@ namespace iPassport.Infra.Repositories.IdentityContext
                 if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
                     query = query.Where(c => c.State.CountryId == accessControl.CountryId.Value);
             }
+            else if (accessControl.Profile == EProfileKey.healthUnit.ToString())
+            {
+                query = query.Where(c => c.Id == accessControl.CityId.Value);
+            }
 
             return query;
         }
