@@ -99,7 +99,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPut]
-        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
         public async Task<ActionResult> Edit([FromBody] CompanyEditRequest request)
         {
             var res = await _service.Edit(_mapper.Map<CompanyEditDto>(request));
