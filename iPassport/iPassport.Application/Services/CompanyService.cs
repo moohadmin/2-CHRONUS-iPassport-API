@@ -76,22 +76,25 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Edit(CompanyEditDto dto)
         {
-            var company = await _companyRepository.GetLoadedCompanyById(dto.Id);
-            if (company == null)
+            var editedCompany = await _companyRepository.GetLoadedCompanyById(dto.Id);
+            if (editedCompany == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            if (!editedCompany.CanEditCompanyFields(dto, _accessor.GetAccessControlDTO().Profile))
+                throw new BusinessException(_localizer["NotAllowEditedFieldsToLoggedUser"]);
 
             await ValidateToSave(dto, dto.Address.CityId, true);
 
-            company.ChangeCompany(dto);
+            editedCompany.ChangeCompany(dto);
 
             if (!dto.IsActive.Value)
-                company.Deactivate(_accessor.GetCurrentUserId());
+                editedCompany.Deactivate(_accessor.GetCurrentUserId());
 
-            var result = await _companyRepository.Update(company);
+            var result = await _companyRepository.Update(editedCompany);
             if (!result)
                 throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-            return new ResponseApi(true, _localizer["CompanyEdited"], company.Id);
+            return new ResponseApi(true, _localizer["CompanyEdited"], editedCompany.Id);
         }
 
         public async Task<PagedResponseApi> FindByNameParts(GetCompaniesPagedFilter filter)
@@ -234,8 +237,8 @@ namespace iPassport.Application.Services
 
         private async Task<bool> ValidateSegment(CompanyAbstractDto dto, Guid cityId, bool isEdit = false)
         {
-            var segment = await _companySegmentRepository.GetLoaded(dto.SegmentId);
-            if (segment == null)
+            var newCompanySegment = await _companySegmentRepository.GetLoaded(dto.SegmentId);
+            if (newCompanySegment == null)
                 throw new BusinessException(_localizer["SegmentNotFound"]);
 
             var accessDto = _accessor.GetAccessControlDTO();
@@ -243,9 +246,23 @@ namespace iPassport.Application.Services
                     && (dto.ParentId != accessDto.CompanyId || dto.IsHeadquarters.GetValueOrDefault()))
                 throw new BusinessException(_localizer["OnlyAllowSubsidiaryCompaniesRegister"]);
 
+            if(isEdit && accessDto.Profile == EProfileKey.government.ToString())
+            {
+                var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(accessDto.CompanyId.GetValueOrDefault());
+                
+                if (loggedUserCompany == null)
+                    throw new BusinessException(_localizer["UserCompanyNotFound"]);
+                if (!newCompanySegment.IsGovernmentType())
+                    throw new BusinessException(_localizer["LoggedUserCanOnlyRegisterGovernmentCompanies"]);
+                if (loggedUserCompany.Segment.IsMunicipal() && (newCompanySegment.IsFederal() || newCompanySegment.IsState()))
+                    throw new BusinessException(_localizer["LoggedUserCannotRegisterHigherSegmentCompanies"]);
+                if (loggedUserCompany.Segment.IsState() && newCompanySegment.IsFederal())
+                    throw new BusinessException(_localizer["LoggedUserCannotRegisterHigherSegmentCompanies"]);
+                
+            }
 
-            await ValidatePrivateSegment(dto, segment);
-            await ValidateGovernmentSegment(dto, segment, cityId, isEdit, accessDto);
+            await ValidatePrivateSegment(dto, newCompanySegment);
+            await ValidateGovernmentSegment(dto, newCompanySegment, cityId, isEdit, accessDto);
 
             return true;
         }
@@ -327,6 +344,7 @@ namespace iPassport.Application.Services
 
             return true;
         }
+
 
         private async Task<bool> HasBranchCompanyToAssociate(Guid companyId)
         {

@@ -840,4 +840,19 @@
   <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithSameLocationAsHis" xml:space="preserve">
     <value>O usuário logado só pode cadastrar unidades de saúde com a mesma localidade do seu cadastro.</value>
   </data>
+	<data name="UserCompanyNotFound" xml:space="preserve">
+    <value>A empresa do usuário não foi encontrada. Favor verificar.</value>
+  </data>
+	<data name="LoggedUserCanOnlyRegisterGovernmentCompanies" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar empresas governamentais.</value>
+  </data>
+	<data name="LoggedUserCanOnlyRegisterGovernmentCompanies" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar empresas governamentais.</value>
+  </data>
+	<data name="LoggedUserCannotRegisterHigherSegmentCompanies" xml:space="preserve">
+    <value>O usuário logado não pode cadastrar empresas de segmento superior ao seu.</value>
+  </data>
+	<data name="NotAllowEditedFieldsToLoggedUser" xml:space="preserve">
+    <value>Há campos alterados não permitidos para o usuário logado.</value>
+  </data>
 </root>

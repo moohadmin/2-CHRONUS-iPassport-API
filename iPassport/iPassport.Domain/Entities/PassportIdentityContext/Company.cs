@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -91,6 +92,17 @@ namespace iPassport.Domain.Entities
                 subs.AddRange(Subsidiaries);
 
             Subsidiaries = subs;
+        }
+        public bool CanEditCompanyFields(CompanyEditDto dto, string loggedUserProfile)
+        {
+            if (loggedUserProfile == EProfileKey.government.ToString() &&
+                    (ParentId != dto.ParentId
+                        || SegmentId != dto.SegmentId
+                        || Cnpj != dto.Cnpj
+                        || Address?.CityId != dto.Address?.CityId))
+                return false;
+
+            return true;
         }
     }
 }

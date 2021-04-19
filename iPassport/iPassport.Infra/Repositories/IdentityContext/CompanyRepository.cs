@@ -115,7 +115,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
         #region Private
         private IQueryable<Company> GetLoadedHeadquarters(AccessControlDTO accessControl) =>
-            AccessControllBaseQuery(accessControl).Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+            AccessControlHeadquartersQuery(accessControl).Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                   .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
                   .Where(x => x.DeactivationDate == null);
 
@@ -172,6 +172,16 @@ namespace iPassport.Infra.Repositories.IdentityContext
                 if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
                     query = query.Where(x => x.Address.City.State.CountryId == accessControl.CountryId.Value && x.Segment.Identifyer <= (int)ECompanySegmentType.Federal);
             }
+            return query;
+        }
+        private IQueryable<Company> AccessControlHeadquartersQuery(AccessControlDTO accessControl)
+        {
+            var query = _DbSet.AsQueryable();
+
+            if (accessControl.Profile == EProfileKey.business.ToString() && accessControl.CompanyId.HasValue && accessControl.CompanyId.Value != Guid.Empty)
+                query = query.Where(c => c.Id == accessControl.CompanyId || c.ParentId == accessControl.CompanyId);
+
+            
             return query;
         }
         #endregion
