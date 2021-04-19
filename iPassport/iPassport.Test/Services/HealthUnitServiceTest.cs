@@ -96,28 +96,6 @@ namespace iPassport.Test.Services
             _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePublic());
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
 
-            // Make fack claims principle instance
-            var fackClaimPrinciple = new Mock<ClaimsPrincipal>();
-
-            // Setup fack data
-            IEnumerable<Claim> claims = new List<Claim>()
-            {
-                new Claim(Constants.TOKEN_CLAIM_USER_ID, Guid.NewGuid().ToString()),
-                new Claim(Constants.TOKEN_CLAIM_FIRST_LOGIN, bool.FalseString),
-                new Claim(Constants.TOKEN_CLAIM_FULL_NAME, "USER FULL NAME"),
-                new Claim(ClaimTypes.Role, EProfileKey.admin.ToString()),
-                new Claim(Constants.TOKEN_CLAIM_COMPANY_ID, string.Empty),
-                new Claim(Constants.TOKEN_CLAIM_CITY_ID, string.Empty),
-                new Claim(Constants.TOKEN_CLAIM_STATE_ID, string.Empty),
-                new Claim(Constants.TOKEN_CLAIM_COUNTRY_ID, string.Empty),
-                new Claim(Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, string.Empty)
-            }.AsEnumerable();
-
-            fackClaimPrinciple.Setup(e => e.Claims).Returns(claims);
-
-            // Assign to current thread principle
-            Thread.CurrentPrincipal = fackClaimPrinciple.Object;
-
             // Act
             var result = _service.Add(mockRequest);
 
