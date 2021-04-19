@@ -1,4 +1,6 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Infra.Contexts;
@@ -13,10 +15,21 @@ namespace iPassport.Infra.Repositories.IdentityContext
     {
         public CompanySegmentRepository(PassportIdentityContext context) : base(context) { }
 
-        public async Task<PagedData<CompanySegment>> GetPagedByTypeId(Guid id, PageFilter filter)
+        private IQueryable<CompanySegment> AccessControllBaseQuery(AccessControlDTO accessControl)
         {
-            var query = _DbSet
-                .Where(m => m.CompanyTypeId == id)
+            var query = _DbSet.AsQueryable();
+
+            if  (accessControl.Profile == EProfileKey.business.ToString())            
+                query = query.Where(c => !accessControl.FilterIds.Any() || accessControl.FilterIds.Contains(c.Id));
+
+            return query;
+        }
+
+        public async Task<PagedData<CompanySegment>> GetPagedByTypeId(Guid id, PageFilter filter, AccessControlDTO accessControl)
+        {
+            var query = AccessControllBaseQuery(accessControl);
+
+            query = query.Where(m => m.CompanyTypeId == id)
                 .OrderBy(m => m.Name);
 
             return await Paginate(query, filter);

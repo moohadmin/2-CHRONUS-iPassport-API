@@ -9,6 +9,7 @@ using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Repositories.PassportIdentityContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -27,9 +28,10 @@ namespace iPassport.Application.Services.AuthenticationServices
         private readonly IHttpContextAccessor _acessor;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IUserDetailsRepository _userDetailsRepository;
+        private readonly IAddressRepository _addressRepository;
 
         public AccountService(ITokenService tokenService,
-            UserManager<Users> userManager, IUserRepository userRepository, IAuth2FactService auth2FactService, IHttpContextAccessor acessor, IStringLocalizer<Resource> localizer, IUserDetailsRepository userDetailsRepository)
+            UserManager<Users> userManager, IUserRepository userRepository, IAuth2FactService auth2FactService, IHttpContextAccessor acessor, IStringLocalizer<Resource> localizer, IUserDetailsRepository userDetailsRepository, IAddressRepository addressRepository)
         {
             _tokenService = tokenService;
             _userManager = userManager;
@@ -38,6 +40,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             _acessor = acessor;
             _localizer = localizer;
             _userDetailsRepository = userDetailsRepository;
+            _addressRepository = addressRepository;
         }
 
         public async Task<ResponseApi> BasicLogin(string username, string password)
@@ -65,9 +68,13 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var user = await ValidateUserToEmailLogin(email);
             var userDetails = await ValidateUserDetailsToEmailLogin(user.Id);
-            ValidateProfileDataToToken(user, userDetails);
+            Address healthunitAddress = null;
+            if (userDetails.HealthUnit != null)
+                healthunitAddress = await _addressRepository.FindFullAddress(userDetails.HealthUnit.AddressId.GetValueOrDefault());
 
-            var tokenData = GetTokenProfileData(user, userDetails);
+            ValidateProfileDataToToken(user, userDetails, healthunitAddress);
+
+            var tokenData = GetTokenProfileData(user, userDetails, healthunitAddress);
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
@@ -188,51 +195,61 @@ namespace iPassport.Application.Services.AuthenticationServices
         }
         private async Task<UserDetails> ValidateUserDetailsToEmailLogin(Guid userId)
         {
-            var userDetails = await _userDetailsRepository.GetByUserId(userId);
+            var userDetails = await _userDetailsRepository.GetWithHealtUnityById(userId);
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             return userDetails;
         }
-        private void ValidateProfileDataToToken(Users user, UserDetails UserDetails)
+
+        private void ValidateProfileDataToToken(Users user, UserDetails UserDetails, Address healthUnitAddress)
         {
-            if(!user.Profile.IsAdmin())
+            if (!user.Profile.IsAdmin())
             {
                 if (user.Company == null)
                     throw new BusinessException(_localizer["CompanyNotFound"]);
 
                 if (!user.Company.IsActive())
                     throw new BusinessException(_localizer["InactiveUserCompany"]);
-                
-                if (!user.Profile.IsBusiness())
+
+                if (user.Profile.IsGovernment())
                 {
                     if (user.Company.Address == null)
                         throw new BusinessException(_localizer["AddressNotFound"]);
-                    
-                    if(user.Profile.IsHealthUnit() && !UserDetails.HealthUnitId.HasValue)
+
+                    if (user.Company.Segment == null)
+                        throw new BusinessException(_localizer["SegmentNotFound"]);
+                }
+                else if (user.Profile.IsHealthUnit())
+                {
+                    if (!UserDetails.HealthUnitId.HasValue)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
+
+                    if (healthUnitAddress == null)
+                        throw new BusinessException(_localizer["AddressNotFound"]);
                 }
             }
         }
-        private TokenProfileDataDto GetTokenProfileData(Users user, UserDetails UserDetails)
+
+        private TokenProfileDataDto GetTokenProfileData(Users user, UserDetails UserDetails, Address healthUnitAddress)
         =>
           new()
           {
               CompanyId = GetCompanyId(user),
-              CityId = GetCityId(user),
-              StateId = GetStateId(user),
-              CountryId = GetCountryId(user),
+              CityId = GetCityId(user, healthUnitAddress),
+              StateId = GetStateId(user, healthUnitAddress),
+              CountryId = GetCountryId(user, healthUnitAddress),
               HealthUnityId = GetHealthUnityId(UserDetails, user.Profile)
           };
 
         private string GetCompanyId(Users user)
             => user.Profile.IsBusiness() ? user.CompanyId.ToString() : "";
-        private string GetCityId(Users user)
-            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.CityId.ToString() : "";
-        private string GetStateId(Users user)
-            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.City.StateId.ToString() : "";
-        private string GetCountryId(Users user)
-            => (user.Profile.IsGovernment() || user.Profile.IsHealthUnit()) ? user.Company.Address.City.State.CountryId.ToString() : "";
+        private string GetCityId(Users user, Address healthUnitAddress)
+            => (user.Profile.IsGovernment() && user.Company.IsMunicipalGovernment()) ? user.Company.Address.CityId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.CityId.ToString() : "");
+        private string GetStateId(Users user, Address healthUnitAddress)
+            => (user.Profile.IsGovernment() && user.Company.IsStateGovernment()) ? user.Company.Address.City.StateId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.StateId.ToString() : "");
+        private string GetCountryId(Users user, Address healthUnitAddress)
+            => (user.Profile.IsGovernment() && user.Company.IsFederalGovernment()) ? user.Company.Address.City.State.CountryId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.State.CountryId.ToString() : "");
         private string GetHealthUnityId(UserDetails UserDetails, Profile profile)
             => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : "";
 

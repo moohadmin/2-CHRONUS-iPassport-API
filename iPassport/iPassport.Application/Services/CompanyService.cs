@@ -114,15 +114,28 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetAllTypes()
         {
-            var companyTypes = await _companyTypeRepository.FindAll();
-            var companyTypeViewModels = _mapper.Map<IList<CompanyTypeViewModel>>(companyTypes);
+            var dto = _accessor.GetAccessControlDTO();
+            if (dto.Profile == EProfileKey.business.ToString())
+            {
+                var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(dto.CompanyId.GetValueOrDefault());
+                dto.FilterIds = new Guid[] { loggedUserCompany.Segment.CompanyTypeId };
+            }
 
+            var companyTypes = await _companyTypeRepository.GetAllTypes(dto);
+
+            var companyTypeViewModels = _mapper.Map<IList<CompanyTypeViewModel>>(companyTypes);
             return new ResponseApi(true, _localizer["CompanyTypes"], companyTypeViewModels);
         }
 
         public async Task<PagedResponseApi> GetSegmetsByTypeId(Guid typeId, PageFilter filter)
         {
-            var res = await _companySegmentRepository.GetPagedByTypeId(typeId, filter);
+            var dto = _accessor.GetAccessControlDTO();
+            if (dto.Profile == EProfileKey.business.ToString())
+            {
+                var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(dto.CompanyId.GetValueOrDefault());
+                dto.FilterIds = new Guid[] { loggedUserCompany.SegmentId.Value };
+            }
+            var res = await _companySegmentRepository.GetPagedByTypeId(typeId, filter, dto);
 
             var result = _mapper.Map<IList<CompanySegmentViewModel>>(res.Data);
 
@@ -135,7 +148,7 @@ namespace iPassport.Application.Services
 
             var companyType = await _companyTypeRepository.Find(filter.CompanyTypeId);
             var companySegment = await _companySegmentRepository.Find(filter.SegmentId);
-
+            var accessDto = _accessor.GetAccessControlDTO();
             if (companyType != null && companySegment != null)
             {
                 if (filter.LocalityId == null && companyType.Identifyer == (int)ECompanyType.Government)
@@ -145,18 +158,18 @@ namespace iPassport.Application.Services
                     throw new BusinessException(_localizer["CnpjRequiredForPrivateCompany"]);
 
                 if (companyType.Identifyer == (int)ECompanyType.Private)
-                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPrivateHeadquarters(filter.Cnpj, companySegment.Identifyer));
+                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPrivateHeadquarters(filter.Cnpj, companySegment.Identifyer, accessDto));
 
                 else if (companyType.Identifyer == (int)ECompanyType.Government && companySegment.Identifyer == (int)ECompanySegmentType.Municipal)
                 {
                     var state = await _stateRepository.Find(filter.LocalityId.Value);
 
                     if (state != null)
-                        res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(state.Id, state.CountryId));
+                        res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicMunicipalHeadquarters(state.Id, state.CountryId, accessDto));
                 }
 
                 else if (companyType.Identifyer == (int)ECompanyType.Government && companySegment.Identifyer == (int)ECompanySegmentType.State)
-                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicStateHeadquarters(filter.LocalityId.Value));
+                    res = _mapper.Map<IList<HeadquarterCompanyViewModel>>(await _companyRepository.GetPublicStateHeadquarters(filter.LocalityId.Value, accessDto));
             }
 
             return new ResponseApi(true, _localizer["Companies"], res);
@@ -181,17 +194,17 @@ namespace iPassport.Application.Services
             var company = await _companyRepository.GetLoadedCompanyById(dto.ParentId);
             ValidateParentCompanyToAssociate(company);
             IList<Company> subs;
-            
+
             if (dto.AssociateAll)
                 subs = await GetSubsidiariesCandidatesToGovernment(company);
-            
+
             else
                 subs = await GetSubsidiariesCandidatesToGovernment(company, dto.Subsidiaries);
 
             company.AddSubsidiaries(subs.ToList());
-            
+
             await _companyRepository.Update(company);
-            
+
             return new ResponseApi(true, _localizer["SubsidiariesCompaniesAssociated"], new AssociatedSubsidiariesViewModel() { AssociatedCount = subs.Count(), ParentName = company.Name });
         }
 
@@ -224,8 +237,14 @@ namespace iPassport.Application.Services
             if (segment == null)
                 throw new BusinessException(_localizer["SegmentNotFound"]);
 
+            var accessDto = _accessor.GetAccessControlDTO();
+            if (!isEdit && accessDto.Profile == EProfileKey.business.ToString() 
+                    && (dto.ParentId != accessDto.CompanyId || dto.IsHeadquarters.GetValueOrDefault()))
+                throw new BusinessException(_localizer["OnlyAllowSubsidiaryCompaniesRegister"]);
+
+
             await ValidatePrivateSegment(dto, segment);
-            await ValidateGovernmentSegment(dto, segment, cityId, isEdit);
+            await ValidateGovernmentSegment(dto, segment, cityId, isEdit, accessDto);
 
             return true;
         }
@@ -257,7 +276,7 @@ namespace iPassport.Application.Services
             return true;
         }
 
-        private async Task<bool> ValidateGovernmentSegment(CompanyAbstractDto dto, CompanySegment segment, Guid cityId, bool isEdit)
+        private async Task<bool> ValidateGovernmentSegment(CompanyAbstractDto dto, CompanySegment segment, Guid cityId, bool isEdit, AccessControlDTO accessDto)
         {
             if (segment.IsGovernmentType())
             {
@@ -282,14 +301,14 @@ namespace iPassport.Application.Services
                         if (!isEdit && await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.Id, ECompanySegmentType.Municipal))
                             throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["City"]));
 
-                        canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId, city.State.CountryId);
+                        canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId, city.State.CountryId, accessDto);
                     }
                     else if (segment.IsState())
                     {
                         if (!isEdit && await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.StateId, ECompanySegmentType.State))
                             throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["State"]));
 
-                        canBeParentCompanies = await _companyRepository.GetPublicStateHeadquarters(city.State.CountryId);
+                        canBeParentCompanies = await _companyRepository.GetPublicStateHeadquarters(city.State.CountryId, accessDto);
                     }
 
                     if (canBeParentCompanies.Any(x => !x.DeactivationDate.HasValue))

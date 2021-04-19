@@ -828,4 +828,7 @@
 	<data name="InactiveUserCompany" xml:space="preserve">
     <value>A empresa do usuário se encontra Inativa. Favor verificar.</value>
   </data>
+	<data name="OnlyAllowSubsidiaryCompaniesRegister" xml:space="preserve">
+    <value>Somente é permitido o cadastro de empresas filiais</value>
+  </data>
 </root>
