@@ -250,7 +250,7 @@ namespace iPassport.Application.Services
 
             if (acessControll.Profile == EProfileKey.government.ToString())
             {
-                if (healthUnitType.Identifyer == (int)EHealthUnitType.Public)
+                if (healthUnitType.Identifyer != (int)EHealthUnitType.Public)
                     throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterHealthUnitiesWithPublicType"]);
 
                 if (((acessControll.CityId.HasValue && acessControll.CityId.Value != healthUnityCity.Id) ||
