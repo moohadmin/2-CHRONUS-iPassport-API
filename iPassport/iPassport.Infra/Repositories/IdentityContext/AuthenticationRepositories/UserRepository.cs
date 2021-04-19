@@ -139,9 +139,11 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             return await Paginate(query, filter);
         }
 
-        public async Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter)
+        public async Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter, AccessControlDTO dto)
         {
-            var query = _context.Users
+            IQueryable<Users> query = AccessControllBaseQuery(dto);
+
+            query = query
                 .Include(x => x.Company)
                 .Include(x => x.Profile)
                 .Where(x => x.UserType == (int)EUserType.Admin

@@ -654,7 +654,7 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
         {
-            var res = await _userRepository.GetPagedAdmins(filter);
+            var res = await _userRepository.GetPagedAdmins(filter, _accessor.GetAccessControlDTO());
 
             if (res.Data == null)
                 return new PagedResponseApi(true, _localizer["AdminUsers"], 0, 0, 0, 0);

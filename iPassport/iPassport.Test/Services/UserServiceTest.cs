@@ -372,14 +372,14 @@ namespace iPassport.Test.Services
             // Arrange
             var mockRequest = Mock.Of<GetAdminUserPagedFilter>();
 
-            _mockUserRepository.Setup(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()).Result)
+            _mockUserRepository.Setup(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>(), It.IsAny<AccessControlDTO>()).Result)
                 .Returns(UserSeed.GetPagedUsers());
 
             // Act
             var result = _service.GetPagedAdmins(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()));
+            _mockUserRepository.Verify(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>(), It.IsAny<AccessControlDTO>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
