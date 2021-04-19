@@ -13,9 +13,9 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<PagedData<CompanyAssociatedDto>> FindByNameParts(GetCompaniesPagedFilter filter);
         Task<Company> GetLoadedCompanyById(Guid id);
         Task<IList<Company>> FindListCnpj(List<string> listCnpj);
-        Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType);
-        Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId, Guid countryId);
-        Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId);
+        Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType, AccessControlDTO accessControl);
+        Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId, Guid countryId, AccessControlDTO accessControl);
+        Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId, AccessControlDTO accessControl);
         Task<bool> HasSubsidiariesCandidatesToFederalGovernment(Guid countryId);
         Task<bool> HasSubsidiariesCandidatesToStateGovernment(Guid stateId);
         Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType);

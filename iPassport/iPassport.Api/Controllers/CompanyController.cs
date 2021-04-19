@@ -166,7 +166,7 @@ namespace iPassport.Api.Controllers
         /// <summary>
         /// This API Get Company Segments by Company Type
         /// </summary>
-        /// <param name="id">Parent Id</param>
+        /// <param name="id">Company Type Id</param>
         /// <param name="request">Page Filter Request</param>
         /// <returns>List of Company Type</returns>
         /// <response code="200">Server returns Ok</response>

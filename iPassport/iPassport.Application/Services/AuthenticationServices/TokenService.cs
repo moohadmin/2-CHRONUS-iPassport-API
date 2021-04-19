@@ -72,11 +72,11 @@ namespace iPassport.Application.Services.AuthenticationServices
                     new Claim("FirstLogin", (user.LastLogin == null).ToString()),
                     new Claim(("FullName"), user.FullName),
                     new Claim(ClaimTypes.Role, user.Profile?.Key),
-                    new Claim("CompanyId", CompanyId ?? ""),
-                    new Claim("CityId", CityId ?? ""),
-                    new Claim("StateId", StateId ?? ""),
-                    new Claim("CountryId", CountryId ?? ""),
-                    new Claim("HealthUnityId", HealthUnityId ?? "")
+                    new Claim("CompanyId", CompanyId ?? string.Empty),
+                    new Claim("CityId", CityId ?? string.Empty),
+                    new Claim("StateId", StateId ?? string.Empty),
+                    new Claim("CountryId", CountryId ?? string.Empty),
+                    new Claim("HealthUnityId", HealthUnityId ?? string.Empty)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

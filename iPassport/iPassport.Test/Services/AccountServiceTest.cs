@@ -7,6 +7,7 @@ using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
@@ -33,6 +34,7 @@ namespace iPassport.Test.Services
         IAccountService _service;
         Mock<IUserDetailsRepository> _mockUserDetailsRepository;
         IStringLocalizer<Resource> _localizer;
+        Mock<IAddressRepository> _mockAddressRepository;
 
         [TestInitialize]
         public void Setup()
@@ -45,9 +47,10 @@ namespace iPassport.Test.Services
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockUserDetailsRepository = new Mock<IUserDetailsRepository>();
             _localizer = ResourceFactory.GetStringLocalizer();
-
-            _service = new AccountService( _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _localizer, _mockUserDetailsRepository.Object);
+            _mockAddressRepository = new Mock<IAddressRepository>();
+            _service = new AccountService(_mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _localizer, _mockUserDetailsRepository.Object, _mockAddressRepository.Object);
         }
+
 
         [TestMethod]
         public void BasicLogin_MustReturnOK()
@@ -84,7 +87,7 @@ namespace iPassport.Test.Services
 
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(UserSeed.GetUserAdmin());
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
             _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()).Result).Returns(token);
 
@@ -95,7 +98,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
             _mockUserManager.Verify(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()));
             _mockTokenService.Verify(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-            _mockUserDetailsRepository.Verify(x => x.GetByUserId(It.IsAny<Guid>()));
+            _mockUserDetailsRepository.Verify(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
@@ -178,13 +181,13 @@ namespace iPassport.Test.Services
             user.Company = null;
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(userDetails);
 
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
             Assert.AreEqual(_localizer["CompanyNotFound"], ex.Message);
             _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
         }
 
         [TestMethod]
@@ -201,17 +204,16 @@ namespace iPassport.Test.Services
             user.Company.Deactivate(Guid.NewGuid());
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(userDetails);
 
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
             Assert.AreEqual(_localizer["InactiveUserCompany"], ex.Message);
             _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
         }
 
-        [TestMethod]
-        [DataRow(EProfileKey.healthUnit)]
+        [TestMethod]        
         [DataRow(EProfileKey.government)]
         public void EmailLogin_ProfileData_CompanyMustHaveAddress(EProfileKey profile)
         {
@@ -221,15 +223,16 @@ namespace iPassport.Test.Services
             var userDetails = UserSeed.GetUserDetails();
             user.Profile = ProfileSeed.Get(profile);
             user.Company.Address = null;
+            
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(userDetails);
 
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
             Assert.AreEqual(_localizer["AddressNotFound"], ex.Message);
             _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
         }
 
         [TestMethod]
@@ -244,13 +247,13 @@ namespace iPassport.Test.Services
             
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetails);
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(userDetails);
 
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
             Assert.AreEqual(_localizer["HealthUnitNotFound"], ex.Message);
             _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+            _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
         }
 
         [TestMethod]
@@ -313,7 +316,7 @@ namespace iPassport.Test.Services
             _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
             _mockUserManager.Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<Users>()).Result).Returns(token);
             _mockUserManager.Setup(x => x.ResetPasswordAsync(It.IsAny<Users>(),token,passwordConfirm).Result).Returns(IdentityResult.Success);
-
+            
             // Act
             var result = _service.ResetPassword(password, passwordConfirm);
 
