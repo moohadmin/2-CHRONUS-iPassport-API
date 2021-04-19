@@ -16,10 +16,9 @@ namespace iPassport.Infra.Repositories.IdentityContext
     {
         public CompanyRepository(PassportIdentityContext context) : base(context) { }
 
-        public async Task<PagedData<CompanyAssociatedDto>> FindByNameParts(GetCompaniesPagedFilter filter)
+        public async Task<PagedData<CompanyAssociatedDto>> FindByNameParts(GetCompaniesPagedFilter filter, AccessControlDTO accessControl)
         {
-            var query = 
-                _DbSet
+            var query = AccessControllBaseQuery(accessControl)
                     .Include(x => x.Address)
                     .Include(x => x.Segment)
                     .Where(m => (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
@@ -156,8 +155,21 @@ namespace iPassport.Infra.Repositories.IdentityContext
             var query = _DbSet.AsQueryable();
 
             if (accessControl.Profile == EProfileKey.business.ToString() && accessControl.CompanyId.HasValue && accessControl.CompanyId.Value != Guid.Empty)
-               query = query.Where(c => c.Id == accessControl.CompanyId);
+                query = query.Where(c => c.Id == accessControl.CompanyId || c.ParentId == accessControl.CompanyId);
 
+            if(accessControl.Profile == EProfileKey.government.ToString())
+            {
+                query = query.Where(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government);
+
+                if (accessControl.CityId.HasValue && accessControl.CityId.Value != Guid.Empty)
+                    query = query.Where(x => x.Address.CityId == accessControl.CityId.Value && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
+
+                if (accessControl.StateId.HasValue && accessControl.StateId.Value != Guid.Empty)
+                    query = query.Where(x => x.Address.City.StateId == accessControl.StateId.Value && x.Segment.Identifyer <= (int)ECompanySegmentType.State);
+
+                if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
+                    query = query.Where(x => x.Address.City.State.CountryId == accessControl.CountryId.Value && x.Segment.Identifyer <= (int)ECompanySegmentType.Federal);
+            }
             return query;
         }
         #endregion

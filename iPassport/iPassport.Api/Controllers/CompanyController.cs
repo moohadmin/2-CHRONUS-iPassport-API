@@ -57,7 +57,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
 
         public async Task<ActionResult> GetByNameParts([FromQuery] GetCompaniesPagedRequest request)
         {

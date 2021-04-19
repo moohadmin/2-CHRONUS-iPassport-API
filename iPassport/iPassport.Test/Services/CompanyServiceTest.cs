@@ -61,13 +61,13 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<GetCompaniesPagedFilter>();
-            _mockRepository.Setup(x => x.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>()).Result).Returns(CompanySeed.GetPagedDto());
+            _mockRepository.Setup(x => x.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>(), It.IsAny<AccessControlDTO>()).Result).Returns(CompanySeed.GetPagedDto());
 
             // Act
             var result = _service.FindByNameParts(mockRequest);
 
             // Assert
-            _mockRepository.Verify(a => a.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>()));
+            _mockRepository.Verify(a => a.FindByNameParts(It.IsAny<GetCompaniesPagedFilter>(), It.IsAny<AccessControlDTO>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

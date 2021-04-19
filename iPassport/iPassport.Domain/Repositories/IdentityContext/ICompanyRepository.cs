@@ -10,7 +10,7 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
 {
     public interface ICompanyRepository : IIdentityBaseRepository<Company>
     {
-        Task<PagedData<CompanyAssociatedDto>> FindByNameParts(GetCompaniesPagedFilter filter);
+        Task<PagedData<CompanyAssociatedDto>> FindByNameParts(GetCompaniesPagedFilter filter, AccessControlDTO accessControl);
         Task<Company> GetLoadedCompanyById(Guid id);
         Task<IList<Company>> FindListCnpj(List<string> listCnpj);
         Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType, AccessControlDTO accessControl);

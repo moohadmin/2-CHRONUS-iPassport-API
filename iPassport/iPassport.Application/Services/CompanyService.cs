@@ -96,7 +96,7 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> FindByNameParts(GetCompaniesPagedFilter filter)
         {
-            var res = await _companyRepository.FindByNameParts(filter);
+            var res = await _companyRepository.FindByNameParts(filter, _accessor.GetAccessControlDTO());
 
             var result = _mapper.Map<IList<CompanyViewModel>>(res.Data);
 
@@ -115,7 +115,7 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> GetAllTypes()
         {
             var dto = _accessor.GetAccessControlDTO();
-            if (dto.Profile == EProfileKey.business.ToString())
+            if (dto.Profile == EProfileKey.business.ToString() || dto.Profile == EProfileKey.government.ToString())
             {
                 var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(dto.CompanyId.GetValueOrDefault());
                 dto.FilterIds = new Guid[] { loggedUserCompany.Segment.CompanyTypeId };
@@ -135,6 +135,7 @@ namespace iPassport.Application.Services
                 var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(dto.CompanyId.GetValueOrDefault());
                 dto.FilterIds = new Guid[] { loggedUserCompany.SegmentId.Value };
             }
+            
             var res = await _companySegmentRepository.GetPagedByTypeId(typeId, filter, dto);
 
             var result = _mapper.Map<IList<CompanySegmentViewModel>>(res.Data);
