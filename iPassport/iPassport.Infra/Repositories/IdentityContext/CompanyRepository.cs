@@ -20,10 +20,12 @@ namespace iPassport.Infra.Repositories.IdentityContext
         {
             var query = 
                 _DbSet
-                    .Include(x => x.Address)
+                    .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                     .Include(x => x.Segment)
                     .Where(m => (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower()))
                                 && (filter.CityId == null || m.Address.CityId == filter.CityId)
+                                && (filter.StateId == null || m.Address.City.StateId == filter.StateId)
+                                && (filter.CountryId == null || m.Address.City.State.CountryId == filter.CountryId)
                                 && (filter.Cnpj == null || m.Cnpj == filter.Cnpj)
                                 && (filter.SegmentId == null || m.SegmentId == filter.SegmentId)
                                 && (filter.TypeId == null || m.Segment.CompanyTypeId == filter.TypeId))
