@@ -20,7 +20,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public UserRepository(PassportIdentityContext context) => _context = context;
 
-        private IQueryable<Users> AccessControllBaseQuery(AccessControlDTO accessControl)
+        private IQueryable<Users> CitizenAccessControllBaseQuery(AccessControlDTO accessControl)
         {
             var query = _context.Users.AsQueryable();
 
@@ -43,6 +43,27 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                     || accessControl.FilterIds.Contains(x.Id));
             }
 
+            return query;
+        }
+
+        private IQueryable<Users> AdminAccessControllBaseQuery(AccessControlDTO accessControl)
+        {
+            var query = _context.Users
+                .Include(x => x.Company)
+                .ThenInclude(x => x.Segment)
+                .AsQueryable();
+
+            if (accessControl.Profile == EProfileKey.government.ToString())
+            {
+                if (accessControl.CityId.HasValue && accessControl.CityId.Value != Guid.Empty)
+                    query = query.Where(x => x.Company.Address.CityId == accessControl.CityId.Value && x.Company.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
+
+                if (accessControl.StateId.HasValue && accessControl.StateId.Value != Guid.Empty)
+                    query = query.Where(x => x.Company.Address.City.StateId == accessControl.StateId.Value && x.Company.Segment.Identifyer == (int)ECompanySegmentType.State);
+
+                if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
+                    query = query.Where(x => x.Company.Address.City.State.CountryId == accessControl.CountryId.Value && x.Company.Segment.Identifyer == (int)ECompanySegmentType.Federal);
+            }
             return query;
         }
 
@@ -114,7 +135,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter, AccessControlDTO dto)
         {
-            IQueryable<Users> query = AccessControllBaseQuery(dto);
+            IQueryable<Users> query = CitizenAccessControllBaseQuery(dto);
 
             if (filter.DocumentType.HasValue)
                 query = GetUserDocument(query, filter.DocumentType.Value, filter.Document);
@@ -141,7 +162,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter, AccessControlDTO dto)
         {
-            IQueryable<Users> query = AccessControllBaseQuery(dto);
+            IQueryable<Users> query = AdminAccessControllBaseQuery(dto);
 
             query = query
                 .Include(x => x.Company)
