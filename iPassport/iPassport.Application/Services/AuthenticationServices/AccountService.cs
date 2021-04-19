@@ -243,15 +243,15 @@ namespace iPassport.Application.Services.AuthenticationServices
           };
 
         private string GetCompanyId(Users user)
-            => user.Profile.IsBusiness() ? user.CompanyId.ToString() : "";
+            => user.Profile.IsBusiness() ? user.CompanyId.ToString() : string.Empty;
         private string GetCityId(Users user, Address healthUnitAddress)
-            => (user.Profile.IsGovernment() && user.Company.IsMunicipalGovernment()) ? user.Company.Address.CityId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.CityId.ToString() : "");
+            => (user.Profile.IsGovernment() && user.Company.IsMunicipalGovernment()) ? user.Company.Address.CityId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.CityId.ToString() : string.Empty);
         private string GetStateId(Users user, Address healthUnitAddress)
-            => (user.Profile.IsGovernment() && user.Company.IsStateGovernment()) ? user.Company.Address.City.StateId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.StateId.ToString() : "");
+            => (user.Profile.IsGovernment() && user.Company.IsStateGovernment()) ? user.Company.Address.City.StateId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.StateId.ToString() : string.Empty);
         private string GetCountryId(Users user, Address healthUnitAddress)
-            => (user.Profile.IsGovernment() && user.Company.IsFederalGovernment()) ? user.Company.Address.City.State.CountryId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.State.CountryId.ToString() : "");
+            => (user.Profile.IsGovernment() && user.Company.IsFederalGovernment()) ? user.Company.Address.City.State.CountryId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.State.CountryId.ToString() : string.Empty);
         private string GetHealthUnityId(UserDetails UserDetails, Profile profile)
-            => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : "";
+            => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : string.Empty;
 
 
         #endregion
