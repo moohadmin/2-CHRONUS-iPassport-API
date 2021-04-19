@@ -82,7 +82,7 @@ namespace iPassport.Application.Services
             if (dto.Ine != null && await _healthUnitRepository.GetByIne(dto.Ine) != null)
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "INE"));
 
-            ValidateAddHealthUnityPermission(healthUnityCity, type);
+            ValidateToSaveHealthUnityPermission(healthUnityCity, type);
 
             try
             {
@@ -149,6 +149,9 @@ namespace iPassport.Application.Services
             // When Health Unit type is public, and Ine and Cnpj is null the unique code must be declared
             if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj) && !unit.UniqueCode.HasValue)
                 unit.AddUniqueCode(await _healthUnitRepository.GetNexUniqueCodeValue());
+
+            var healthUnityCity = await _cityRepository.FindLoadedById(address.CityId);
+            ValidateToSaveHealthUnityPermission(healthUnityCity, type);
 
             try
             {
@@ -244,13 +247,13 @@ namespace iPassport.Application.Services
             return locations;
         }
 
-        private void ValidateAddHealthUnityPermission(City healthUnityCity, HealthUnitType healthUnitType)
+        private void ValidateToSaveHealthUnityPermission(City healthUnityCity, HealthUnitType healthUnitType)
         {
             var acessControll = _accessor.GetAccessControlDTO();
 
             if (acessControll.Profile == EProfileKey.government.ToString())
             {
-                if (healthUnitType.Identifyer == (int)EHealthUnitType.Public)
+                if (healthUnitType.Identifyer != (int)EHealthUnitType.Public)
                     throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterHealthUnitiesWithPublicType"]);
 
                 if (((acessControll.CityId.HasValue && acessControll.CityId.Value != healthUnityCity.Id) ||
