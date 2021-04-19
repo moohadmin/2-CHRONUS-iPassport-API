@@ -7,9 +7,11 @@ using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Utils;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
@@ -18,7 +20,10 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -86,10 +91,32 @@ namespace iPassport.Test.Services
             var mockRequest = Mock.Of<HealthUnitCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>() && x.TypeId == Guid.NewGuid() && x.CompanyId == Guid.NewGuid());
 
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<HealthUnit>()).Result).Returns(true);
-            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetFullLoaded());
             _mockAddressRepository.Setup(x => x.InsertAsync(It.IsAny<Address>()).Result).Returns(true);
             _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePublic());
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
+
+            // Make fack claims principle instance
+            var fackClaimPrinciple = new Mock<ClaimsPrincipal>();
+
+            // Setup fack data
+            IEnumerable<Claim> claims = new List<Claim>()
+            {
+                new Claim(Constants.TOKEN_CLAIM_USER_ID, Guid.NewGuid().ToString()),
+                new Claim(Constants.TOKEN_CLAIM_FIRST_LOGIN, bool.FalseString),
+                new Claim(Constants.TOKEN_CLAIM_FULL_NAME, "USER FULL NAME"),
+                new Claim(ClaimTypes.Role, EProfileKey.admin.ToString()),
+                new Claim(Constants.TOKEN_CLAIM_COMPANY_ID, string.Empty),
+                new Claim(Constants.TOKEN_CLAIM_CITY_ID, string.Empty),
+                new Claim(Constants.TOKEN_CLAIM_STATE_ID, string.Empty),
+                new Claim(Constants.TOKEN_CLAIM_COUNTRY_ID, string.Empty),
+                new Claim(Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, string.Empty)
+            }.AsEnumerable();
+
+            fackClaimPrinciple.Setup(e => e.Claims).Returns(claims);
+
+            // Assign to current thread principle
+            Thread.CurrentPrincipal = fackClaimPrinciple.Object;
 
             // Act
             var result = _service.Add(mockRequest);

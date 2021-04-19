@@ -819,4 +819,10 @@
   <data name="LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis" xml:space="preserve">
     <value>O usuário logado só pode cadastrar cidadãos com a mesma localidade do seu cadastro.</value>
   </data>
+  <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithPublicType" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar unidades de saúde do tipo Pública.</value>
+  </data>
+  <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithSameLocationAsHis" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar unidades de saúde com a mesma localidade do seu cadastro.</value>
+  </data>
 </root>

@@ -59,7 +59,8 @@ namespace iPassport.Application.Services
             if (await _companyRepository.Find(dto.CompanyId.Value) == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            if (await _cityRepository.Find(dto.Address.CityId) == null)
+            var healthUnityCity = await _cityRepository.FindLoadedById(dto.Address.CityId);
+            if (healthUnityCity == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var type = await _healthUnitTypeRepository.Find(dto.TypeId.Value);
@@ -80,6 +81,8 @@ namespace iPassport.Application.Services
 
             if (dto.Ine != null && await _healthUnitRepository.GetByIne(dto.Ine) != null)
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "INE"));
+
+            ValidateAddHealthUnityPermission(healthUnityCity, type);
 
             try
             {
@@ -240,6 +243,23 @@ namespace iPassport.Application.Services
             }
             return locations;
         }
+
+        private void ValidateAddHealthUnityPermission(City healthUnityCity, HealthUnitType healthUnitType)
+        {
+            var acessControll = _accessor.GetAccessControlDTO();
+
+            if (acessControll.Profile == EProfileKey.government.ToString())
+            {
+                if (healthUnitType.Identifyer == (int)EHealthUnitType.Public)
+                    throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterHealthUnitiesWithPublicType"]);
+
+                if (((acessControll.CityId.HasValue && acessControll.CityId.Value != healthUnityCity.Id) ||
+                    (acessControll.StateId.HasValue && acessControll.StateId.Value != healthUnityCity?.StateId) ||
+                    (acessControll.CountryId.HasValue && acessControll.CountryId.Value != healthUnityCity?.State.CountryId)))
+                    throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterHealthUnitiesWithSameLocationAsHis"]);
+            }
+        }
+
         #endregion
     }
 }

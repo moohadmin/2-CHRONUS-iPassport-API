@@ -26,7 +26,7 @@ namespace iPassport.Test.Settings.Factories
                             new Claim(Constants.TOKEN_CLAIM_USER_ID, Guid.NewGuid().ToString()),
                             new Claim(Constants.TOKEN_CLAIM_FIRST_LOGIN, bool.TrueString),
                             new Claim(Constants.TOKEN_CLAIM_FULL_NAME, "FullName"),
-                            new Claim(ClaimTypes.Role, EProfileKey.government.ToString()),
+                            new Claim(ClaimTypes.Role, EProfileKey.admin.ToString()),
                             new Claim(Constants.TOKEN_CLAIM_COMPANY_ID, Guid.NewGuid().ToString()),
                             new Claim(Constants.TOKEN_CLAIM_CITY_ID, Guid.NewGuid().ToString()),
                             new Claim(Constants.TOKEN_CLAIM_STATE_ID, Guid.NewGuid().ToString()),
