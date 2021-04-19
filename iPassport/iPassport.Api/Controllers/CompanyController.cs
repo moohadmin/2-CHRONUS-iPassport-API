@@ -166,6 +166,8 @@ namespace iPassport.Api.Controllers
         /// <summary>
         /// This API Get Company Segments by Company Type
         /// </summary>
+        /// <param name="id">Company Type Id</param>
+        /// <param name="request">Page Filter Request</param>
         /// <returns>List of Company Type</returns>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
@@ -185,6 +187,8 @@ namespace iPassport.Api.Controllers
         /// <summary>
         /// This API Get Paged Companies Candidates to be Subsidiaries
         /// </summary>
+        /// <param name="id">Parent Id</param>
+        /// <param name="request">Page Filter Request</param>
         /// <returns>List of Paged Companies Candidates</returns>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
@@ -198,6 +202,31 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> GetSubsidiariesCandidates([FromRoute] Guid id, [FromQuery]PageFilterRequest request)
         {
             var res = await _service.GetSubsidiariesCandidatesPaged(id, _mapper.Map<PageFilter>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API Associate Companies Subsidiaries
+        /// </summary>
+        /// <param name="id">Parent Id</param>
+        /// <param name="request">Associate Subsidiaries Request</param>
+        /// <returns>Operation result</returns>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPost("{id}/Subsidiaries")]
+        [AuthorizeRole(RolesModel.Admin)]
+        public async Task<ActionResult> PostSubsidiaries([FromRoute] Guid id, [FromBody] AssociateSubsidiariesRequest request)
+        {
+            var dto = _mapper.Map<AssociateSubsidiariesDto>(request);
+            dto.ParentId = id;
+            
+            var res = await _service.AssociateSubsidiaries(dto);
+            
             return Ok(res);
         }
     }

@@ -46,6 +46,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
             .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
             .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
             .Include(x => x.ParentCompany)
+            .Include(x => x.Subsidiaries)
             .Include(x => x.Responsible)
             .Include(x => x.DeactivationUser)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -53,18 +54,18 @@ namespace iPassport.Infra.Repositories.IdentityContext
         public async Task<IList<Company>> FindListCnpj(List<string> listCnpj)
             => await _DbSet.Where(m => listCnpj.Contains(m.Cnpj)).ToListAsync();
 
-        public async Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType) =>
-            await GetLoadedHeadquarters().Where(x => x.Cnpj.StartsWith(cnpj)
+        public async Task<IList<Company>> GetPrivateHeadquarters(string cnpj, int segmentType, AccessControlDTO accessControl) =>
+            await GetLoadedHeadquarters(accessControl).Where(x => x.Cnpj.StartsWith(cnpj)
                             && x.Segment.Identifyer == segmentType
                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Private
                             && x.ParentId == null).ToListAsync();
 
-        public async Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId, Guid countryId) =>
-            await GetLoadedHeadquarters().Where(x => (x.Segment.Identifyer == (int)ECompanySegmentType.State && x.Address.City.StateId == stateId)
+        public async Task<IList<Company>> GetPublicMunicipalHeadquarters(Guid stateId, Guid countryId, AccessControlDTO accessControl) =>
+            await GetLoadedHeadquarters(accessControl).Where(x => (x.Segment.Identifyer == (int)ECompanySegmentType.State && x.Address.City.StateId == stateId)
                                                      || (x.Segment.Identifyer == (int)ECompanySegmentType.Federal && x.Address.City.State.CountryId == countryId)).ToListAsync();
 
-        public async Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId) =>
-            await GetLoadedHeadquarters().Where(x => x.Segment.Identifyer == (int)ECompanySegmentType.Federal
+        public async Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId, AccessControlDTO accessControl) =>
+            await GetLoadedHeadquarters(accessControl).Where(x => x.Segment.Identifyer == (int)ECompanySegmentType.Federal
                             && x.Address.City.State.CountryId == countryId
                             && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government).ToListAsync();
 
@@ -95,14 +96,25 @@ namespace iPassport.Infra.Repositories.IdentityContext
 
         public async Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter)
             => await Paginate(QuerySubsidiariesCandidatesToFederalGovernment(countryId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
-        
-            
+
+        public async Task<IList<Company>> GetSubsidiariesCandidatesToFederalGovernment(Guid countryId, IEnumerable<Guid> candidates)
+            => await QuerySubsidiariesCandidatesToFederalGovernment(countryId)
+                            .Where(x => (candidates == null || !candidates.Any()) || candidates.Contains(x.Id))
+                            .OrderBy(m => m.Name)
+                            .ToListAsync();
+
         public async Task<PagedData<Company>> GetSubsidiariesCandidatesToStateGovernmentPaged(Guid stateId, PageFilter filter)
             => await Paginate(QuerySubsidiariesCandidatesToStateGovernment(stateId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
 
+        public async Task<IList<Company>> GetSubsidiariesCandidatesToStateGovernment(Guid stateId, IEnumerable<Guid> candidates)
+            => await QuerySubsidiariesCandidatesToStateGovernment(stateId)
+                            .Where(x => (candidates == null || !candidates.Any()) || candidates.Contains(x.Id))
+                            .OrderBy(m => m.Name)
+                            .ToListAsync();
+
         #region Private
-        private IQueryable<Company> GetLoadedHeadquarters() =>
-            _DbSet.Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+        private IQueryable<Company> GetLoadedHeadquarters(AccessControlDTO accessControl) =>
+            AccessControllBaseQuery(accessControl).Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                   .Include(x => x.Segment).ThenInclude(x => x.CompanyType)
                   .Where(x => x.DeactivationDate == null);
 
@@ -139,6 +151,15 @@ namespace iPassport.Infra.Repositories.IdentityContext
             return new PagedData<CompanyAssociatedDto>() { PageNumber = filter.PageNumber, PageSize = filter.PageSize, TotalPages = totalPages, TotalRecords = dataCount, Data = data };
         }
 
+        private IQueryable<Company> AccessControllBaseQuery(AccessControlDTO accessControl)
+        {
+            var query = _DbSet.AsQueryable();
+
+            if (accessControl.Profile == EProfileKey.business.ToString() && accessControl.CompanyId.HasValue && accessControl.CompanyId.Value != Guid.Empty)
+               query = query.Where(c => c.Id == accessControl.CompanyId);
+
+            return query;
+        }
         #endregion
     }
 }

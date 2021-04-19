@@ -813,8 +813,23 @@
   <data name="VaccineNextDoseDateCannoteBeLowerToPrevious" xml:space="preserve">
     <value>A data da próxima dose não pode ser menor que a data da dose anterior.</value>
   </data>
-  <data name="InactiveUserCompany" xml:space="preserve">
+  <data name="AssociateAll" xml:space="preserve">
+    <value>Associar todos</value>
+  </data>
+  <data name="AssociateAllMustBeNullWhenSubsidiariesIsNotNull" xml:space="preserve">
+    <value>Não é possivel associar todas as empresas canditadas quando a lista de candidatas estiver preenchida.</value>
+  </data>
+  <data name="Subsidiaries" xml:space="preserve">
+    <value>Subsidiárias</value>
+  </data>
+  <data name="SubsidiariesCompaniesAssociated" xml:space="preserve">
+    <value>Empresas associadas com sucesso.</value>
+  </data>
+	<data name="InactiveUserCompany" xml:space="preserve">
     <value>A empresa do usuário se encontra Inativa. Favor verificar.</value>
+  </data>
+	<data name="OnlyAllowSubsidiaryCompaniesRegister" xml:space="preserve">
+    <value>Somente é permitido o cadastro de empresas filiais</value>
   </data>
   <data name="LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis" xml:space="preserve">
     <value>O usuário logado só pode cadastrar cidadãos com a mesma localidade do seu cadastro.</value>

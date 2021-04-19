@@ -53,6 +53,7 @@ namespace iPassport.Test.Services
             _service = new AccountService( _mockTokenService.Object, _mockUserManager.Object, _mockUserRepository.Object, _mockAuth2FactService.Object, _accessor, _localizer, _mockUserDetailsRepository.Object, _mockAddressRepository.Object);
         }
 
+
         [TestMethod]
         public void BasicLogin_MustReturnOK()
         {
@@ -357,7 +358,7 @@ namespace iPassport.Test.Services
             _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
             _mockUserManager.Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<Users>()).Result).Returns(token);
             _mockUserManager.Setup(x => x.ResetPasswordAsync(It.IsAny<Users>(),token,passwordConfirm).Result).Returns(IdentityResult.Success);
-
+            
             // Act
             var result = _service.ResetPassword(password, passwordConfirm);
 

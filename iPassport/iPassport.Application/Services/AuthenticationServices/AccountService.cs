@@ -199,17 +199,17 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             return userDetails;
         }
-        
+
         private void ValidateProfileDataToToken(Users user, UserDetails UserDetails, Address healthUnitAddress)
         {
-            if(!user.Profile.IsAdmin())
+            if (!user.Profile.IsAdmin())
             {
                 if (user.Company == null)
                     throw new BusinessException(_localizer["CompanyNotFound"]);
 
                 if (!user.Company.IsActive())
                     throw new BusinessException(_localizer["InactiveUserCompany"]);
-                
+
                 if (user.Profile.IsGovernment())
                 {
                     if (user.Company.Address == null)
@@ -222,13 +222,13 @@ namespace iPassport.Application.Services.AuthenticationServices
                 {
                     if (!UserDetails.HealthUnitId.HasValue)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
-                    
-                    if(healthUnitAddress == null)
+
+                    if (healthUnitAddress == null)
                         throw new BusinessException(_localizer["AddressNotFound"]);
                 }
             }
         }
-        
+
         private TokenProfileDataDto GetTokenProfileData(Users user, UserDetails UserDetails, Address healthUnitAddress)
         =>
           new()
@@ -241,15 +241,15 @@ namespace iPassport.Application.Services.AuthenticationServices
           };
 
         private string GetCompanyId(Users user)
-            => user.Profile.IsBusiness() ? user.CompanyId.ToString() : "";
+            => user.Profile.IsBusiness() ? user.CompanyId.ToString() : string.Empty;
         private string GetCityId(Users user, Address healthUnitAddress)
-            => (user.Profile.IsGovernment() && user.Company.IsMunicipalGovernment()) ? user.Company.Address.CityId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.CityId.ToString() : "");
+            => (user.Profile.IsGovernment() && user.Company.IsMunicipalGovernment()) ? user.Company.Address.CityId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.CityId.ToString() : string.Empty);
         private string GetStateId(Users user, Address healthUnitAddress)
-            => (user.Profile.IsGovernment() && user.Company.IsStateGovernment()) ? user.Company.Address.City.StateId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.StateId.ToString() : "");
+            => (user.Profile.IsGovernment() && user.Company.IsStateGovernment()) ? user.Company.Address.City.StateId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.StateId.ToString() : string.Empty);
         private string GetCountryId(Users user, Address healthUnitAddress)
-            => (user.Profile.IsGovernment() && user.Company.IsFederalGovernment()) ? user.Company.Address.City.State.CountryId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.State.CountryId.ToString() : "");
+            => (user.Profile.IsGovernment() && user.Company.IsFederalGovernment()) ? user.Company.Address.City.State.CountryId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.City.State.CountryId.ToString() : string.Empty);
         private string GetHealthUnityId(UserDetails UserDetails, Profile profile)
-            => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : "";
+            => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : string.Empty;
 
 
         #endregion

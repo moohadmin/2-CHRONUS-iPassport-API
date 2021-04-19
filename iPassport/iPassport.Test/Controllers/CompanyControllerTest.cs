@@ -153,5 +153,24 @@ namespace iPassport.Test.Controllers
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
+
+
+        [TestMethod]
+        public void AddSubs_MustReturnOk()
+        {
+            var mockRequest = Mock.Of<AssociateSubsidiariesRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.AssociateSubsidiaries(It.IsAny<AssociateSubsidiariesDto>()))
+                .Returns(Task.FromResult(new ResponseApi(true, "Test Success!", It.IsAny<IList<Guid>>())));
+
+            // Act
+            var result = _controller.PostSubsidiaries(Guid.NewGuid(), mockRequest);
+
+            // Assert
+            _mockService.Verify(a => a.AssociateSubsidiaries(It.IsAny<AssociateSubsidiariesDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
     }
 }
