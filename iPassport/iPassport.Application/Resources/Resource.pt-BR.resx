@@ -825,10 +825,10 @@
   <data name="SubsidiariesCompaniesAssociated" xml:space="preserve">
     <value>Empresas associadas com sucesso.</value>
   </data>
-	<data name="InactiveUserCompany" xml:space="preserve">
+  <data name="InactiveUserCompany" xml:space="preserve">
     <value>A empresa do usuário se encontra Inativa. Favor verificar.</value>
   </data>
-	<data name="OnlyAllowSubsidiaryCompaniesRegister" xml:space="preserve">
+  <data name="OnlyAllowSubsidiaryCompaniesRegister" xml:space="preserve">
     <value>Somente é permitido o cadastro de empresas filiais</value>
   </data>
   <data name="LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis" xml:space="preserve">
@@ -840,16 +840,28 @@
   <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithSameLocationAsHis" xml:space="preserve">
     <value>O usuário logado só pode cadastrar unidades de saúde com a mesma localidade do seu cadastro.</value>
   </data>
-	<data name="UserCompanyNotFound" xml:space="preserve">
+  <data name="UserCompanyNotFound" xml:space="preserve">
     <value>A empresa do usuário não foi encontrada. Favor verificar.</value>
   </data>
-	<data name="NotAllowEditedFieldsToLoggedUser" xml:space="preserve">
+  <data name="NotAllowEditedFieldsToLoggedUser" xml:space="preserve">
     <value>Há campos alterados não permitidos para o usuário logado.</value>
   </data>
-	<data name="LoggedInUserCanOnlyEditCompanyWithSameLocationAsHis" xml:space="preserve">
+  <data name="LoggedInUserCanOnlyEditCompanyWithSameLocationAsHis" xml:space="preserve">
     <value>O usuário logado só pode editar empresas com a mesma localidade do seu cadastro.</value>
   </data>
-	<data name="LoggedUserCannotRegisterHigherSegmentCompanies" xml:space="preserve">
+  <data name="LoggedUserCannotRegisterHigherSegmentCompanies" xml:space="preserve">
     <value>O usuário logado não pode cadastrar empresas de segmento superior ao seu.</value>
+  </data>
+  <data name="OnlyAdminCanDeleteVaccineData" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem excluir dados de vacinação</value>
+  </data>
+  <data name="OnlyAdminCanEditCitizenFields" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de um cidadão.</value>
+  </data>
+  <data name="OnlyAdminCanEditCitizenOutOfLocality" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de um cidadão fora da sua localidade</value>
+  </data>
+  <data name="OnlyAdminCanEditVaccineData" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de vacinação</value>
   </data>
 </root>
