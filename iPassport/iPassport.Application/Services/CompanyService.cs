@@ -84,8 +84,11 @@ namespace iPassport.Application.Services
 
             company.ChangeCompany(dto);
 
-            if (!dto.IsActive.Value)
+            if (!dto.IsActive.Value && company.IsActive())
                 company.Deactivate(_accessor.GetCurrentUserId());
+
+            else if (company.DeactivationDate.HasValue && dto.IsActive.Value)
+                company.Activate();
 
             var result = await _companyRepository.Update(company);
             if (!result)
