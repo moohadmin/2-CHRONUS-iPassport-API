@@ -301,7 +301,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
-            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockPriorityGroupRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(PriorityGroupSeed.Get());
             _mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<Users>()).Result).Returns(identityResult);
             _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()).Result).Returns(true);
@@ -314,7 +314,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
             _mockRepository.Verify(x => x.GetLoadedUserById(It.IsAny<Guid>()));
             _mockAddressRepository.Verify(x => x.Find(It.IsAny<Guid>()));
-            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCityRepository.Verify(x => x.FindLoadedById(It.IsAny<Guid>()));
             _mockPriorityGroupRepository.Verify(x => x.Find(It.IsAny<Guid>()));
             _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<Users>()));
             _mockRepository.Verify(x => x.Update(It.IsAny<UserDetails>()));
@@ -435,7 +435,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
-            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockPriorityGroupRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(PriorityGroupSeed.Get());
             _mockVaccineRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(VaccineSeed.GetVaccines().FirstOrDefault());
             _mockHealthUnitRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitSeed.GetHealthUnit());
