@@ -31,7 +31,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
             }
             else if (accessControl.Profile == EProfileKey.healthUnit.ToString())
             {
-                query = query.Where(s => s.Id == accessControl.StateId.Value);
+                query = query.Where(s => s.Id == accessControl.CountryId.Value);
             }
 
             return query;

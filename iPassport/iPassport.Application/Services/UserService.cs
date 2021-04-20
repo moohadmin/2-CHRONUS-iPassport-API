@@ -382,10 +382,10 @@ namespace iPassport.Application.Services
                 {
                     var toInclude = dto.Doses.Where(x => !currentUserDetails.UserVaccines.Any(y => y.Id == x.Id));
                     var toChange = currentUserDetails.UserVaccines.Where(x => dto.Doses.Any(y => y.Id == x.Id));
-                    var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id));
+                    var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id && !x.ExclusionDate.HasValue));
 
                     if (!isAdmin && toRemove.Any())
-                        throw new BusinessException(string.Empty);
+                        throw new BusinessException(_localizer["OnlyAdminCanDeleteVaccineData"]);
 
                     ValidateVaccineDates(toInclude);
                     ValidateVaccineDates(dto.Doses.Where(x => currentUserDetails.UserVaccines.Any(y => y.Id == x.Id)));
