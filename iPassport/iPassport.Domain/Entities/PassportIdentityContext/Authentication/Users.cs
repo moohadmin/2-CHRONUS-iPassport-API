@@ -246,6 +246,38 @@ namespace iPassport.Domain.Entities.Authentication
             DeactivationUserId = null;
             DeactivationDate = null;
         }
-    } 
+
+        public bool CanEditCitizenFields(CitizenEditDto dto, AccessControlDTO accessControl)
+        {
+            if (accessControl.Profile == EProfileKey.government.ToString())
+                return Birthday == dto.Birthday
+                     && CNS == dto.Cns
+                     && CPF == dto.Cpf
+                     && Email == dto.Email
+                     && Occupation == dto.Occupation
+                     && PhoneNumber == dto.Telephone
+                     && CompanyId == dto.CompanyId;
+
+            if (accessControl.Profile == EProfileKey.healthUnit.ToString())
+                return Birthday == dto.Birthday
+                    && CNS == dto.Cns
+                    && FullName == dto.CompleteName
+                    && CPF == dto.Cpf
+                    && Email == dto.Email
+                    && Occupation == dto.Occupation
+                    && PhoneNumber == dto.Telephone
+                    && CompanyId == dto.CompanyId
+                    && BloodTypeId == dto.BloodTypeId
+                    && GenderId == dto.GenderId
+                    && HumanRaceId == dto.HumanRaceId
+                    && Address.Number == dto.Address.Number
+                    && Address.Cep == dto.Address.Cep
+                    && Address.CityId == dto.Address.CityId
+                    && Address.Description == dto.Address.Description
+                    && Address.District == dto.Address.District;
+            
+            return accessControl.Profile == EProfileKey.admin.ToString();
+        }
+    }
 }
 
