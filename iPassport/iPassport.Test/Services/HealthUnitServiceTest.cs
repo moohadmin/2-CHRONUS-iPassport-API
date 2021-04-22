@@ -7,17 +7,23 @@ using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Utils;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -35,6 +41,7 @@ namespace iPassport.Test.Services
         Mock<IUnitOfWork> _mockUnitOfWork;
         Mock<ICompanyRepository> _mockCompanyRepository;
         Resource _resource;
+        IHttpContextAccessor _acessor;
 
         [TestInitialize]
         public void Setup()
@@ -47,10 +54,18 @@ namespace iPassport.Test.Services
             _mockCityRepository = new Mock<ICityRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockCompanyRepository = new Mock<ICompanyRepository>();
-
+            _acessor = HttpContextAccessorFactory.Create();
             _resource = ResourceFactory.Create();
-
-            _service = new HealthUnitService(_mockRepository.Object, _mockHealthUnitTypeRepository.Object, _mockLocalizer.Object, _mapper, _mockAddressRepository.Object, _mockCityRepository.Object, _mockCompanyRepository.Object, _mockUnitOfWork.Object);
+            
+            _service = new HealthUnitService(_mockRepository.Object,
+                _mockHealthUnitTypeRepository.Object,
+                _mockLocalizer.Object,
+                _mapper,
+                _mockAddressRepository.Object,
+                _mockCityRepository.Object,
+                _mockCompanyRepository.Object,
+                _mockUnitOfWork.Object,
+                _acessor);
         }
 
         [TestMethod]
@@ -58,13 +73,13 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<GetHealthUnitPagedFilter>();
-            _mockRepository.Setup(x => x.GetPagedHealthUnits(It.IsAny<GetHealthUnitPagedFilter>()).Result).Returns(HealthUnitSeed.GetPaged());
+            _mockRepository.Setup(x => x.GetPagedHealthUnits(It.IsAny<GetHealthUnitPagedFilter>(), It.IsAny<AccessControlDTO>()).Result).Returns(HealthUnitSeed.GetPaged());
 
             // Act
             var result = _service.FindByNameParts(mockRequest);
 
             // Assert
-            _mockRepository.Verify(a => a.GetPagedHealthUnits(It.IsAny<GetHealthUnitPagedFilter>()));
+            _mockRepository.Verify(a => a.GetPagedHealthUnits(It.IsAny<GetHealthUnitPagedFilter>(), It.IsAny<AccessControlDTO>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
@@ -76,7 +91,7 @@ namespace iPassport.Test.Services
             var mockRequest = Mock.Of<HealthUnitCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>() && x.TypeId == Guid.NewGuid() && x.CompanyId == Guid.NewGuid());
 
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<HealthUnit>()).Result).Returns(true);
-            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetFullLoaded());
             _mockAddressRepository.Setup(x => x.InsertAsync(It.IsAny<Address>()).Result).Returns(true);
             _mockHealthUnitTypeRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitTypeSeed.GetHealthUnitTypePublic());
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());

@@ -68,9 +68,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         {
             var user = await ValidateUserToEmailLogin(email);
             var userDetails = await ValidateUserDetailsToEmailLogin(user.Id);
-            Address healthunitAddress = null;
-            if (userDetails.HealthUnit != null)
-                healthunitAddress = await _addressRepository.FindFullAddress(userDetails.HealthUnit.AddressId.GetValueOrDefault());
+            var healthunitAddress = await _addressRepository.FindFullAddress(userDetails.HealthUnit == null ? Guid.Empty : userDetails.HealthUnit.AddressId.GetValueOrDefault());
 
             ValidateProfileDataToToken(user, userDetails, healthunitAddress);
 
@@ -243,7 +241,7 @@ namespace iPassport.Application.Services.AuthenticationServices
           };
 
         private string GetCompanyId(Users user)
-            => user.Profile.IsBusiness() ? user.CompanyId.ToString() : string.Empty;
+            => (user.Profile.IsBusiness() || user.Profile.IsGovernment()) ? user.CompanyId.ToString() : string.Empty;
         private string GetCityId(Users user, Address healthUnitAddress)
             => (user.Profile.IsGovernment() && user.Company.IsMunicipalGovernment()) ? user.Company.Address.CityId.ToString() : (user.Profile.IsHealthUnit() ? healthUnitAddress.CityId.ToString() : string.Empty);
         private string GetStateId(Users user, Address healthUnitAddress)

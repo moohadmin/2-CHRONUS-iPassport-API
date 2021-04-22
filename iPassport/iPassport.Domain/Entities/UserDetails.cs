@@ -210,5 +210,15 @@ namespace iPassport.Domain.Entities
             };
 
         public void ChangeUserDetail(AdminDto dto) => HealthUnitId = dto.HealthUnitId;
+
+        public bool CanEditCitizenFields(CitizenEditDto dto, AccessControlDTO accessControl)
+        {
+            if (accessControl.Profile == EProfileKey.government.ToString() || accessControl.Profile == EProfileKey.healthUnit.ToString())
+                return Bond == dto.Bond
+                && WasCovidInfected == dto.WasCovidInfected
+                && PriorityGroupId == dto.PriorityGroupId;
+
+            return accessControl.Profile == EProfileKey.admin.ToString();
+        }
     }
 }

@@ -10,6 +10,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -26,6 +27,7 @@ namespace iPassport.Test.Services
         IStateService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
+        IHttpContextAccessor _accessor;
 
         [TestInitialize]
         public void Setup()
@@ -34,8 +36,9 @@ namespace iPassport.Test.Services
             _mockRepository = new Mock<IStateRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _mockCountryRepository = new Mock<ICountryRepository>();
+            _accessor = HttpContextAccessorFactory.Create();
 
-            _service = new StateService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCountryRepository.Object);
+            _service = new StateService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _mockCountryRepository.Object, _accessor);
         }
 
         [TestMethod]
@@ -43,13 +46,13 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<GetByIdPagedFilter>();
-            _mockRepository.Setup(x => x.GetByCountryId(It.IsAny<GetByIdPagedFilter>()).Result).Returns(StateSeed.GetPaged());
+            _mockRepository.Setup(x => x.GetByCountryId(It.IsAny<GetByIdPagedFilter>(), It.IsAny<AccessControlDTO>()).Result).Returns(StateSeed.GetPaged());
 
             // Act
             var result = _service.GetByCountryId(mockRequest);
 
             // Assert
-            _mockRepository.Verify(a => a.GetByCountryId(It.IsAny<GetByIdPagedFilter>()));
+            _mockRepository.Verify(a => a.GetByCountryId(It.IsAny<GetByIdPagedFilter>(), It.IsAny<AccessControlDTO>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.AreEqual(true, result.Result.Success);

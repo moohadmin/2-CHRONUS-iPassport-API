@@ -254,7 +254,7 @@ namespace iPassport.Test.Services
             // Arrange
             var mockRequest = Mock.Of<GetCitzenPagedFilter>();
 
-            _mockUserRepository.Setup(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()).Result)
+            _mockUserRepository.Setup(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>(), It.IsAny<AccessControlDTO>()).Result)
                 .Returns(UserSeed.GetPagedUsers());
             _mockRepository.Setup(x => x.GetImportedUserById(It.IsAny<Guid[]>()).Result)
                 .Returns(UserSeed.GetImportedUserDto());
@@ -263,7 +263,7 @@ namespace iPassport.Test.Services
             var result = _service.GetPaggedCizten(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>()));
+            _mockUserRepository.Verify(x => x.GetPaggedCizten(It.IsAny<GetCitzenPagedFilter>(), It.IsAny<AccessControlDTO>()));
             _mockRepository.Verify(x => x.GetImportedUserById(It.IsAny<Guid[]>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
@@ -301,7 +301,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
-            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockPriorityGroupRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(PriorityGroupSeed.Get());
             _mockUserManager.Setup(x => x.UpdateAsync(It.IsAny<Users>()).Result).Returns(identityResult);
             _mockRepository.Setup(x => x.Update(It.IsAny<UserDetails>()).Result).Returns(true);
@@ -314,7 +314,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
             _mockRepository.Verify(x => x.GetLoadedUserById(It.IsAny<Guid>()));
             _mockAddressRepository.Verify(x => x.Find(It.IsAny<Guid>()));
-            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCityRepository.Verify(x => x.FindLoadedById(It.IsAny<Guid>()));
             _mockPriorityGroupRepository.Verify(x => x.Find(It.IsAny<Guid>()));
             _mockUserManager.Verify(x => x.UpdateAsync(It.IsAny<Users>()));
             _mockRepository.Verify(x => x.Update(It.IsAny<UserDetails>()));
@@ -351,9 +351,11 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Guid.NewGuid();
+            var userDetails = UserSeed.GetUserDetails();
+            userDetails.HealthUnit.Type = new HealthUnitType();
 
             _mockUserRepository.Setup(x => x.GetAdminById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
-            _mockRepository.Setup(r => r.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockRepository.Setup(r => r.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(userDetails);
 
             // Act
             var result = _service.GetAdminById(mockRequest);
@@ -370,14 +372,14 @@ namespace iPassport.Test.Services
             // Arrange
             var mockRequest = Mock.Of<GetAdminUserPagedFilter>();
 
-            _mockUserRepository.Setup(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()).Result)
+            _mockUserRepository.Setup(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>(), It.IsAny<AccessControlDTO>()).Result)
                 .Returns(UserSeed.GetPagedUsers());
 
             // Act
             var result = _service.GetPagedAdmins(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()));
+            _mockUserRepository.Verify(x => x.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>(), It.IsAny<AccessControlDTO>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
@@ -433,7 +435,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
-            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockPriorityGroupRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(PriorityGroupSeed.Get());
             _mockVaccineRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(VaccineSeed.GetVaccines().FirstOrDefault());
             _mockHealthUnitRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(HealthUnitSeed.GetHealthUnit());

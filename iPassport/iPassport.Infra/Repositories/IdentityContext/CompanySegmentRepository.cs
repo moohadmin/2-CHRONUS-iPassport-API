@@ -20,9 +20,22 @@ namespace iPassport.Infra.Repositories.IdentityContext
             var query = _DbSet.AsQueryable();
 
             if  (accessControl.Profile == EProfileKey.business.ToString())            
-                query = query.Where(c => !accessControl.FilterIds.Any() || accessControl.FilterIds.Contains(c.Id));
+                query = query.Where(c => accessControl.FilterIds == null || !accessControl.FilterIds.Any() || accessControl.FilterIds.Contains(c.Id));
 
-            return query;
+            if (accessControl.Profile == EProfileKey.government.ToString())
+            {
+                //uses the location to distinguish the business segment associated with the logged in user and perform the filters
+                int segmentIdentifyer = 0;
+                if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
+                    segmentIdentifyer = (int)ECompanySegmentType.Federal;
+                if (accessControl.StateId.HasValue && accessControl.StateId.Value != Guid.Empty)
+                    segmentIdentifyer = (int)ECompanySegmentType.State;
+                if (accessControl.CityId.HasValue && accessControl.CityId.Value != Guid.Empty)
+                    segmentIdentifyer = (int)ECompanySegmentType.Municipal;
+                
+                query = query.Where(x => x.Identifyer <= segmentIdentifyer);
+            }
+           return query;
         }
 
         public async Task<PagedData<CompanySegment>> GetPagedByTypeId(Guid id, PageFilter filter, AccessControlDTO accessControl)

@@ -107,7 +107,9 @@ namespace iPassport.Application.Services
             if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
                 throw new BusinessException(_localizer["PriorityGroupNotFound"]);
 
-            if (dto.Address == null || await _cityRepository.Find(dto.Address.CityId) == null)
+            var citizenCity = await _cityRepository.FindLoadedById(dto.Address.CityId);
+
+            if (dto.Address == null || citizenCity == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             if (dto.Test != null && dto.Test.IsEmpty())
@@ -129,6 +131,8 @@ namespace iPassport.Application.Services
                         throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
+
+            ValidateAddCitizenPermission(citizenCity);
 
             try
             {
@@ -292,7 +296,10 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
-            var res = await _userRepository.GetPaggedCizten(filter);
+            AccessControlDTO accessControl = await GetCitizenControlData();
+
+            var res = await _userRepository.GetPaggedCizten(filter, accessControl);
+
             var ImportedInfo = await _detailsRepository.GetImportedUserById(res.Data.Select(x => x.Id).ToArray());
 
             var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
@@ -302,7 +309,6 @@ namespace iPassport.Application.Services
             });
 
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
-
         }
 
         public async Task<ResponseApi> GetCitizenById(Guid id)
@@ -328,7 +334,10 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> EditCitizen(CitizenEditDto dto)
         {
+            AccessControlDTO accessControl = await GetCitizenControlData();
+
             var currentUser = await _userRepository.GetById(dto.Id);
+            
             if (currentUser == null)
                 throw new BusinessException(_localizer["CitizenNotFound"]);
 
@@ -336,7 +345,7 @@ namespace iPassport.Application.Services
             if (currentUserDetails == null)
                 throw new BusinessException(_localizer["CitizenNotFound"]);
 
-            await ValidateEditCitizen(dto);
+            await ValidateEditCitizen(dto, accessControl, currentUserDetails, currentUser);
 
             try
             {
@@ -351,10 +360,16 @@ namespace iPassport.Application.Services
 
                 if (!(await _detailsRepository.Update(currentUserDetails)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
+                
+                var isAdmin = accessControl.Profile == EProfileKey.admin.ToString();
 
                 if (dto.Doses == null && currentUserDetails.UserVaccines.Any(x => !x.ExclusionDate.HasValue))
                 {
+                    if(!isAdmin)
+                        throw new BusinessException(_localizer["OnlyAdminCanDeleteVaccineData"]);
+
                     var toRemove = currentUserDetails.UserVaccines.Where(x => !x.ExclusionDate.HasValue);
+                    
                     foreach (var item in toRemove)
                     {
                         item.Delete();
@@ -367,15 +382,27 @@ namespace iPassport.Application.Services
                 {
                     var toInclude = dto.Doses.Where(x => !currentUserDetails.UserVaccines.Any(y => y.Id == x.Id));
                     var toChange = currentUserDetails.UserVaccines.Where(x => dto.Doses.Any(y => y.Id == x.Id));
-                    var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id));
+                    var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id && !x.ExclusionDate.HasValue));
+
+                    if (!isAdmin && toRemove.Any())
+                        throw new BusinessException(_localizer["OnlyAdminCanDeleteVaccineData"]);
 
                     ValidateVaccineDates(toInclude);
                     ValidateVaccineDates(dto.Doses.Where(x => currentUserDetails.UserVaccines.Any(y => y.Id == x.Id)));
 
                     foreach (var item in currentUserDetails.UserVaccines.Where(x => !x.ExclusionDate.HasValue))
                     {
-                        if (toChange.Any(x => x.Id == item.Id))
-                            item.Change(dto.Doses.FirstOrDefault(x => x.Id == item.Id));
+                        var itemToChange = toChange.FirstOrDefault(x => x.Id == item.Id);
+                        var itemChangedDto = dto.Doses.FirstOrDefault(x => x.Id == item.Id);
+                        
+                        if (itemToChange != null)
+                        {
+                            if(!itemToChange.CanEditVaccineFields(accessControl, itemChangedDto))
+                                throw new BusinessException(_localizer["OnlyAdminCanEditVaccineData"]);
+
+                            item.Change(itemChangedDto);
+                        }
+                        
                         else if (toRemove.Any(x => x.Id == item.Id))
                             item.Delete();
 
@@ -644,7 +671,7 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
         {
-            var res = await _userRepository.GetPagedAdmins(filter);
+            var res = await _userRepository.GetPagedAdmins(filter, _accessor.GetAccessControlDTO());
 
             if (res.Data == null)
                 return new PagedResponseApi(true, _localizer["AdminUsers"], 0, 0, 0, 0);
@@ -660,7 +687,17 @@ namespace iPassport.Application.Services
         }
 
         #region Private Methods
-        private async Task<bool> ValidateEditCitizen(CitizenEditDto dto)
+        private async Task<AccessControlDTO> GetCitizenControlData()
+        {
+            var accessControl = _accessor.GetAccessControlDTO();
+
+            if (accessControl.Profile == EProfileKey.healthUnit.ToString())
+                accessControl.FilterIds = await _detailsRepository.GetVaccinatedUsersWithHealtUnityById(accessControl.HealthUnityId.GetValueOrDefault());
+            
+            return accessControl;
+        }
+
+        private async Task ValidateEditCitizen(CitizenEditDto dto, AccessControlDTO accessControl, UserDetails userDetails, Users user)
         {
             if (dto.Address == null || await _addressRepository.Find(dto.Address.Id) == null)
                 throw new BusinessException(_localizer["AddressNotFound"]);
@@ -680,7 +717,8 @@ namespace iPassport.Application.Services
             if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
                 throw new BusinessException(_localizer["PriorityGroupNotFound"]);
 
-            if (await _cityRepository.Find(dto.Address.CityId) == null)
+            var city = await _cityRepository.FindLoadedById(dto.Address.CityId);
+            if (city == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             if (dto.Doses != null && dto.Doses.Any())
@@ -704,7 +742,29 @@ namespace iPassport.Application.Services
             if (dto.Test?.Id != null && await _userDiseaseTestRepository.Find(dto.Test.Id.Value) == null)
                 throw new BusinessException(_localizer["UserDiseaseTestsNotFound"]);
 
-            return true;
+            await ValidateEditCitizenAccessControl(accessControl, city, userDetails, user, dto);
+        }
+
+        private async Task ValidateEditCitizenAccessControl(AccessControlDTO accessControl, City city, UserDetails userDetails, Users user, CitizenEditDto citizenEditDto)
+        {
+            //se perfil gov:
+            // - mesma cidade/estado/país
+            if (accessControl.Profile == EProfileKey.government.ToString()
+                && ((accessControl.CityId.HasValue && accessControl.CityId.Value != city.Id)
+                    || (accessControl.StateId.HasValue && accessControl.StateId.Value != city.StateId)
+                    || (accessControl.CountryId.HasValue && accessControl.CountryId.Value != city.State.CountryId)))
+                        throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
+
+            //se perfil unidade de saude
+            // - mesma localidade ou vacinado na unidade
+            if (accessControl.Profile == EProfileKey.healthUnit.ToString()
+                && ((accessControl.CityId.HasValue && accessControl.CityId.Value != city.Id)
+                    && accessControl.HealthUnityId.HasValue && !userDetails.UserVaccines.Any(x => x.HealthUnitId == accessControl.HealthUnityId.Value)))
+                        throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
+
+            // validar campos permitidos na alteração
+            if(!user.CanEditCitizenFields(citizenEditDto, accessControl) || !userDetails.CanEditCitizenFields(citizenEditDto, accessControl))
+                throw new BusinessException(_localizer["OnlyAdminCanEditCitizenFields"]);
         }
 
         private void ValidateSaveUserIdentityResult(IdentityResult result)
@@ -1098,6 +1158,17 @@ namespace iPassport.Application.Services
             if (ex.ToString().Contains("IX_Users_PhoneNumber"))
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
         }
+
+        private void ValidateAddCitizenPermission(City citizenCity)
+        {
+            var acessControll = _accessor.GetAccessControlDTO();
+            if ((acessControll.Profile == EProfileKey.government.ToString()) &&
+                ((acessControll.CityId.HasValue && acessControll.CityId.Value != citizenCity.Id) ||
+                    (acessControll.StateId.HasValue && acessControll.StateId.Value != citizenCity?.StateId) ||
+                    (acessControll.CountryId.HasValue && acessControll.CountryId.Value != citizenCity?.State.CountryId)))
+                throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis"]);
+        }
+
         #endregion
     }
 }

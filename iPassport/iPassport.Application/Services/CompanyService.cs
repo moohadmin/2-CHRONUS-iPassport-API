@@ -58,6 +58,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(CompanyCreateDto dto)
         {
+            ValidateCompanyAddAcessControl(dto);
             await ValidateToSave(dto, dto.Address.CityId);
 
             var company = Company.Create(dto);
@@ -76,30 +77,31 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Edit(CompanyEditDto dto)
         {
-            var company = await _companyRepository.GetLoadedCompanyById(dto.Id);
-            if (company == null)
+            var editedCompany = await _companyRepository.GetLoadedCompanyById(dto.Id);
+            if (editedCompany == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
+            await ValidateCompanyEditAcessControl(dto, editedCompany);
             await ValidateToSave(dto, dto.Address.CityId, true);
 
-            company.ChangeCompany(dto);
+            editedCompany.ChangeCompany(dto);
 
-            if (!dto.IsActive.Value && company.IsActive())
-                company.Deactivate(_accessor.GetCurrentUserId());
+            if (!dto.IsActive.Value && editedCompany.IsActive())
+                editedCompany.Deactivate(_accessor.GetCurrentUserId());
 
-            else if (company.DeactivationDate.HasValue && dto.IsActive.Value)
-                company.Activate();
+            else if (editedCompany.DeactivationDate.HasValue && dto.IsActive.Value)
+                editedCompany.Activate();
 
-            var result = await _companyRepository.Update(company);
+            var result = await _companyRepository.Update(editedCompany);
             if (!result)
                 throw new BusinessException(_localizer["OperationNotPerformed"]);
 
-            return new ResponseApi(true, _localizer["CompanyEdited"], company.Id);
+            return new ResponseApi(true, _localizer["CompanyEdited"], editedCompany.Id);
         }
 
         public async Task<PagedResponseApi> FindByNameParts(GetCompaniesPagedFilter filter)
         {
-            var res = await _companyRepository.FindByNameParts(filter);
+            var res = await _companyRepository.FindByNameParts(filter, _accessor.GetAccessControlDTO());
 
             var result = _mapper.Map<IList<CompanyViewModel>>(res.Data);
 
@@ -118,7 +120,7 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> GetAllTypes()
         {
             var dto = _accessor.GetAccessControlDTO();
-            if (dto.Profile == EProfileKey.business.ToString())
+            if (dto.Profile == EProfileKey.business.ToString() || dto.Profile == EProfileKey.government.ToString())
             {
                 var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(dto.CompanyId.GetValueOrDefault());
                 dto.FilterIds = new Guid[] { loggedUserCompany.Segment.CompanyTypeId };
@@ -138,6 +140,7 @@ namespace iPassport.Application.Services
                 var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(dto.CompanyId.GetValueOrDefault());
                 dto.FilterIds = new Guid[] { loggedUserCompany.SegmentId.Value };
             }
+            
             var res = await _companySegmentRepository.GetPagedByTypeId(typeId, filter, dto);
 
             var result = _mapper.Map<IList<CompanySegmentViewModel>>(res.Data);
@@ -234,25 +237,19 @@ namespace iPassport.Application.Services
             return true;
         }
 
-        private async Task<bool> ValidateSegment(CompanyAbstractDto dto, Guid cityId, bool isEdit = false)
+        private async Task ValidateSegment(CompanyAbstractDto dto, Guid cityId, bool isEdit = false)
         {
-            var segment = await _companySegmentRepository.GetLoaded(dto.SegmentId);
-            if (segment == null)
+            var newCompanySegment = await _companySegmentRepository.GetLoaded(dto.SegmentId);
+            if (newCompanySegment == null)
                 throw new BusinessException(_localizer["SegmentNotFound"]);
 
             var accessDto = _accessor.GetAccessControlDTO();
-            if (!isEdit && accessDto.Profile == EProfileKey.business.ToString() 
-                    && (dto.ParentId != accessDto.CompanyId || dto.IsHeadquarters.GetValueOrDefault()))
-                throw new BusinessException(_localizer["OnlyAllowSubsidiaryCompaniesRegister"]);
 
-
-            await ValidatePrivateSegment(dto, segment);
-            await ValidateGovernmentSegment(dto, segment, cityId, isEdit, accessDto);
-
-            return true;
+            await ValidatePrivateSegment(dto, newCompanySegment);
+            await ValidateGovernmentSegment(dto, newCompanySegment, cityId, isEdit, accessDto);
         }
 
-        private async Task<bool> ValidatePrivateSegment(CompanyAbstractDto dto, CompanySegment segment)
+        private async Task ValidatePrivateSegment(CompanyAbstractDto dto, CompanySegment segment)
         {
             if (segment.IsPrivateType())
             {
@@ -276,10 +273,9 @@ namespace iPassport.Application.Services
                     throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
 
             }
-            return true;
         }
 
-        private async Task<bool> ValidateGovernmentSegment(CompanyAbstractDto dto, CompanySegment segment, Guid cityId, bool isEdit, AccessControlDTO accessDto)
+        private async Task ValidateGovernmentSegment(CompanyAbstractDto dto, CompanySegment segment, Guid cityId, bool isEdit, AccessControlDTO accessDto)
         {
             if (segment.IsGovernmentType())
             {
@@ -326,8 +322,41 @@ namespace iPassport.Application.Services
                         throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
                 }
             }
+        }
+        private async Task ValidateCompanyEditAcessControl(CompanyEditDto dto, Company editedCompany)
+        {
+            var accessDto = _accessor.GetAccessControlDTO();
+            if (accessDto.Profile == EProfileKey.government.ToString())
+            {
+                if (accessDto.CityId.HasValue && accessDto.CityId.Value != Guid.Empty && editedCompany.Address.CityId != accessDto.CityId.Value)
+                    throw new BusinessException(_localizer["LoggedInUserCanOnlyEditCompanyWithSameLocationAsHis"]);
 
-            return true;
+                if (accessDto.StateId.HasValue && accessDto.StateId.Value != Guid.Empty && editedCompany.Address.City.StateId != accessDto.StateId.Value)
+                    throw new BusinessException(_localizer["LoggedInUserCanOnlyEditCompanyWithSameLocationAsHis"]);
+
+                if (accessDto.CountryId.HasValue && accessDto.CountryId.Value != Guid.Empty && editedCompany.Address.City.State.CountryId != accessDto.CountryId.Value)
+                    throw new BusinessException(_localizer["LoggedInUserCanOnlyEditCompanyWithSameLocationAsHis"]);
+
+                var loggedUserCompany = await _companyRepository.GetLoadedCompanyById(accessDto.CompanyId.GetValueOrDefault());                
+                if (loggedUserCompany == null)
+                    throw new BusinessException(_localizer["UserCompanyNotFound"]);
+                
+                if (loggedUserCompany.Segment.IsMunicipal() && (editedCompany.Segment.IsFederal() || editedCompany.Segment.IsState()))
+                    throw new BusinessException(_localizer["LoggedUserCannotRegisterHigherSegmentCompanies"]);
+                
+                if (loggedUserCompany.Segment.IsState() && editedCompany.Segment.IsFederal())
+                    throw new BusinessException(_localizer["LoggedUserCannotRegisterHigherSegmentCompanies"]);
+
+                if (!editedCompany.CanEditCompanyFields(dto, accessDto.Profile))
+                    throw new BusinessException(_localizer["NotAllowEditedFieldsToLoggedUser"]);
+            }
+        }
+        private void ValidateCompanyAddAcessControl(CompanyCreateDto dto)
+        {
+            var accessDto = _accessor.GetAccessControlDTO();
+            if (accessDto.Profile == EProfileKey.business.ToString()
+                    && (dto.ParentId != accessDto.CompanyId || dto.IsHeadquarters.GetValueOrDefault()))
+                throw new BusinessException(_localizer["OnlyAllowSubsidiaryCompaniesRegister"]);
         }
 
         private async Task<bool> HasBranchCompanyToAssociate(Guid companyId)

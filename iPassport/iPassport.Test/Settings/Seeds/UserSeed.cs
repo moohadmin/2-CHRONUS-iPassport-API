@@ -23,7 +23,8 @@ namespace iPassport.Test.Seeds
                 UserDiseaseTests = new List<UserDiseaseTest>()
                 {
                     new UserDiseaseTest(Guid.NewGuid(),null,DateTime.UtcNow,null,"PCR")
-                }
+                },
+                HealthUnit = new HealthUnit(Guid.NewGuid(), Guid.NewGuid())
             };
 
         public static Users GetUser() =>
