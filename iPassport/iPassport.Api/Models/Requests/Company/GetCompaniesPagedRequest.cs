@@ -27,5 +27,13 @@ namespace iPassport.Api.Models.Requests.Company
         /// City Id
         /// </summary>
         public Guid? CityId { get; set; }
+        /// <summary>
+        /// State Id
+        /// </summary>
+        public Guid? StateId { get; set; }
+        /// <summary>
+        /// Country Id
+        /// </summary>
+        public Guid? CountryId { get; set; }
     }
 }

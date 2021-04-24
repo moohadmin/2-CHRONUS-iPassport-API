@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -9,6 +10,7 @@ using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,15 +19,17 @@ namespace iPassport.Application.Services
 {
     public class CountryService : ICountryService
     {
-        private readonly ICountryRepository _countryRepository;        
+        private readonly ICountryRepository _countryRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _accessor;
 
-        public CountryService(ICountryRepository countryRepository, IStringLocalizer<Resource> localizer, IMapper mapper)
+        public CountryService(ICountryRepository countryRepository, IStringLocalizer<Resource> localizer, IMapper mapper, IHttpContextAccessor accessor)
         {
             _countryRepository = countryRepository;
             _localizer = localizer;
             _mapper = mapper;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi> Add(CountryCreateDto dto)
@@ -52,7 +56,7 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> FindByNameParts(GetByNamePartsPagedFilter filter)
         {
-            var res = await _countryRepository.FindByNameParts(filter);
+            var res = await _countryRepository.FindByNameParts(filter, _accessor.GetAccessControlDTO());
 
             var result = _mapper.Map<IList<CountryViewModel>>(res.Data);
 

@@ -1,4 +1,5 @@
 ﻿using iPassport.Application.Exceptions;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
@@ -18,6 +19,53 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         private readonly PassportIdentityContext _context;
 
         public UserRepository(PassportIdentityContext context) => _context = context;
+
+        private IQueryable<Users> CitizenAccessControllBaseQuery(AccessControlDTO accessControl)
+        {
+            var query = _context.Users.AsQueryable();
+
+            if (accessControl.Profile == EProfileKey.government.ToString())
+            {
+                if (accessControl.CityId.HasValue && accessControl.CityId.Value != Guid.Empty)
+                    query = query.Where(x => x.Address.CityId == accessControl.CityId.Value);
+
+                if (accessControl.StateId.HasValue && accessControl.StateId.Value != Guid.Empty)
+                    query = query.Where(x => x.Address.City.StateId == accessControl.StateId.Value);
+
+                if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
+                    query = query.Where(x => x.Address.City.State.CountryId == accessControl.CountryId.Value);
+            }
+            else if (accessControl.Profile == EProfileKey.business.ToString() && accessControl.CompanyId.HasValue && accessControl.CompanyId.Value != Guid.Empty)
+                query = query.Where(x => x.CompanyId == accessControl.CompanyId.Value);
+            else if (accessControl.Profile == EProfileKey.healthUnit.ToString())
+            {
+                query = query.Where(x => (accessControl.CityId == null || x.Address.CityId == accessControl.CityId.Value)
+                    || accessControl.FilterIds.Contains(x.Id));
+            }
+
+            return query;
+        }
+
+        private IQueryable<Users> AdminAccessControllBaseQuery(AccessControlDTO accessControl)
+        {
+            var query = _context.Users
+                .Include(x => x.Company)
+                .ThenInclude(x => x.Segment)
+                .AsQueryable();
+
+            if (accessControl.Profile == EProfileKey.government.ToString())
+            {
+                if (accessControl.CityId.HasValue && accessControl.CityId.Value != Guid.Empty)
+                    query = query.Where(x => x.Company.Address.CityId == accessControl.CityId.Value && x.Company.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
+
+                if (accessControl.StateId.HasValue && accessControl.StateId.Value != Guid.Empty)
+                    query = query.Where(x => x.Company.Address.City.StateId == accessControl.StateId.Value && x.Company.Segment.Identifyer == (int)ECompanySegmentType.State);
+
+                if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
+                    query = query.Where(x => x.Company.Address.City.State.CountryId == accessControl.CountryId.Value && x.Company.Segment.Identifyer == (int)ECompanySegmentType.Federal);
+            }
+            return query;
+        }
 
         public async Task<Users> GetByPhone(string phone) =>
             await _context.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
@@ -42,7 +90,9 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<Users> GetByEmail(string email) =>
            await _context.Users
-               .Include(x => x.Profile)               
+                .Include(x => x.Profile)
+                .Include(x => x.Company).ThenInclude(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State)
+                .Include(x => x.Company).ThenInclude(x => x.Segment).ThenInclude(x => x.CompanyType)
                .Where(x => x.NormalizedEmail == email.ToUpper()).FirstOrDefaultAsync();
 
         public async Task Update(Users user)
@@ -83,9 +133,9 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
         public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserType == (int)EUserType.Citizen && u.LastLogin != null).CountAsync();
         public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserType == (int)EUserType.Agent && u.LastLogin != null).CountAsync();
 
-        public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter)
+        public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter, AccessControlDTO dto)
         {
-            IQueryable<Users> query = _context.Users;
+            IQueryable<Users> query = CitizenAccessControllBaseQuery(dto);
 
             if (filter.DocumentType.HasValue)
                 query = GetUserDocument(query, filter.DocumentType.Value, filter.Document);
@@ -110,9 +160,11 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             return await Paginate(query, filter);
         }
 
-        public async Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter)
+        public async Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter, AccessControlDTO dto)
         {
-            var query = _context.Users
+            IQueryable<Users> query = AdminAccessControllBaseQuery(dto);
+
+            query = query
                 .Include(x => x.Company)
                 .Include(x => x.Profile)
                 .Where(x => x.UserType == (int)EUserType.Admin

@@ -630,9 +630,6 @@
   <data name="Vaccine" xml:space="preserve">
     <value>Vacina</value>
   </data>
-  <data name="InvalidVaccineDoseDate" xml:space="preserve">
-    <value>A data de vacinação não pode ser anterior à última dose cadastrada. Favor verificar.</value>
-  </data>
   <data name="EndTime" xml:space="preserve">
     <value>período final</value>
   </data>
@@ -744,8 +741,8 @@
   <data name="CompanySegments" xml:space="preserve">
     <value>Segmentos de Empresa</value>
   </data>
-  <data name="VaccineInvalidPeriodSecondDose" xml:space="preserve">
-    <value>Somente é permitido o lançamento da 2ª dose da {0} no período entre {1} e {2} dias, após aplicação da 1ª dose.</value>
+  <data name="VaccineDoseDateCannoteBeEquals" xml:space="preserve">
+    <value>As datas de vacinação entre as doses não podem ser iguais</value>
   </data>
   <data name="CnpjRequiredForPrivateCompany" xml:space="preserve">
     <value>Os 8 primeiros números do Cnpj são necessários para realizar a pesquisa</value>
@@ -809,6 +806,63 @@
   </data>
   <data name="CompanyEdited" xml:space="preserve">
     <value>Empresa Editada com sucesso!</value>
+  </data>
+  <data name="SubsidiariesCandidatesCompanies" xml:space="preserve">
+    <value>Empresas Candidatas</value>
+  </data>
+  <data name="VaccineNextDoseDateCannoteBeLowerToPrevious" xml:space="preserve">
+    <value>A data da próxima dose não pode ser menor que a data da dose anterior.</value>
+  </data>
+  <data name="AssociateAll" xml:space="preserve">
+    <value>Associar todos</value>
+  </data>
+  <data name="AssociateAllMustBeNullWhenSubsidiariesIsNotNull" xml:space="preserve">
+    <value>Não é possivel associar todas as empresas canditadas quando a lista de candidatas estiver preenchida.</value>
+  </data>
+  <data name="Subsidiaries" xml:space="preserve">
+    <value>Subsidiárias</value>
+  </data>
+  <data name="SubsidiariesCompaniesAssociated" xml:space="preserve">
+    <value>Empresas associadas com sucesso.</value>
+  </data>
+  <data name="InactiveUserCompany" xml:space="preserve">
+    <value>A empresa do usuário se encontra Inativa. Favor verificar.</value>
+  </data>
+  <data name="OnlyAllowSubsidiaryCompaniesRegister" xml:space="preserve">
+    <value>Somente é permitido o cadastro de empresas filiais</value>
+  </data>
+  <data name="LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar cidadãos com a mesma localidade do seu cadastro.</value>
+  </data>
+  <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithPublicType" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar unidades de saúde do tipo Pública.</value>
+  </data>
+  <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithSameLocationAsHis" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar unidades de saúde com a mesma localidade do seu cadastro.</value>
+  </data>
+  <data name="UserCompanyNotFound" xml:space="preserve">
+    <value>A empresa do usuário não foi encontrada. Favor verificar.</value>
+  </data>
+  <data name="NotAllowEditedFieldsToLoggedUser" xml:space="preserve">
+    <value>Há campos alterados não permitidos para o usuário logado.</value>
+  </data>
+  <data name="LoggedInUserCanOnlyEditCompanyWithSameLocationAsHis" xml:space="preserve">
+    <value>O usuário logado só pode editar empresas com a mesma localidade do seu cadastro.</value>
+  </data>
+  <data name="LoggedUserCannotRegisterHigherSegmentCompanies" xml:space="preserve">
+    <value>O usuário logado não pode cadastrar empresas de segmento superior ao seu.</value>
+  </data>
+  <data name="OnlyAdminCanDeleteVaccineData" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem excluir dados de vacinação</value>
+  </data>
+  <data name="OnlyAdminCanEditCitizenFields" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de um cidadão.</value>
+  </data>
+  <data name="OnlyAdminCanEditCitizenOutOfLocality" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de um cidadão fora da sua localidade</value>
+  </data>
+  <data name="OnlyAdminCanEditVaccineData" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de vacinação</value>
   </data>
   <data name="ThereIsMoreThanOneHealthUnityWithInformedData" xml:space="preserve">
     <value>Há mais de uma unidade de saúde cadastrada com os dados informados.</value>

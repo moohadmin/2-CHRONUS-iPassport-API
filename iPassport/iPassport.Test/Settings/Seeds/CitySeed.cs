@@ -25,9 +25,15 @@ namespace iPassport.Test.Seeds
 
         public static PagedData<City> GetPaged()
         {
-            
-
             return new PagedData<City>() { Data = GetCities() };
+        }
+
+        public static City GetFullLoaded()
+        {
+            var city = new City("City Name", 123456, Guid.NewGuid(), 100);
+            city.State = new State("State Name", "SN", 789012, Guid.NewGuid(), 1000);
+            city.State.Country = new Country("Country Name", "CN", "EXT123", 10000);
+            return city;
         }
     }
 }

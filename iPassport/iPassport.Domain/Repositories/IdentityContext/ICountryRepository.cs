@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using System.Threading.Tasks;
 
@@ -6,6 +7,6 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
 {
     public interface ICountryRepository : IIdentityBaseRepository<Country>
     {
-        Task<PagedData<Country>> FindByNameParts(GetByNamePartsPagedFilter filter);
+        Task<PagedData<Country>> FindByNameParts(GetByNamePartsPagedFilter filter, AccessControlDTO accessControl);
     }
 }

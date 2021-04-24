@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Entities;
+﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace iPassport.Domain.Repositories
 {
     public interface IHealthUnitRepository : IRepository<HealthUnit>
     {
-        Task<PagedData<HealthUnit>> GetPagedHealthUnits(GetHealthUnitPagedFilter filter);
+        Task<PagedData<HealthUnit>> GetPagedHealthUnits(GetHealthUnitPagedFilter filter, AccessControlDTO accessControl);
         Task<HealthUnit> GetByCnpj(string cnpj);
         Task<HealthUnit> GetByIne(string ine);
         Task<IList<HealthUnit>> FindByCnpjIneAndCode(List<string> listCnpj, List<string> listIne, List<int?> listCode);

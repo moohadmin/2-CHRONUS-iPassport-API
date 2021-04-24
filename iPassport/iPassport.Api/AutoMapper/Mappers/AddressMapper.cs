@@ -47,7 +47,7 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<AddressDto, AddressViewModel>()
             .ForMember(des => des.Cep, act => act.MapFrom(src => src.Cep))
             .ForMember(des => des.Description, act => act.MapFrom(src => src.Description))
-            .ForMember(des => des.CityId, act => act.MapFrom(src => src.City != null ? src.City.Id : null))
+            .ForMember(des => des.CityId, act => act.MapFrom(src => src.CityId))
             .ForMember(des => des.City, act => act.MapFrom(src => src.City != null ? src.City.Name : null))
             .ForMember(des => des.State, act => act.MapFrom(src => src.City != null && src.City.State != null ? src.City.State.Name : null))
             .ForMember(des => des.Country, act => act.MapFrom(src => src.City != null && src.City.State != null && src.City.State.Country != null ? src.City.State.Country.Name : null))

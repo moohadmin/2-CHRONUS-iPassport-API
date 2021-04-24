@@ -52,6 +52,23 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
 
             profile.CreateMap<CompanyResponsible, CompanyResponsibleViewModel>();
+
+            profile.CreateMap<Company, CompanySubsidiaryCandidateResponseViewModel>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+                .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Name))
+                .ForMember(des => des.SegmentName, act => act.MapFrom(src => src.Segment == null ? null : src.Segment.Name));
+
+            profile.CreateMap<Company, CompanySubsidiaryCandidateViewModel>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
+                .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
+                .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj))
+                .ForMember(des => des.Segment, act => act.MapFrom(src => src.Segment == null ? null : src.Segment.Name));
+
+            profile.CreateMap<CompanySegmentDto, CompanySegmentViewModel>();
+
+            profile.CreateMap<CompanyAssociatedDto, CompanyViewModel>();
+
+            profile.CreateMap<AssociateSubsidiariesRequest, AssociateSubsidiariesDto>();
         }
     }
 }

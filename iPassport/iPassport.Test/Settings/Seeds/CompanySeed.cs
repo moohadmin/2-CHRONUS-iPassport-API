@@ -37,15 +37,24 @@ namespace iPassport.Test.Seeds
                company5
             };
         }
+        public static IList<CompanyAssociatedDto> GetCompanyDtos()
+        => new List<CompanyAssociatedDto>()
+            {
+               new (Get(),true),
+               new (Get(),true),
+               new (Get(),true),
+               new (Get(),true)
+            };
+        
 
         public static PagedData<Company> GetPaged()
         {
             return new PagedData<Company>() { Data = GetCompanies() };
         }
         
-        public static Company Get(bool? Isheadquarter, ECompanyType? type, bool? isActive, ECompanySegmentType? segment = null, string cnpj = "01948981000166", string name = "Company1")
+        public static Company Get(bool? Isheadquarter, bool? isActive, ECompanySegmentType? segment = null, string cnpj = "01948981000166", string name = "Company1", bool? hasAddress=true)
         {
-            if (!Isheadquarter.HasValue && !type.HasValue && !isActive.HasValue)
+            if (!Isheadquarter.HasValue && !isActive.HasValue && segment == null)
                 return null;
 
             var company = new Company(name, "TradeName", cnpj, GetAddress(), Guid.NewGuid(), Isheadquarter, Guid.NewGuid(), null);
@@ -61,29 +70,22 @@ namespace iPassport.Test.Seeds
                     _ => null,
                 };
             }
-            else
-            {
-                switch (type)
-                {
-                    case ECompanyType.Government:
-                        company.Segment = CompanySegmentSeed.GetMunicipalType();
-                        break;
-                    case ECompanyType.Private:
-                        company.Segment = CompanySegmentSeed.GetHealthType();
-                        break;
-                    default:
-                        break;
-                }
-            }
             
             if (!isActive.GetValueOrDefault())
                 company.Deactivate(Guid.NewGuid());
 
-            company.Address = AddressSeed.GetLoaded();
+            if (hasAddress.GetValueOrDefault())
+                company.Address = AddressSeed.GetLoaded();
+            else
+                company.Address = null;
 
             return company;
         }
-        
+
+        public static PagedData<CompanyAssociatedDto> GetPagedDto()
+        {
+            return new PagedData<CompanyAssociatedDto>() { Data = GetCompanyDtos() };
+        }
 
     }
 }

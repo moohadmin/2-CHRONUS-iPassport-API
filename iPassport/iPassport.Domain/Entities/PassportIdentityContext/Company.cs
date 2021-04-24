@@ -1,12 +1,16 @@
 ﻿using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace iPassport.Domain.Entities
 {
     public class Company : Entity
     {
         public Company() { }
+        public Company(Guid id) => Id = id;
+
         public Company(string name, string tradeName, string cnpj, AddressCreateDto addressDto, Guid? segmentId, bool? isHeadquarters,
             Guid? parentId, CompanyResponsibleDto responsible)
         {
@@ -32,11 +36,12 @@ namespace iPassport.Domain.Entities
         public DateTime? DeactivationDate { get; set; }
         public Guid? DeactivationUserId { get; set; }
 
-        public Address Address { get; set; }
-        public CompanySegment Segment { get; set; }
-        public Company ParentCompany { get; set; }
-        public CompanyResponsible Responsible { get; set; }
-        public Users DeactivationUser { get; set; }
+        public virtual Address Address { get; set; }
+        public virtual CompanySegment Segment { get; set; }
+        public virtual Company ParentCompany { get; set; }
+        public virtual CompanyResponsible Responsible { get; set; }
+        public virtual Users DeactivationUser { get; set; }
+        public virtual IEnumerable<Company> Subsidiaries { get; set; }
 
         public static Company Create(CompanyCreateDto dto)
                 => new Company(dto.Name, dto.TradeName, dto.Cnpj, dto.Address, dto.SegmentId, dto.IsHeadquarters, dto.ParentId, dto.Responsible);
@@ -80,5 +85,24 @@ namespace iPassport.Domain.Entities
             => Cnpj.Substring(0, 8) == cnpj.Substring(0, 8);
         public bool IsStateGovernment() => Segment.IsState() && Segment.IsGovernmentType();
         public bool IsFederalGovernment() => Segment.IsFederal() && Segment.IsGovernmentType();
+        public bool IsMunicipalGovernment() => Segment.IsMunicipal() && Segment.IsGovernmentType();
+        public void AddSubsidiaries(List<Company> subs)
+        {
+            if (Subsidiaries != null)
+                subs.AddRange(Subsidiaries);
+
+            Subsidiaries = subs;
+        }
+        public bool CanEditCompanyFields(CompanyEditDto dto, string loggedUserProfile)
+        {
+            if (loggedUserProfile == EProfileKey.government.ToString() &&
+                    (ParentId != dto.ParentId
+                        || SegmentId != dto.SegmentId
+                        || Cnpj != dto.Cnpj
+                        || Address?.CityId != dto.Address?.CityId))
+                return false;
+
+            return true;
+        }
     }
 }

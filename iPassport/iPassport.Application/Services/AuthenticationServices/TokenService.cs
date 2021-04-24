@@ -5,6 +5,7 @@ using iPassport.Application.Resources;
 using iPassport.Application.Services.Constants;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
@@ -42,10 +43,10 @@ namespace iPassport.Application.Services.AuthenticationServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("UserId", user.Id.ToString()),
-                    new Claim("Profile", user.UserType.ToString()),
-                    new Claim("HasPhoto", user.UserHavePhoto().ToString()),
-                    new Claim("HasPlan", hasPlan.ToString())
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_USER_ID, user.Id.ToString()),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_PROFILE, user.UserType.ToString()),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HAS_PHOTO, user.UserHavePhoto().ToString()),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HAS_PLAN, hasPlan.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddYears(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -59,7 +60,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             return jwt;
         }
 
-        public async Task<string> GenerateByEmail(Users user)
+        public async Task<string> GenerateByEmail(Users user, string CompanyId, string CityId, string StateId, string CountryId, string HealthUnityId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
@@ -68,10 +69,15 @@ namespace iPassport.Application.Services.AuthenticationServices
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("UserId", user.Id.ToString()),
-                    new Claim("FirstLogin", (user.LastLogin == null).ToString()),
-                    new Claim(("FullName"), user.FullName),
-                    new Claim(ClaimTypes.Role, user.Profile?.Key)
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_USER_ID, user.Id.ToString()),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_FIRST_LOGIN, (user.LastLogin == null).ToString()),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_FULL_NAME, user.FullName),
+                    new Claim(ClaimTypes.Role, user.Profile?.Key),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_COMPANY_ID, CompanyId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_CITY_ID, CityId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_STATE_ID, StateId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_COUNTRY_ID, CountryId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, HealthUnityId ?? string.Empty)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

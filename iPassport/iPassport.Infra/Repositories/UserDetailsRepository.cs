@@ -38,5 +38,8 @@ namespace iPassport.Infra.Repositories
 
         public async Task<UserDetails> GetWithHealtUnityById(Guid id) =>
             await _DbSet.Include(x => x.HealthUnit).ThenInclude(h => h.Type).FirstOrDefaultAsync(x => x.Id == id);
+
+        public async Task<Guid[]> GetVaccinatedUsersWithHealtUnityById(Guid id)
+            => await _DbSet.Where(u => u.UserVaccines.Any(uv => uv.HealthUnitId == id && uv.ExclusionDate == null)).Select(u => u.Id).ToArrayAsync();
     }
 }

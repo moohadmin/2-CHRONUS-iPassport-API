@@ -16,5 +16,17 @@
         public const int MAX_LENGHT_IMPORT_USERS_FILE = 82160; // 80KB
 
         public const string ADMIN_PROFILE_KEY = "admin";
+
+        public const string TOKEN_CLAIM_USER_ID = "UserId";
+        public const string TOKEN_CLAIM_PROFILE = "Profile";
+        public const string TOKEN_CLAIM_HAS_PHOTO = "HasPhoto";
+        public const string TOKEN_CLAIM_HAS_PLAN = "HasPlan";
+        public const string TOKEN_CLAIM_FIRST_LOGIN = "FirstLogin";
+        public const string TOKEN_CLAIM_FULL_NAME = "FullName";
+        public const string TOKEN_CLAIM_CITY_ID = "CityId";
+        public const string TOKEN_CLAIM_STATE_ID = "StateId";
+        public const string TOKEN_CLAIM_COUNTRY_ID = "CountryId";
+        public const string TOKEN_CLAIM_COMPANY_ID = "CompanyId";
+        public const string TOKEN_CLAIM_HEALTH_UNITY_ID = "HealthUnityId";
     }
 }

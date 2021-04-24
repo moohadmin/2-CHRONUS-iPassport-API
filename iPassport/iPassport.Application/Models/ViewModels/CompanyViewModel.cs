@@ -51,5 +51,9 @@ namespace iPassport.Application.Models.ViewModels
         /// Active
         /// </summary>
         public bool Active { get; set; }
+        /// <summary>
+        /// Company Has Subsidiary companies to Associate
+        /// </summary>
+        public bool CanAssociate { get; set; }
     }
 }

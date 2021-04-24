@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -11,6 +12,7 @@ using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -29,6 +31,7 @@ namespace iPassport.Application.Services
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _accessor;
 
         public HealthUnitService(IHealthUnitRepository healthUnitRepository,
                                 IHealthUnitTypeRepository healthUnitTypeRepository,
@@ -37,7 +40,8 @@ namespace iPassport.Application.Services
                                 IAddressRepository addressRepository,
                                 ICityRepository cityRepository,
                                 ICompanyRepository companyRepository,
-                                IUnitOfWork unitOfWork)
+                                IUnitOfWork unitOfWork,
+                                IHttpContextAccessor accessor)
         {
             _healthUnitRepository = healthUnitRepository;
             _healthUnitTypeRepository = healthUnitTypeRepository;
@@ -47,6 +51,7 @@ namespace iPassport.Application.Services
             _cityRepository = cityRepository;
             _companyRepository = companyRepository;
             _unitOfWork = unitOfWork;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi> Add(HealthUnitCreateDto dto)
@@ -54,7 +59,8 @@ namespace iPassport.Application.Services
             if (await _companyRepository.Find(dto.CompanyId.Value) == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            if (await _cityRepository.Find(dto.Address.CityId) == null)
+            var healthUnityCity = await _cityRepository.FindLoadedById(dto.Address.CityId);
+            if (healthUnityCity == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var type = await _healthUnitTypeRepository.Find(dto.TypeId.Value);
@@ -75,6 +81,8 @@ namespace iPassport.Application.Services
 
             if (dto.Ine != null && await _healthUnitRepository.GetByIne(dto.Ine) != null)
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "INE"));
+
+            ValidateToSaveHealthUnityPermission(healthUnityCity, type);
 
             try
             {
@@ -142,6 +150,9 @@ namespace iPassport.Application.Services
             if (type.Identifyer == (int)EHealthUnitType.Public && string.IsNullOrWhiteSpace(dto.Ine) && string.IsNullOrWhiteSpace(dto.Cnpj) && !unit.UniqueCode.HasValue)
                 unit.AddUniqueCode(await _healthUnitRepository.GetNexUniqueCodeValue());
 
+            var healthUnityCity = await _cityRepository.FindLoadedById(address.CityId);
+            ValidateToSaveHealthUnityPermission(healthUnityCity, type);
+
             try
             {
                 address.ChangeAddress(dto.Address);
@@ -181,7 +192,10 @@ namespace iPassport.Application.Services
 
         public async Task<PagedResponseApi> FindByNameParts(GetHealthUnitPagedFilter filter)
         {
-            var res = await _healthUnitRepository.GetPagedHealthUnits(filter);
+            filter.Locations = await FilterLocation(_accessor.GetAccessControlDTO());
+            
+            var res = await _healthUnitRepository.GetPagedHealthUnits(filter, _accessor.GetAccessControlDTO());
+
 
             var result = _mapper.Map<IList<HealthUnitViewModel>>(res.Data);
 
@@ -213,5 +227,42 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, _localizer["HealthUnits"], result);
         }
+
+        #region Private Methods
+        private async Task<IList<Guid>> FilterLocation(AccessControlDTO accessControl)
+        {
+            IList<Guid> locations = new List<Guid>();
+
+            if (accessControl.Profile == EProfileKey.government.ToString() || accessControl.Profile == EProfileKey.healthUnit.ToString())
+            {
+                if (accessControl.CityId.HasValue && accessControl.CityId.Value != Guid.Empty)
+                    locations = await _addressRepository.GetCityAddresses(accessControl.CityId.Value);
+
+                if (accessControl.StateId.HasValue && accessControl.StateId.Value != Guid.Empty)
+                    locations = await _addressRepository.GetStateAddresses(accessControl.StateId.Value);
+
+                if (accessControl.CountryId.HasValue && accessControl.CountryId.Value != Guid.Empty)
+                    locations = await _addressRepository.GetCountryAddresses(accessControl.CountryId.Value);
+            }
+            return locations;
+        }
+
+        private void ValidateToSaveHealthUnityPermission(City healthUnityCity, HealthUnitType healthUnitType)
+        {
+            var acessControll = _accessor.GetAccessControlDTO();
+
+            if (acessControll.Profile == EProfileKey.government.ToString())
+            {
+                if (healthUnitType.Identifyer != (int)EHealthUnitType.Public)
+                    throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterHealthUnitiesWithPublicType"]);
+
+                if (((acessControll.CityId.HasValue && acessControll.CityId.Value != healthUnityCity.Id) ||
+                    (acessControll.StateId.HasValue && acessControll.StateId.Value != healthUnityCity?.StateId) ||
+                    (acessControll.CountryId.HasValue && acessControll.CountryId.Value != healthUnityCity?.State.CountryId)))
+                    throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterHealthUnitiesWithSameLocationAsHis"]);
+            }
+        }
+
+        #endregion
     }
 }
