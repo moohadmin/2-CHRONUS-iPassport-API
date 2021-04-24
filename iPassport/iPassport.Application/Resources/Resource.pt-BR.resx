@@ -864,4 +864,7 @@
   <data name="OnlyAdminCanEditVaccineData" xml:space="preserve">
     <value>Apenas Usuários Administradores podem alterar dados de vacinação</value>
   </data>
+  <data name="ThereIsMoreThanOneHealthUnityWithInformedData" xml:space="preserve">
+    <value>Há mais de uma unidade de saúde cadastrada com os dados informados.</value>
+  </data>
 </root>
