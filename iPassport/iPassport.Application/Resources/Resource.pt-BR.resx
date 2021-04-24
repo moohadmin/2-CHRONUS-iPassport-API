@@ -810,4 +810,7 @@
   <data name="CompanyEdited" xml:space="preserve">
     <value>Empresa Editada com sucesso!</value>
   </data>
+  <data name="ThereIsMoreThanOneHealthUnityWithInformedData" xml:space="preserve">
+    <value>Há mais de uma unidade de saúde cadastrada com os dados informados.</value>
+  </data>
 </root>
