@@ -403,7 +403,7 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
-            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(true);
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType, null).Result).Returns(true);
 
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Add(mockRequest)).Result;
@@ -423,7 +423,7 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
-            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType, null).Result).Returns(false);
             if (ECompanySegmentType.Municipal == segmentType)
                 _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AccessControlDTO>()).Result).Returns(Mock.Of<List<Company>>());
             else
@@ -448,7 +448,7 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
-            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType, null).Result).Returns(false);
             if (ECompanySegmentType.Municipal == segmentType)
                 _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AccessControlDTO>()).Result).Returns(candidateParentCompany);
             else
@@ -473,7 +473,7 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
-            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType, null).Result).Returns(false);
             if (ECompanySegmentType.Municipal == segmentType)
                 _mockRepository.Setup(x => x.GetPublicMunicipalHeadquarters(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AccessControlDTO>()).Result).Returns(candidateParentCompany);
             else
@@ -520,7 +520,7 @@ namespace iPassport.Test.Services
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result)
                     .Returns(CompanySeed.Get(isHeadquarters, true, segmentType));
-            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType, null).Result).Returns(false);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
             
             if(ECompanySegmentType.Federal == segmentType)
@@ -567,7 +567,7 @@ namespace iPassport.Test.Services
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
             _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result)
                     .Returns(CompanySeed.Get(isHeadquarters, true, segmentType));
-            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType).Result).Returns(false);
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType, It.IsAny<Guid>()).Result).Returns(false);
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
 
             if (ECompanySegmentType.Federal == segmentType)
