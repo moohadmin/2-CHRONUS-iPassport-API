@@ -36,7 +36,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
                                     || x.Segment.Identifyer == (int)ECompanySegmentType.State) 
                             && (x.Segment.Identifyer == (int)ECompanySegmentType.Federal ?
                            QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.State.CountryId == x.Address.City.State.CountryId)
-                                    : QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.StateId == x.Address.City.StateId))
+                                    : QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.StateId == x.Address.City.StateId && y.Segment.Identifyer == (int)ECompanySegmentType.Municipal))
                             ));
 
             return await PaginateCompanyDto(query, filter);
@@ -123,13 +123,15 @@ namespace iPassport.Infra.Repositories.IdentityContext
             QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.State.CountryId == countryId);
        
         private IQueryable<Company> QuerySubsidiariesCandidatesToStateGovernment(Guid stateId) =>
-            QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.StateId == stateId);
+            QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.StateId == stateId 
+                                    && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
 
         private IQueryable<Company> QuerySubsidiariesCandidatesToGovernment() 
             =>
             _DbSet.Where(x => x.ParentId == null && x.DeactivationDate == null
                              && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government                             
-                             && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
+                             && (x.Segment.Identifyer == (int)ECompanySegmentType.Municipal
+                                    || x.Segment.Identifyer == (int)ECompanySegmentType.State));
 
         private async Task<PagedData<CompanyAssociatedDto>> PaginateCompanyDto(IQueryable<CompanyAssociatedDto> dbSet, PageFilter filter)
         {
