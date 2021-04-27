@@ -113,6 +113,11 @@ namespace iPassport.Infra.Repositories.IdentityContext
                             .OrderBy(m => m.Name)
                             .ToListAsync();
 
+        public async Task<bool> HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(string cnpj)
+            => await _DbSet.AnyAsync(x => x.DeactivationDate == null 
+                                    && x.IsHeadquarters == true
+                                    && x.Cnpj.Substring(0, 8).Equals(cnpj.Substring(0, 8)));
+
         #region Private
         private IQueryable<Company> GetLoadedHeadquarters(AccessControlDTO accessControl) =>
             AccessControlHeadquartersQuery(accessControl).Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
