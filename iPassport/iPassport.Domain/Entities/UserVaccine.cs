@@ -119,7 +119,7 @@ namespace iPassport.Domain.Entities
                     && EmployeeCoren == itemChangedDto.EmployeeCoren
                     && EmployeeCpf == itemChangedDto.EmployeeCpf
                     && EmployeeName == itemChangedDto.EmployeeName
-                    && VaccinationDate == itemChangedDto.VaccinationDate
+                    && VaccinationDate.Date == itemChangedDto.VaccinationDate.Date
                     && VaccineId == itemChangedDto.VaccineId
                     && HealthUnitId == itemChangedDto.HealthUnitId;
 

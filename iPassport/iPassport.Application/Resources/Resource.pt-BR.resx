@@ -855,8 +855,8 @@
   <data name="OnlyAdminCanDeleteVaccineData" xml:space="preserve">
     <value>Apenas Usuários Administradores podem excluir dados de vacinação</value>
   </data>
-  <data name="OnlyAdminCanEditCitizenFields" xml:space="preserve">
-    <value>Apenas Usuários Administradores podem alterar dados de um cidadão.</value>
+  <data name="ProfileNotAuthorizedToChangeRegistration" xml:space="preserve">
+    <value>Este perfil não possui permissão para realizar alterações de cadastros.</value>
   </data>
   <data name="OnlyAdminCanEditCitizenOutOfLocality" xml:space="preserve">
     <value>Apenas Usuários Administradores podem alterar dados de um cidadão fora da sua localidade</value>
