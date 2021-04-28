@@ -223,8 +223,6 @@ namespace iPassport.Application.Services
             if (!isEdit && await _companyRepository.CnpjAlreadyRegistered(dto.Cnpj))
                 throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Cnpj"]));
 
-            
-
             await ValidateAddress(cityId);
             await ValidateSegment(dto, cityId, isEdit);
 
@@ -276,10 +274,9 @@ namespace iPassport.Application.Services
                     if (dto.ParentId.HasValue)
                         throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
 
-                    if (!isEdit && await _companyRepository.HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(dto.Cnpj))
-                        throw new BusinessException(string.Empty);
+                    if (await _companyRepository.HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(dto.Cnpj, isEdit ? dto.Id : null))
+                        throw new BusinessException(string.Format(_localizer["AlreadyExistActiveHeadquartersWithSameCnpjCompanyIdentifyPart"], dto.Cnpj.Substring(0,8)));
                 } 
-
             }
         }
 

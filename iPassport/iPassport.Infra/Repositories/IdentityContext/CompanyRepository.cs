@@ -29,11 +29,11 @@ namespace iPassport.Infra.Repositories.IdentityContext
                                 && (filter.SegmentId == null || m.SegmentId == filter.SegmentId)
                                 && (filter.TypeId == null || m.Segment.CompanyTypeId == filter.TypeId))
                     .OrderBy(m => m.Name)
-                    .Select(x => 
-                        new CompanyAssociatedDto(x, 
+                    .Select(x =>
+                        new CompanyAssociatedDto(x,
                             x.DeactivationDate == null &&
-                                (x.Segment.Identifyer == (int)ECompanySegmentType.Federal 
-                                    || x.Segment.Identifyer == (int)ECompanySegmentType.State) 
+                                (x.Segment.Identifyer == (int)ECompanySegmentType.Federal
+                                    || x.Segment.Identifyer == (int)ECompanySegmentType.State)
                             && (x.Segment.Identifyer == (int)ECompanySegmentType.Federal ?
                            QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.State.CountryId == x.Address.City.State.CountryId)
                                     : QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.StateId == x.Address.City.StateId && y.Segment.Identifyer == (int)ECompanySegmentType.Municipal))
@@ -80,7 +80,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
         {
             var segmentIdentifyer = (int)segmentType;
             var query = _DbSet.Where(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == segmentIdentifyer);
-            
+
             if(changedCompanyId.HasValue)
                 query = _DbSet.Where(x => x.Id != changedCompanyId.Value);
 
@@ -116,10 +116,13 @@ namespace iPassport.Infra.Repositories.IdentityContext
                             .OrderBy(m => m.Name)
                             .ToListAsync();
 
-        public async Task<bool> HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(string cnpj)
-            => await _DbSet.AnyAsync(x => x.DeactivationDate == null 
+        public async Task<bool> HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(string cnpj, Guid? changedCompanyId)
+           => await _DbSet.AnyAsync(x => x.DeactivationDate == null
                                     && x.IsHeadquarters == true
-                                    && x.Cnpj.Substring(0, 8).Equals(cnpj.Substring(0, 8)));
+                                    && (changedCompanyId == null || x.Id != changedCompanyId.Value)
+                                    && x.Cnpj.Substring(0, 8).Equals(cnpj.Substring(0, 8))
+                                    );
+        
 
         #region Private
         private IQueryable<Company> GetLoadedHeadquarters(AccessControlDTO accessControl) =>
