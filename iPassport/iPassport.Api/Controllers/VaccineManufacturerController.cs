@@ -55,7 +55,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet]
-        [AuthorizeRole(RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetByNameInitals([FromQuery] GetByNamePartsPagedRequest request)
         {
             var res = await _service.GetByNameInitals(_mapper.Map<GetByNamePartsPagedFilter>(request));
