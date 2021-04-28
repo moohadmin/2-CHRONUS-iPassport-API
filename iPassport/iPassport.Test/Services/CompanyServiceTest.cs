@@ -588,6 +588,28 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.AreEqual(true, result.Result.Success);
         }
+        [TestMethod]
+        [DataRow(ECompanySegmentType.Federal, "Country")]
+        [DataRow(ECompanySegmentType.State, "State")]
+        [DataRow(ECompanySegmentType.Municipal, "City")]
+        public void Edit_GovernmentType_MustNotHaveSameLocaleCompany(ECompanySegmentType segmentType, string messagePart)
+        {
+            // Arrange
+            var segment = CompanySegmentSeed.Get(segmentType);
+            var mockRequest = Mock.Of<CompanyEditDto>(x => x.Address == Mock.Of<AddressEditDto>() && x.Id == Guid.NewGuid()
+                    && x.IsActive == true && x.IsHeadquarters == null && x.ParentId == null);
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
+            _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(segment);
+            _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.GetLoaded());
+            _mockRepository.Setup(x => x.HasSameSegmentAndLocaleGovernmentCompany(It.IsAny<Guid>(), segmentType, It.IsAny<Guid>()).Result).Returns(true);
+            _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Edit(mockRequest)).Result;
+            Assert.AreEqual(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer[messagePart]), ex.Message);
+        }
+
 
         [TestMethod]
         [DataRow(null, null, null)]
