@@ -870,4 +870,10 @@
   <data name="AlreadyExistActiveHeadquartersWithSameCnpjCompanyIdentifyPart" xml:space="preserve">
     <value>Já existe o cadastro de uma empresa matriz para este número de registro ({0}). Favor verificar.</value>
   </data>
+	<data name="NotAllowEditCompanyHeadquarters" xml:space="preserve">
+    <value>Não é possível mudar a hierarquia da empresa.</value>
+  </data>
+	<data name="NotAllowDeactivateCompanyWithActiveSubsidiaries" xml:space="preserve">
+    <value>Não é possível desativar empresa com filial ativa.</value>
+  </data>
 </root>

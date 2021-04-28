@@ -3,6 +3,7 @@ using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace iPassport.Domain.Entities
 {
@@ -104,5 +105,6 @@ namespace iPassport.Domain.Entities
 
             return true;
         }
+        public bool HasActiveSubsidiaries() => Subsidiaries != null && Subsidiaries.Any(x => x.IsActive());
     }
 }

@@ -95,8 +95,8 @@ namespace iPassport.Infra.Repositories.IdentityContext
             return await query.AnyAsync();
         }
 
-        public async Task<bool> CnpjAlreadyRegistered(string cnpj)
-            => await _DbSet.AnyAsync(x => x.Cnpj.Equals(cnpj));
+        public async Task<bool> CnpjAlreadyRegistered(string cnpj , Guid? changedCompanyId)
+            => await _DbSet.AnyAsync(x => x.Cnpj.Equals(cnpj) && (changedCompanyId == null || x.Id != changedCompanyId.Value));
 
         public async Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter)
             => await Paginate(QuerySubsidiariesCandidatesToFederalGovernment(countryId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
