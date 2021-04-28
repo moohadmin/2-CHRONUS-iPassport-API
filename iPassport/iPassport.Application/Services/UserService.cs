@@ -742,10 +742,10 @@ namespace iPassport.Application.Services
             if (dto.Test?.Id != null && await _userDiseaseTestRepository.Find(dto.Test.Id.Value) == null)
                 throw new BusinessException(_localizer["UserDiseaseTestsNotFound"]);
 
-            await ValidateEditCitizenAccessControl(accessControl, city, userDetails, user, dto);
+            ValidateEditCitizenAccessControl(accessControl, city, userDetails, user, dto);
         }
 
-        private async Task ValidateEditCitizenAccessControl(AccessControlDTO accessControl, City city, UserDetails userDetails, Users user, CitizenEditDto citizenEditDto)
+        private void ValidateEditCitizenAccessControl(AccessControlDTO accessControl, City city, UserDetails userDetails, Users user, CitizenEditDto citizenEditDto)
         {
             //se perfil gov:
             // - mesma cidade/estado/país
@@ -764,7 +764,7 @@ namespace iPassport.Application.Services
 
             // validar campos permitidos na alteração
             if(!user.CanEditCitizenFields(citizenEditDto, accessControl) || !userDetails.CanEditCitizenFields(citizenEditDto, accessControl))
-                throw new BusinessException(_localizer["OnlyAdminCanEditCitizenFields"]);
+                throw new BusinessException(_localizer["ProfileNotAuthorizedToChangeRegistration"]);
         }
 
         private void ValidateSaveUserIdentityResult(IdentityResult result)

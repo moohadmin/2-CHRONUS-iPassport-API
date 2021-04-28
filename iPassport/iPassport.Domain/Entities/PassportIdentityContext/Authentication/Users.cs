@@ -250,7 +250,7 @@ namespace iPassport.Domain.Entities.Authentication
         public bool CanEditCitizenFields(CitizenEditDto dto, AccessControlDTO accessControl)
         {
             if (accessControl.Profile == EProfileKey.government.ToString())
-                return Birthday == dto.Birthday
+                return Birthday.Date == dto.Birthday.Date
                      && CNS == dto.Cns
                      && CPF == dto.Cpf
                      && Email == dto.Email
@@ -259,7 +259,7 @@ namespace iPassport.Domain.Entities.Authentication
                      && CompanyId == dto.CompanyId;
 
             if (accessControl.Profile == EProfileKey.healthUnit.ToString())
-                return Birthday == dto.Birthday
+                return Birthday.Date == dto.Birthday.Date
                     && CNS == dto.Cns
                     && FullName == dto.CompleteName
                     && CPF == dto.Cpf
