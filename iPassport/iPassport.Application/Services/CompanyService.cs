@@ -245,11 +245,11 @@ namespace iPassport.Application.Services
 
             var accessDto = _accessor.GetAccessControlDTO();
 
-            await ValidatePrivateSegment(dto, newCompanySegment);
+            await ValidatePrivateSegment(dto, newCompanySegment, isEdit);
             await ValidateGovernmentSegment(dto, newCompanySegment, cityId, isEdit, accessDto);
         }
 
-        private async Task ValidatePrivateSegment(CompanyAbstractDto dto, CompanySegment segment)
+        private async Task ValidatePrivateSegment(CompanyAbstractDto dto, CompanySegment segment, bool isEdit = false)
         {
             if (segment.IsPrivateType())
             {
@@ -269,9 +269,14 @@ namespace iPassport.Application.Services
                     if (!CnpjUtils.Valid(dto.Cnpj) || !headquarter.BranchCompanyCnpjIsValid(dto.Cnpj))
                         throw new BusinessException(string.Format(_localizer["BranchCnpjNotValid"], headquarter.Name));
                 }
-                else if (dto.ParentId.HasValue)
-                    throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
+                else 
+                {
+                    if (dto.ParentId.HasValue)
+                        throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
 
+                    if (await _companyRepository.HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(dto.Cnpj, isEdit ? dto.Id : null))
+                        throw new BusinessException(string.Format(_localizer["AlreadyExistActiveHeadquartersWithSameCnpjCompanyIdentifyPart"], dto.Cnpj.Substring(0,8)));
+                } 
             }
         }
 
