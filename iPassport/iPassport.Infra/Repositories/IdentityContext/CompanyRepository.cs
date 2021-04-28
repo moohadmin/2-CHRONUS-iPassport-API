@@ -76,12 +76,15 @@ namespace iPassport.Infra.Repositories.IdentityContext
         public async Task<bool> HasSubsidiariesCandidatesToStateGovernment(Guid stateId) =>
             await QuerySubsidiariesCandidatesToStateGovernment(stateId).AnyAsync();
 
-        public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
+        public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType, Guid? changedCompanyId)
         {
             var segmentIdentifyer = (int)segmentType;
             var query = _DbSet.Where(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == segmentIdentifyer);
+            
+            if(changedCompanyId.HasValue)
+                query = _DbSet.Where(x => x.Id != changedCompanyId.Value);
 
-             query = segmentType switch
+            query = segmentType switch
             {
                 ECompanySegmentType.Municipal => query.Where(x => x.Address.CityId == localId),
                 ECompanySegmentType.State => query.Where(x => x.Address.City.StateId == localId),

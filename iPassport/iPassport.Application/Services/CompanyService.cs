@@ -77,7 +77,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Edit(CompanyEditDto dto)
         {
-            var editedCompany = await _companyRepository.GetLoadedCompanyById(dto.Id);
+            var editedCompany = await _companyRepository.GetLoadedCompanyById(dto.Id.GetValueOrDefault());
             if (editedCompany == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
@@ -289,7 +289,7 @@ namespace iPassport.Application.Services
                     if (dto.ParentId.HasValue)
                         throw new BusinessException(string.Format(_localizer["FieldMustBeNull"], _localizer["ParentId"]));
 
-                    if (!isEdit && await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.State.CountryId, ECompanySegmentType.Federal))
+                    if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.State.CountryId, ECompanySegmentType.Federal, isEdit ? dto.Id : null))
                         throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["Country"]));
                 }
                 else
@@ -297,14 +297,14 @@ namespace iPassport.Application.Services
                     IList<Company> canBeParentCompanies = new List<Company>();
                     if (segment.IsMunicipal())
                     {
-                        if (!isEdit && await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.Id, ECompanySegmentType.Municipal))
+                        if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.Id, ECompanySegmentType.Municipal, isEdit ? dto.Id : null))
                             throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["City"]));
 
                         canBeParentCompanies = await _companyRepository.GetPublicMunicipalHeadquarters(city.StateId, city.State.CountryId, accessDto);
                     }
                     else if (segment.IsState())
                     {
-                        if (!isEdit && await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.StateId, ECompanySegmentType.State))
+                        if (await _companyRepository.HasSameSegmentAndLocaleGovernmentCompany(city.StateId, ECompanySegmentType.State, isEdit ? dto.Id : null))
                             throw new BusinessException(string.Format(_localizer["CompanyAlreadyRegisteredToSegmentAndLocal"], _localizer["State"]));
 
                         canBeParentCompanies = await _companyRepository.GetPublicStateHeadquarters(city.State.CountryId, accessDto);

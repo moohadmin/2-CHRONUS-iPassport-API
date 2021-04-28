@@ -4,6 +4,7 @@ namespace iPassport.Domain.Dtos
 {
     public abstract class CompanyAbstractDto
     {
+        public Guid? Id { get; set; }
         public string Name { get; set; }
         public string TradeName { get; set; }
         public string Cnpj { get; set; }
