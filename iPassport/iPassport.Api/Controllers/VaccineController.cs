@@ -62,7 +62,7 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is responsible for Get paged list of Citzen by name and Manufacutrer.
+        /// This API is responsible for Get paged list of Vacinne by name and Manufacutrer.
         /// </summary>
         /// <param name="request">Get Vaccines Paged Request</param>
         /// <response code="200">Server returns Ok</response>
@@ -74,7 +74,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("Manufacturer")]
-        [AuthorizeRole(RolesModel.Admin, RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesByManufacuterRequest request)
         {
             var res = await _service.GetByManufacturerId(_mapper.Map<GetByIdAndNamePartsPagedFilter>(request));
