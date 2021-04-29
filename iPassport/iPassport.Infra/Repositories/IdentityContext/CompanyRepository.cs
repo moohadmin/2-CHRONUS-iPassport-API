@@ -82,7 +82,7 @@ namespace iPassport.Infra.Repositories.IdentityContext
             var query = _DbSet.Where(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == segmentIdentifyer);
 
             if(changedCompanyId.HasValue)
-                query = _DbSet.Where(x => x.Id != changedCompanyId.Value);
+                query = query.Where(x => x.Id != changedCompanyId.Value);
 
             query = segmentType switch
             {
