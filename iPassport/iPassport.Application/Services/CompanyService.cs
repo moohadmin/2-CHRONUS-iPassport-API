@@ -226,7 +226,7 @@ namespace iPassport.Application.Services
             if (isEdit)
             {
                 ValidatePrivateCompanyIsHeadquartersChange(editedCompany, dto);
-                ValidatePrivateCompanyDeactivate(editedCompany);
+                ValidatePrivateCompanyDeactivate(editedCompany, dto);
             }
 
             await ValidateAddress(cityId);
@@ -413,9 +413,9 @@ namespace iPassport.Application.Services
             if (editedCompany.Segment.IsPrivateType() && editedCompany.IsHeadquarters != dto.IsHeadquarters)
                 throw new BusinessException(_localizer["NotAllowEditCompanyHeadquarters"]);
         }
-        private void ValidatePrivateCompanyDeactivate(Company editedCompany)
+        private void ValidatePrivateCompanyDeactivate(Company editedCompany, CompanyAbstractDto dto)
         {
-            if (editedCompany.IsPrivateHeadquarters() && editedCompany.HasActiveSubsidiaries())
+            if (!dto.IsActive.Value && editedCompany.IsActive() && editedCompany.IsPrivateHeadquarters() && editedCompany.HasActiveSubsidiaries())
                 throw new BusinessException(_localizer["NotAllowDeactivateCompanyWithActiveSubsidiaries"]);
         }
         #endregion

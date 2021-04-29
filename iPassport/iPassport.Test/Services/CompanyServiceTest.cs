@@ -662,13 +662,13 @@ namespace iPassport.Test.Services
             // Arrange
             var editedCompany = CompanySeed.Get(true, true, ECompanySegmentType.Health);
             var mockRequest = Mock.Of<CompanyEditDto>(x => x.Address == Mock.Of<AddressEditDto>() && x.Id == Guid.NewGuid()
-                    && x.IsActive == true && x.IsHeadquarters == true && x.ParentId == null && x.Cnpj == "42192517000170");
+                    && x.IsActive == false && x.IsHeadquarters == true && x.ParentId == null && x.Cnpj == "42192517000170");
             editedCompany.AddSubsidiaries(CompanySeed.GetCompanies(true).ToList());
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<Company>()).Result).Returns(true);
             _mockCompanySegmentRepository.Setup(x => x.GetLoaded(It.IsAny<Guid>()).Result).Returns(CompanySegmentSeed.GetHealthType());
             _mockRepository.Setup(x => x.GetLoadedCompanyById(It.IsAny<Guid>()).Result).Returns(editedCompany);
-            _mockRepository.Setup(x => x.HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(It.IsAny<string>(), It.IsAny<Guid>()).Result).Returns(true);
+            _mockRepository.Setup(x => x.HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(It.IsAny<string>(), It.IsAny<Guid>()).Result).Returns(false);
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.Edit(mockRequest)).Result;
             Assert.AreEqual(_localizer["NotAllowDeactivateCompanyWithActiveSubsidiaries"], ex.Message);
