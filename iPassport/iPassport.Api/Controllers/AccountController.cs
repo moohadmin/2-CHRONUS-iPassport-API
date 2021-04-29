@@ -159,15 +159,5 @@ namespace iPassport.Api.Controllers
             var res = await _service.Logout();
             return Ok(res);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public DateTime Get()
-        {
-            return DateTime.Now;
-        }
     }
 }
