@@ -18,11 +18,12 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<IList<Company>> GetPublicStateHeadquarters(Guid countryId, AccessControlDTO accessControl);
         Task<bool> HasSubsidiariesCandidatesToFederalGovernment(Guid countryId);
         Task<bool> HasSubsidiariesCandidatesToStateGovernment(Guid stateId);
-        Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType);
-        Task<bool> CnpjAlreadyRegistered(string cnpj);
+        Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType, Guid? changedCompanyId);
+        Task<bool> CnpjAlreadyRegistered(string cnpj, Guid? changedCompanyId);
         Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter);
         Task<PagedData<Company>> GetSubsidiariesCandidatesToStateGovernmentPaged(Guid stateId,PageFilter filter);
         Task<IList<Company>> GetSubsidiariesCandidatesToStateGovernment(Guid stateId, IEnumerable<Guid> candidates);
         Task<IList<Company>> GetSubsidiariesCandidatesToFederalGovernment(Guid countryId, IEnumerable<Guid> candidates);
+        Task<bool> HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(string cnpj, Guid? changedCompanyId);
     }
 }

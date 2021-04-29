@@ -29,14 +29,14 @@ namespace iPassport.Infra.Repositories.IdentityContext
                                 && (filter.SegmentId == null || m.SegmentId == filter.SegmentId)
                                 && (filter.TypeId == null || m.Segment.CompanyTypeId == filter.TypeId))
                     .OrderBy(m => m.Name)
-                    .Select(x => 
-                        new CompanyAssociatedDto(x, 
+                    .Select(x =>
+                        new CompanyAssociatedDto(x,
                             x.DeactivationDate == null &&
-                                (x.Segment.Identifyer == (int)ECompanySegmentType.Federal 
-                                    || x.Segment.Identifyer == (int)ECompanySegmentType.State) 
+                                (x.Segment.Identifyer == (int)ECompanySegmentType.Federal
+                                    || x.Segment.Identifyer == (int)ECompanySegmentType.State)
                             && (x.Segment.Identifyer == (int)ECompanySegmentType.Federal ?
                            QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.State.CountryId == x.Address.City.State.CountryId)
-                                    : QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.StateId == x.Address.City.StateId))
+                                    : QuerySubsidiariesCandidatesToGovernment().Any(y => y.Address.City.StateId == x.Address.City.StateId && y.Segment.Identifyer == (int)ECompanySegmentType.Municipal))
                             ));
 
             return await PaginateCompanyDto(query, filter);
@@ -76,12 +76,15 @@ namespace iPassport.Infra.Repositories.IdentityContext
         public async Task<bool> HasSubsidiariesCandidatesToStateGovernment(Guid stateId) =>
             await QuerySubsidiariesCandidatesToStateGovernment(stateId).AnyAsync();
 
-        public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType)
+        public async Task<bool> HasSameSegmentAndLocaleGovernmentCompany(Guid localId, ECompanySegmentType segmentType, Guid? changedCompanyId)
         {
             var segmentIdentifyer = (int)segmentType;
             var query = _DbSet.Where(x => x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government && x.Segment.Identifyer == segmentIdentifyer);
 
-             query = segmentType switch
+            if(changedCompanyId.HasValue)
+                query = query.Where(x => x.Id != changedCompanyId.Value);
+
+            query = segmentType switch
             {
                 ECompanySegmentType.Municipal => query.Where(x => x.Address.CityId == localId),
                 ECompanySegmentType.State => query.Where(x => x.Address.City.StateId == localId),
@@ -92,8 +95,8 @@ namespace iPassport.Infra.Repositories.IdentityContext
             return await query.AnyAsync();
         }
 
-        public async Task<bool> CnpjAlreadyRegistered(string cnpj)
-            => await _DbSet.AnyAsync(x => x.Cnpj.Equals(cnpj));
+        public async Task<bool> CnpjAlreadyRegistered(string cnpj , Guid? changedCompanyId)
+            => await _DbSet.AnyAsync(x => x.Cnpj.Equals(cnpj) && (changedCompanyId == null || x.Id != changedCompanyId.Value));
 
         public async Task<PagedData<Company>> GetSubsidiariesCandidatesToFederalGovernmentPaged(Guid countryId, PageFilter filter)
             => await Paginate(QuerySubsidiariesCandidatesToFederalGovernment(countryId).Include(x => x.Segment).OrderBy(m => m.Name), filter);
@@ -113,6 +116,14 @@ namespace iPassport.Infra.Repositories.IdentityContext
                             .OrderBy(m => m.Name)
                             .ToListAsync();
 
+        public async Task<bool> HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(string cnpj, Guid? changedCompanyId)
+           => await _DbSet.AnyAsync(x => x.DeactivationDate == null
+                                    && x.IsHeadquarters == true
+                                    && (changedCompanyId == null || x.Id != changedCompanyId.Value)
+                                    && x.Cnpj.Substring(0, 8).Equals(cnpj.Substring(0, 8))
+                                    );
+        
+
         #region Private
         private IQueryable<Company> GetLoadedHeadquarters(AccessControlDTO accessControl) =>
             AccessControlHeadquartersQuery(accessControl).Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
@@ -123,13 +134,15 @@ namespace iPassport.Infra.Repositories.IdentityContext
             QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.State.CountryId == countryId);
        
         private IQueryable<Company> QuerySubsidiariesCandidatesToStateGovernment(Guid stateId) =>
-            QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.StateId == stateId);
+            QuerySubsidiariesCandidatesToGovernment().Where(x => x.Address.City.StateId == stateId 
+                                    && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
 
         private IQueryable<Company> QuerySubsidiariesCandidatesToGovernment() 
             =>
             _DbSet.Where(x => x.ParentId == null && x.DeactivationDate == null
                              && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Government                             
-                             && x.Segment.Identifyer == (int)ECompanySegmentType.Municipal);
+                             && (x.Segment.Identifyer == (int)ECompanySegmentType.Municipal
+                                    || x.Segment.Identifyer == (int)ECompanySegmentType.State));
 
         private async Task<PagedData<CompanyAssociatedDto>> PaginateCompanyDto(IQueryable<CompanyAssociatedDto> dbSet, PageFilter filter)
         {

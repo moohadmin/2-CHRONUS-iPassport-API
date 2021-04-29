@@ -120,7 +120,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("{id}")]
-        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
         public async Task<ActionResult> GetById(Guid id)
         {
             var res = await _service.GetById(id);

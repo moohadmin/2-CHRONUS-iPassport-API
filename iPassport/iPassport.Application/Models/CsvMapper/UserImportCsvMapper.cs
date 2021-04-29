@@ -1,5 +1,6 @@
 ﻿using iPassport.Domain.Dtos;
 using TinyCsvParser.Mapping;
+using TinyCsvParser.TypeConverter;
 
 namespace iPassport.Application.Models.CsvMapper
 {
@@ -13,6 +14,12 @@ namespace iPassport.Application.Models.CsvMapper
             MapProperty(2, x => x.Birthday);
             MapProperty(3, x => x.Cpf);
             MapProperty(4, x => x.Cns);
+            // 4 - CNS
+            MapUsing((entity, values) =>
+            {
+                entity.Cns = values.Tokens[4] == string.Empty ? null : values.Tokens[4];
+                return true;
+            });
             MapProperty(5, x => x.Cnpj);
             MapProperty(6, x => x.Occupation);
             MapProperty(7, x => x.Bond);
@@ -21,7 +28,12 @@ namespace iPassport.Application.Models.CsvMapper
             MapProperty(10, x => x.HumanRace);
             MapProperty(11, x => x.CountryCode);
             MapProperty(12, x => x.PhoneNumber);
-            MapProperty(13, x => x.Email);
+            // 13 - Email
+            MapUsing((entity, values) =>
+            {
+                entity.Email = values.Tokens[13] == string.Empty ? null : values.Tokens[13];
+                return true;
+            });
             MapProperty(14, x => x.Cep);
             MapProperty(15, x => x.Address);
             MapProperty(16, x => x.Number);
