@@ -22,6 +22,8 @@ namespace iPassport.Domain.Entities
         public string Number { get; private set; }
         public string District { get; private set; }
         public Guid CityId { get; private set; }
+        public string Complement { get; private set; }
+        
 
         public City City { get; set; }
 
