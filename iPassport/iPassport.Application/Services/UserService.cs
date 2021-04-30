@@ -169,7 +169,7 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> GetCurrentUser()
         {
             var userId = _accessor.GetCurrentUserId();
-            var authUser = await _userManager.FindByIdAsync(userId.ToString());
+            var authUser = await _userRepository.GetById(userId);
 
             if (authUser.IsCitizen())
                 authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);

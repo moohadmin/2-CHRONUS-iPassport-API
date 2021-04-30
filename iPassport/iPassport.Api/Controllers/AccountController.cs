@@ -80,7 +80,7 @@ namespace iPassport.Api.Controllers
         [HttpPost("LoginByCitizen")]
         public async Task<ActionResult> MobileLogin([FromBody] LoginMobileRequest request)
         {
-            var res = await _service.MobileLogin(request.Pin, request.UserId, request.AcceptTerms);
+            var res = await _service.PinLogin(request.Pin, request.UserId, request.AcceptTerms);
             return Ok(res);
         }
 

@@ -153,9 +153,15 @@ namespace iPassport.Domain.Entities.Authentication
         private Address CreateUserAddress(AddressCreateDto dto) =>
             new Address().Create(dto);
 
-        public bool IsAgent() => UserType == (int)EUserType.Agent;
-        public bool IsCitizen() => UserType == (int)EUserType.Citizen;
+        public bool IsAgent() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAgent());
+        public bool IsInactiveAgent() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAgent() && x.IsInactive());
 
+        public bool IsCitizen() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsCitizen());
+        public bool IsInactiveCitizen() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsCitizen() && x.IsInactive());
+
+        public bool IsAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin());
+        public bool IsInactiveAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin() && x.IsInactive());
+        
         public Users CreateCitizen(CitizenCreateDto dto)
         => new Users(dto.CompleteName,
                 dto.Cpf,

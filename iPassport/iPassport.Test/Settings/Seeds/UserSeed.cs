@@ -3,6 +3,8 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
+using iPassport.Test.Settings.Seeds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,14 +32,46 @@ namespace iPassport.Test.Seeds
         public static Users GetUser() =>
             new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 1);
 
-        public static Users GetUserAgent() =>
-            new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
+        public static Users Get(EUserType userType)
+        {
+            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
+            user.UserUserTypes = new List<UserUserType>()
+            {
+                new UserUserType(){ UserType = UserTypeSeed.Get(userType) }
+            };
+            return user;
+        }
+
+        public static Users GetUserAgent()
+        {
+            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
+            user.UserUserTypes = new List<UserUserType>()
+            {
+                new UserUserType(){ UserType = UserTypeSeed.GetAgent() }
+            };
+            return user;
+        }
+
+        public static Users GetUserCitizen()
+        {
+            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
+            user.UserUserTypes = new List<UserUserType>()
+            {
+                new UserUserType(){ UserType = UserTypeSeed.GetCitizen() }
+            };
+            return user;
+        }
 
         public static Users GetUserAdmin()
         {
             var user = new Users("test", "test", "test", "test", Guid.NewGuid(), "Test", Guid.NewGuid(), 0);
             user.Profile = new("Administrativo", "admin");
-            user.Company = CompanySeed.Get();
+            user.Company = CompanySeed.Get();            
+            user.UserUserTypes = new List<UserUserType>()
+            {
+                new UserUserType(){ UserType = UserTypeSeed.GetAdmin() }
+            };
+
             return user;
         }
 
