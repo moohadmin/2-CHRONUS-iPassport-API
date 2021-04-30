@@ -68,14 +68,16 @@ quality:
   services:
     - docker:stable-dind
   script:
-    - docker build $BUILD_ARGS --file $DOCKERFILE_PATH --tag ${CI_REGISTRY_IMAGE}:$TAG .
+    - docker build $BUILD_ARGS --file $DOCKERFILE_PATH --tag ${CI_REGISTRY_IMAGE}:$TAG --tag ${CI_REGISTRY_IMAGE}:$TAG_NAME .
     - echo ${CI_REGISTRY_PASSWORD} | docker login ${CI_REGISTRY} --username ${CI_REGISTRY_USER} --password-stdin
     - docker push ${CI_REGISTRY_IMAGE}:$TAG
+    - docker push ${CI_REGISTRY_IMAGE}:$TAG_NAME
 
 docker:develop:gitlab-registry:
   extends: .docker
   variables:
     TAG: develop_${CI_PIPELINE_ID}
+    TAG_NAME: develop
   only:
     - develop
 
@@ -83,6 +85,7 @@ docker:release:gitlab-registry:
   extends: .docker
   variables:
     TAG: release_${CI_PIPELINE_ID}
+    TAG_NAME: release
   only:
     - /^release\/[0-9.]+$/
     
@@ -90,6 +93,7 @@ docker:master:gitlab-registry:
   extends: .docker
   variables:
     TAG: latest
+    TAG_NAME: master
   only:
     - master
 
@@ -97,6 +101,7 @@ docker:tags:gitlab-registry:
   extends: .docker
   variables:
     TAG: ${CI_COMMIT_TAG}
+    TAG_NAME: tag
   only:
     - tags
 

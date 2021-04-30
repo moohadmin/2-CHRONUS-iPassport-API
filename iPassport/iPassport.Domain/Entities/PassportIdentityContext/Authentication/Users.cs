@@ -40,6 +40,8 @@ namespace iPassport.Domain.Entities.Authentication
 
             if (userName == null)
                 UserName = Id.ToString();
+
+            
         }
         /// <summary>
         /// User Agent
@@ -102,7 +104,7 @@ namespace iPassport.Domain.Entities.Authentication
         /// </summary>
         public string BloodType { get; set; }
         public string Occupation { get; set; }
-        public Guid? AddressId { get; private set; }
+        public Guid? AddressId { get; set; }
         public string Photo { get; set; }
         public string InternationalDocument { get; set; }
         public int UserType { get; set; }
@@ -114,6 +116,7 @@ namespace iPassport.Domain.Entities.Authentication
         public Guid? ProfileId { get; set; }
         public DateTime? DeactivationDate { get; set; }
         public Guid? DeactivationUserId { get; set; }
+        public string CorporateCellphoneNumber { get; set; }
 
         public Address Address { get; set; }
         public Company Company { get; set; }
@@ -122,6 +125,8 @@ namespace iPassport.Domain.Entities.Authentication
         public BloodType BBloodType { get; set; }
         public Profile Profile { get; set; }
         public Users DeactivationUser { get; set; }
+
+        public virtual IList<UserUserType> UserUserTypes { get; set; }
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
