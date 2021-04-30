@@ -62,7 +62,7 @@ namespace iPassport.Domain.Entities
 
 
         public UserDetails Create(UserAgentDto dto) =>
-            new UserDetails(dto.UserId);
+            new UserDetails(dto.Id);
 
         public UserDetails Create(CitizenCreateDto dto) =>
             new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected, bond: dto.Bond, priorityGroupId: dto.PriorityGroupId,

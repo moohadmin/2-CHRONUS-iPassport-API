@@ -34,9 +34,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Profile, act => act.MapFrom(src => src.UserType));
 
             profile.CreateMap<UserAgentCreateRequest, UserAgentDto>()
-                .ForMember(des => des.Username, act => act.MapFrom(src => src.Username))
                 .ForMember(des => des.Password, act => act.MapFrom(src => src.Password))
-                .ForMember(des => des.PasswordIsValid, act => act.MapFrom(src => src.PasswordIsValid))
                 .ForMember(des => des.Mobile, act => act.MapFrom(src => src.CellphoneNumber))
                 .ForMember(des => des.FullName, act => act.MapFrom(src => src.CompleteName))
                 .ForMember(des => des.CPF, act => act.MapFrom(src => src.Cpf))

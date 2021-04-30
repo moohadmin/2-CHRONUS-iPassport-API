@@ -274,7 +274,7 @@ namespace iPassport.Application.Services
                 ValidateSaveUserIdentityResult(result);
 
                 /// Re-Hidrated UserId to UserDetails
-                dto.UserId = user.Id;
+                dto.Id = user.Id;
 
                 /// Add Details to User in iPassportContext
                 var _userDetails = new UserDetails();

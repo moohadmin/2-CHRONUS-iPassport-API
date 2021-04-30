@@ -1,4 +1,6 @@
-﻿namespace iPassport.Domain.Dtos
+﻿using System;
+
+namespace iPassport.Domain.Dtos
 {
     public class UserAgentDto
     {
@@ -8,8 +10,7 @@
         public string Password { get; set; }
         public string Mobile { get; set; }
         public AddressCreateDto Address { get; set; }
-        public System.Guid CompanyId { get; set; }
-        public bool PasswordIsValid { get; set; }
-        public System.Guid UserId { get; set; }
+        public Guid CompanyId { get; set; }
+        public Guid Id { get; set; }
     }
 }

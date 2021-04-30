@@ -24,7 +24,7 @@ namespace iPassport.Test.Controllers.Validator
         [TestMethod]
         public void Success()
         {
-            Assert.IsTrue(_validator.Validate(
+            var validator = _validator.Validate(
                 new UserAgentCreateRequest()
                 {
                     CompanyId = Guid.NewGuid(),
@@ -37,13 +37,14 @@ namespace iPassport.Test.Controllers.Validator
                     CorporateCellphoneNumber = "5571999999999",
                     Address = new AddressCreateRequest()
                     {
-                        Cep = "41700000,",
+                        Cep = "41700000",
                         CityId = Guid.NewGuid(),
                         Description = "test",
                         District = "test",
                         Number = "1"
                     }
-                }).IsValid);
+                });
+            Assert.IsTrue(validator.IsValid);
         }
     }
 }
