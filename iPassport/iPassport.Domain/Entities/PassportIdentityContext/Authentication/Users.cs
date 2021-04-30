@@ -222,8 +222,9 @@ namespace iPassport.Domain.Entities.Authentication
                     dto.CompanyId,
                     (int)EUserType.Citizen);
 
-        public static Users CreateUser(AdminDto dto) =>
-            new(dto.CompleteName
+        public static Users CreateUser(AdminDto dto, Guid userTypeId)
+        {
+            var user = new Users(dto.CompleteName
                 , dto.Cpf
                 , dto.Email
                 , dto.Telephone
@@ -232,10 +233,20 @@ namespace iPassport.Domain.Entities.Authentication
                 , dto.ProfileId
                 , (int)EUserType.Admin);
 
-        public void Deactivate(Guid deactivationUserId)
+            user.AddUserType(userTypeId);
+
+            return user;
+        }
+            
+
+        public void Deactivate(Guid deactivationUserId, EUserType? userTypeIdentifyer = null)
         {
-            DeactivationUserId = deactivationUserId;
-            DeactivationDate = DateTime.UtcNow;
+            if(userTypeIdentifyer == null)
+            {
+                DeactivationUserId = deactivationUserId;
+                DeactivationDate = DateTime.UtcNow;
+            }else if (UserUserTypes != null)
+                UserUserTypes.FirstOrDefault(x => x.UserType.Identifyer == (int)userTypeIdentifyer).Deactivate(deactivationUserId);            
         }
 
         public void ChangeUser(AdminDto dto)
@@ -288,6 +299,16 @@ namespace iPassport.Domain.Entities.Authentication
                     && Address.District == dto.Address.District;
             
             return accessControl.Profile == EProfileKey.admin.ToString();
+        }
+
+        private void AddUserType(Guid userTypeId)
+        {
+            var userUserType = new UserUserType(Id, userTypeId);
+
+            if (UserUserTypes == null)
+                UserUserTypes = new List<UserUserType>();
+
+            UserUserTypes.Add(userUserType);
         }
     }
 }
