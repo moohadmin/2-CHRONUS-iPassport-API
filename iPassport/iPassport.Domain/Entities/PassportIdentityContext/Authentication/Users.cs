@@ -142,7 +142,7 @@ namespace iPassport.Domain.Entities.Authentication
             dto.FileName = $"{Id}{extension}";
         }
 
-        public Users CreateAgent(UserAgentCreateDto dto) =>
+        public Users CreateAgent(UserAgentDto dto) =>
             new Users(dto.FullName, dto.CPF, dto.Address != null ? CreateUserAddress(dto.Address) : null, dto.Username, dto.Mobile, (int)EUserType.Agent, dto.CompanyId);
 
         private Address CreateUserAddress(AddressCreateDto dto) =>

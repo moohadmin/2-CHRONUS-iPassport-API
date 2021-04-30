@@ -1,11 +1,8 @@
 ﻿namespace iPassport.Domain.Dtos
 {
-    public class UserAgentCreateDto
+    public class UserAgentDto
     {
         public string FullName { get; set; }
-        /// <summary>
-        /// Vendo se aparece
-        /// </summary>
         public string CPF { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }

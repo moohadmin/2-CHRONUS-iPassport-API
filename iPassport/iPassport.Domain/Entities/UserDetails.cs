@@ -61,7 +61,7 @@ namespace iPassport.Domain.Entities
         public virtual HealthUnit HealthUnit { get; set; }
 
 
-        public UserDetails Create(UserAgentCreateDto dto) =>
+        public UserDetails Create(UserAgentDto dto) =>
             new UserDetails(dto.UserId);
 
         public UserDetails Create(CitizenCreateDto dto) =>

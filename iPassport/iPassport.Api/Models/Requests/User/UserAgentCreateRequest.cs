@@ -8,29 +8,34 @@ namespace iPassport.Api.Models.Requests.User
     public class UserAgentCreateRequest
     {
         /// <summary>
-        /// Full Name
-        /// </summary>
-        public string FullName { get; set; }
-
-        /// <summary>
         /// Cpf
         /// </summary>
-        public string CPF { get; set; }
+        public string Cpf { get; set; }
 
         /// <summary>
-        /// Username
+        /// E-mail
         /// </summary>
-        public string Username { get; set; }
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Cellphone Number
+        /// </summary>
+        public string CellphoneNumber { get; set; }
+
+        /// <summary>
+        /// Corporate Cellphone Number
+        /// </summary>
+        public string CorporateCellphoneNumber { get; set; }
+
+        /// <summary>
+        /// Complete Name
+        /// </summary>
+        public string CompleteName { get; set; }
 
         /// <summary>
         /// Password
         /// </summary>
         public string Password { get; set; }
-
-        /// <summary>
-        /// Mobile
-        /// </summary>
-        public string Mobile { get; set; }
 
         /// <summary>
         /// Address
@@ -43,9 +48,8 @@ namespace iPassport.Api.Models.Requests.User
         public Guid CompanyId { get; set; }
 
         /// <summary>
-        /// Password Is Valid ?
+        /// Is User Active
         /// </summary>
-        public bool PasswordIsValid { get; set; }
-        
+        public bool? IsActive { get; set; }
     }
 }

@@ -252,7 +252,7 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["AgentCount"], res);
         }
 
-        public async Task<ResponseApi> AddAgent(UserAgentCreateDto dto)
+        public async Task<ResponseApi> AddAgent(UserAgentDto dto)
         {
             var company = await _companyRepository.Find(dto.CompanyId);
             if (company == null)

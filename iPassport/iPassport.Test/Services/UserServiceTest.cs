@@ -228,7 +228,7 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void AddAgent()
         {
-            var mockRequest = Mock.Of<UserAgentCreateDto>(x => x.Address == Mock.Of<AddressCreateDto>());
+            var mockRequest = Mock.Of<UserAgentDto>(x => x.Address == Mock.Of<AddressCreateDto>());
             var identyResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
             // Arrange
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
