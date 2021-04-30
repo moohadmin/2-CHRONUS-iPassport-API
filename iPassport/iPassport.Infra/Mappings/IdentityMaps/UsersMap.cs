@@ -19,7 +19,9 @@ namespace iPassport.Infra.Mappings.IdentityMaps
 
             builder.Property(x => x.UserType);
             builder.Property(x => x.DeactivationDate);
-            
+            builder.Property(x => x.CorporateCellphoneNumber)
+                .IsRequired(false);
+
             builder.HasOne(x => x.Address)
                 .WithMany()
                 .HasForeignKey(x => x.AddressId);
@@ -53,7 +55,8 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .WithMany()
                 .HasForeignKey(x => x.DeactivationUserId)
                 .IsRequired(false);
-                
+
+            
         }
     }
 }
