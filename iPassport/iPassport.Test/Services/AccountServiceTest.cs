@@ -20,6 +20,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -37,10 +38,12 @@ namespace iPassport.Test.Services
         Mock<IUserDetailsRepository> _mockUserDetailsRepository;
         IStringLocalizer<Resource> _localizer;
         Mock<IAddressRepository> _mockAddressRepository;
+        Resource _resource;
 
         [TestInitialize]
         public void Setup()
         {
+            _resource = ResourceFactory.Create();
             _accessor = HttpContextAccessorFactory.Create();
             _mockUserRepository = new Mock<IUserRepository>();
             _mockUserManager = UserManagerFactory.CreateMock();
@@ -57,27 +60,51 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void BasicLogin_MustReturnOK()
         {
-            var user = "teste";
+            var username = "teste";
             var Password = "test";
             var token = "6546548955123ugyfgyuyggyu446654654";
             var hasPlan = false;
-
+            var user = UserSeed.GetUserAgent();
+            
             // Arrange
-            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>(), hasPlan).Result).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>(), hasPlan, It.IsAny<string>()).Result).Returns(token);
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
-            _mockUserManager.Setup(x => x.FindByNameAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetByUsername(It.IsAny<string>()).Result).Returns(user);
             
             // Act
-            var result = _service.BasicLogin(user,Password);
+            var result = _service.BasicLogin(username,Password);
 
             // Assert
-            _mockTokenService.Verify(a => a.GenerateBasic(It.IsAny<Users>(), hasPlan), Times.Once);
+            _mockTokenService.Verify(a => a.GenerateBasic(It.IsAny<Users>(), hasPlan, It.IsAny<string>()), Times.Once);
             _mockUserRepository.Verify(a => a.Update(It.IsAny<Users>()), Times.Once);
             _mockUserManager.Verify(a => a.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()), Times.Once);
-            _mockUserManager.Verify(a => a.FindByNameAsync(It.IsAny<string>()), Times.Once);
+            _mockUserRepository.Verify(a => a.GetByUsername(It.IsAny<string>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        [DataRow(EUserType.Citizen)]
+        [DataRow(EUserType.Admin)]
+        public void BasicLogin_MustHaveAgentAcess(EUserType userType)
+        {
+            var username = "teste";
+            var Password = "test";
+            var token = "6546548955123ugyfgyuyggyu446654654";
+            var hasPlan = false;
+            var user = UserSeed.Get(userType);
+
+            // Arrange
+            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>(), hasPlan, It.IsAny<string>()).Result).Returns(token);
+            _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
+            _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
+            _mockUserRepository.Setup(x => x.GetByUsername(It.IsAny<string>()).Result).Returns(user);
+
+            // Assert
+            Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.BasicLogin(username, Password),
+                _resource.GetMessage("UserNotHaveAgentAccess"));
+
         }
 
         [TestMethod]
@@ -124,12 +151,32 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
+        [DataRow(EUserType.Citizen)]
+        [DataRow(EUserType.Agent)]
+        public void EmailLogin_MustHaveAdminAcess(EUserType userType)
+        {
+            var email = "teste";
+            var Password = "test";
+
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(UserSeed.Get(userType));
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
+            Assert.AreEqual(_localizer["UserNotHaveAdminAccess"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
+        }
+
+        [TestMethod]
         public void EmailLogin_User_MustBeActiveUser()
         {
             var email = "teste";
             var Password = "test";
             var user = UserSeed.GetUserAdmin();
+            //TODO Keep only user.Deactivate() after refactory admin add
             user.Deactivate(Guid.NewGuid());
+            user.UserUserTypes.FirstOrDefault().Deactivate(Guid.NewGuid());
+
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
 
@@ -299,32 +346,52 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        public void MobileLogin_MustReturnOK()
+        public void PinLogin_MustReturnOK()
         {
             int pin = 1111;
             var userId = Guid.NewGuid();
             var acceptTerms = true;
             var token = "6546548955123ugyfgyuyggyu446654654";
-            var userSeed = UserSeed.GetUserDetails();
+            var userDetail = UserSeed.GetUserDetails();
             var hasPlan = false;
-
+            var user = UserSeed.GetUserCitizen();
             // Arrange
             _mockAuth2FactService.Setup(x => x.ValidPin(Guid.NewGuid(), It.IsAny<string>()).Result);
-            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(user);
             _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>()));
-            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>(), hasPlan).Result).Returns(token);
-            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userSeed);
+            _mockTokenService.Setup(x => x.GenerateBasic(It.IsAny<Users>(), hasPlan, It.IsAny<string>()).Result).Returns(token);
+            _mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()).Result).Returns(userDetail);
 
             // Act
-            var result = _service.MobileLogin(pin, userId, acceptTerms);
+            var result = _service.PinLogin(pin, userId, acceptTerms);
 
             // Assert
             _mockAuth2FactService.Verify(x => x.ValidPin(It.IsAny<Guid>(), It.IsAny<string>()));
             _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
             _mockUserRepository.Verify(x => x.Update(It.IsAny<Users>()));
-            _mockTokenService.Verify(x => x.GenerateBasic(It.IsAny<Users>(), hasPlan));
+            _mockTokenService.Verify(x => x.GenerateBasic(It.IsAny<Users>(), hasPlan, It.IsAny<string>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        [DataRow(EUserType.Admin)]
+        [DataRow(EUserType.Agent)]
+        public void PinLogin_MustHaveCitizenAcess(EUserType userType)
+        {
+            int pin = 1111;
+            var userId = Guid.NewGuid();
+            var acceptTerms = true;
+
+            // Arrange
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.Get(userType));
+            
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.PinLogin(pin, userId, acceptTerms)).Result;
+            Assert.AreEqual(_localizer["UserNotHaveCitizenAccess"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
+            
         }
 
         [TestMethod]
