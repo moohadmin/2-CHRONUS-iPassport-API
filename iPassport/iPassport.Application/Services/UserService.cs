@@ -94,7 +94,7 @@ namespace iPassport.Application.Services
         {
             await ValidateAddCitizen(dto);
 
-            var user = new Users().CreateCitizen(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen)));
+            var user = new Users().CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen)));
 
             try
             {
@@ -511,7 +511,7 @@ namespace iPassport.Application.Services
 
                 try
                 {
-                    Users user = Users.CreateCitizen(data.Result, citizenUserTypeId);
+                    Users user = Users.CreateUser(data.Result, citizenUserTypeId);
 
                     // Add User in iPassportIdentityContext
                     var result = await _userManager.CreateAsync(user);
