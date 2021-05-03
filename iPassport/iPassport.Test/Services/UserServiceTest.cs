@@ -9,6 +9,7 @@ using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
@@ -55,6 +56,7 @@ namespace iPassport.Test.Services
         Mock<IProfileRepository> _mockProfileRepository;
         Mock<IUserTokenRepository> _mockUserTokenRepository;
         Resource _resource;
+        Mock<IUserTypeRepository> _mockUserTypeRepository;
 
         [TestInitialize]
         public void Setup()
@@ -82,10 +84,12 @@ namespace iPassport.Test.Services
             _mockImportedFileRepository = new();
             _mockProfileRepository = new Mock<IProfileRepository>();
             _mockUserTokenRepository = new Mock<IUserTokenRepository>();
+            _mockUserTypeRepository = new Mock<IUserTypeRepository>();
 
             _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, ResourceFactory.GetStringLocalizer(), _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
                 _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object,
-                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object, _mockProfileRepository.Object, _mockUserTokenRepository.Object);
+                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object, 
+                _mockProfileRepository.Object, _mockUserTokenRepository.Object, _mockUserTypeRepository.Object);
         }
 
         [TestMethod]
@@ -135,13 +139,13 @@ namespace iPassport.Test.Services
             var detailsSeed = UserSeed.GetUserDetails();
 
             // Arrange
-            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
 
             // Act
             var result = _service.GetCurrentUser();
 
             // Assert
-            _mockUserManager.Verify(a => a.FindByIdAsync(It.IsAny<string>()), Times.Once);
+            _mockUserRepository.Verify(a => a.GetById(It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(UserDetailsViewModel));
@@ -298,7 +302,7 @@ namespace iPassport.Test.Services
             var mockRequest = Mock.Of<CitizenEditDto>(x => x.PriorityGroupId == Guid.NewGuid() && x.Address == Mock.Of<AddressEditDto>());
             var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
 
-            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserCitizen());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
@@ -327,12 +331,13 @@ namespace iPassport.Test.Services
         public void AddAdmin()
         {
             // Arrange
-            var mockRequest = Mock.Of<AdminDto>(x => x.CompanyId == Guid.NewGuid());
+            var mockRequest = Mock.Of<AdminDto>(x => x.CompanyId == Guid.NewGuid() && x.IsActive == true);
             var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
             _mockProfileRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(ProfileSeed.Get());
             _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(identityResult);
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<UserDetails>()));
+            _mockUserTypeRepository.Setup(x => x.GetByIdentifier((int)EUserType.Admin).Result).Returns(UserTypeSeed.GetAdmin());
 
             // Act
             var result = _service.AddAdmin(mockRequest);
@@ -342,6 +347,7 @@ namespace iPassport.Test.Services
             _mockProfileRepository.Verify(x => x.Find(It.IsAny<Guid>()));
             _mockUserManager.Verify(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()));
             _mockRepository.Verify(x => x.InsertAsync(It.IsAny<UserDetails>()));
+            _mockUserTypeRepository.Verify(x => x.GetByIdentifier((int)EUserType.Admin));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

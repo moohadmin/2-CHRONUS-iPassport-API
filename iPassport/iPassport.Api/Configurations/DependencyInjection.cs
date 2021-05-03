@@ -148,6 +148,8 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICompanySegmentRepository, CompanySegmentRepository>();
 
             services.AddScoped<ICompanyResponsibleRepository, CompanyResponsibleRepository>();
+            
+            services.AddScoped<IUserTypeRepository, UserTypeRepository>();
             #endregion
 
             #region DI Settings

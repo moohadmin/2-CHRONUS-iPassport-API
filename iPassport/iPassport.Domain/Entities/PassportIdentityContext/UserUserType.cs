@@ -20,6 +20,20 @@ namespace iPassport.Domain.Entities
         public virtual Users User { get; set; }
         public virtual UserType UserType { get; set; }
         public virtual Users DeactivationUser { get; set; }
+
+        public bool IsActive() => !DeactivationDate.HasValue;
+        public bool IsInactive() => DeactivationDate.HasValue;
+
+        public void Deactivate(Guid deactivationUserId)
+        {
+            DeactivationUserId = deactivationUserId;
+            DeactivationDate = DateTime.UtcNow;
+        }
+        public void Activate()
+        {
+            DeactivationUserId = null;
+            DeactivationDate = null;
+        }
     }
 }
 

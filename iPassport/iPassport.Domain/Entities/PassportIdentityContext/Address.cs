@@ -17,6 +17,16 @@ namespace iPassport.Domain.Entities
             District = district;
         }
 
+        public Address(AddressDto dto)
+        {
+            Id = Guid.NewGuid();
+            Description = dto.Description;
+            Cep = dto.Cep;
+            CityId = dto.CityId.Value;
+            Number = dto.Number;
+            District = dto.District;
+        }
+
         public string Description { get; private set; }
         public string Cep { get; private set; }
         public string Number { get; private set; }

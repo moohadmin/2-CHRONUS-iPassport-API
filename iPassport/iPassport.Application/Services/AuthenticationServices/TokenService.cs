@@ -34,7 +34,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             _localizer = localizer;
         } 
 
-        public async Task<string> GenerateBasic(Users user, bool hasPlan)
+        public async Task<string> GenerateBasic(Users user, bool hasPlan, string identifyUserType)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
@@ -44,7 +44,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_USER_ID, user.Id.ToString()),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_PROFILE, user.UserType.ToString()),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_PROFILE, identifyUserType ?? string.Empty),
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HAS_PHOTO, user.UserHavePhoto().ToString()),
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HAS_PLAN, hasPlan.ToString())
                 }),

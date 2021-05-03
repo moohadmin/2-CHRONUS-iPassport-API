@@ -876,6 +876,27 @@
   <data name="NotAllowDeactivateCompanyWithActiveSubsidiaries" xml:space="preserve">
     <value>Há empresas filiais associadas. Inativação não permitida.</value>
   </data>
+	<data name="UserTypeNotFound" xml:space="preserve">
+    <value>Tipo de usuário não encontrado. Favor verificar.</value>
+  </data>
+	<data name="UserNotHaveAdminAccess" xml:space="preserve">
+    <value> usuário não tem acesso do tipo administrativo.</value>
+  </data>
+	<data name="UserNotHaveCitizenAccess" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo cidadão.</value>
+  </data>
+	<data name="UserNotHaveAgentAccess" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo agente.</value>
+  </data>
+    <data name="UserNotHaveAccessOfType" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo {0}.</value>
+  </data>
+  <data name="Agent" xml:space="preserve">
+    <value>Agente</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Administrativo</value>
+  </data>
   <data name="CellphoneNumber" xml:space="preserve">
     <value>Celular</value>
   </data>

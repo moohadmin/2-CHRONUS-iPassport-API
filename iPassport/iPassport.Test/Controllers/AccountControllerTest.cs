@@ -60,13 +60,13 @@ namespace iPassport.Test.Controllers
         {
             // Arrange
             var LoginMobileRequest = Mock.Of<LoginMobileRequest>();
-            _mockService.Setup(r => r.MobileLogin(It.IsAny<int>(), It.IsAny<Guid>(), It.IsAny<bool>()));
+            _mockService.Setup(r => r.PinLogin(It.IsAny<int>(), It.IsAny<Guid>(), It.IsAny<bool>()));
 
             // Act
             var result = _controller.MobileLogin(LoginMobileRequest);
 
             // Assert
-            _mockService.Verify(a => a.MobileLogin(It.IsAny<int>(), It.IsAny<Guid>(), It.IsAny<bool>()), Times.Once);
+            _mockService.Verify(a => a.PinLogin(It.IsAny<int>(), It.IsAny<Guid>(), It.IsAny<bool>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

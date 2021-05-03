@@ -45,13 +45,15 @@ namespace iPassport.Application.Services.AuthenticationServices
 
         public async Task<ResponseApi> BasicLogin(string username, string password)
         {
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userRepository.GetByUsername(username);
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
+            ValidateUserTypeAllowedToLogin(user, EUserType.Agent);
+
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = await _tokenService.GenerateBasic(user, false);
+                var token = await _tokenService.GenerateBasic(user, false, ((int)EUserType.Agent).ToString());
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
@@ -92,7 +94,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
         }
 
-        public async Task<ResponseApi> MobileLogin(int pin, Guid userId, bool acceptTerms)
+        public async Task<ResponseApi> PinLogin(int pin, Guid userId, bool acceptTerms)
         {
             if (!acceptTerms)
                 throw new BusinessException(_localizer["TermsOfUseNotAccepted"]);
@@ -101,6 +103,8 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
+            ValidateUserTypeAllowedToLogin(user, EUserType.Citizen);
+
             await _auth2FactService.ValidPin(user.Id, pin.ToString("0000"));
 
             var userDetails = await _userDetailsRepository.GetByUserId(userId);
@@ -108,7 +112,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException(_localizer["UserNotFound"]);
             var hasPlan = userDetails.PlanId.HasValue;
 
-            var token = await _tokenService.GenerateBasic(user, hasPlan);
+            var token = await _tokenService.GenerateBasic(user, hasPlan, ((int)EUserType.Citizen).ToString());
 
             if (token != null)
             {
@@ -183,8 +187,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
-            if (user.IsInactive())
-                throw new BusinessException(_localizer["InactiveUser"]);
+            ValidateUserTypeAllowedToLogin(user, EUserType.Admin);
 
             if (user.Profile == null)
                 throw new BusinessException(_localizer["UserAccessProfileNotFound"]);
@@ -199,7 +202,6 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             return userDetails;
         }
-
         private void ValidateProfileDataToToken(Users user, UserDetails UserDetails, Address healthUnitAddress)
         {
             if (!user.Profile.IsAdmin())
@@ -239,7 +241,6 @@ namespace iPassport.Application.Services.AuthenticationServices
               CountryId = GetCountryId(user, healthUnitAddress),
               HealthUnityId = GetHealthUnityId(UserDetails, user.Profile)
           };
-
         private string GetCompanyId(Users user)
             => (user.Profile.IsBusiness() || user.Profile.IsGovernment()) ? user.CompanyId.ToString() : string.Empty;
         private string GetCityId(Users user, Address healthUnitAddress)
@@ -251,6 +252,47 @@ namespace iPassport.Application.Services.AuthenticationServices
         private string GetHealthUnityId(UserDetails UserDetails, Profile profile)
             => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : string.Empty;
 
+        private void ValidateUserTypeAllowedToLogin(Users user, EUserType allowedType)
+        {
+            switch (allowedType)
+            {
+                case EUserType.Admin:
+                    ValidateActiveAdminUserType(user);
+                    break;
+                case EUserType.Citizen:
+                    ValidateActiveCitizenUserType(user);
+                    break;
+                case EUserType.Agent:
+                    ValidateActiveAgentUserType(user);
+                    break;
+                default:
+                    throw new BusinessException(_localizer["UserTypeNotFound"]);
+            }
+        }        
+        private void ValidateActiveAdminUserType (Users user)
+        {
+            if (!user.IsAdminType())
+                throw new BusinessException(_localizer["UserNotHaveAdminAccess"]);
+
+            if (user.IsInactiveAdminType())
+                throw new BusinessException(_localizer["InactiveUser"]);
+        }
+        private void ValidateActiveAgentUserType(Users user)
+        {
+            if (!user.IsAgent())
+                throw new BusinessException(_localizer["UserNotHaveAgentAccess"]);
+
+            if (user.IsInactiveAgent())
+                throw new BusinessException(_localizer["InactiveUser"]);
+        }
+        private void ValidateActiveCitizenUserType(Users user)
+        {
+            if (!user.IsCitizen())
+                throw new BusinessException(_localizer["UserNotHaveCitizenAccess"]);
+
+            if (user.IsInactiveCitizen())
+                throw new BusinessException(_localizer["InactiveUser"]);
+        }
 
         #endregion
     }

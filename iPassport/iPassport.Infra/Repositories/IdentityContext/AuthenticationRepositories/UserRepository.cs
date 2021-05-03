@@ -71,7 +71,9 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             await _context.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
 
         public async Task<Users> GetById(Guid id) =>
-            await _context.Users.Where(x => x.Id == id).Include(y => y.Address).FirstOrDefaultAsync();
+            await _context.Users.Where(x => x.Id == id).Include(y => y.Address)
+            .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
+            .FirstOrDefaultAsync();
 
         public async Task<Users> GetAdminById(Guid id) =>
             await _context.Users
@@ -93,7 +95,14 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                 .Include(x => x.Profile)
                 .Include(x => x.Company).ThenInclude(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State)
                 .Include(x => x.Company).ThenInclude(x => x.Segment).ThenInclude(x => x.CompanyType)
+                .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
                .Where(x => x.NormalizedEmail == email.ToUpper()).FirstOrDefaultAsync();
+
+        public async Task<Users> GetByUsername(string username)
+            =>
+            await _context.Users                
+                .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
+               .Where(x => x.NormalizedUserName == username.ToUpper()).FirstOrDefaultAsync();
 
         public async Task Update(Users user)
         {
