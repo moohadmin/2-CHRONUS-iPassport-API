@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Resources;
+using iPassport.Domain.Utils;
 using Microsoft.Extensions.Localization;
 using System;
+using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
@@ -33,6 +35,13 @@ namespace iPassport.Api.Models.Validators.Vaccines
 
             RuleFor(x => x.HealthUnitId)
                 .SetValidator(new GuidValidator(localizer["HealthUnitId"], localizer));
+
+            RuleFor(x => x.EmployeeCpf)
+                .Cascade(CascadeMode.Stop)
+                .SetValidator(new RequiredFieldValidator<string>(localizer["EmployeeCpf"], localizer)).When(x => !string.IsNullOrWhiteSpace(x.EmployeeCpf))
+                .Length(11).When(x => !string.IsNullOrWhiteSpace(x.EmployeeCpf)).WithMessage(string.Format(localizer["InvalidField"], localizer["EmployeeCpf"]))
+                .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.EmployeeCpf)).WithMessage(string.Format(localizer["InvalidField"], localizer["EmployeeCpf"]))
+                .Must(x => CpfUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.EmployeeCpf)).WithMessage(string.Format(localizer["InvalidField"], localizer["EmployeeCpf"]));
         }
     }
 }

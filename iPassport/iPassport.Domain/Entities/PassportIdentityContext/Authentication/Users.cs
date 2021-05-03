@@ -164,25 +164,31 @@ namespace iPassport.Domain.Entities.Authentication
 
         public bool HasType(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer));
 
-        public Users CreateCitizen(CitizenCreateDto dto)
-        => new Users(dto.CompleteName,
-                dto.Cpf,
-                dto.Rg,
-                dto.Cns,
-                null,
-                dto.Birthday,
-                dto.GenderId,
-                dto.HumanRaceId,
-                dto.BloodTypeId,
-                dto.Occupation,
-                CreateUserAddress(dto.Address),
-                null,
-                null,
-                null,
-                dto.Email,
-                dto.Telephone,
-                dto.CompanyId,
-                (int)EUserType.Citizen);
+        public Users CreateCitizen(CitizenCreateDto dto, Guid userTypeId)
+        {
+            var user = new Users(dto.CompleteName,
+                                dto.Cpf,
+                                dto.Rg,
+                                dto.Cns,
+                                null,
+                                dto.Birthday,
+                                dto.GenderId,
+                                dto.HumanRaceId,
+                                dto.BloodTypeId,
+                                dto.Occupation,
+                                CreateUserAddress(dto.Address),
+                                null,
+                                null,
+                                null,
+                                dto.Email,
+                                dto.Telephone,
+                                dto.CompanyId,
+                                (int)EUserType.Citizen);
+
+            user.AddUserType(userTypeId);
+
+            return user;
+        }
 
         public void ChangeCitizen(CitizenEditDto dto)
         {
@@ -204,25 +210,32 @@ namespace iPassport.Domain.Entities.Authentication
                 Address.ChangeAddress(dto.Address);
         }
 
-        public static Users CreateCitizen(UserImportDto dto)
-            => new(dto.FullName,
-                    dto.Cpf,
-                    null,
-                    dto.Cns,
-                    null,
-                    dto.Birthday,
-                    dto.GenderId,
-                    dto.HumanRaceId,
-                    dto.BloodTypeId,
-                    dto.Occupation,
-                    new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District),
-                    null,
-                    null,
-                    null,
-                    dto.Email,
-                    string.Concat(dto.CountryCode, dto.PhoneNumber),
-                    dto.CompanyId,
-                    (int)EUserType.Citizen);
+        public static Users CreateCitizen(UserImportDto dto, Guid userTypeId)
+        {
+            var user = new Users(dto.FullName,
+                        dto.Cpf,
+                        null,
+                        dto.Cns,
+                        null,
+                        dto.Birthday,
+                        dto.GenderId,
+                        dto.HumanRaceId,
+                        dto.BloodTypeId,
+                        dto.Occupation,
+                        new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District),
+                        null,
+                        null,
+                        null,
+                        dto.Email,
+                        string.Concat(dto.CountryCode, dto.PhoneNumber),
+                        dto.CompanyId,
+                        (int)EUserType.Citizen);
+
+            user.AddUserType(userTypeId);
+
+            return user;
+        }
+            
 
         public static Users CreateUser(AdminDto dto, Guid userTypeId)
         {
