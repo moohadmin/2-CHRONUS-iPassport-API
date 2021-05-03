@@ -168,7 +168,7 @@ namespace iPassport.Domain.Entities.Authentication
 
         public bool HasType(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer));
 
-        public Users CreateCitizen(CitizenCreateDto dto, Guid userTypeId)
+        public Users CreateUser(CitizenCreateDto dto, Guid userTypeId)
         {
             var user = new Users(dto.CompleteName,
                                 dto.Cpf,
@@ -214,7 +214,7 @@ namespace iPassport.Domain.Entities.Authentication
                 Address.ChangeAddress(dto.Address);
         }
 
-        public static Users CreateCitizen(UserImportDto dto, Guid userTypeId)
+        public static Users CreateUser(UserImportDto dto, Guid userTypeId)
         {
             var user = new Users(dto.FullName,
                         dto.Cpf,
