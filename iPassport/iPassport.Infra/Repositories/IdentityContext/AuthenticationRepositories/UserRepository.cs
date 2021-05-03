@@ -142,8 +142,8 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.UserUserTypes.Any(y => y.UserType.Identifyer == (int)filter.UserType)).CountAsync();
 
-        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen) && u.LastLogin != null).CountAsync();
-        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Agent) && u.LastLogin != null).CountAsync();
+        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen && u.LastLogin != null)).CountAsync();
+        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Agent && u.LastLogin != null )).CountAsync();
 
         public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter, AccessControlDTO dto)
         {
