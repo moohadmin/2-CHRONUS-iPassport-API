@@ -56,12 +56,13 @@ namespace iPassport.Application.Services
         private readonly IImportedFileRepository _importedFileRepository;
         private readonly IProfileRepository _profileRepository;
         private readonly IUserTokenRepository _userTokenRepository;
+        private readonly IUserTypeRepository _userTypeRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
             IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository,
             IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository,
             IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IImportedFileRepository importedFileRepository
-            , IProfileRepository profileRepository, IUserTokenRepository userTokenRepository)
+            , IProfileRepository profileRepository, IUserTokenRepository userTokenRepository, IUserTypeRepository userTypeRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -86,6 +87,7 @@ namespace iPassport.Application.Services
             _importedFileRepository = importedFileRepository;
             _profileRepository = profileRepository;
             _userTokenRepository = userTokenRepository;
+            _userTypeRepository = userTypeRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
@@ -491,10 +493,10 @@ namespace iPassport.Application.Services
         {
             await ValidateToSaveAdmin(dto);
 
-            Users user = Users.CreateUser(dto);
-
             if (!dto.IsActive.GetValueOrDefault())
-                user.Deactivate(_accessor.GetCurrentUserId());
+                dto.DeactivationUserId = _accessor.GetCurrentUserId();
+            
+           Users user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Admin)));
 
             try
             {
@@ -523,6 +525,7 @@ namespace iPassport.Application.Services
 
                 VerifyUniqueKeyErrors(ex);
 
+                throw;
             }
 
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
@@ -616,17 +619,19 @@ namespace iPassport.Application.Services
             currentAdminUser.ChangeUser(dto);
             currentAdminUserDetails.ChangeUserDetail(dto);
 
+            ValidateUserType(currentAdminUser, EUserType.Admin);
+
             UserToken currentUserActiveToken = null;
-            if (!dto.IsActive.GetValueOrDefault() && currentAdminUser.IsActive())
+            if (!dto.IsActive.GetValueOrDefault() && currentAdminUser.IsActive(EUserType.Admin))
             {
-                currentAdminUser.Deactivate(_accessor.GetCurrentUserId());
+                currentAdminUser.Deactivate(_accessor.GetCurrentUserId(), EUserType.Admin);
 
                 currentUserActiveToken = await _userTokenRepository.GetActive(currentAdminUser.Id);
                 currentUserActiveToken?.Deactivate();
             }
 
-            if (dto.IsActive.GetValueOrDefault() && currentAdminUser.IsInactive())
-                currentAdminUser.Activate();
+            if (dto.IsActive.GetValueOrDefault() && currentAdminUser.IsInactive(EUserType.Admin))
+                currentAdminUser.Activate(EUserType.Admin);
 
             try
             {
@@ -655,6 +660,8 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackPassport();
 
                 VerifyUniqueKeyErrors(ex);
+
+                throw;
             }
 
             return new ResponseApi(true, _localizer["UserUpdated"], currentAdminUser.Id);
@@ -1259,6 +1266,21 @@ namespace iPassport.Application.Services
                     (acessControll.StateId.HasValue && acessControll.StateId.Value != citizenCity?.StateId) ||
                     (acessControll.CountryId.HasValue && acessControll.CountryId.Value != citizenCity?.State.CountryId)))
                 throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis"]);
+        }
+
+        private async Task<Guid> GetUserTypeIdByIdentifierWhenExists(EUserType userTypeIdentifyer)
+        {
+            var userType = await _userTypeRepository.GetByIdentifier((int)userTypeIdentifyer);
+            if (userType == null)
+                throw new BusinessException(_localizer["UserTypeNotFound"]);
+
+            return userType.Id;
+        }
+
+        private void ValidateUserType(Users editedUser, EUserType userTypeIdentifyer)
+        {
+            if(!editedUser.HasType(userTypeIdentifyer))
+                throw new BusinessException(string.Format(_localizer["UserNotHaveAccessOfType"],_localizer[userTypeIdentifyer.ToString()]));
         }
 
         #endregion

@@ -161,7 +161,9 @@ namespace iPassport.Domain.Entities.Authentication
 
         public bool IsAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin());
         public bool IsInactiveAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin() && x.IsInactive());
-        
+
+        public bool HasType(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer));
+
         public Users CreateCitizen(CitizenCreateDto dto)
         => new Users(dto.CompleteName,
                 dto.Cpf,
@@ -222,8 +224,9 @@ namespace iPassport.Domain.Entities.Authentication
                     dto.CompanyId,
                     (int)EUserType.Citizen);
 
-        public static Users CreateUser(AdminDto dto) =>
-            new(dto.CompleteName
+        public static Users CreateUser(AdminDto dto, Guid userTypeId)
+        {
+            var user = new Users(dto.CompleteName
                 , dto.Cpf
                 , dto.Email
                 , dto.Telephone
@@ -232,10 +235,18 @@ namespace iPassport.Domain.Entities.Authentication
                 , dto.ProfileId
                 , (int)EUserType.Admin);
 
-        public void Deactivate(Guid deactivationUserId)
+            user.AddUserType(userTypeId);
+            if(!dto.IsActive.GetValueOrDefault() && dto.DeactivationUserId.HasValue)
+                user.UserUserTypes.FirstOrDefault().Deactivate(dto.DeactivationUserId.Value);
+
+            return user;
+        }
+            
+
+        public void Deactivate(Guid deactivationUserId, EUserType userTypeIdentifyer)
         {
-            DeactivationUserId = deactivationUserId;
-            DeactivationDate = DateTime.UtcNow;
+            if (UserUserTypes != null)
+                UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).Deactivate(deactivationUserId);            
         }
 
         public void ChangeUser(AdminDto dto)
@@ -250,12 +261,18 @@ namespace iPassport.Domain.Entities.Authentication
             ProfileId = dto.ProfileId;
         }
 
-        public bool IsActive() => !DeactivationDate.HasValue;
-        public bool IsInactive() => DeactivationDate.HasValue;
-        public void Activate()
+        public bool IsActive(EUserType userTypeIdentifyer) 
+            =>
+            UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer)) && UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).IsActive();
+        
+        public bool IsInactive(EUserType userTypeIdentifyer) 
+            =>
+            UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer)) && UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).IsInactive();
+        
+        public void Activate(EUserType userTypeIdentifyer)
         {
-            DeactivationUserId = null;
-            DeactivationDate = null;
+            if (UserUserTypes != null)
+                UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).Activate();
         }
 
         public bool CanEditCitizenFields(CitizenEditDto dto, AccessControlDTO accessControl)
@@ -288,6 +305,16 @@ namespace iPassport.Domain.Entities.Authentication
                     && Address.District == dto.Address.District;
             
             return accessControl.Profile == EProfileKey.admin.ToString();
+        }
+
+        private void AddUserType(Guid userTypeId)
+        {
+            var userUserType = new UserUserType(Id, userTypeId);
+
+            if (UserUserTypes == null)
+                UserUserTypes = new List<UserUserType>();
+
+            UserUserTypes.Add(userUserType);
         }
     }
 }

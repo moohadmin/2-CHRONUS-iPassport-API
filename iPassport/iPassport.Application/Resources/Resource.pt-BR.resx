@@ -888,4 +888,13 @@
 	<data name="UserNotHaveAgentAccess" xml:space="preserve">
     <value>O usuário não tem acesso do tipo agente.</value>
   </data>
+    <data name="UserNotHaveAccessOfType" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo {0}.</value>
+  </data>
+  <data name="Agent" xml:space="preserve">
+    <value>Agente</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Administrativo</value>
+  </data>
 </root>
