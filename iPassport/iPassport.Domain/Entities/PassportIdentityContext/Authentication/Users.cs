@@ -161,7 +161,9 @@ namespace iPassport.Domain.Entities.Authentication
 
         public bool IsAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin());
         public bool IsInactiveAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin() && x.IsInactive());
-        
+
+        public bool HasType(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer));
+
         public Users CreateCitizen(CitizenCreateDto dto)
         => new Users(dto.CompleteName,
                 dto.Cpf,
@@ -234,19 +236,17 @@ namespace iPassport.Domain.Entities.Authentication
                 , (int)EUserType.Admin);
 
             user.AddUserType(userTypeId);
+            if(!dto.IsActive.GetValueOrDefault() && dto.DeactivationUserId.HasValue)
+                user.UserUserTypes.FirstOrDefault().Deactivate(dto.DeactivationUserId.Value);
 
             return user;
         }
             
 
-        public void Deactivate(Guid deactivationUserId, EUserType? userTypeIdentifyer = null)
+        public void Deactivate(Guid deactivationUserId, EUserType userTypeIdentifyer)
         {
-            if(userTypeIdentifyer == null)
-            {
-                DeactivationUserId = deactivationUserId;
-                DeactivationDate = DateTime.UtcNow;
-            }else if (UserUserTypes != null)
-                UserUserTypes.FirstOrDefault(x => x.UserType.Identifyer == (int)userTypeIdentifyer).Deactivate(deactivationUserId);            
+            if (UserUserTypes != null)
+                UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).Deactivate(deactivationUserId);            
         }
 
         public void ChangeUser(AdminDto dto)
@@ -261,12 +261,18 @@ namespace iPassport.Domain.Entities.Authentication
             ProfileId = dto.ProfileId;
         }
 
-        public bool IsActive() => !DeactivationDate.HasValue;
-        public bool IsInactive() => DeactivationDate.HasValue;
-        public void Activate()
+        public bool IsActive(EUserType userTypeIdentifyer) 
+            =>
+            UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer)) && UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).IsActive();
+        
+        public bool IsInactive(EUserType userTypeIdentifyer) 
+            =>
+            UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer)) && UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).IsInactive();
+        
+        public void Activate(EUserType userTypeIdentifyer)
         {
-            DeactivationUserId = null;
-            DeactivationDate = null;
+            if (UserUserTypes != null)
+                UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).Activate();
         }
 
         public bool CanEditCitizenFields(CitizenEditDto dto, AccessControlDTO accessControl)

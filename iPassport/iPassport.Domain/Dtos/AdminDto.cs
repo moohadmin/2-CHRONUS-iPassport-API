@@ -15,5 +15,6 @@ namespace iPassport.Domain.Dtos
         public string Password { get; set; }
         public Guid? ProfileId { get; set; }
         public bool? IsActive { get; set; }
+        public Guid? DeactivationUserId { get; set; }
     }
 }

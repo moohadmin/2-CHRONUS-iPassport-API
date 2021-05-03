@@ -174,7 +174,7 @@ namespace iPassport.Test.Services
             var Password = "test";
             var user = UserSeed.GetUserAdmin();
             //TODO Keep only user.Deactivate() after refactory admin add
-            user.Deactivate(Guid.NewGuid());
+            user.Deactivate(Guid.NewGuid(),EUserType.Admin);
             user.UserUserTypes.FirstOrDefault().Deactivate(Guid.NewGuid());
 
             // Arrange
