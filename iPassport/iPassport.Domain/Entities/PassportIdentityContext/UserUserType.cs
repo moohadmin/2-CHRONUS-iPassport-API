@@ -16,6 +16,7 @@ namespace iPassport.Domain.Entities
         public Guid UserTypeId { get; private set; }
         public DateTime? DeactivationDate { get; private set; }
         public Guid? DeactivationUserId { get; private set; }
+        public DateTime? LastLogin { get; private set; }
 
         public virtual Users User { get; set; }
         public virtual UserType UserType { get; set; }
@@ -34,6 +35,8 @@ namespace iPassport.Domain.Entities
             DeactivationUserId = null;
             DeactivationDate = null;
         }
+
+        public void UpdateLastLogin() => LastLogin = DateTime.UtcNow;
     }
 }
 

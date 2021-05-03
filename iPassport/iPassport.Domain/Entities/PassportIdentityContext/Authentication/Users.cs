@@ -235,7 +235,6 @@ namespace iPassport.Domain.Entities.Authentication
 
             return user;
         }
-            
 
         public static Users CreateUser(AdminDto dto, Guid userTypeId)
         {
