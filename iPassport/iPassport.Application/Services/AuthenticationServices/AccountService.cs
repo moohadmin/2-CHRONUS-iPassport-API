@@ -58,7 +58,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
-                user.UpdateLastLogin();
+                user.UpdateLastLogin(EUserType.Agent);
                 await _userRepository.Update(user);
 
                 return new ResponseApi(true, _localizer["UserAuthenticated"], token);
@@ -78,14 +78,14 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = await _tokenService.GenerateByEmail(user, tokenData.CompanyId, tokenData.CityId, tokenData.StateId, tokenData.CountryId, tokenData.HealthUnityId);
+                var token = await _tokenService.GenerateByEmail(user, tokenData.CompanyId, tokenData.CityId, tokenData.StateId, tokenData.CountryId, tokenData.HealthUnityId, (!user.HasLastLogin(EUserType.Admin)).ToString());
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
-                if (user.LastLogin != null)
+                if (user.HasLastLogin(EUserType.Admin))
                 {
-                    user.UpdateLastLogin();
+                    user.UpdateLastLogin(EUserType.Admin);
                     await _userRepository.Update(user);
                 }
 
@@ -119,7 +119,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 if (!user.AcceptTerms)
                     user.SetAcceptTerms(acceptTerms);
 
-                user.UpdateLastLogin();
+                user.UpdateLastLogin(EUserType.Citizen);
                 await _userRepository.Update(user);
 
                 return new ResponseApi(true, _localizer["UserAuthenticated"], token);
@@ -167,7 +167,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (result != IdentityResult.Success)
                 throw new BusinessException(_localizer["PasswordOutPattern"]);
 
-            user.UpdateLastLogin();
+            user.UpdateLastLogin(EUserType.Admin);
             await _userRepository.Update(user);
 
             return new ResponseApi(true, _localizer["PasswordChanged"], null);

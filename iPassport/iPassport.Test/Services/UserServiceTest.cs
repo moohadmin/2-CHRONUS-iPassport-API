@@ -279,7 +279,7 @@ namespace iPassport.Test.Services
             // Arrange
             var mockRequest = Guid.NewGuid();
 
-            _mockUserRepository.Setup(x => x.GetLoadedUsersById(It.IsAny<Guid>()).Result)
+            _mockUserRepository.Setup(x => x.GetLoadedCitizenById(It.IsAny<Guid>()).Result)
                 .Returns(UserSeed.GetUsers().FirstOrDefault());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
@@ -288,7 +288,7 @@ namespace iPassport.Test.Services
             var result = _service.GetCitizenById(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.GetLoadedUsersById(It.IsAny<Guid>()));
+            _mockUserRepository.Verify(x => x.GetLoadedCitizenById(It.IsAny<Guid>()));
             _mockRepository.Verify(x => x.GetLoadedUserById(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);

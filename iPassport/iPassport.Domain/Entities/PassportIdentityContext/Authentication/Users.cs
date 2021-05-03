@@ -90,6 +90,8 @@ namespace iPassport.Domain.Entities.Authentication
         public string CNS { get; set; }
         public string PassportDoc { get; set; }
         public DateTime Birthday { get; set; }
+
+        [Obsolete("Deprecieated Must Use UserUserTypes")]
         public DateTime? LastLogin { get; set; }
         /// <summary>
         /// Depreciated must use GenderId
@@ -107,6 +109,8 @@ namespace iPassport.Domain.Entities.Authentication
         public Guid? AddressId { get; set; }
         public string Photo { get; set; }
         public string InternationalDocument { get; set; }
+
+        [Obsolete("Deprecieated Must Use UserUserTypes.UserType.Identifyer")]
         public int UserType { get; set; }
         public Guid? CompanyId { get; set; }
         public DateTime CreateDate { get; set; }
@@ -131,8 +135,8 @@ namespace iPassport.Domain.Entities.Authentication
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
         public bool UserHavePhoto() => !string.IsNullOrWhiteSpace(Photo);
-        public void UpdateLastLogin() => LastLogin = DateTime.UtcNow;
-
+        public void UpdateLastLogin(EUserType userTypeIdentifyer) => UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).UpdateLastLogin();
+        public bool HasLastLogin(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer) && x.LastLogin.HasValue);
         public void AddPhoto(string imageUrl)
         {
             if (string.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
@@ -235,7 +239,6 @@ namespace iPassport.Domain.Entities.Authentication
 
             return user;
         }
-            
 
         public static Users CreateUser(AdminDto dto, Guid userTypeId)
         {
