@@ -83,7 +83,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                 .FirstOrDefaultAsync(x => x.Id == id && x.UserUserTypes.Any(x => x.UserType.Identifyer == (int)EUserType.Admin));
                 
 
-        public async Task<Users> GetLoadedUsersById(Guid id) =>
+        public async Task<Users> GetLoadedCitizenById(Guid id) =>
             await _context.Users
                 .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                 .Include(x => x.Company)
@@ -91,7 +91,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                 .Include(x => x.GGender)
                 .Include(x => x.HumanRace)
                 .Include(x => x.UserUserTypes).ThenInclude(y => y.UserType)
-                .Where(x => x.Id == id).FirstOrDefaultAsync();
+                .Where(x => x.Id == id && x.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen)).FirstOrDefaultAsync();
 
         public async Task<Users> GetByEmail(string email) =>
            await _context.Users
@@ -140,10 +140,10 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             return await GetUserDocument(query, documentType, document).FirstOrDefaultAsync();
         }
 
-        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.UserUserTypes.Any(y => y.UserType.Identifyer == (int)filter.UserType)).CountAsync();
+        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.UserUserTypes.Any(y => y.UserType.Identifyer == filter.UserType)).CountAsync();
 
-        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen && u.LastLogin != null)).CountAsync();
-        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Agent && u.LastLogin != null )).CountAsync();
+        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen && y.LastLogin != null)).CountAsync();
+        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Agent && y.LastLogin != null )).CountAsync();
 
         public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter, AccessControlDTO dto)
         {

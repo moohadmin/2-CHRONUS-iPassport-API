@@ -275,7 +275,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetCitizenById(Guid id)
         {
-            var authUser = await _userRepository.GetLoadedUsersById(id);
+            var authUser = await _userRepository.GetLoadedCitizenById(id);
 
             if (authUser == null)
                 throw new BusinessException(_localizer["UserNotFound"]);

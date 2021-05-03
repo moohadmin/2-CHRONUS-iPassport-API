@@ -135,8 +135,8 @@ namespace iPassport.Domain.Entities.Authentication
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
         public bool UserHavePhoto() => !string.IsNullOrWhiteSpace(Photo);
-        public void UpdateLastLogin() => LastLogin = DateTime.UtcNow;
-
+        public void UpdateLastLogin(EUserType userTypeIdentifyer) => UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).UpdateLastLogin();
+        public bool HasLastLogin(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer) && x.LastLogin.HasValue);
         public void AddPhoto(string imageUrl)
         {
             if (string.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
