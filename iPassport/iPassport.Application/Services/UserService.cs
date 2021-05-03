@@ -1287,23 +1287,28 @@ namespace iPassport.Application.Services
 
         private async Task<string> GenerateAgentUsername(string fullName)
         {
-            var separator = '.';
-
-            var nameList = fullName.Split(" ").ToList();
-            var possibleNames = new List<string>()
-            { 
-                GenerateRandomUsername(nameList) 
-            };
-
-            nameList.ForEach(x => possibleNames.Add($"{nameList.First()}{separator}{x}"));
+            var nameList = fullName.Split(" ").Reverse().ToList();
+            
+            (var firstName, var possibleNames) = GenerateFirstNameAndPossibleNames(nameList);
 
             var namesInDb = await _userRepository.GetUsernamesList(possibleNames);
 
-            possibleNames.Reverse();
-            return SetValidUsername(namesInDb.ToList(), possibleNames, nameList);
+            return SetValidUsername(namesInDb.ToList(), possibleNames, nameList, firstName);
         }
 
-        private string SetValidUsername(IList<string> namesInDb, IList<string> possibleNames, IList<string> nameList)
+        private (string firstName, List<string> possibleNames) GenerateFirstNameAndPossibleNames(List<string> nameList)
+        {
+            var separator = '.';
+            var firstName = nameList.Last();
+            var possibleNames = new List<string>();
+
+            nameList.Remove(firstName);
+            nameList.ForEach(x => possibleNames.Add($"{nameList.First()}{separator}{x}"));
+
+            return (firstName, possibleNames);
+        }
+
+        private string SetValidUsername(IList<string> namesInDb, IList<string> possibleNames, IList<string> nameList, string firstName)
         {
             foreach (var username in possibleNames)
             {
@@ -1311,19 +1316,18 @@ namespace iPassport.Application.Services
                     return username;
             }
 
-            possibleNames.Add(GenerateRandomUsername(nameList));
+            possibleNames.Add(GenerateRandomUsername(nameList.Last(), firstName));
 
-            SetValidUsername(namesInDb, possibleNames, nameList);
-            return string.Empty;
+            return SetValidUsername(namesInDb, possibleNames, nameList, firstName);
         }
 
-        private string GenerateRandomUsername(IList<string> nameList)
+        private string GenerateRandomUsername(string lastName, string firstName)
         {
             var random = new Random();
             var separator = '.';
             var randomNumber = random.Next(0, 9999).ToString("D4");
 
-            return $"{nameList.First()}{separator}{nameList.Last()}{randomNumber}";
+            return $"{firstName}{separator}{lastName}{randomNumber}";
         }
 
         #endregion
