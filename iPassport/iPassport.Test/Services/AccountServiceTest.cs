@@ -172,10 +172,9 @@ namespace iPassport.Test.Services
         {
             var email = "teste";
             var Password = "test";
-            var user = UserSeed.GetUserAdmin();
-            //TODO Keep only user.Deactivate() after refactory admin add
+            var user = UserSeed.GetUserAdmin();            
             user.Deactivate(Guid.NewGuid(),EUserType.Admin);
-            user.UserUserTypes.FirstOrDefault().Deactivate(Guid.NewGuid());
+            
 
             // Arrange
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(user);
