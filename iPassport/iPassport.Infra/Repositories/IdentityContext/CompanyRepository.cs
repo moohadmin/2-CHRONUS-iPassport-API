@@ -122,7 +122,14 @@ namespace iPassport.Infra.Repositories.IdentityContext
                                     && (changedCompanyId == null || x.Id != changedCompanyId.Value)
                                     && x.Cnpj.Substring(0, 8).Equals(cnpj.Substring(0, 8))
                                     );
-        
+
+
+        public async Task<IList<Company>> GetPrivateActiveCompanies(Guid? id)
+            => await _DbSet.Include(x => x.Segment)
+                            .Where(x => (id == null || x.Id == id.Value)
+                                    && x.IsPrivate()
+                                    && x.IsActive())
+                            .ToListAsync();
 
         #region Private
         private IQueryable<Company> GetLoadedHeadquarters(AccessControlDTO accessControl) =>

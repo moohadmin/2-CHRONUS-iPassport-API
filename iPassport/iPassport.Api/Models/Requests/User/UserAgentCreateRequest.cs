@@ -45,7 +45,7 @@ namespace iPassport.Api.Models.Requests.User
         /// <summary>
         /// Company Id
         /// </summary>
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
 
         /// <summary>
         /// Is User Active

@@ -9,7 +9,7 @@ namespace iPassport.Domain.Dtos
         public string Username { get; set; }
         public string Password { get; set; }
         public string Mobile { get; set; }
-        public AddressCreateDto Address { get; set; }
+        public AddressDto Address { get; set; }
         public Guid CompanyId { get; set; }
         public Guid Id { get; set; }
     }

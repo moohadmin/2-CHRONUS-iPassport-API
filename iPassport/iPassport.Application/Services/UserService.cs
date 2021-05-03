@@ -254,15 +254,15 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddAgent(UserAgentDto dto)
         {
-            var company = await _companyRepository.Find(dto.CompanyId);
-            if (company == null)
+            var company = await _companyRepository.GetPrivateActiveCompanies(dto.CompanyId);
+            
+            if (company.FirstOrDefault() == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
-            if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId) == null)
+            if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId.Value) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             var user = new Users().CreateAgent(dto);
-
 
             try
             {
