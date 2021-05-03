@@ -257,17 +257,16 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> AddAgent(UserAgentDto dto)
         {
             var company = await _companyRepository.GetPrivateActiveCompanies(dto.CompanyId);
-            
+
             if (company.FirstOrDefault() == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
             if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId.Value) == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
-            if (!dto.IsActive.GetValueOrDefault())
-                dto.DeactivationUserId = _accessor.GetCurrentUserId();
+            dto.Username = await GenerateAgentUsername(dto.FullName);
 
-            var user = new Users().CreateAgent(dto);
+            var user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Agent)));
 
             try
             {
@@ -342,7 +341,7 @@ namespace iPassport.Application.Services
             AccessControlDTO accessControl = await GetCitizenControlData();
 
             var currentUser = await _userRepository.GetById(dto.Id);
-            
+
             if (currentUser == null)
                 throw new BusinessException(_localizer["CitizenNotFound"]);
 
@@ -365,16 +364,16 @@ namespace iPassport.Application.Services
 
                 if (!(await _detailsRepository.Update(currentUserDetails)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
-                
+
                 var isAdmin = accessControl.Profile == EProfileKey.admin.ToString();
 
                 if (dto.Doses == null && currentUserDetails.UserVaccines.Any(x => !x.ExclusionDate.HasValue))
                 {
-                    if(!isAdmin)
+                    if (!isAdmin)
                         throw new BusinessException(_localizer["OnlyAdminCanDeleteVaccineData"]);
 
                     var toRemove = currentUserDetails.UserVaccines.Where(x => !x.ExclusionDate.HasValue);
-                    
+
                     foreach (var item in toRemove)
                     {
                         item.Delete();
@@ -399,15 +398,15 @@ namespace iPassport.Application.Services
                     {
                         var itemToChange = toChange.FirstOrDefault(x => x.Id == item.Id);
                         var itemChangedDto = dto.Doses.FirstOrDefault(x => x.Id == item.Id);
-                        
+
                         if (itemToChange != null)
                         {
-                            if(!itemToChange.CanEditVaccineFields(accessControl, itemChangedDto))
+                            if (!itemToChange.CanEditVaccineFields(accessControl, itemChangedDto))
                                 throw new BusinessException(_localizer["OnlyAdminCanEditVaccineData"]);
 
                             item.Change(itemChangedDto);
                         }
-                        
+
                         else if (toRemove.Any(x => x.Id == item.Id))
                             item.Delete();
 
@@ -460,7 +459,7 @@ namespace iPassport.Application.Services
             {
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
-                
+
                 throw;
             }
             catch (Exception ex)
@@ -498,8 +497,8 @@ namespace iPassport.Application.Services
 
             if (!dto.IsActive.GetValueOrDefault())
                 dto.DeactivationUserId = _accessor.GetCurrentUserId();
-            
-           Users user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Admin)));
+
+            Users user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Admin)));
 
             try
             {
@@ -703,7 +702,7 @@ namespace iPassport.Application.Services
 
             if (accessControl.Profile == EProfileKey.healthUnit.ToString())
                 accessControl.FilterIds = await _detailsRepository.GetVaccinatedUsersWithHealtUnityById(accessControl.HealthUnityId.GetValueOrDefault());
-            
+
             return accessControl;
         }
 
@@ -763,17 +762,17 @@ namespace iPassport.Application.Services
                 && ((accessControl.CityId.HasValue && accessControl.CityId.Value != city.Id)
                     || (accessControl.StateId.HasValue && accessControl.StateId.Value != city.StateId)
                     || (accessControl.CountryId.HasValue && accessControl.CountryId.Value != city.State.CountryId)))
-                        throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
+                throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
 
             //se perfil unidade de saude
             // - mesma localidade ou vacinado na unidade
             if (accessControl.Profile == EProfileKey.healthUnit.ToString()
                 && ((accessControl.CityId.HasValue && accessControl.CityId.Value != city.Id)
                     && accessControl.HealthUnityId.HasValue && !userDetails.UserVaccines.Any(x => x.HealthUnitId == accessControl.HealthUnityId.Value)))
-                        throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
+                throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
 
             // validar campos permitidos na alteração
-            if(!user.CanEditCitizenFields(citizenEditDto, accessControl) || !userDetails.CanEditCitizenFields(citizenEditDto, accessControl))
+            if (!user.CanEditCitizenFields(citizenEditDto, accessControl) || !userDetails.CanEditCitizenFields(citizenEditDto, accessControl))
                 throw new BusinessException(_localizer["ProfileNotAuthorizedToChangeRegistration"]);
         }
 
@@ -1282,8 +1281,49 @@ namespace iPassport.Application.Services
 
         private void ValidateUserType(Users editedUser, EUserType userTypeIdentifyer)
         {
-            if(!editedUser.HasType(userTypeIdentifyer))
-                throw new BusinessException(string.Format(_localizer["UserNotHaveAccessOfType"],_localizer[userTypeIdentifyer.ToString()]));
+            if (!editedUser.HasType(userTypeIdentifyer))
+                throw new BusinessException(string.Format(_localizer["UserNotHaveAccessOfType"], _localizer[userTypeIdentifyer.ToString()]));
+        }
+
+        private async Task<string> GenerateAgentUsername(string fullName)
+        {
+            var separator = '.';
+
+            var nameList = fullName.Split(" ").ToList();
+            var possibleNames = new List<string>()
+            { 
+                GenerateRandomUsername(nameList) 
+            };
+
+            nameList.ForEach(x => possibleNames.Add($"{nameList.First()}{separator}{x}"));
+
+            var namesInDb = await _userRepository.GetUsernamesList(possibleNames);
+
+            possibleNames.Reverse();
+            return SetValidUsername(namesInDb.ToList(), possibleNames, nameList);
+        }
+
+        private string SetValidUsername(IList<string> namesInDb, IList<string> possibleNames, IList<string> nameList)
+        {
+            foreach (var username in possibleNames)
+            {
+                if (!namesInDb.Any(x => x.ToUpper() == username.ToUpper()))
+                    return username;
+            }
+
+            possibleNames.Add(GenerateRandomUsername(nameList));
+
+            SetValidUsername(namesInDb, possibleNames, nameList);
+            return string.Empty;
+        }
+
+        private string GenerateRandomUsername(IList<string> nameList)
+        {
+            var random = new Random();
+            var separator = '.';
+            var randomNumber = random.Next(0, 9999).ToString("D4");
+
+            return $"{nameList.First()}{separator}{nameList.Last()}{randomNumber}";
         }
 
         #endregion

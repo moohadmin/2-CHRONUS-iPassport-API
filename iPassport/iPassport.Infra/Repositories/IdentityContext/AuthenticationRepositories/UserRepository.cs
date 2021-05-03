@@ -9,6 +9,7 @@ using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -100,10 +101,20 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<Users> GetByUsername(string username)
             =>
-            await _context.Users                
+            await _context.Users
                 .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
                .Where(x => x.NormalizedUserName == username.ToUpper()).FirstOrDefaultAsync();
 
+        public async Task<IEnumerable<string>> GetUsernamesList(IEnumerable<string> usernames)
+        {
+            usernames = usernames.Select(x => x = x.ToUpper());
+
+            return await _context.Users
+                .Where(x => usernames.Contains(x.NormalizedUserName))
+                .Select(x => x.UserName)
+                .ToListAsync();
+
+        }
         public async Task Update(Users user)
         {
             try
