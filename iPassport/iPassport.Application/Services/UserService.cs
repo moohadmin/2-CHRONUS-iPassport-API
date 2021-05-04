@@ -261,10 +261,7 @@ namespace iPassport.Application.Services
             await ValidateAgentRequest(dto);
 
             var currentUser = await _userRepository.GetById(dto.Id);
-            if (currentUser == null)
-                throw new BusinessException(_localizer["AgentNotFound"]);
-
-            if (await _detailsRepository.GetLoadedUserById(dto.Id) == null)
+            if (currentUser == null || await _detailsRepository.GetLoadedUserById(dto.Id) == null)
                 throw new BusinessException(_localizer["AgentNotFound"]);
 
             try
@@ -280,7 +277,6 @@ namespace iPassport.Application.Services
                     await ChangeUserPassword(currentUser, dto.Password);
 
                 await _userRepository.Update(currentUser);
-
 
                 _unitOfWork.CommitIdentity();
                 _unitOfWork.CommitPassport();
@@ -652,15 +648,6 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["UserUpdated"], currentAdminUser.Id);
         }
 
-        private async Task ChangeUserPassword(Users user, string password)
-        {
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var changeResult = await _userManager.ResetPasswordAsync(user, token, password);
-
-            if (!changeResult.Succeeded)
-                throw new BusinessException(_localizer["PasswordChangeError"]);
-        }
-
         public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
         {
             var res = await _userRepository.GetPagedAdmins(filter, _accessor.GetAccessControlDTO());
@@ -743,7 +730,7 @@ namespace iPassport.Application.Services
 
             ValidateAddCitizenPermission(citizenCity);
         }
-
+        
         private async Task ValidateAgentRequest(UserAgentDto dto)
         {
             var company = await _companyRepository.GetPrivateActiveCompanies(dto.CompanyId);
@@ -1397,6 +1384,14 @@ namespace iPassport.Application.Services
 
             if (currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
                 throw new BusinessException(_localizer["UserNotUpdated"]);
+        }
+        private async Task ChangeUserPassword(Users user, string password)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var changeResult = await _userManager.ResetPasswordAsync(user, token, password);
+
+            if (!changeResult.Succeeded)
+                throw new BusinessException(_localizer["PasswordChangeError"]);
         }
 
         #endregion
