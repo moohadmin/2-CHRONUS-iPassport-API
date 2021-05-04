@@ -314,7 +314,7 @@ namespace iPassport.Api.Controllers
         [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> AddAgent([FromBody] UserAgentCreateRequest request)
         {
-            var res = await _service.AddAgent(_mapper.Map<UserAgentCreateDto>(request));
+            var res = await _service.AddAgent(_mapper.Map<UserAgentDto>(request));
             return Ok(res);
         }
 

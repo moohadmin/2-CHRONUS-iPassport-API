@@ -25,5 +25,6 @@ namespace iPassport.Domain.Repositories.PassportIdentityContext
         Task<IList<Company>> GetSubsidiariesCandidatesToStateGovernment(Guid stateId, IEnumerable<Guid> candidates);
         Task<IList<Company>> GetSubsidiariesCandidatesToFederalGovernment(Guid countryId, IEnumerable<Guid> candidates);
         Task<bool> HasActiveHeadquartersWithSameCnpjCompanyIdentifyPart(string cnpj, Guid? changedCompanyId);
+        Task<IList<Company>> GetPrivateActiveCompanies(Guid? id);
     }
 }

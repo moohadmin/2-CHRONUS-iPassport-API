@@ -900,4 +900,10 @@
   <data name="Agents" xml:space="preserve">
     <value>Agentes.</value>
   </data>
+  <data name="CellphoneNumber" xml:space="preserve">
+    <value>Celular</value>
+  </data>
+  <data name="CorporateCellphoneNumber" xml:space="preserve">
+    <value>Celular Corporativo</value>
+  </data>
 </root>
