@@ -372,5 +372,22 @@ namespace iPassport.Test.Controllers
 
         }
 
+        [TestMethod]
+        public void GetAgentById_MustReturnOk()
+        {
+            var mockRequest = Guid.NewGuid();
+
+            // Arrange
+            _mockService.Setup(r => r.GetAgentById(It.IsAny<Guid>()).Result)
+                .Returns(new ResponseApi(true, "test", UserSeed.GetUserDetails()));
+
+            // Act
+            var result = _controller.GetAgentById(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetAgentById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
     }
 }

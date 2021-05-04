@@ -60,7 +60,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             return jwt;
         }
 
-        public async Task<string> GenerateByEmail(Users user, string companyId, string cityId, string stateId, string countryId, string healthUnityId, string isFirstLoginText)
+        public async Task<string> GenerateByEmail(Users user, string companyId, string cityId, string stateId, string countryId, string healthUnityId, string isFirstLoginText, string identifyUserType)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
@@ -77,7 +77,8 @@ namespace iPassport.Application.Services.AuthenticationServices
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_CITY_ID, cityId ?? string.Empty),
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_STATE_ID, stateId ?? string.Empty),
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_COUNTRY_ID, countryId ?? string.Empty),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, healthUnityId ?? string.Empty)
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, healthUnityId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_PROFILE, identifyUserType ?? string.Empty)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

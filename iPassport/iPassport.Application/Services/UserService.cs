@@ -658,6 +658,16 @@ namespace iPassport.Application.Services
                 _mapper.Map<IList<AdminUserViewModel>>(res.Data));
         }
 
+        public async Task<ResponseApi> GetAgentById(Guid id)
+        {
+            var agentUser = await _userRepository.GetAgentById(id);
+
+            if (agentUser == null)
+                return new ResponseApi(true, _localizer["Agent"], null);
+            
+            return new ResponseApi(true, _localizer["Agent"], _mapper.Map<AgentDetailsViewModel>(agentUser));
+        }
+
         #region Private Methods
         private async Task<AccessControlDTO> GetCitizenControlData()
         {
