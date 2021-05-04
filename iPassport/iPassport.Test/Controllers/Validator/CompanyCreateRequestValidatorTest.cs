@@ -316,9 +316,7 @@ namespace iPassport.Test.Controllers.Validator
             Assert.AreEqual(expetedMessage, validationResult.Errors.Single().ErrorMessage);
         }
 
-        [TestMethod]
-        [DataRow("text")]
-        [DataRow("45as55bb")]
+        [TestMethod]        
         [DataRow("43.700-000")]
         [DataRow("-4370000")]
         public void ValidAddressNumber(string number)
