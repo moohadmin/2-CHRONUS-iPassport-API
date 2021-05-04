@@ -161,5 +161,18 @@ namespace iPassport.Test.Seeds
                         Username = "test2"
                     },
                 };
+
+        public static AgentDetailsViewModel GetAgentDetails() =>
+            new AgentDetailsViewModel()
+            {
+                Id = Guid.NewGuid(),                
+                CompleteName = "teste",
+                Cpf = "0000000000",
+                Email = "teste@teste.com",                
+                IsActive = true,
+                CorporateCellphoneNumber = "5571999999999",
+                CellphoneNumber = "5571999999999",
+                CompanyId = Guid.NewGuid()
+            };
     }
 }
