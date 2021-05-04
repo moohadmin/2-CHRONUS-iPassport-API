@@ -283,6 +283,7 @@ namespace iPassport.Application.Services
                 /// Add Details to User in iPassportContext
                 var _userDetails = new UserDetails();
                 var userDetails = _userDetails.Create(dto);
+
                 await _detailsRepository.InsertAsync(userDetails);
 
                 _unitOfWork.CommitIdentity();
