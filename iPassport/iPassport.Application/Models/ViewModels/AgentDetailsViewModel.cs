@@ -9,7 +9,7 @@ namespace iPassport.Application.Models.ViewModels
         public string Username { get; set; }
         public string Cpf { get; set; }
         public string Email { get; set; }
-        public string PersonalCellphoneNumber { get; set; }
+        public string CellphoneNumber { get; set; }
         public string CorporateCellphoneNumber { get; set; }
         public AddressViewModel Address { get; set; }
         public Guid? CompanyId { get; set; }

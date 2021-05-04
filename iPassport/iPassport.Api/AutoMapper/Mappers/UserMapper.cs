@@ -86,7 +86,7 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<Users, AgentDetailsViewModel>()
                 .ForMember(des => des.CompleteName, act => act.MapFrom(src => src.FullName))
-                .ForMember(des => des.PersonalCellphoneNumber, act => act.MapFrom(src => src.PhoneNumber))
+                .ForMember(des => des.CellphoneNumber, act => act.MapFrom(src => src.PhoneNumber))
                 .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive(EUserType.Agent)))
                 .ForMember(des => des.CompanyId, act => act.MapFrom(src => src.CompanyId))
                 .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Company != null ? src.Company.Name : null))
