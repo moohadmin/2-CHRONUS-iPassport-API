@@ -880,7 +880,7 @@
     <value>Tipo de usuário não encontrado. Favor verificar.</value>
   </data>
 	<data name="UserNotHaveAdminAccess" xml:space="preserve">
-    <value> usuário não tem acesso do tipo administrativo.</value>
+    <value>O usuário não tem acesso do tipo administrativo.</value>
   </data>
 	<data name="UserNotHaveCitizenAccess" xml:space="preserve">
     <value>O usuário não tem acesso do tipo cidadão.</value>
