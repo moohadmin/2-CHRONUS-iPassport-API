@@ -24,6 +24,6 @@ namespace iPassport.Domain.Repositories.Authentication
         Task<Users> GetAdminById(Guid id);
         Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter, AccessControlDTO dto);
         Task<Users> GetByUsername(string username);
-        Task<IEnumerable<string>> GetUsernamesList(IEnumerable<string> usernames)
+        Task<IEnumerable<string>> GetUsernamesList(IEnumerable<string> usernames);
     }
 }

@@ -107,7 +107,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
 
         public async Task<IEnumerable<string>> GetUsernamesList(IEnumerable<string> usernames)
         {
-            usernames = usernames.Select(x => x = x.ToUpper());
+            usernames = usernames.Select(x => x.ToUpper());
 
             return await _context.Users
                 .Where(x => usernames.Contains(x.NormalizedUserName))

@@ -127,8 +127,8 @@ namespace iPassport.Infra.Repositories.IdentityContext
         public async Task<IList<Company>> GetPrivateActiveCompanies(Guid? id)
             => await _DbSet.Include(x => x.Segment)
                             .Where(x => (id == null || x.Id == id.Value)
-                                    && x.IsPrivate()
-                                    && x.IsActive())
+                                    && x.Segment.CompanyType.Identifyer == (int)ECompanyType.Private
+                                    && !x.DeactivationDate.HasValue)
                             .ToListAsync();
 
         #region Private

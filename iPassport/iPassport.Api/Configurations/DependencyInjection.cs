@@ -154,7 +154,7 @@ namespace iPassport.Api.Configurations
 
             #region DI Settings
 
-            /// ASP.NET HttpContext dependency
+            // ASP.NET HttpContext dependency
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #endregion

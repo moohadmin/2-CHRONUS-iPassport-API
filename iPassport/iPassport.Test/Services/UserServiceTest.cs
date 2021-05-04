@@ -230,23 +230,36 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        public void AddAgent()
+        [DataRow("test agent")]
+        [DataRow("test agent", "test.agent")]
+        [DataRow("test cerqueira agent", "test.agent")]
+        public void AddAgent(string fullName, string repeatedName = null)
         {
-            var mockRequest = Mock.Of<UserAgentDto>(x => x.Address == Mock.Of<AddressCreateDto>());
+            var mockRequest = Mock.Of<UserAgentDto>(x => x.Address == Mock.Of<AddressDto>(y => y.CityId == Guid.NewGuid()) && x.FullName == fullName);
             var identyResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+
             // Arrange
-            _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
+            if (repeatedName !=null)
+                _mockUserRepository.Setup(x => x.GetUsernamesList(It.IsAny<IList<string>>()).Result).Returns(new List<string>() { repeatedName });
+            else
+                _mockUserRepository.Setup(x => x.GetUsernamesList(It.IsAny<IList<string>>()).Result);
+            
+            
+            _mockCompanyRepository.Setup(x => x.GetPrivateActiveCompanies(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetCompanies());
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(identyResult);
             _mockRepository.Setup(x => x.InsertAsync(It.IsAny<UserDetails>()));
+            _mockUserTypeRepository.Setup(x => x.GetByIdentifier(It.IsAny<int>()).Result).Returns(UserTypeSeed.GetAgent());
+
             // Act
             var result = _service.AddAgent(mockRequest);
 
             // Assert
-            _mockCompanyRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCompanyRepository.Verify(x => x.GetPrivateActiveCompanies(It.IsAny<Guid>()));
             _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
             _mockUserManager.Verify(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()));
             _mockRepository.Verify(x => x.InsertAsync(It.IsAny<UserDetails>()));
+
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(Guid));

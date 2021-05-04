@@ -1303,7 +1303,7 @@ namespace iPassport.Application.Services
             var possibleNames = new List<string>();
 
             nameList.Remove(firstName);
-            nameList.ForEach(x => possibleNames.Add($"{nameList.First()}{separator}{x}"));
+            nameList.ForEach(x => possibleNames.Add($"{firstName}{separator}{x}"));
 
             return (firstName, possibleNames);
         }
