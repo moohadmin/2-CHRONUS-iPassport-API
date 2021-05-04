@@ -18,8 +18,7 @@ namespace iPassport.Infra.Mappings
 
             builder.Property(c => c.Bond);
 
-            builder.Property(c => c.PriorityGroup);
-
+            
             builder.Property(c => c.ImportedFileId);
             
             builder.Property(c => c.WasTestPerformed);
@@ -27,7 +26,7 @@ namespace iPassport.Infra.Mappings
             builder.HasOne(c => c.Plan)
                 .WithMany(p => p.Users);
 
-            builder.HasOne(c => c.PPriorityGroup)
+            builder.HasOne(c => c.PriorityGroup)
                 .WithMany()
                 .HasForeignKey(x => x.PriorityGroupId)
                 .IsRequired(false);

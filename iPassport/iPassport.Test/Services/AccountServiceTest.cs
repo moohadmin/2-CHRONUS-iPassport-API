@@ -290,8 +290,7 @@ namespace iPassport.Test.Services
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
             Assert.AreEqual(_localizer["AddressNotFound"], ex.Message);
-            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
-            //_mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));            
             _mockUserDetailsRepository.Verify(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
             _mockAddressRepository.Verify(x => x.FindFullAddress(It.IsAny<Guid>()));
         }

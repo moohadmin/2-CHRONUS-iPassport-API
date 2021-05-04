@@ -139,7 +139,7 @@ namespace iPassport.Test.Services
             var detailsSeed = UserSeed.GetUserDetails();
 
             // Arrange
-            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.Get(EUserType.Citizen));
 
             // Act
             var result = _service.GetCurrentUser();

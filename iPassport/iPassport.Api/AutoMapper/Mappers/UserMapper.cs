@@ -79,7 +79,7 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<Users, AdminUserViewModel>()
                 .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Company != null ? src.Company.Name : null))
                 .ForMember(des => des.ProfileName, act => act.MapFrom(src => src.Profile != null ? src.Profile.Name : null))
-                .ForMember(des => des.IsActive, act => act.MapFrom(src => !src.DeactivationDate.HasValue))
+                .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive(Domain.Enums.EUserType.Admin)))
                 .ForMember(des => des.CompleteName, act => act.MapFrom(src => src.FullName));
 
             profile.CreateMap<AdminEditRequest, AdminDto>()

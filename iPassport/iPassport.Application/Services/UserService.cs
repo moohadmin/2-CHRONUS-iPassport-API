@@ -136,7 +136,10 @@ namespace iPassport.Application.Services
             if (authUser.IsCitizen())
                 authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
 
+            var userTypeIdentifyer = _accessor.GetCurrentUserTypeIdentifyer();
+
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
+            userDetailsViewModel.LastLogin = !userTypeIdentifyer.HasValue? null : authUser.GetLastLogin(userTypeIdentifyer.Value);
 
             return new ResponseApi(true, "User Loged", userDetailsViewModel);
         }
