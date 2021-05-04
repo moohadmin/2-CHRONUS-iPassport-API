@@ -46,6 +46,8 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<Users, CitizenViewModel>()
                 .ForMember(des => des.Telephone, act => act.MapFrom(src => src.PhoneNumber));
 
+            profile.CreateMap<Users, AgentViewModel>();
+
             profile.CreateMap<CitizenDetailsDto, CitizenDetailsViewModel>();
 
             profile.CreateMap<CitizenEditRequest, CitizenEditDto>()

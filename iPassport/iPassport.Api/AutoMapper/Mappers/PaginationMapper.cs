@@ -38,7 +38,9 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.PassportId));
 
             profile.CreateMap<GetCitzenPagedRequest, GetCitzenPagedFilter>();
-            
+
+            profile.CreateMap<GetAgentPagedRequest, GetAgentPagedFilter>();
+
             profile.CreateMap<GetAdminUserPagedRequest, GetAdminUserPagedFilter>();
 
             profile.CreateMap<GetCompaniesPagedRequest, GetCompaniesPagedFilter>();

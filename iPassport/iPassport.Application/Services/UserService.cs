@@ -213,6 +213,16 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, _localizer["AgentCount"], res);
         }
+        public async Task<PagedResponseApi> GetPagedAgent(GetAgentPagedFilter filter)
+        {
+            AccessControlDTO accessControl = await GetCitizenControlData();
+
+            var res = await _userRepository.GetPagedAgent(filter, accessControl);
+
+            var result = _mapper.Map<IList<AgentViewModel>>(res.Data);
+           
+            return new PagedResponseApi(true, _localizer["Agents"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+        }
 
         public async Task<ResponseApi> AddAgent(UserAgentCreateDto dto)
         {

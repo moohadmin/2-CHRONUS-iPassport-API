@@ -279,6 +279,26 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
+        /// This API is responsible for Get paged list of Agent by name.
+        /// </summary>
+        /// <param name="request">Get Agent Paged Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Paged Aegnt list.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Agent")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business)]
+        public async Task<ActionResult> GetAgentByNameParts([FromQuery] GetAgentPagedRequest request)
+        {
+            var res = await _service.GetPagedAgent(_mapper.Map<GetAgentPagedFilter>(request));
+
+            return Ok(res);
+        }
+        /// <summary>
         /// This API is responsible for Add Agent.
         /// </summary>
         /// <param name="request">Agent Create Request</param>
