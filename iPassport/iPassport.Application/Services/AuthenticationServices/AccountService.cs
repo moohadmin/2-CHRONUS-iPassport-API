@@ -78,7 +78,7 @@ namespace iPassport.Application.Services.AuthenticationServices
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                var token = await _tokenService.GenerateByEmail(user, tokenData.CompanyId, tokenData.CityId, tokenData.StateId, tokenData.CountryId, tokenData.HealthUnityId, (!user.HasLastLogin(EUserType.Admin)).ToString());
+                var token = await _tokenService.GenerateByEmail(user, tokenData.CompanyId, tokenData.CityId, tokenData.StateId, tokenData.CountryId, tokenData.HealthUnityId, (!user.HasLastLogin(EUserType.Admin)).ToString(), ((int)EUserType.Admin).ToString());
 
                 if (token == null)
                     throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
