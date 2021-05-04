@@ -33,6 +33,11 @@ namespace iPassport.Application.Models.ViewModels
         public Guid? CompanyId { get; set; }
 
         /// <summary>
+        /// Citizen Company Name
+        /// </summary>
+        public string CompanyName { get; set; }
+
+        /// <summary>
         /// Address Id
         /// </summary>
         public Guid AddressId { get; set; }
@@ -40,5 +45,10 @@ namespace iPassport.Application.Models.ViewModels
         /// Address
         /// </summary>
         public AddressViewModel Address { get; set; }
+
+        /// <summary>
+        /// IsActive
+        /// </summary>
+        public bool IsActive { get; set; }
     }
 }

@@ -218,12 +218,12 @@ namespace iPassport.Application.Services
         }
         public async Task<PagedResponseApi> GetPagedAgent(GetAgentPagedFilter filter)
         {
-            AccessControlDTO accessControl = await GetCitizenControlData();
+            AccessControlDTO accessControl = _accessor.GetAccessControlDTO();
 
             var res = await _userRepository.GetPagedAgent(filter, accessControl);
 
-            var result = _mapper.Map<IList<AgentViewModel>>(res.Data);
-           
+            var result = _mapper.Map<IList<AgentViewModel>>(res.Data);           
+
             return new PagedResponseApi(true, _localizer["Agents"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
@@ -672,7 +672,7 @@ namespace iPassport.Application.Services
 
             if (accessControl.Profile == EProfileKey.healthUnit.ToString())
                 accessControl.FilterIds = await _detailsRepository.GetVaccinatedUsersWithHealtUnityById(accessControl.HealthUnityId.GetValueOrDefault());
-            
+
             return accessControl;
         }
 

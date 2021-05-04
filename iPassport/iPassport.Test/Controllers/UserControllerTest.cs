@@ -184,6 +184,24 @@ namespace iPassport.Test.Controllers
         }
 
         [TestMethod]
+        public void PaggedUserAgent_MustReturnOk()
+        {
+            var mockrequest = Mock.Of<GetAgentPagedRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.GetPagedAgent(It.IsAny<GetAgentPagedFilter>()).Result)
+                .Returns(UserSeed.GetPagedAgent());
+
+            // Act
+            var result = _controller.GetAgentByNameParts(mockrequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetPagedAgent(It.IsAny<GetAgentPagedFilter>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
         public void GetLoggedAgentCount_MustReturnOk()
         {
             var seed = new Random().Next(99999);
