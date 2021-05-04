@@ -474,5 +474,26 @@ namespace iPassport.Test.Services
             }
             Assert.AreEqual(message, ex.Message);
         }
+
+
+        [TestMethod]
+        public void GetAgentById()
+        {
+            // Arrange
+            var mockRequest = Guid.NewGuid();
+            _mockUserRepository.Setup(x => x.GetAgentById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAdmin());
+            
+
+            // Act
+            var result = _service.GetAgentById(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetAgentById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(AgentDetailsViewModel));
+        }
+
+
     }
 }
