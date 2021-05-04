@@ -127,9 +127,6 @@ namespace iPassport.Domain.Entities.Authentication
             dto.FileName = $"{Id}{extension}";
         }
 
-        public Users CreateAgent(UserAgentCreateDto dto) =>
-            new Users(dto.FullName, dto.CPF, dto.Address != null ? CreateUserAddress(dto.Address) : null, dto.Username, dto.Mobile, dto.CompanyId);
-
         private Address CreateUserAddress(AddressCreateDto dto) =>
             new Address().Create(dto);
 
@@ -138,7 +135,6 @@ namespace iPassport.Domain.Entities.Authentication
 
         public bool IsCitizen() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsCitizen());
         public bool IsInactiveCitizen() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsCitizen() && x.IsInactive());
-
         public bool IsAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin());
         public bool IsInactiveAdminType() => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsAdmin() && x.IsInactive());
 
@@ -230,7 +226,25 @@ namespace iPassport.Domain.Entities.Authentication
 
             return user;
         }
-            
+
+        public static Users CreateUser(UserAgentDto dto, Guid userTypeId)
+        {
+            var user = new Users();
+            user.FullName = dto.FullName;
+            user.CPF = dto.CPF;
+            user.Email = dto.Email;
+            user.PhoneNumber = dto.CellphoneNumber;
+            user.CorporateCellphoneNumber = dto.CorporateCellphoneNumber;
+            user.Address = new Address(dto.Address);
+            user.CompanyId = dto.CompanyId;
+            user.UserName = dto.Username;
+
+            user.AddUserType(userTypeId);
+            if (!dto.IsActive.GetValueOrDefault() && dto.DeactivationUserId.HasValue)
+                user.UserUserTypes.FirstOrDefault().Deactivate(dto.DeactivationUserId.Value);
+
+            return user;
+        }
 
         public void Deactivate(Guid deactivationUserId, EUserType userTypeIdentifyer)
         {

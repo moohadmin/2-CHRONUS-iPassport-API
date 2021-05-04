@@ -81,6 +81,7 @@ namespace iPassport.Domain.Entities
 
         public bool IsActive() => !DeactivationDate.HasValue;
         public bool IsInactive() => DeactivationDate.HasValue;
+        public bool IsPrivate() => Segment.CompanyType.IsPrivate();
         public bool IsPrivateHeadquarters() => IsHeadquarters.GetValueOrDefault() && Segment.CompanyType.IsPrivate();
         public bool BranchCompanyCnpjIsValid(string cnpj)
             => Cnpj.Substring(0, 8) == cnpj.Substring(0, 8);
