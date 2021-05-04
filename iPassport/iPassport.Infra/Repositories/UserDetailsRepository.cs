@@ -22,7 +22,7 @@ namespace iPassport.Infra.Repositories
                         .Include(u => u.UserVaccines).ThenInclude(v => v.HealthUnit).ThenInclude(u => u.Type)
                         .Include(x => x.Plan)
                         .Include(x => x.UserDiseaseTests)
-                        .Include(x => x.PPriorityGroup)
+                        .Include(x => x.PriorityGroup)
                         .Include(x => x.Passport).ThenInclude(x => x.ListPassportDetails)
                         .Include(x => x.ImportedFile)
                         .Where(x => x.Id == id).FirstOrDefaultAsync();

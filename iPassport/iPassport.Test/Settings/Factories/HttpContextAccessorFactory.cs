@@ -31,7 +31,8 @@ namespace iPassport.Test.Settings.Factories
                             new Claim(Constants.TOKEN_CLAIM_CITY_ID, Guid.NewGuid().ToString()),
                             new Claim(Constants.TOKEN_CLAIM_STATE_ID, Guid.NewGuid().ToString()),
                             new Claim(Constants.TOKEN_CLAIM_COUNTRY_ID, Guid.NewGuid().ToString()),
-                            new Claim(Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, Guid.NewGuid().ToString())
+                            new Claim(Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, Guid.NewGuid().ToString()),
+                            new Claim(Constants.TOKEN_CLAIM_PROFILE, 1.ToString())
                         })
                 });
 
