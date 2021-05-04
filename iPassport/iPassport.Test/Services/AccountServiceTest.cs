@@ -420,7 +420,7 @@ namespace iPassport.Test.Services
             var passwordConfirm = "tested";
             var token = "2313214568fds645sfd456fsd456fs654fs65fsd6f5";
             // Arrange
-            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.Get(EUserType.Admin));
             _mockUserManager.Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<Users>()).Result).Returns(token);
             _mockUserManager.Setup(x => x.ResetPasswordAsync(It.IsAny<Users>(),token,passwordConfirm).Result).Returns(IdentityResult.Success);
             
@@ -428,10 +428,33 @@ namespace iPassport.Test.Services
             var result = _service.ResetPassword(password, passwordConfirm);
 
             // Assert
-            _mockUserManager.Verify(x => x.FindByIdAsync(It.IsAny<string>()));
+            _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
             _mockUserManager.Verify(x => x.GeneratePasswordResetTokenAsync(It.IsAny<Users>()));
             _mockUserManager.Verify(x => x.ResetPasswordAsync(It.IsAny<Users>(), token, passwordConfirm));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+        }
+
+        [TestMethod]
+        [DataRow(EUserType.Citizen)]
+        [DataRow(EUserType.Agent)]
+        public void ResetPassword_MustHaveAdminAcess(EUserType userType)
+        {
+
+            // Arrange
+            var password = "tested";
+            var passwordConfirm = "tested";
+            var token = "2313214568fds645sfd456fsd456fs654fs65fsd6f5";
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.Get(userType));
+            _mockUserManager.Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<Users>()).Result).Returns(token);
+            _mockUserManager.Setup(x => x.ResetPasswordAsync(It.IsAny<Users>(), token, passwordConfirm).Result).Returns(IdentityResult.Success);
+
+
+
+            // Assert
+            var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.ResetPassword(password, passwordConfirm)).Result;
+            Assert.AreEqual(_localizer["UserNotHaveAdminAccess"], ex.Message);
+            _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
+
         }
     }
 }
