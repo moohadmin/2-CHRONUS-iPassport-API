@@ -48,7 +48,7 @@ namespace iPassport.Api.Models.Validators.Users
 
             RuleFor(x => x.CellphoneNumber)
                .Must(y => PhoneNumberUtils.ValidMobile(y))
-               .When(y => y != null)
+               .When(y => y.CellphoneNumber != null)
                .WithMessage(string.Format(localizer["InvalidField"], localizer["CellphoneNumber"]));
 
             RuleFor(x => x.CorporateCellphoneNumber)
@@ -58,7 +58,7 @@ namespace iPassport.Api.Models.Validators.Users
 
             RuleFor(x => x.CorporateCellphoneNumber)
                .Must(y => PhoneNumberUtils.ValidMobile(y))
-               .When(y => y != null)
+               .When(y => y.CorporateCellphoneNumber != null)
                .WithMessage(string.Format(localizer["InvalidField"], localizer["CorporateCellphoneNumber"]));
 
             RuleFor(x => x.Password)
