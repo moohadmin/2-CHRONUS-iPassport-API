@@ -39,11 +39,6 @@ namespace iPassport.Domain.Entities
 
         public bool? WasCovidInfected { get; private set; }
         public string Bond { get; private set; }
-        /// <summary>
-        /// Depreciated must use PriorityGroupId
-        /// </summary>
-        public string PriorityGroup { get; private set; }
-
         public Guid? PlanId { get; private set; }
         public Guid? PriorityGroupId { get; private set; }
         public virtual Guid? ImportedFileId { get; set; }
@@ -52,7 +47,7 @@ namespace iPassport.Domain.Entities
 
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }
-        public virtual PriorityGroup PPriorityGroup { get; set; }
+        public virtual PriorityGroup PriorityGroup { get; set; }
 
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
         public virtual IEnumerable<UserDiseaseTest> UserDiseaseTests { get; set; }
