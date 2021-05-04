@@ -24,6 +24,7 @@ namespace iPassport.Domain.Entities
         public bool IsCitizen() => Identifyer == (int)EUserType.Citizen;
         public bool IsAgent() => Identifyer == (int)EUserType.Agent;
         public bool IsType(EUserType userTypeIdentifyer) => Identifyer == (int)userTypeIdentifyer;
+        public bool IsType(int userTypeIdentifyer) => Identifyer == userTypeIdentifyer;
 
     }
 }

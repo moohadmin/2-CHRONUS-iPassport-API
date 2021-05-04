@@ -87,8 +87,8 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             await _context.Users
                 .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                 .Include(x => x.Company)
-                .Include(x => x.BBloodType)
-                .Include(x => x.GGender)
+                .Include(x => x.BloodType)
+                .Include(x => x.Gender)
                 .Include(x => x.HumanRace)
                 .Include(x => x.UserUserTypes).ThenInclude(y => y.UserType)
                 .Where(x => x.Id == id && x.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen)).FirstOrDefaultAsync();
@@ -179,6 +179,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             query = query
                 .Include(x => x.Company)
                 .Include(x => x.Profile)
+                .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
                 .Where(x => x.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Admin)
                     && (filter.CompanyId == null || filter.CompanyId == x.CompanyId)
                     && (filter.ProfileId == null || filter.ProfileId == x.ProfileId)
