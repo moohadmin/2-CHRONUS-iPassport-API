@@ -71,7 +71,7 @@ namespace iPassport.Api.Models.Validators
                 .WithMessage(string.Format(localizer["InvalidField"], "Cep"));
 
             RuleFor(y => y.Number)
-                    .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
+                    .Must(x => Regex.IsMatch(x, "^[0-9a-zA-Z]+$"))
                     .When(x => !string.IsNullOrWhiteSpace(x.Number))
                     .WithMessage(string.Format(localizer["InvalidField"], localizer["Number"]));
 
@@ -107,7 +107,7 @@ namespace iPassport.Api.Models.Validators
                 .WithMessage(string.Format(localizer["InvalidField"], "Cep"));
 
             RuleFor(y => y.Number)
-                    .Must(x => Regex.IsMatch(x, "^[0-9]+$"))
+                    .Must(x => Regex.IsMatch(x, "^[0-9a-zA-Z]+$"))
                     .When(x => !string.IsNullOrWhiteSpace(x.Number))
                     .WithMessage(string.Format(localizer["InvalidField"], localizer["Number"]));
 
