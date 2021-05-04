@@ -31,6 +31,7 @@ namespace iPassport.Api.AutoMapper.Mappers
             .ForMember(des => des.City, act => act.MapFrom(src => src.City != null ? src.City.Name : null))
             .ForMember(des => des.State, act => act.MapFrom(src => src.City != null && src.City.State != null ? src.City.State.Name : null))
             .ForMember(des => des.Country, act => act.MapFrom(src => src.City != null && src.City.State != null && src.City.State.Country != null ? src.City.State.Country.Name : null))
+            .ForMember(des => des.Complement, act => act.MapFrom(src => src.Complement))
             .ForMember(des => des.StateId, opt => {
                 opt.PreCondition(src => (src?.City?.State != null));
                 opt.MapFrom(src => src.City.StateId);

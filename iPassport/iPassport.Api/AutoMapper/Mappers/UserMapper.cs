@@ -6,6 +6,7 @@ using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Entities.Authentication;
 using iPassport.Domain.Filters;
+using iPassport.Domain.Enums;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -77,13 +78,22 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<Users, AdminUserViewModel>()
                 .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Company != null ? src.Company.Name : null))
                 .ForMember(des => des.ProfileName, act => act.MapFrom(src => src.Profile != null ? src.Profile.Name : null))
-                .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive(Domain.Enums.EUserType.Admin)))
+                .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive(EUserType.Admin)))
                 .ForMember(des => des.CompleteName, act => act.MapFrom(src => src.FullName));
 
             profile.CreateMap<AdminEditRequest, AdminDto>()
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.UserId));
 
             profile.CreateMap<Users, UserViewModel>();
+
+            profile.CreateMap<Users, AgentDetailsViewModel>()
+                .ForMember(des => des.CompleteName, act => act.MapFrom(src => src.FullName))
+                .ForMember(des => des.PersonalCellphoneNumber, act => act.MapFrom(src => src.PhoneNumber))
+                .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive(EUserType.Agent)))
+                .ForMember(des => des.CompanyId, act => act.MapFrom(src => src.CompanyId))
+                .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Company != null ? src.Company.Name : null))
+                .ForMember(des => des.Address, act => act.MapFrom(src => src.Address))
+                ;
         }
     }
 }

@@ -27,5 +27,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetAdminById(Guid id);
         Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter);
         Task<ResponseApi> EditAdmin(AdminDto dto);
+        Task<ResponseApi> GetAgentById(Guid id);
     }
 }

@@ -23,5 +23,6 @@ namespace iPassport.Domain.Repositories.Authentication
         Task<Users> GetAdminById(Guid id);
         Task<PagedData<Users>> GetPagedAdmins(GetAdminUserPagedFilter filter, AccessControlDTO dto);
         Task<Users> GetByUsername(string username);
+        Task<Users> GetAgentById(Guid id);
     }
 }

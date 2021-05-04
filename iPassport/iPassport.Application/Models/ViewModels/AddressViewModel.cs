@@ -17,5 +17,6 @@ namespace iPassport.Application.Models.ViewModels
         public string Country { get; set; }
         public string Number { get; set; }
         public string District { get; set; }
+        public string Complement { get; set; }
     }
 }
