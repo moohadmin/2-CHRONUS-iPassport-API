@@ -1297,25 +1297,25 @@ namespace iPassport.Application.Services
 
         private async Task<string> GenerateAgentUsername(string fullName)
         {
-            var nameList = fullName.Split(" ").Reverse().ToList();
+            var nameList = fullName.Split(" ").Select(x => x.ToLower()).Reverse().ToList();
+            var firstName = nameList.Last();
             
-            (var firstName, var possibleNames) = GenerateFirstNameAndPossibleNames(nameList);
+            var possibleNames = GeneratePossibleUsernames(nameList, firstName);
 
             var namesInDb = await _userRepository.GetUsernamesList(possibleNames);
 
             return SetValidUsername(namesInDb.ToList(), possibleNames, nameList, firstName);
         }
 
-        private (string firstName, List<string> possibleNames) GenerateFirstNameAndPossibleNames(List<string> nameList)
+        private List<string> GeneratePossibleUsernames(List<string> nameList, string firstName)
         {
             var separator = '.';
-            var firstName = nameList.Last();
             var possibleNames = new List<string>();
 
             nameList.Remove(firstName);
             nameList.ForEach(x => possibleNames.Add($"{firstName}{separator}{x}"));
 
-            return (firstName, possibleNames);
+            return possibleNames;
         }
 
         private string SetValidUsername(IList<string> namesInDb, IList<string> possibleNames, IList<string> nameList, string firstName)
