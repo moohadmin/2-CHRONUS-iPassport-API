@@ -206,13 +206,13 @@ namespace iPassport.Test.Controllers
             var mockrequest = Mock.Of<UserAgentCreateRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.AddAgent(It.IsAny<UserAgentCreateDto>()));
+            _mockService.Setup(r => r.AddAgent(It.IsAny<UserAgentDto>()));
 
             // Act
             var result = _controller.AddAgent(mockrequest);
 
             // Assert
-            _mockService.Verify(r => r.AddAgent(It.IsAny<UserAgentCreateDto>()));
+            _mockService.Verify(r => r.AddAgent(It.IsAny<UserAgentDto>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
