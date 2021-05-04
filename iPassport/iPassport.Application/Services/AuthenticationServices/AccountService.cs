@@ -49,7 +49,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
-            ValidateUserTypeAllowedToLogin(user, EUserType.Agent);
+            ValidateUserTypeAllowed(user, EUserType.Agent);
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
@@ -103,7 +103,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            ValidateUserTypeAllowedToLogin(user, EUserType.Citizen);
+            ValidateUserTypeAllowed(user, EUserType.Citizen);
 
             await _auth2FactService.ValidPin(user.Id, pin.ToString("0000"));
 
@@ -159,7 +159,9 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (password != passwordConfirm)
                 throw new BusinessException(_localizer["PasswordDifference"]);
 
-            var user = await _userManager.FindByIdAsync(_acessor.GetCurrentUserId().ToString());
+            var user = await _userRepository.GetById(_acessor.GetCurrentUserId());
+            ValidateUserTypeAllowed(user, EUserType.Admin);
+
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var result = await _userManager.ResetPasswordAsync(user, token, passwordConfirm);
@@ -187,7 +189,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             if (user == null)
                 throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
-            ValidateUserTypeAllowedToLogin(user, EUserType.Admin);
+            ValidateUserTypeAllowed(user, EUserType.Admin);
 
             if (user.Profile == null)
                 throw new BusinessException(_localizer["UserAccessProfileNotFound"]);
@@ -252,7 +254,7 @@ namespace iPassport.Application.Services.AuthenticationServices
         private string GetHealthUnityId(UserDetails UserDetails, Profile profile)
             => profile.IsHealthUnit() ? UserDetails.HealthUnitId.ToString() : string.Empty;
 
-        private void ValidateUserTypeAllowedToLogin(Users user, EUserType allowedType)
+        private void ValidateUserTypeAllowed(Users user, EUserType allowedType)
         {
             switch (allowedType)
             {
