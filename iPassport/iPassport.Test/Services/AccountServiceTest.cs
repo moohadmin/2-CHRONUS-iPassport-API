@@ -118,7 +118,7 @@ namespace iPassport.Test.Services
             _mockUserRepository.Setup(x => x.GetByEmail(It.IsAny<string>()).Result).Returns(UserSeed.GetUserAdmin());
             _mockUserDetailsRepository.Setup(x => x.GetWithHealtUnityById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockUserManager.Setup(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(true);
-            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()).Result).Returns(token);
+            _mockTokenService.Setup(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()).Result).Returns(token);
             _mockAddressRepository.Setup(x => x.FindFullAddress(It.IsAny<Guid>()).Result).Returns(new Address());
 
             // Act
@@ -127,7 +127,7 @@ namespace iPassport.Test.Services
             // Assert
             _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
             _mockUserManager.Verify(x => x.CheckPasswordAsync(It.IsAny<Users>(), It.IsAny<string>()));
-            _mockTokenService.Verify(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            _mockTokenService.Verify(x => x.GenerateByEmail(It.IsAny<Users>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
             _mockUserDetailsRepository.Verify(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
             _mockAddressRepository.Verify(x => x.FindFullAddress(It.IsAny<Guid>()));
 
@@ -290,8 +290,7 @@ namespace iPassport.Test.Services
             // Assert
             var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EmailLogin(email, Password)).Result;
             Assert.AreEqual(_localizer["AddressNotFound"], ex.Message);
-            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));
-            //_mockUserDetailsRepository.Setup(x => x.GetByUserId(It.IsAny<Guid>()));
+            _mockUserRepository.Verify(x => x.GetByEmail(It.IsAny<string>()));            
             _mockUserDetailsRepository.Verify(x => x.GetWithHealtUnityById(It.IsAny<Guid>()));
             _mockAddressRepository.Verify(x => x.FindFullAddress(It.IsAny<Guid>()));
         }

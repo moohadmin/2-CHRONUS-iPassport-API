@@ -60,7 +60,7 @@ namespace iPassport.Application.Services.AuthenticationServices
             return jwt;
         }
 
-        public async Task<string> GenerateByEmail(Users user, string CompanyId, string CityId, string StateId, string CountryId, string HealthUnityId)
+        public async Task<string> GenerateByEmail(Users user, string companyId, string cityId, string stateId, string countryId, string healthUnityId, string isFirstLoginText)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(EnvConstants.SECRET_JWT_TOKEN);
@@ -70,14 +70,14 @@ namespace iPassport.Application.Services.AuthenticationServices
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_USER_ID, user.Id.ToString()),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_FIRST_LOGIN, (user.LastLogin == null).ToString()),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_FIRST_LOGIN, isFirstLoginText ?? string.Empty),
                     new Claim(Domain.Utils.Constants.TOKEN_CLAIM_FULL_NAME, user.FullName),
                     new Claim(ClaimTypes.Role, user.Profile?.Key),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_COMPANY_ID, CompanyId ?? string.Empty),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_CITY_ID, CityId ?? string.Empty),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_STATE_ID, StateId ?? string.Empty),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_COUNTRY_ID, CountryId ?? string.Empty),
-                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, HealthUnityId ?? string.Empty)
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_COMPANY_ID, companyId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_CITY_ID, cityId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_STATE_ID, stateId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_COUNTRY_ID, countryId ?? string.Empty),
+                    new Claim(Domain.Utils.Constants.TOKEN_CLAIM_HEALTH_UNITY_ID, healthUnityId ?? string.Empty)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

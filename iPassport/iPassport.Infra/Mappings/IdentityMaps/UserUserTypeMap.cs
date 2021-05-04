@@ -21,6 +21,15 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(p => p.DeactivationDate)
                 .IsRequired(false);
 
+            builder.Property(p => p.LastLogin)
+                .IsRequired(false);
+
+            builder.Property(p => p.CreateDate)
+                .IsRequired(false);
+
+            builder.Property(p => p.UpdateDate)
+                .IsRequired(false);
+
             builder.HasOne(x => x.UserType)
                 .WithMany(x => x.UserUserTypes)
                 .HasForeignKey(x => x.UserTypeId);
@@ -33,7 +42,6 @@ namespace iPassport.Infra.Mappings.IdentityMaps
                 .WithMany()
                 .HasForeignKey(x => x.DeactivationUserId)
                 .IsRequired(false);
-            
         }
     }
 }

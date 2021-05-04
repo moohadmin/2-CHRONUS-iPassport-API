@@ -23,11 +23,11 @@ namespace iPassport.Domain.Dtos
             WasTestPerformed = userDetails.WasTestPerformed;
             Test = userDetails.UserDiseaseTests.Any() ? new UserDiseaseTestDto(userDetails.UserDiseaseTests?.OrderByDescending(x => x.CreateDate).FirstOrDefault()) : null;
             Address = authUser.Address != null ? new AddressDto(authUser.Address) : null;
-            PriorityGroup = userDetails.PPriorityGroup != null ? new PriorityGroupDto(userDetails.PPriorityGroup) : null;
-            BloodType = authUser.BBloodType != null ? new BloodTypeDto(authUser.BBloodType) : null;
+            PriorityGroup = userDetails.PriorityGroup != null ? new PriorityGroupDto(userDetails.PriorityGroup) : null;
+            BloodType = authUser.BloodType != null ? new BloodTypeDto(authUser.BloodType) : null;
             HumanRace = authUser.HumanRace != null ? new HumanRaceDto(authUser.HumanRace) : null;
             Company = authUser.Company != null ? new CompanyDto(authUser.Company) : null;
-            Gender = authUser.GGender != null ? new GenderDto(authUser.GGender) : null;
+            Gender = authUser.Gender != null ? new GenderDto(authUser.Gender) : null;
             Doses = userDetails.UserVaccines != null ? userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.GroupBy(v => new { v.VaccineId })
             .Select(v => new UserVaccineDetailsDto()
             {

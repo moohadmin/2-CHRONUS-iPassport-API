@@ -2,6 +2,7 @@
 using iPassport.Api.Models.Requests;
 using iPassport.Application.Resources;
 using Microsoft.Extensions.Localization;
+using System.Text.RegularExpressions;
 
 namespace iPassport.Api.Models.Validators.Plans
 {
@@ -17,10 +18,13 @@ namespace iPassport.Api.Models.Validators.Plans
         public BasicLoginRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.Username)
-                .SetValidator(new RequiredFieldValidator<string>("Username", localizer));
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Username"]));
+                
 
             RuleFor(s => s.Password)
-                .SetValidator(new RequiredFieldValidator<string>("Password", localizer));
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Password"]));
         }
     }
 }

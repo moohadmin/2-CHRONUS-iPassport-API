@@ -17,7 +17,7 @@ namespace iPassport.Domain.Dtos
             HealthUnit = details?.HealthUnit != null ? new HealthUnitDto(details.HealthUnit) : null;
             Occupation = authUser.Occupation;
             Profile = authUser.Profile != null ? new ProfileDto(authUser.Profile) : null;
-            IsActive = !authUser.DeactivationDate.HasValue;
+            IsActive = !authUser.IsInactiveAdminType();
         }
 
         public Guid Id { get; set; }

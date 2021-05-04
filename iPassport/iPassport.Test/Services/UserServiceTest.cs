@@ -139,7 +139,7 @@ namespace iPassport.Test.Services
             var detailsSeed = UserSeed.GetUserDetails();
 
             // Arrange
-            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.Get(EUserType.Citizen));
 
             // Act
             var result = _service.GetCurrentUser();
@@ -292,7 +292,7 @@ namespace iPassport.Test.Services
             // Arrange
             var mockRequest = Guid.NewGuid();
 
-            _mockUserRepository.Setup(x => x.GetLoadedUsersById(It.IsAny<Guid>()).Result)
+            _mockUserRepository.Setup(x => x.GetLoadedCitizenById(It.IsAny<Guid>()).Result)
                 .Returns(UserSeed.GetUsers().FirstOrDefault());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
@@ -301,7 +301,7 @@ namespace iPassport.Test.Services
             var result = _service.GetCitizenById(mockRequest);
 
             // Assert
-            _mockUserRepository.Verify(x => x.GetLoadedUsersById(It.IsAny<Guid>()));
+            _mockUserRepository.Verify(x => x.GetLoadedCitizenById(It.IsAny<Guid>()));
             _mockRepository.Verify(x => x.GetLoadedUserById(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
@@ -451,7 +451,7 @@ namespace iPassport.Test.Services
                 });
 
             // Act
-            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUser());
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.Get(EUserType.Citizen));
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockAddressRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
             _mockCityRepository.Setup(x => x.FindLoadedById(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());

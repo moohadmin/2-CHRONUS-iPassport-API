@@ -14,7 +14,7 @@ namespace iPassport.Domain.Entities.Authentication
         /// <summary>
         /// User Citizen
         /// </summary>
-        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, Guid? genderId, Guid? humanRaceId, Guid? bloodTypeId, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid? companyId, int userType)
+        public Users(string fullName, string cpf, string rg, string cns, string passportDocument, DateTime birthday, Guid? genderId, Guid? humanRaceId, Guid? bloodTypeId, string occupation, Address address, string photo, string internationalDocument, string userName, string email, string mobile, Guid? companyId)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
@@ -32,29 +32,25 @@ namespace iPassport.Domain.Entities.Authentication
             InternationalDocument = internationalDocument;
             UserName = userName;
             Email = email;
-            PhoneNumber = mobile;
-            UserType = userType;
+            PhoneNumber = mobile;            
             CompanyId = companyId;
             CreateDate = DateTime.UtcNow;
             UpdateDate = DateTime.UtcNow;
 
             if (userName == null)
                 UserName = Id.ToString();
-
-            
         }
         /// <summary>
         /// User Agent
         /// </summary>
-        public Users(string fullName, string cpf, Address address, string userName, string mobile, int userType, Guid? companyId)
+        public Users(string fullName, string cpf, Address address, string userName, string mobile, Guid? companyId)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
             CPF = cpf;
             Address = address;
             UserName = userName;
-            PhoneNumber = mobile;
-            UserType = userType;
+            PhoneNumber = mobile;            
 
             CompanyId = companyId;
             CreateDate = DateTime.UtcNow;
@@ -64,7 +60,7 @@ namespace iPassport.Domain.Entities.Authentication
         /// User Admin
         /// </summary>
         public Users(string fullName, string cpf, string email, string mobile, Guid companyId,
-                        string occupation, Guid? profileId, int userType)
+                        string occupation, Guid? profileId)
         {
             Id = Guid.NewGuid();
             FullName = fullName;
@@ -75,7 +71,7 @@ namespace iPassport.Domain.Entities.Authentication
             Occupation = occupation;
             if (profileId.HasValue)
                 ProfileId = profileId;
-            UserType = userType;
+            
             UserName = Id.ToString();
 
             CreateDate = DateTime.UtcNow;
@@ -90,49 +86,33 @@ namespace iPassport.Domain.Entities.Authentication
         public string CNS { get; set; }
         public string PassportDoc { get; set; }
         public DateTime Birthday { get; set; }
-        public DateTime? LastLogin { get; set; }
-        /// <summary>
-        /// Depreciated must use GenderId
-        /// </summary>
-        public string Gender { get; set; }
-        /// <summary>
-        /// Depreciated must use HumanRaceId
-        /// </summary>
-        public string Breed { get; set; }
-        /// <summary>
-        /// Depreciated must use BloodTypeId
-        /// </summary>
-        public string BloodType { get; set; }
         public string Occupation { get; set; }
         public Guid? AddressId { get; set; }
         public string Photo { get; set; }
-        public string InternationalDocument { get; set; }
-        public int UserType { get; set; }
+        public string InternationalDocument { get; set; }        
         public Guid? CompanyId { get; set; }
         public DateTime CreateDate { get; set; }
         public Guid? HumanRaceId { get; set; }
         public Guid? GenderId { get; set; }
         public Guid? BloodTypeId { get; set; }
-        public Guid? ProfileId { get; set; }
-        public DateTime? DeactivationDate { get; set; }
-        public Guid? DeactivationUserId { get; set; }
+        public Guid? ProfileId { get; set; }        
         public string CorporateCellphoneNumber { get; set; }
 
         public Address Address { get; set; }
         public Company Company { get; set; }
         public HumanRace HumanRace { get; set; }
-        public Gender GGender { get; set; }
-        public BloodType BBloodType { get; set; }
+        public Gender Gender { get; set; }
+        public BloodType BloodType { get; set; }
         public Profile Profile { get; set; }
-        public Users DeactivationUser { get; set; }
-
+        
         public virtual IList<UserUserType> UserUserTypes { get; set; }
 
         public void SetAcceptTerms(bool acceptTerms) => AcceptTerms = acceptTerms;
         public void SetUpdateDate() => UpdateDate = DateTime.UtcNow;
         public bool UserHavePhoto() => !string.IsNullOrWhiteSpace(Photo);
-        public void UpdateLastLogin() => LastLogin = DateTime.UtcNow;
-
+        public void UpdateLastLogin(EUserType userTypeIdentifyer) => UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).UpdateLastLogin();
+        public bool HasLastLogin(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer) && x.LastLogin.HasValue);
+        public DateTime? GetLastLogin(int userTypeIdentifyer) => UserUserTypes.FirstOrDefault(x => x.UserType.IsType(userTypeIdentifyer)).LastLogin;
         public void AddPhoto(string imageUrl)
         {
             if (string.IsNullOrWhiteSpace(Photo) && !string.IsNullOrWhiteSpace(imageUrl))
@@ -147,6 +127,9 @@ namespace iPassport.Domain.Entities.Authentication
             dto.FileName = $"{Id}{extension}";
         }
 
+        public Users CreateAgent(UserAgentCreateDto dto) =>
+            new Users(dto.FullName, dto.CPF, dto.Address != null ? CreateUserAddress(dto.Address) : null, dto.Username, dto.Mobile, dto.CompanyId);
+
         private Address CreateUserAddress(AddressCreateDto dto) =>
             new Address().Create(dto);
 
@@ -160,25 +143,30 @@ namespace iPassport.Domain.Entities.Authentication
 
         public bool HasType(EUserType userTypeIdentifyer) => UserUserTypes != null && UserUserTypes.Any(x => x.UserType.IsType(userTypeIdentifyer));
 
-        public Users CreateCitizen(CitizenCreateDto dto)
-        => new Users(dto.CompleteName,
-                dto.Cpf,
-                dto.Rg,
-                dto.Cns,
-                null,
-                dto.Birthday,
-                dto.GenderId,
-                dto.HumanRaceId,
-                dto.BloodTypeId,
-                dto.Occupation,
-                CreateUserAddress(dto.Address),
-                null,
-                null,
-                null,
-                dto.Email,
-                dto.Telephone,
-                dto.CompanyId,
-                (int)EUserType.Citizen);
+        public Users CreateUser(CitizenCreateDto dto, Guid userTypeId)
+        {
+            var user = new Users(dto.CompleteName,
+                                dto.Cpf,
+                                dto.Rg,
+                                dto.Cns,
+                                null,
+                                dto.Birthday,
+                                dto.GenderId,
+                                dto.HumanRaceId,
+                                dto.BloodTypeId,
+                                dto.Occupation,
+                                CreateUserAddress(dto.Address),
+                                null,
+                                null,
+                                null,
+                                dto.Email,
+                                dto.Telephone,
+                                dto.CompanyId);
+
+            user.AddUserType(userTypeId);
+
+            return user;
+        }
 
         public void ChangeCitizen(CitizenEditDto dto)
         {
@@ -200,25 +188,30 @@ namespace iPassport.Domain.Entities.Authentication
                 Address.ChangeAddress(dto.Address);
         }
 
-        public static Users CreateCitizen(UserImportDto dto)
-            => new(dto.FullName,
-                    dto.Cpf,
-                    null,
-                    dto.Cns,
-                    null,
-                    dto.Birthday,
-                    dto.GenderId,
-                    dto.HumanRaceId,
-                    dto.BloodTypeId,
-                    dto.Occupation,
-                    new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District),
-                    null,
-                    null,
-                    null,
-                    dto.Email,
-                    string.Concat(dto.CountryCode, dto.PhoneNumber),
-                    dto.CompanyId,
-                    (int)EUserType.Citizen);
+        public static Users CreateUser(UserImportDto dto, Guid userTypeId)
+        {
+            var user = new Users(dto.FullName,
+                        dto.Cpf,
+                        null,
+                        dto.Cns,
+                        null,
+                        dto.Birthday,
+                        dto.GenderId,
+                        dto.HumanRaceId,
+                        dto.BloodTypeId,
+                        dto.Occupation,
+                        new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District),
+                        null,
+                        null,
+                        null,
+                        dto.Email,
+                        string.Concat(dto.CountryCode, dto.PhoneNumber),
+                        dto.CompanyId);
+
+            user.AddUserType(userTypeId);
+
+            return user;
+        }
 
         public static Users CreateUser(AdminDto dto, Guid userTypeId)
         {
@@ -228,8 +221,7 @@ namespace iPassport.Domain.Entities.Authentication
                 , dto.Telephone
                 , dto.CompanyId.Value
                 , dto.Occupation
-                , dto.ProfileId
-                , (int)EUserType.Admin);
+                , dto.ProfileId);
 
             user.AddUserType(userTypeId);
             if(!dto.IsActive.GetValueOrDefault() && dto.DeactivationUserId.HasValue)

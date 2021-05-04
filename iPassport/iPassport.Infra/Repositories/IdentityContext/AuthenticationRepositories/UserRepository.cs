@@ -80,16 +80,19 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             await _context.Users
                 .Include(x => x.Profile)
                 .Include(x => x.Company)
-                .FirstOrDefaultAsync(x => x.Id == id && x.UserType == (int)EUserType.Admin);
+                .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
+                .FirstOrDefaultAsync(x => x.Id == id && x.UserUserTypes.Any(x => x.UserType.Identifyer == (int)EUserType.Admin));
+                
 
-        public async Task<Users> GetLoadedUsersById(Guid id) =>
+        public async Task<Users> GetLoadedCitizenById(Guid id) =>
             await _context.Users
                 .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                 .Include(x => x.Company)
-                .Include(x => x.BBloodType)
-                .Include(x => x.GGender)
+                .Include(x => x.BloodType)
+                .Include(x => x.Gender)
                 .Include(x => x.HumanRace)
-                .Where(x => x.Id == id).FirstOrDefaultAsync();
+                .Include(x => x.UserUserTypes).ThenInclude(y => y.UserType)
+                .Where(x => x.Id == id && x.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen)).FirstOrDefaultAsync();
 
         public async Task<Users> GetByEmail(string email) =>
            await _context.Users
@@ -148,10 +151,10 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             return await GetUserDocument(query, documentType, document).FirstOrDefaultAsync();
         }
 
-        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.UserType == (int)filter.UserType).CountAsync();
+        public async Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter) => await _context.Users.Where(x => x.UserUserTypes.Any(y => y.UserType.Identifyer == filter.UserType)).CountAsync();
 
-        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserType == (int)EUserType.Citizen && u.LastLogin != null).CountAsync();
-        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserType == (int)EUserType.Agent && u.LastLogin != null).CountAsync();
+        public async Task<int> GetLoggedCitzenCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen && y.LastLogin != null)).CountAsync();
+        public async Task<int> GetLoggedAgentCount() => await _context.Users.Where(u => u.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Agent && y.LastLogin != null )).CountAsync();
 
         public async Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter, AccessControlDTO dto)
         {
@@ -172,7 +175,7 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             if (filter.CountryId.HasValue)
                 query = query.Where(x => x.Address.City.State.CountryId == filter.CountryId);
 
-            query = query.Where(m => m.UserType == (int)EUserType.Citizen
+            query = query.Where(m => m.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Citizen)
                               && (string.IsNullOrWhiteSpace(filter.Initials) || m.FullName.ToLower().Contains(filter.Initials.ToLower()))
                               && (string.IsNullOrWhiteSpace(filter.Telephone) || m.PhoneNumber.ToLower().Contains(filter.Telephone.ToLower())))
                       .OrderBy(m => m.FullName);
@@ -187,7 +190,8 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             query = query
                 .Include(x => x.Company)
                 .Include(x => x.Profile)
-                .Where(x => x.UserType == (int)EUserType.Admin
+                .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
+                .Where(x => x.UserUserTypes.Any(y => y.UserType.Identifyer == (int)EUserType.Admin)
                     && (filter.CompanyId == null || filter.CompanyId == x.CompanyId)
                     && (filter.ProfileId == null || filter.ProfileId == x.ProfileId)
                     && (filter.Cpf == null || filter.Cpf == x.CPF)

@@ -79,5 +79,21 @@ namespace iPassport.Application.Extensions
 
             return result;
         }
+
+        public static int? GetCurrentUserTypeIdentifyer(this IHttpContextAccessor context)
+        {
+            var claimValue = context.HttpContext.User.FindFirst(Constants.TOKEN_CLAIM_PROFILE);
+
+            if (claimValue == null)
+                throw new BusinessException(string.Format("{0} não encontrado", Constants.TOKEN_CLAIM_PROFILE));
+
+            if (string.IsNullOrWhiteSpace(claimValue.Value))
+                return null;
+
+            if (!int.TryParse(claimValue.Value, out int result))
+                throw new BusinessException(string.Format("{0} inválido", Constants.TOKEN_CLAIM_PROFILE));
+
+            return result;
+        }
     }
 }

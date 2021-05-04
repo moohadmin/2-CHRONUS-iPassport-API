@@ -30,8 +30,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.UserType, act => act.MapFrom(src => src.ProfileType));
 
             profile.CreateMap<Users, UserDetailsViewModel>()
-                .ForMember(des => des.UserId, act => act.MapFrom(src => src.Id))
-                .ForMember(des => des.Profile, act => act.MapFrom(src => src.UserType));
+                .ForMember(des => des.UserId, act => act.MapFrom(src => src.Id));
 
             profile.CreateMap<UserAgentCreateRequest, UserAgentDto>()
                 .ForMember(des => des.Password, act => act.MapFrom(src => src.Password))
@@ -76,7 +75,7 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<Users, AdminUserViewModel>()
                 .ForMember(des => des.CompanyName, act => act.MapFrom(src => src.Company != null ? src.Company.Name : null))
                 .ForMember(des => des.ProfileName, act => act.MapFrom(src => src.Profile != null ? src.Profile.Name : null))
-                .ForMember(des => des.IsActive, act => act.MapFrom(src => !src.DeactivationDate.HasValue))
+                .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive(Domain.Enums.EUserType.Admin)))
                 .ForMember(des => des.CompleteName, act => act.MapFrom(src => src.FullName));
 
             profile.CreateMap<AdminEditRequest, AdminDto>()

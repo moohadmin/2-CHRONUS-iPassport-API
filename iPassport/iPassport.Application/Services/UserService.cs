@@ -92,49 +92,9 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
         {
-            var user = new Users().CreateCitizen(dto);
+            await ValidateAddCitizen(dto);
 
-            if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
-                throw new BusinessException(_localizer["CompanyNotFound"]);
-
-            if (dto.GenderId.HasValue && await _genderRepository.Find(dto.GenderId.Value) == null)
-                throw new BusinessException(_localizer["GenderNotFound"]);
-
-            if (dto.BloodTypeId.HasValue && await _bloodTypeRepository.Find(dto.BloodTypeId.Value) == null)
-                throw new BusinessException(_localizer["BloodTypeNotFound"]);
-
-            if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
-                throw new BusinessException(_localizer["HumanRaceNotFound"]);
-
-            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
-                throw new BusinessException(_localizer["PriorityGroupNotFound"]);
-
-            var citizenCity = await _cityRepository.FindLoadedById(dto.Address.CityId);
-
-            if (dto.Address == null || citizenCity == null)
-                throw new BusinessException(_localizer["CityNotFound"]);
-
-            if (dto.Test != null && dto.Test.IsEmpty())
-                throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
-
-            if (dto.Doses != null && dto.Doses.Any())
-            {
-                if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
-                    throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
-
-                ValidateVaccineDates(dto.Doses);
-
-                foreach (var item in dto.Doses)
-                {
-                    if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
-                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
-
-                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
-                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
-                }
-            }
-
-            ValidateAddCitizenPermission(citizenCity);
+            var user = new Users().CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen)));
 
             try
             {
@@ -176,7 +136,10 @@ namespace iPassport.Application.Services
             if (authUser.IsCitizen())
                 authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
 
+            var userTypeIdentifyer = _accessor.GetCurrentUserTypeIdentifyer();
+
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
+            userDetailsViewModel.LastLogin = !userTypeIdentifyer.HasValue? null : authUser.GetLastLogin(userTypeIdentifyer.Value);
 
             return new ResponseApi(true, "User Loged", userDetailsViewModel);
         }
@@ -318,7 +281,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetCitizenById(Guid id)
         {
-            var authUser = await _userRepository.GetLoadedUsersById(id);
+            var authUser = await _userRepository.GetLoadedCitizenById(id);
 
             if (authUser == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
@@ -491,7 +454,6 @@ namespace iPassport.Application.Services
                     throw new BusinessException(_localizer["VaccineNextDoseDateCannoteBeLowerToPrevious"]);
             });
         }
-
         public async Task<ResponseApi> AddAdmin(AdminDto dto)
         {
             await ValidateToSaveAdmin(dto);
@@ -547,7 +509,7 @@ namespace iPassport.Application.Services
 
             var validData = fileData.Where(f => f.IsValid).ToList();
             await GetComplementaryDatForUserImport(validData, importedFile);
-
+            var citizenUserTypeId = await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen);
             foreach (var data in validData.Where(d => d.IsValid))
             {
                 _unitOfWork.BeginTransactionIdentity();
@@ -555,7 +517,7 @@ namespace iPassport.Application.Services
 
                 try
                 {
-                    Users user = Users.CreateCitizen(data.Result);
+                    Users user = Users.CreateUser(data.Result, citizenUserTypeId);
 
                     // Add User in iPassportIdentityContext
                     var result = await _userManager.CreateAsync(user);
@@ -707,8 +669,55 @@ namespace iPassport.Application.Services
             return accessControl;
         }
 
+        private async Task ValidateAddCitizen(CitizenCreateDto dto)
+        {
+            if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            if (dto.GenderId.HasValue && await _genderRepository.Find(dto.GenderId.Value) == null)
+                throw new BusinessException(_localizer["GenderNotFound"]);
+
+            if (dto.BloodTypeId.HasValue && await _bloodTypeRepository.Find(dto.BloodTypeId.Value) == null)
+                throw new BusinessException(_localizer["BloodTypeNotFound"]);
+
+            if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
+                throw new BusinessException(_localizer["HumanRaceNotFound"]);
+
+            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
+                throw new BusinessException(_localizer["PriorityGroupNotFound"]);
+
+            var citizenCity = await _cityRepository.FindLoadedById(dto.Address.CityId);
+
+            if (dto.Address == null || citizenCity == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            if (dto.Test != null && dto.Test.IsEmpty())
+                throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
+
+            if (dto.Doses != null && dto.Doses.Any())
+            {
+                if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
+                    throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+
+                ValidateVaccineDates(dto.Doses);
+
+                foreach (var item in dto.Doses)
+                {
+                    if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
+                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
+
+                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
+                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
+                }
+            }
+
+            ValidateAddCitizenPermission(citizenCity);
+        }
+
         private async Task ValidateEditCitizen(CitizenEditDto dto, AccessControlDTO accessControl, UserDetails userDetails, Users user)
         {
+            ValidateUserType(user, EUserType.Citizen);
+
             if (dto.Address == null || await _addressRepository.Find(dto.Address.Id) == null)
                 throw new BusinessException(_localizer["AddressNotFound"]);
 

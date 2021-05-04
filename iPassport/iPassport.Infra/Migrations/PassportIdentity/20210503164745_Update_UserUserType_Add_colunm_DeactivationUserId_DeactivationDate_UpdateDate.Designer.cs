@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations.PassportIdentity
 {
     [DbContext(typeof(PassportIdentityContext))]
-    partial class PassportIdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20210503164745_Update_UserUserType_Add_colunm_DeactivationUserId_DeactivationDate_UpdateDate")]
+    partial class Update_UserUserType_Add_colunm_DeactivationUserId_DeactivationDate_UpdateDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,8 +240,14 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<DateTime>("Birthday")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("BloodType")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("BloodTypeId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Breed")
+                        .HasColumnType("text");
 
                     b.Property<string>("CNS")
                         .HasColumnType("text");
@@ -260,6 +268,12 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<DateTime?>("DeactivationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeactivationUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -270,6 +284,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                     b.Property<string>("FullName")
                         .HasColumnType("text");
 
+                    b.Property<string>("Gender")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("GenderId")
                         .HasColumnType("uuid");
 
@@ -278,6 +295,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
 
                     b.Property<string>("InternationalDocument")
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -330,6 +350,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<int>("UserType")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
@@ -343,6 +366,8 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .IsUnique();
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("DeactivationUserId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -848,7 +873,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .WithMany()
                         .HasForeignKey("AddressId");
 
-                    b.HasOne("iPassport.Domain.Entities.BloodType", "BloodType")
+                    b.HasOne("iPassport.Domain.Entities.BloodType", "BBloodType")
                         .WithMany()
                         .HasForeignKey("BloodTypeId");
 
@@ -856,7 +881,11 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                         .WithMany()
                         .HasForeignKey("CompanyId");
 
-                    b.HasOne("iPassport.Domain.Entities.Gender", "Gender")
+                    b.HasOne("iPassport.Domain.Entities.Authentication.Users", "DeactivationUser")
+                        .WithMany()
+                        .HasForeignKey("DeactivationUserId");
+
+                    b.HasOne("iPassport.Domain.Entities.Gender", "GGender")
                         .WithMany()
                         .HasForeignKey("GenderId");
 
@@ -870,11 +899,13 @@ namespace iPassport.Infra.Migrations.PassportIdentity
 
                     b.Navigation("Address");
 
-                    b.Navigation("BloodType");
+                    b.Navigation("BBloodType");
 
                     b.Navigation("Company");
 
-                    b.Navigation("Gender");
+                    b.Navigation("DeactivationUser");
+
+                    b.Navigation("GGender");
 
                     b.Navigation("HumanRace");
 

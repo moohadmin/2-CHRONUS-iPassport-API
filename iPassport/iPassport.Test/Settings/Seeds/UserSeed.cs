@@ -30,11 +30,11 @@ namespace iPassport.Test.Seeds
             };
 
         public static Users GetUser() =>
-            new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 1);
+            new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid());
 
         public static Users Get(EUserType userType)
         {
-            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
+            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid());
             user.UserUserTypes = new List<UserUserType>()
             {
                 new UserUserType(){ UserType = UserTypeSeed.Get(userType) }
@@ -44,7 +44,7 @@ namespace iPassport.Test.Seeds
 
         public static Users GetUserAgent()
         {
-            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
+            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid());
             user.UserUserTypes = new List<UserUserType>()
             {
                 new UserUserType(){ UserType = UserTypeSeed.GetAgent() }
@@ -54,7 +54,7 @@ namespace iPassport.Test.Seeds
 
         public static Users GetUserCitizen()
         {
-            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2);
+            var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid());
             user.UserUserTypes = new List<UserUserType>()
             {
                 new UserUserType(){ UserType = UserTypeSeed.GetCitizen() }
@@ -64,7 +64,7 @@ namespace iPassport.Test.Seeds
 
         public static Users GetUserAdmin()
         {
-            var user = new Users("test", "test", "test", "test", Guid.NewGuid(), "Test", Guid.NewGuid(), 0);
+            var user = new Users("test", "test", "test", "test", Guid.NewGuid(), "Test", Guid.NewGuid());
             user.Profile = new("Administrativo", "admin");
             user.Company = CompanySeed.Get();            
             user.UserUserTypes = new List<UserUserType>()
@@ -79,8 +79,8 @@ namespace iPassport.Test.Seeds
         {
             return new List<Users>()
             {
-                new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 2),
-                new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid(), 1)
+                new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid()),
+                new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid())
 
             };
         }
