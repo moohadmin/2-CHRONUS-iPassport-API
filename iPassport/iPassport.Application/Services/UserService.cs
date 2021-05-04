@@ -219,13 +219,7 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> AddAgent(UserAgentDto dto)
         {
-            var company = await _companyRepository.GetPrivateActiveCompanies(dto.CompanyId);
-
-            if (company.FirstOrDefault() == null)
-                throw new BusinessException(_localizer["CompanyNotFound"]);
-
-            if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId.Value) == null)
-                throw new BusinessException(_localizer["CityNotFound"]);
+            await ValidateAgentRequest(dto);
 
             dto.Username = await GenerateAgentUsername(dto.FullName);
 
@@ -260,6 +254,45 @@ namespace iPassport.Application.Services
                 VerifyUniqueKeyErrors(ex);
             }
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
+        }
+
+        public async Task<ResponseApi> EditAgent(UserAgentDto dto)
+        {
+            await ValidateAgentRequest(dto);
+
+            var currentUser = await _userRepository.GetById(dto.Id);
+            if (currentUser == null)
+                throw new BusinessException(_localizer["AgentNotFound"]);
+
+            if (await _detailsRepository.GetLoadedUserById(dto.Id) == null)
+                throw new BusinessException(_localizer["AgentNotFound"]);
+
+            try
+            {
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
+                currentUser.ChangeAgent(dto);
+
+                await ChangeUserActivationStatus(dto.IsActive, currentUser, EUserType.Agent);
+
+                if (!string.IsNullOrEmpty(dto.Password))
+                    await ChangeUserPassword(currentUser, dto.Password);
+
+                await _userRepository.Update(currentUser);
+
+
+                _unitOfWork.CommitIdentity();
+                _unitOfWork.CommitPassport();
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                VerifyUniqueKeyErrors(ex);
+            }
+            return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
         }
 
         public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
@@ -586,24 +619,14 @@ namespace iPassport.Application.Services
 
             ValidateUserType(currentAdminUser, EUserType.Admin);
 
-            UserToken currentUserActiveToken = null;
-            if (!dto.IsActive.GetValueOrDefault() && currentAdminUser.IsActive(EUserType.Admin))
-            {
-                currentAdminUser.Deactivate(_accessor.GetCurrentUserId(), EUserType.Admin);
-
-                currentUserActiveToken = await _userTokenRepository.GetActive(currentAdminUser.Id);
-                currentUserActiveToken?.Deactivate();
-            }
-
-            if (dto.IsActive.GetValueOrDefault() && currentAdminUser.IsInactive(EUserType.Admin))
-                currentAdminUser.Activate(EUserType.Admin);
-
             try
             {
                 _unitOfWork.BeginTransactionIdentity();
                 _unitOfWork.BeginTransactionPassport();
 
                 var result = await _userManager.UpdateAsync(currentAdminUser);
+            
+                await ChangeUserActivationStatus(dto.IsActive, currentAdminUser, EUserType.Admin);
 
                 if (!string.IsNullOrEmpty(dto.Password))
                     await ChangeUserPassword(currentAdminUser, dto.Password);
@@ -611,9 +634,6 @@ namespace iPassport.Application.Services
                 ValidateSaveUserIdentityResult(result);
 
                 if (!(await _detailsRepository.Update(currentAdminUserDetails)))
-                    throw new BusinessException(_localizer["UserNotUpdated"]);
-
-                if (currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
 
                 _unitOfWork.CommitIdentity();
@@ -722,6 +742,17 @@ namespace iPassport.Application.Services
             }
 
             ValidateAddCitizenPermission(citizenCity);
+        }
+
+        private async Task ValidateAgentRequest(UserAgentDto dto)
+        {
+            var company = await _companyRepository.GetPrivateActiveCompanies(dto.CompanyId);
+
+            if (company.FirstOrDefault() == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId.Value) == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
         }
 
         private async Task ValidateEditCitizen(CitizenEditDto dto, AccessControlDTO accessControl, UserDetails userDetails, Users user)
@@ -1348,6 +1379,24 @@ namespace iPassport.Application.Services
             var randomNumber = random.Next(0, 9999).ToString("D4");
 
             return $"{firstName}{separator}{lastName}{randomNumber}";
+        }
+
+        private async Task ChangeUserActivationStatus(bool? isActive, Users currentUser, EUserType type)
+        {
+            UserToken currentUserActiveToken = null;
+            if (!isActive.GetValueOrDefault() && currentUser.IsActive(type))
+            {
+                currentUser.Deactivate(_accessor.GetCurrentUserId(), type);
+
+                currentUserActiveToken = await _userTokenRepository.GetActive(currentUser.Id);
+                currentUserActiveToken?.Deactivate();
+            }
+
+            if (isActive.GetValueOrDefault() && currentUser.IsInactive(type))
+                currentUser.Activate(type);
+
+            if (currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
+                throw new BusinessException(_localizer["UserNotUpdated"]);
         }
 
         #endregion

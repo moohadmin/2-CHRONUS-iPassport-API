@@ -75,6 +75,7 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.District, act => act.MapFrom(src => src.District));
 
             profile.CreateMap<AddressCreateRequest, AddressDto>();
+            profile.CreateMap<AddressEditRequest, AddressDto>();
         }
     }
 }

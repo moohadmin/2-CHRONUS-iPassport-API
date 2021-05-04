@@ -47,5 +47,14 @@ namespace iPassport.Domain.Entities
             Number = dto.Number;
             District = dto.District;
         }
+
+        public void ChangeAddress(AddressDto dto)
+        {
+            Description = dto.Description;
+            Cep = dto.Cep;
+            CityId = dto.CityId.Value;
+            Number = dto.Number;
+            District = dto.District;
+        }
     }
 }
