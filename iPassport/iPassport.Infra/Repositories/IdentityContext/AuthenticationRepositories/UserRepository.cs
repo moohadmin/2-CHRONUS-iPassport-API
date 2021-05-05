@@ -240,6 +240,14 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
             return await Paginate(query, filter);
         }
 
+        public async Task<Users> GetAgentById(Guid id) =>
+            await _context.Users                
+                .Include(x => x.Company)
+                .Include(x => x.UserUserTypes).ThenInclude(x => x.UserType)
+                .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
+                .FirstOrDefaultAsync(x => x.Id == id && x.UserUserTypes.Any(x => x.UserType.Identifyer == (int)EUserType.Agent));
+
+
         protected virtual async Task<PagedData<Users>> Paginate(IQueryable<Users> dbSet, PageFilter filter)
         {
             (int take, int skip) = CalcPageOffset(filter);

@@ -88,7 +88,7 @@ namespace iPassport.Test.Services
 
             _service = new UserService(_mockUserRepository.Object, _mockRepository.Object, _planMockRepository.Object, _mapper, _accessor, _mockUserManager.Object, _externalStorageService.Object, ResourceFactory.GetStringLocalizer(), _mockCompanyRepository.Object, _mockCityRepository.Object, _mockVaccineRepository.Object,
                 _mockGenderRepository.Object, _mockBloodTypeRepository.Object, _mockHumanRaceRepository.Object, _mockPriorityGroupRepository.Object, _mockHealthUnitRepository.Object,
-                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object, 
+                _mockUserVaccineRepository.Object, _mockUserDiseaseTestRepository.Object, _mockAddressRepository.Object, _mockUnitOfWork.Object, _mockImportedFileRepository.Object,
                 _mockProfileRepository.Object, _mockUserTokenRepository.Object, _mockUserTypeRepository.Object);
         }
 
@@ -257,12 +257,12 @@ namespace iPassport.Test.Services
             var identyResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
 
             // Arrange
-            if (repeatedName !=null)
+            if (repeatedName != null)
                 _mockUserRepository.Setup(x => x.GetUsernamesList(It.IsAny<IList<string>>()).Result).Returns(new List<string>() { repeatedName });
             else
                 _mockUserRepository.Setup(x => x.GetUsernamesList(It.IsAny<IList<string>>()).Result);
-            
-            
+
+
             _mockCompanyRepository.Setup(x => x.GetPrivateActiveCompanies(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetCompanies());
             _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
             _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(identyResult);
@@ -281,6 +281,71 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(Guid));
+        }
+
+        [TestMethod]
+        public void EditAgent()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<UserAgentDto>(x => x.CompanyId == Guid.NewGuid() && x.Id == Guid.NewGuid() && x.Address == Mock.Of<AddressDto>(y => y.CityId == Guid.NewGuid()));
+
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAdmin());
+            _mockRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockCompanyRepository.Setup(x => x.GetPrivateActiveCompanies(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetCompanies());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>())).Returns(Task.CompletedTask);
+
+            // Act
+            var result = _service.EditAgent(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
+            _mockRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCompanyRepository.Verify(x => x.GetPrivateActiveCompanies(It.IsAny<Guid>()));
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        [DataRow("Test!343", true)]
+        [DataRow("Testt343", false)]
+        [DataRow("test!343", false)]
+        [DataRow("invalido!!!!", false)]
+        public void EditAgentChangePassword(string password, bool isValid)
+        {
+            // Arrange
+            var mockRequest = Mock.Of<UserAgentDto>(x => x.CompanyId == Guid.NewGuid() && x.Id == Guid.NewGuid() && x.Address == Mock.Of<AddressDto>(y => y.CityId == Guid.NewGuid()) && x.Password == password);
+            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == isValid);
+
+            _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAdmin());
+            _mockRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
+            _mockCompanyRepository.Setup(x => x.GetPrivateActiveCompanies(It.IsAny<Guid>()).Result).Returns(CompanySeed.GetCompanies());
+            _mockCityRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CitySeed.Get());
+            _mockUserRepository.Setup(x => x.Update(It.IsAny<Users>())).Returns(Task.CompletedTask);
+            _mockUserManager.Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<Users>()).Result).Returns("test");
+            _mockUserManager.Setup(x => x.ResetPasswordAsync(It.IsAny<Users>(), It.IsAny<string>(), password).Result).Returns(identityResult);
+
+            // Assert
+            if (isValid)
+            {
+                var result = _service.EditAgent(mockRequest);
+                _mockUserRepository.Verify(x => x.GetById(It.IsAny<Guid>()));
+                Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+                Assert.IsNotNull(result.Result.Data);
+            }
+            else
+            {
+                var ex = Assert.ThrowsExceptionAsync<BusinessException>(async () => await _service.EditAgent(mockRequest)).Result;
+                string message = _resource.GetMessage("PasswordChangeError");
+
+                Assert.AreEqual(message, ex.Message);
+            }
+
+            _mockRepository.Verify(x => x.Find(It.IsAny<Guid>()));
+            _mockCompanyRepository.Verify(x => x.GetPrivateActiveCompanies(It.IsAny<Guid>()));
+            _mockCityRepository.Verify(x => x.Find(It.IsAny<Guid>()));
         }
 
         [TestMethod]
@@ -492,5 +557,26 @@ namespace iPassport.Test.Services
             }
             Assert.AreEqual(message, ex.Message);
         }
+
+
+        [TestMethod]
+        public void GetAgentById()
+        {
+            // Arrange
+            var mockRequest = Guid.NewGuid();
+            _mockUserRepository.Setup(x => x.GetAgentById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAdmin());
+
+
+            // Act
+            var result = _service.GetAgentById(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetAgentById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+            Assert.IsInstanceOfType(result.Result.Data, typeof(AgentDetailsViewModel));
+        }
+
+
     }
 }

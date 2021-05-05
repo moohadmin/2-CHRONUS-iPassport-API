@@ -319,6 +319,27 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
+        /// This API is responsible for edit Agent.
+        /// </summary>
+        /// <param name="request">Agent edit Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Agent Id</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpPut("Agent")]
+        [AuthorizeRole(RolesModel.Admin)]
+        public async Task<ActionResult> EditAgent([FromBody] UserAgentEditRequest request)
+        {
+            var res = await _service.EditAgent(_mapper.Map<UserAgentDto>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
         /// This API is responsible for Get paged list of Citzen by name.
         /// </summary>
         /// <param name="request">Get Citzen Paged Request</param>
@@ -523,6 +544,27 @@ namespace iPassport.Api.Controllers
         public async Task<ActionResult> EditAdmin([FromBody] AdminEditRequest request)
         {
             var res = await _service.EditAdmin(_mapper.Map<AdminDto>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for get Agent By Id.
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Agent Object.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpGet("Agent/{id}")]
+        [AuthorizeRole(RolesModel.Admin)]
+        public async Task<ActionResult> GetAgentById(Guid id)
+        {
+            var res = await _service.GetAgentById(id);
             return Ok(res);
         }
     }

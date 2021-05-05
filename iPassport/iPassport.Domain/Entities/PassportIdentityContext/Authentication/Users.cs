@@ -310,6 +310,19 @@ namespace iPassport.Domain.Entities.Authentication
             return accessControl.Profile == EProfileKey.admin.ToString();
         }
 
+        public void ChangeAgent(UserAgentDto dto)
+        {
+            CPF = dto.CPF;
+            Email = dto.Email;
+            CorporateCellphoneNumber = dto.CorporateCellphoneNumber;
+            PhoneNumber = dto.CellphoneNumber;
+            FullName = dto.FullName;
+            CompanyId = dto.CompanyId;
+
+            if (AddressId.HasValue)
+                Address.ChangeAddress(dto.Address);
+        }
+
         private void AddUserType(Guid userTypeId)
         {
             var userUserType = new UserUserType(Id, userTypeId);

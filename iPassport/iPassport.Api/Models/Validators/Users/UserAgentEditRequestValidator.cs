@@ -8,19 +8,23 @@ using System.Text.RegularExpressions;
 namespace iPassport.Api.Models.Validators.Users
 {
     /// <summary>
-    /// User Agent Create Request Validator
+    /// User Agent Edit Request Validator
     /// </summary>
-    public class UserAgentCreateRequestValidator : AbstractValidator<UserAgentCreateRequest>
+    public class UserAgentEditRequestValidator : AbstractValidator<UserAgentEditRequest>
     {
         /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="localizer">localizer</param>
-        public UserAgentCreateRequestValidator(IStringLocalizer<Resource> localizer)
+        public UserAgentEditRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.IsActive)
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["IsActive"]));
+
+            RuleFor(x => x.Id)
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["UserId"]));
 
             RuleFor(x => x.CompleteName)
                 .NotEmpty()
@@ -62,10 +66,6 @@ namespace iPassport.Api.Models.Validators.Users
                .WithMessage(string.Format(localizer["InvalidField"], localizer["CorporateCellphoneNumber"]));
 
             RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["Password"]));
-
-            RuleFor(x => x.Password)
                 .Must(y => {
                     return Regex.IsMatch(y, "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$");
                 })
@@ -77,7 +77,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["Company"]));
 
             RuleFor(x => x.Address)
-                .SetValidator(new AddressValidator(localizer));
+                .SetValidator(new AddressEditValidator(localizer));
         }
     }
 }

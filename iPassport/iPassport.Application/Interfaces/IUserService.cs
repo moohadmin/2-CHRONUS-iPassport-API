@@ -20,6 +20,7 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetLoggedAgentCount();
         Task<ResponseApi> AddAgent(UserAgentDto dto);
         Task<PagedResponseApi> GetPagedAgent(GetAgentPagedFilter filter);
+        Task<ResponseApi> EditAgent(UserAgentDto dto);
         Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter);
         Task<ResponseApi> GetCitizenById(Guid id);
         Task<ResponseApi> EditCitizen(CitizenEditDto dto);
@@ -28,5 +29,6 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetAdminById(Guid id);
         Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter);
         Task<ResponseApi> EditAdmin(AdminDto dto);
+        Task<ResponseApi> GetAgentById(Guid id);
     }
 }

@@ -44,8 +44,7 @@ namespace iPassport.Domain.Entities
 
         public void UpdateLastLogin()
         {
-            LastLogin = DateTime.UtcNow;
-            UpdateDate = DateTime.UtcNow;
+            LastLogin = DateTime.UtcNow;            
         }
             
     }
