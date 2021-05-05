@@ -175,6 +175,24 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
+        public void RemoveUserImage_RemovePhotoFromUserDetails()
+        {
+            var authSeed = UserSeed.GetUserWithPhoto();
+            var mockUserId = Guid.NewGuid();
+
+            // Arrange
+            _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(authSeed);
+
+            // Act
+            var result = _service.RemoveUserImage(mockUserId);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNull(result.Result.Data);
+            Assert.IsNull(authSeed.Photo);
+        }
+
+        [TestMethod]
         public void GetLoggedCitzenCount()
         {
             var seed = new Random().Next(99999);

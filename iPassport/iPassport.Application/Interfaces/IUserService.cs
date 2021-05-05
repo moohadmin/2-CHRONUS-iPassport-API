@@ -15,6 +15,7 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> GetUserPlan();
         Task<ResponseApi> GetCurrentUser();
         Task<ResponseApi> AddUserImage(UserImageDto userImageDto);
+        Task<ResponseApi> RemoveUserImage(Guid userId);
         Task<ResponseApi> GetLoggedCitzenCount();
         Task<ResponseApi> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
         Task<ResponseApi> GetLoggedAgentCount();

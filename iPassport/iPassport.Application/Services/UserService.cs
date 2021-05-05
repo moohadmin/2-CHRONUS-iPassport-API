@@ -196,6 +196,23 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["ImageAdded"], user.Photo);
         }
 
+        public async Task<ResponseApi> RemoveUserImage(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            if (!user.UserHavePhoto())
+                throw new BusinessException(_localizer["UserNotHavePhoto"]);
+
+            user.RemovePhoto();
+
+            await _userManager.UpdateAsync(user);
+
+            return new ResponseApi(true, _localizer["ImageRemoved"]);
+        }
+
         public async Task<ResponseApi> GetLoggedCitzenCount()
         {
             var res = await _userRepository.GetLoggedCitzenCount();
