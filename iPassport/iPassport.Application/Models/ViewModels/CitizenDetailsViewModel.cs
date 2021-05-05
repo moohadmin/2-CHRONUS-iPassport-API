@@ -33,6 +33,8 @@ namespace iPassport.Application.Models.ViewModels
 
         public string Telephone { get; set; }
 
+        public string Photo { get; set; }
+
         public AddressViewModel Address { get; set; }
 
         public IList<UserVaccineViewModel> Doses { get; set; }
