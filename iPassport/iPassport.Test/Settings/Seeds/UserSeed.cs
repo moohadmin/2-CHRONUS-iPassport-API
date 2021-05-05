@@ -32,6 +32,9 @@ namespace iPassport.Test.Seeds
         public static Users GetUser() =>
             new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid());
 
+        public static Users GetUserWithPhoto() =>
+            new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, $"{Guid.NewGuid()}.png", "test", "test", "test", "test", Guid.NewGuid());
+
         public static Users Get(EUserType userType)
         {
             var user = new Users("test", "test", "test", "test", "test", DateTime.UtcNow, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "test", null, null, "test", "test", "test", "test", Guid.NewGuid());

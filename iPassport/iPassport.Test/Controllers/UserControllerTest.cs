@@ -102,6 +102,23 @@ namespace iPassport.Test.Controllers
         }
 
         [TestMethod]
+        public void UserImageRemove_MustReturnOk()
+        {
+            var mockUserId = Guid.NewGuid();
+
+            // Arrange
+            _mockService.Setup(r => r.RemoveUserImage(It.IsAny<Guid>()));
+
+            // Act
+            var result = _controller.UserImageRemove(mockUserId);
+
+            // Assert
+            _mockService.Verify(a => a.RemoveUserImage(It.IsAny<Guid>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
         public void GetUserPlan_MustReturnOk()
         {
             // Arrange

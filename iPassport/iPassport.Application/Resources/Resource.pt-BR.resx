@@ -879,7 +879,7 @@
   <data name="UserTypeNotFound" xml:space="preserve">
     <value>Tipo de usuário não encontrado. Favor verificar.</value>
   </data>
-	<data name="UserNotHaveAdminAccess" xml:space="preserve">
+  <data name="UserNotHaveAdminAccess" xml:space="preserve">
     <value>O usuário não tem acesso do tipo administrativo.</value>
   </data>
   <data name="UserNotHaveCitizenAccess" xml:space="preserve">
@@ -905,5 +905,8 @@
   </data>
   <data name="CorporateCellphoneNumber" xml:space="preserve">
     <value>Celular Corporativo</value>
+  </data>
+  <data name="ImageRemoved" xml:space="preserve">
+    <value>Imagem Removida.</value>
   </data>
 </root>
