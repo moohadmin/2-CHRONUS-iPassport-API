@@ -1387,6 +1387,7 @@ namespace iPassport.Application.Services
             if (currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
                 throw new BusinessException(_localizer["UserNotUpdated"]);
         }
+
         private async Task ChangeUserPassword(Users user, string password)
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
