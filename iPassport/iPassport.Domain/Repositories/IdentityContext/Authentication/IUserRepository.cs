@@ -19,6 +19,7 @@ namespace iPassport.Domain.Repositories.Authentication
         Task<int> GetLoggedCitzenCount();
         Task<int> GetRegisteredUserCount(GetRegisteredUserCountFilter filter);
         Task<int> GetLoggedAgentCount();
+        Task<PagedData<Users>> GetPagedAgent(GetAgentPagedFilter filter, AccessControlDTO dto);
         Task<PagedData<Users>> GetPaggedCizten(GetCitzenPagedFilter filter, AccessControlDTO dto);
         Task<Users> GetByEmail(string email);
         Task<Users> GetAdminById(Guid id);

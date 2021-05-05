@@ -128,6 +128,19 @@ namespace iPassport.Test.Seeds
             );
         }
 
+        public static PagedResponseApi GetPagedAgent()
+        {
+            return new PagedResponseApi(
+                true,
+                "test",
+                1,
+                1,
+                10,
+                100,
+                GetAdminUserViewModels()
+            );
+        }
+
         public static IList<AdminUserViewModel> GetAdminUserViewModels() =>
             new List<AdminUserViewModel>() {
                     new AdminUserViewModel()
@@ -162,6 +175,45 @@ namespace iPassport.Test.Seeds
                     },
                 };
 
+        public static IList<AgentViewModel> GetAgentUserViewModels() =>
+            new List<AgentViewModel>() {
+                    new AgentViewModel()
+                    {
+                        Id = Guid.NewGuid(),
+                        CompanyName = "test",
+                        CompanyId = Guid.NewGuid(),
+                        Address = new AddressViewModel(){ Id = Guid.NewGuid()},
+                        FullName = "Teste",
+                        UserName = "teste",
+                        Cpf = "00000000000",                        
+                        IsActive = true,
+                        AddressId = Guid.NewGuid(),
+                    },
+                    new AgentViewModel()
+                    {
+                        Id = Guid.NewGuid(),
+                        CompanyName = "test",
+                        CompanyId = Guid.NewGuid(),
+                        Address = new AddressViewModel(){ Id = Guid.NewGuid()},
+                        FullName = "Teste",
+                        UserName = "teste",
+                        Cpf = "00000000000",
+                        IsActive = true,
+                        AddressId = Guid.NewGuid(),
+                    },
+                    new AgentViewModel()
+                    {
+                        Id = Guid.NewGuid(),
+                        CompanyName = "test",
+                        CompanyId = Guid.NewGuid(),
+                        Address = new AddressViewModel(){ Id = Guid.NewGuid()},
+                        FullName = "Teste",
+                        UserName = "teste",
+                        Cpf = "00000000000",
+                        IsActive = true,
+                        AddressId = Guid.NewGuid(),
+                    },
+                };
         public static AgentDetailsViewModel GetAgentDetails() =>
             new AgentDetailsViewModel()
             {
