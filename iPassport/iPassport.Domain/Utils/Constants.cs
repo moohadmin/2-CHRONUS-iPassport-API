@@ -28,5 +28,7 @@
         public const string TOKEN_CLAIM_COUNTRY_ID = "CountryId";
         public const string TOKEN_CLAIM_COMPANY_ID = "CompanyId";
         public const string TOKEN_CLAIM_HEALTH_UNITY_ID = "HealthUnityId";
+
+        public const string S3_USER_IMAGES_PATH = "images/users";
     }
 }

@@ -19,7 +19,6 @@ using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -207,7 +206,6 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
             Assert.AreEqual(5, result.Result.Data);
-
         }
 
         [TestMethod]
@@ -371,7 +369,6 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
-
 
         [TestMethod]
         public void EditCitizen()
@@ -540,14 +537,12 @@ namespace iPassport.Test.Services
             Assert.AreEqual(message, ex.Message);
         }
 
-
         [TestMethod]
         public void GetAgentById()
         {
             // Arrange
             var mockRequest = Guid.NewGuid();
             _mockUserRepository.Setup(x => x.GetAgentById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAdmin());
-
 
             // Act
             var result = _service.GetAgentById(mockRequest);
@@ -558,7 +553,5 @@ namespace iPassport.Test.Services
             Assert.IsNotNull(result.Result.Data);
             Assert.IsInstanceOfType(result.Result.Data, typeof(AgentDetailsViewModel));
         }
-
-
     }
 }
