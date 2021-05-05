@@ -218,6 +218,23 @@ namespace iPassport.Test.Controllers
         }
 
         [TestMethod]
+        public void EditAgent_MustReturnOk()
+        {
+            var mockRequest = Mock.Of<UserAgentEditRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.EditAgent(It.IsAny<UserAgentDto>()));
+
+            // Act
+            var result = _controller.EditAgent(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.EditAgent(It.IsAny<UserAgentDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
         public void GetByNameParts_MustReturnOk()
         {
             var mockrequest = Mock.Of<GetCitzenPagedRequest>();
