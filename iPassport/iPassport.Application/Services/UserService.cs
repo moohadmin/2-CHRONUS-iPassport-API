@@ -252,6 +252,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackPassport();
 
                 VerifyUniqueKeyErrors(ex);
+                throw;
             }
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
         }
@@ -261,7 +262,7 @@ namespace iPassport.Application.Services
             await ValidateAgentRequest(dto);
 
             var currentUser = await _userRepository.GetById(dto.Id);
-            if (currentUser == null || await _detailsRepository.GetLoadedUserById(dto.Id) == null)
+            if (currentUser == null || await _detailsRepository.Find(dto.Id) == null)
                 throw new BusinessException(_localizer["AgentNotFound"]);
 
             try
@@ -287,6 +288,7 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackPassport();
 
                 VerifyUniqueKeyErrors(ex);
+                throw;
             }
             return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
         }
@@ -735,7 +737,7 @@ namespace iPassport.Application.Services
         {
             var company = await _companyRepository.GetPrivateActiveCompanies(dto.CompanyId);
 
-            if (company.FirstOrDefault() == null)
+            if (company?.FirstOrDefault() == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
             if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId.Value) == null)
