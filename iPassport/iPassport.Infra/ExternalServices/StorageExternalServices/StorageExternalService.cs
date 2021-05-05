@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace iPassport.Infra.ExternalServices.StorageExternalServices
@@ -38,21 +39,21 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
         public async Task<string> UploadFileAsync(IFormFile imageFile, string fileName)
         {
             var memoryStream = new MemoryStream();
-            
+
             try
             {
                 foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
                 {
                     memoryStream = await ResiseImage(imageFile, size);
-                    string path = $"{Constants.S3_USER_IMAGES_PATH}/{size}";
-                    await UpToS3Async(memoryStream, path, fileName);
+                    string path = GetFilePath(size, fileName);
+                    await UpToS3Async(memoryStream, path);
                 }
             }
             finally
             {
                 memoryStream.Dispose();
             }
-            
+
             return fileName;
         }
 
@@ -65,23 +66,23 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
         {
             GetObjectResponse response = await _awsS3.GetObjectAsync(_bucketName, key);
 
-            if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
+            if (response.HttpStatusCode != HttpStatusCode.OK)
                 throw new BusinessException(_localizer["FileNotFound"]);
 
             return response.ResponseStream;
         }
 
-        public string GeneratePreSignedURL(string filename)
+        public string GeneratePreSignedURL(string filename, EImageSize? size)
         {
             if (string.IsNullOrWhiteSpace(filename))
-                throw new BusinessException(_localizer["UserDontHavePhoto"]);
+                throw new BusinessException(_localizer["UserNotHavePhoto"]);
 
             try
             {
                 GetPreSignedUrlRequest request = new GetPreSignedUrlRequest
                 {
                     BucketName = _bucketName,
-                    Key = filename,
+                    Key = GetFilePath(size, filename),
                     Expires = DateTime.UtcNow.AddHours(1)
                 };
 
@@ -93,7 +94,7 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             }
         }
 
-        private async Task<bool> UpToS3Async(Stream FileStream, string path, string filename)
+        private async Task<bool> UpToS3Async(Stream FileStream, string path)
         {
             try
             {
@@ -101,7 +102,7 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
                 {
                     InputStream = FileStream,
                     BucketName = _bucketName,
-                    Key = $"{path}/{filename}"
+                    Key = $"{path}"
                 };
 
                 PutObjectResponse response = await _awsS3.PutObjectAsync(request);
@@ -118,28 +119,43 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 
         private async Task<MemoryStream> ResiseImage(IFormFile formFile, EImageSize imageSize)
         {
-            using var imageStream = new MemoryStream();
-
-            await formFile.CopyToAsync(imageStream);
-
-            using var img = Image.FromStream(imageStream);
-            using var image = new Bitmap(img);
-            var imgReturn = new Bitmap((int)imageSize, (int)imageSize);
-
-            using (var graphic = Graphics.FromImage(imgReturn))
+            try
             {
-                graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphic.SmoothingMode = SmoothingMode.HighQuality;
-                graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                graphic.CompositingQuality = CompositingQuality.HighQuality;
-                graphic.DrawImage(image, 0, 0, (int)imageSize, (int)imageSize);
+                using var imageStream = new MemoryStream();
+
+                await formFile.CopyToAsync(imageStream);
+
+                using var img = Image.FromStream(imageStream);
+                using var image = new Bitmap(img);
+                var imgReturn = new Bitmap((int)imageSize, (int)imageSize);
+
+                using (var graphic = Graphics.FromImage(imgReturn))
+                {
+                    graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    graphic.SmoothingMode = SmoothingMode.HighQuality;
+                    graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    graphic.CompositingQuality = CompositingQuality.HighQuality;
+                    graphic.DrawImage(image, 0, 0, (int)imageSize, (int)imageSize);
+                }
+
+                var outputStream = new MemoryStream();
+                imgReturn.Save(outputStream, ImageFormat.Jpeg);
+                outputStream.Seek(0, SeekOrigin.Begin);
+
+                return outputStream;
+
             }
+            catch (Exception e)
+            {
+                throw new InternalErrorException(e.Message, (int)HttpStatusCode.InternalServerError, e.StackTrace);
+            }
+        }
 
-            var outputStream = new MemoryStream();
-            imgReturn.Save(outputStream, ImageFormat.Jpeg);
-            outputStream.Seek(0, SeekOrigin.Begin);
+        private static string GetFilePath(EImageSize? size, string filename)
+        {
+            size = size == null ? EImageSize.medium : size;
 
-            return outputStream;
+            return $"{Constants.S3_USER_IMAGES_PATH}/{size}/{filename}";
         }
     }
 }

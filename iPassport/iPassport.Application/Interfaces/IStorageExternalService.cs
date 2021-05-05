@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using iPassport.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -10,6 +11,6 @@ namespace iPassport.Application.Interfaces
 
         Task<Stream> GetFile(string key);
 
-        string GeneratePreSignedURL(string filename);
+        string GeneratePreSignedURL(string filename, EImageSize? size);
     }
 }

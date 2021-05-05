@@ -52,9 +52,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> Get([FromQuery] string imageSize)
         {
-            var res = await _service.Get();
+            var res = await _service.Get(imageSize);
             return Ok(res);
         }
 

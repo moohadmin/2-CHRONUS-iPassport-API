@@ -909,7 +909,7 @@
   <data name="FileNotFound" xml:space="preserve">
     <value>Arquivo não encontrado.</value>
   </data>
-  <data name="UserDontHavePhoto" xml:space="preserve">
+  <data name="UserNotHavePhoto" xml:space="preserve">
     <value>O usuário não possui foto cadastrada</value>
   </data>
 </root>

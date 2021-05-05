@@ -185,7 +185,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             if (user.UserHavePhoto())
-                throw new BusinessException("Usuário já Tem Foto Cadastrada");
+                throw new BusinessException(_localizer["UserAlreadyPhoto"]);
 
             user.PhotoNameGenerator(userImageDto);
             var imageUrl = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);
@@ -333,6 +333,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             if(!String.IsNullOrWhiteSpace(authUser.Photo))
+                // TODO: force to user size image parameter
                 authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
