@@ -228,6 +228,24 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
+        public void GetPagedAgent()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<GetAgentPagedFilter>();
+
+            _mockUserRepository.Setup(x => x.GetPagedAgent(It.IsAny<GetAgentPagedFilter>(), It.IsAny<AccessControlDTO>()).Result)
+                .Returns(UserSeed.GetPagedUsers());
+
+            // Act
+            var result = _service.GetPagedAgent(mockRequest);
+
+            // Assert
+            _mockUserRepository.Verify(x => x.GetPagedAgent(It.IsAny<GetAgentPagedFilter>(), It.IsAny<AccessControlDTO>()));
+            Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
         [DataRow("test agent")]
         [DataRow("test agent", "test.agent")]
         [DataRow("test cerqueira agent", "test.agent")]

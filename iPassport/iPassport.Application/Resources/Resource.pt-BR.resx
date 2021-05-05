@@ -897,6 +897,9 @@
   <data name="Admin" xml:space="preserve">
     <value>Administrativo</value>
   </data>
+  <data name="Agents" xml:space="preserve">
+    <value>Agentes.</value>
+  </data>
   <data name="CellphoneNumber" xml:space="preserve">
     <value>Celular</value>
   </data>
