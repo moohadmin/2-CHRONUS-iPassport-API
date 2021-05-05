@@ -332,6 +332,9 @@ namespace iPassport.Application.Services
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
+            if(!String.IsNullOrWhiteSpace(authUser.Photo))
+                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
 
             GetHealthUnitAddress(citizenDto.Doses);
