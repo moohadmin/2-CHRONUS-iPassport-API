@@ -13,27 +13,27 @@ namespace iPassport.Application.Models.ViewModels
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Citizen Full Name
+        /// Agent Full Name
         /// </summary>
         public string UserName { get; set; }
 
         /// <summary>
-        /// Citizen Full Name
+        /// Agent Full Name
         /// </summary>
         public string FullName { get; set; }
-        
-        /// <summary>
-        /// Citizen CPF
-        /// </summary>
-        public string CPF { get; set; }
 
         /// <summary>
-        /// Citizen CompanyId
+        /// Agent Cpf
+        /// </summary>
+        public string Cpf { get; set; }
+
+        /// <summary>
+        /// Agent CompanyId
         /// </summary>
         public Guid? CompanyId { get; set; }
 
         /// <summary>
-        /// Citizen Company Name
+        /// Agent Company Name
         /// </summary>
         public string CompanyName { get; set; }
 

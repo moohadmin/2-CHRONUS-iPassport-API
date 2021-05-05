@@ -23,10 +23,6 @@ namespace iPassport.Api.Models.Validators.Users
                 .Must(x => string.IsNullOrWhiteSpace(x) || x.Length >= 3).WithMessage(string.Format(localizer["InitalsRequestMin"], "3"))
                 .SetValidator(new RequiredFieldValidator<string>("Initials", localizer));
 
-            RuleFor(x => x.Login)
-                .Must(x => string.IsNullOrWhiteSpace(x) || x.Length >= 3).WithMessage(string.Format(localizer["InitalsRequestMin"], "3"))
-                .SetValidator(new RequiredFieldValidator<string>("Login", localizer));
-
             When(y => !string.IsNullOrWhiteSpace(y.Cpf), () =>
             {
                 RuleFor(x => x.Cpf)
