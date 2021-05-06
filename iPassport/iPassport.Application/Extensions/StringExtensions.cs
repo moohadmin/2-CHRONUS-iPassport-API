@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace iPassport.Domain.Utils
+namespace iPassport.Application.Extensions
 {
-    public static class EnumUtils
+    public static class StringExtensions
     {
         public static TEnum ToEnum<TEnum>(this string strEnumValue)
         {
             if (!Enum.TryParse(typeof(TEnum), strEnumValue, out object enumValue))
                 throw new InvalidCastException();
-            
+
             return (TEnum)enumValue;
         }
     }

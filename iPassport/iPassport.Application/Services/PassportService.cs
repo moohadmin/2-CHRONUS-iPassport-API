@@ -10,7 +10,6 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
-using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
