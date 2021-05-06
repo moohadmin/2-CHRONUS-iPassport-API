@@ -128,13 +128,13 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
         }
 
-        public async Task<ResponseApi> GetCurrentUser()
+        public async Task<ResponseApi> GetCurrentUser(string imageSize)
         {
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userRepository.GetById(userId);
 
             if (authUser.IsCitizen())
-                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
 
             var userTypeIdentifyer = _accessor.GetCurrentUserTypeIdentifyer();
 
@@ -194,6 +194,23 @@ namespace iPassport.Application.Services
             await _userManager.UpdateAsync(user);
 
             return new ResponseApi(true, _localizer["ImageAdded"], user.Photo);
+        }
+
+        public async Task<ResponseApi> RemoveUserImage(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            if (!user.UserHavePhoto())
+                throw new BusinessException(_localizer["UserNotHavePhoto"]);
+
+            user.RemovePhoto();
+
+            await _userManager.UpdateAsync(user);
+
+            return new ResponseApi(true, _localizer["ImageRemoved"]);
         }
 
         public async Task<ResponseApi> GetLoggedCitzenCount()
@@ -320,7 +337,7 @@ namespace iPassport.Application.Services
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
-        public async Task<ResponseApi> GetCitizenById(Guid id)
+        public async Task<ResponseApi> GetCitizenById(Guid id, string imageSize)
         {
             var authUser = await _userRepository.GetLoadedCitizenById(id);
 
@@ -332,9 +349,8 @@ namespace iPassport.Application.Services
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            if(!String.IsNullOrWhiteSpace(authUser.Photo))
-                // TODO: force to user size image parameter
-                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+            if(string.IsNullOrWhiteSpace(authUser.Photo))
+                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
 
@@ -692,6 +708,21 @@ namespace iPassport.Application.Services
         }
 
         #region Private Methods
+
+        private EImageSize? GetImageSize(string imageSize)
+        {
+            if (string.IsNullOrWhiteSpace(imageSize))
+                return null;
+
+            foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
+            {
+                if (size.ToString().ToLower().Equals(imageSize.ToLower()))
+                    return size;
+            }
+
+            throw new BusinessException(_localizer["InvalidImageSize"]);
+        }
+
         private async Task<AccessControlDTO> GetCitizenControlData()
         {
             var accessControl = _accessor.GetAccessControlDTO();

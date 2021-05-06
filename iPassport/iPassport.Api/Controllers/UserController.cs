@@ -100,6 +100,25 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
+        /// This API is responsible for remove User Image.
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [Authorize]
+        [HttpDelete("{userId}/Image")]
+        public async Task<ActionResult> UserImageRemove(Guid userId)
+        {
+            var res = await _service.RemoveUserImage(userId);
+            return Ok(res);
+        }
+
+        /// <summary>
         /// This API is responsible for change User Plan.
         /// </summary>
         /// <param name="planId">Plan Id</param>
@@ -171,9 +190,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet("Current")]
-        public async Task<ActionResult> GetCurrentUser()
+        public async Task<ActionResult> GetCurrentUser([FromQuery]string imageSize)
         {
-            var res = await _service.GetCurrentUser();
+            var res = await _service.GetCurrentUser(imageSize);
             return Ok(res);
         }
 
@@ -417,9 +436,9 @@ namespace iPassport.Api.Controllers
         [Authorize]
         [HttpGet("Citizen/{id}")]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
-        public async Task<ActionResult> GetCitizenById(Guid id)
+        public async Task<ActionResult> GetCitizenById(Guid id, [FromQuery] string imageSize)
         {
-            var res = await _service.GetCitizenById(id);
+            var res = await _service.GetCitizenById(id, imageSize);
             return Ok(res);
         }
 

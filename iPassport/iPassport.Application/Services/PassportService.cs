@@ -7,6 +7,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +44,7 @@ namespace iPassport.Application.Services
             _localizer = localizer;
         }
 
-        public async Task<ResponseApi> Get()
+        public async Task<ResponseApi> Get(string imageSize)
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
@@ -74,12 +75,12 @@ namespace iPassport.Application.Services
             var authUser = await _userRepository.GetById(UserId);
 
             viewModel.UserFullName = authUser.FullName;
-            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo,);
+            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
             viewModel.UserPlan = userDetails.Plan?.Type;
             viewModel.PlanColorStart = userDetails.Plan?.ColorStart;
             viewModel.PlanColorEnd = userDetails.Plan?.ColorEnd;
 
-            return new ResponseApi(true, "User Passport", viewModel);
+            return new ResponseApi(true, _localizer["UserPassport"], viewModel);
         }
 
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
@@ -138,7 +139,7 @@ namespace iPassport.Application.Services
             return dto;
         }
 
-        public async Task<ResponseApi> GetPassportUserToValidate(Guid passportDetailsId)
+        public async Task<ResponseApi> GetPassportUserToValidate(Guid passportDetailsId, string imageSize)
         {
             var passport = await _repository.FindByPassportDetailsValid(passportDetailsId);
 
@@ -153,11 +154,24 @@ namespace iPassport.Application.Services
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;
-            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo);
+            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, GetImageSize(imageSize));
             viewModel.UserFullName = passportCitizen.FullName;
             viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
 
-            return new ResponseApi(true, "Passport para validação", viewModel);
+            return new ResponseApi(true, _localizer["PassaportToValidate"], viewModel);
+        }
+        private EImageSize? GetImageSize(string imageSize)
+        {
+            if (string.IsNullOrWhiteSpace(imageSize))
+                return null;
+
+            foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
+            {
+                if (size.ToString().ToLower().Equals(imageSize.ToLower()))
+                    return size;
+            }
+
+            throw new BusinessException(_localizer["InvalidImageSize"]);
         }
     }
 }

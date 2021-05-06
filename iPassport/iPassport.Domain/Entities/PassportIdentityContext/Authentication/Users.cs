@@ -120,7 +120,10 @@ namespace iPassport.Domain.Entities.Authentication
                 Photo = imageUrl;
             }
         }
-
+        public void RemovePhoto()
+        {
+            Photo = null;
+        }
         public void PhotoNameGenerator(UserImageDto dto)
         {
             var extension = Path.GetExtension(dto.ImageFile.FileName);
