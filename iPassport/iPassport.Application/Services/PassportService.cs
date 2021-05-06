@@ -154,10 +154,12 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotAgent"]);
 
             var passportCitizen = await _userRepository.GetById(passport.UserDetails.Id);
+            
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;
-            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, GetImageSize(imageSize));
+            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, imageEnum);
             viewModel.UserFullName = passportCitizen.FullName;
             viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
 
