@@ -10,6 +10,7 @@ using iPassport.Domain.Entities;
 using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
+using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
@@ -74,8 +75,10 @@ namespace iPassport.Application.Services
             var viewModel = _mapper.Map<PassportViewModel>(passport);
             var authUser = await _userRepository.GetById(UserId);
 
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
+
             viewModel.UserFullName = authUser.FullName;
-            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
+            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
             viewModel.UserPlan = userDetails.Plan?.Type;
             viewModel.PlanColorStart = userDetails.Plan?.ColorStart;
             viewModel.PlanColorEnd = userDetails.Plan?.ColorEnd;
@@ -159,19 +162,6 @@ namespace iPassport.Application.Services
             viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
 
             return new ResponseApi(true, _localizer["PassaportToValidate"], viewModel);
-        }
-        private EImageSize? GetImageSize(string imageSize)
-        {
-            if (string.IsNullOrWhiteSpace(imageSize))
-                return null;
-
-            foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
-            {
-                if (size.ToString().ToLower().Equals(imageSize.ToLower()))
-                    return size;
-            }
-
-            throw new BusinessException(_localizer["InvalidImageSize"]);
         }
     }
 }

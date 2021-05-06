@@ -17,6 +17,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -133,8 +134,10 @@ namespace iPassport.Application.Services
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userRepository.GetById(userId);
 
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
+
             if (authUser.IsCitizen())
-                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
 
             var userTypeIdentifyer = _accessor.GetCurrentUserTypeIdentifyer();
 
@@ -349,8 +352,10 @@ namespace iPassport.Application.Services
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            if(string.IsNullOrWhiteSpace(authUser.Photo))
-                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
+
+            if (string.IsNullOrWhiteSpace(authUser.Photo))
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
 
@@ -708,20 +713,6 @@ namespace iPassport.Application.Services
         }
 
         #region Private Methods
-
-        private EImageSize? GetImageSize(string imageSize)
-        {
-            if (string.IsNullOrWhiteSpace(imageSize))
-                return null;
-
-            foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
-            {
-                if (size.ToString().ToLower().Equals(imageSize.ToLower()))
-                    return size;
-            }
-
-            throw new BusinessException(_localizer["InvalidImageSize"]);
-        }
 
         private async Task<AccessControlDTO> GetCitizenControlData()
         {
