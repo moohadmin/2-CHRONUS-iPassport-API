@@ -3,7 +3,6 @@ stages:
   - test
   - quality
   - docker
-  - deploy
 
 
 include:
@@ -104,50 +103,3 @@ docker:tags:gitlab-registry:
     TAG_NAME: tag
   only:
     - tags
-
-.deploy:
-  stage: deploy
-  image: registry.solutis.digital/devops/build-docker-templates/google-cloud-sdk-envsubst:1.1.0
-  script:
-    - echo $SERVICE_ACCOUNT_KEY >> key.json
-    - gcloud auth activate-service-account --key-file=key.json
-    - gcloud config set project $PROJECT
-    - gcloud config set compute/zone $ZONE
-    - gcloud container clusters get-credentials $CLUSTER --zone $ZONE
-    - for YAML in $(ls $CONFIG_DIR);do cat $CONFIG_DIR/$YAML | envsubst; cat $CONFIG_DIR/$YAML | envsubst | kubectl apply -n ${ENVIRONMENT} -f -;done
-
-deploy:develop:
-  extends: .deploy
-  variables:   
-    ENVIRONMENT: dev 
-    IMAGE_TAG: ${CI_REGISTRY_IMAGE}:develop_${CI_PIPELINE_ID}
-    CONFIG_DIR: config
-  only:
-    - develop  
-
-deploy:release:
-  extends: .deploy
-  variables:    
-    ENVIRONMENT: test 
-    IMAGE_TAG: ${CI_REGISTRY_IMAGE}:release_${CI_PIPELINE_ID}
-    CONFIG_DIR: config
-  only:
-    - /^release\/[0-9.]+$/
-
-deploy:tags:
-  extends: .deploy
-  variables:    
-    ENVIRONMENT: test
-    IMAGE_TAG:  ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
-    CONFIG_DIR: config
-  only:
-    - tags
-
-deploy:master:
-  extends: .deploy
-  variables:    
-    ENVIRONMENT: test 
-    IMAGE_TAG: ${CI_REGISTRY_IMAGE}:master_${CI_PIPELINE_ID}
-    CONFIG_DIR: config
-  only:
-    - master
