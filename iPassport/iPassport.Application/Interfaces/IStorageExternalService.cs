@@ -9,5 +9,6 @@ namespace iPassport.Application.Interfaces
     {
         Task<string> UploadFileAsync(IFormFile imageFile, string fileName);
         Task<string> GeneratePreSignedURL(string filename, EImageSize? size);
+        Task<string> DeleteFileAsync(string fileName);
     }
 }
