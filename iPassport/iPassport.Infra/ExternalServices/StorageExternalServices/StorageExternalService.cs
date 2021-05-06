@@ -82,15 +82,15 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
                 GetPreSignedUrlRequest request = new GetPreSignedUrlRequest
                 {
                     BucketName = _bucketName,
-                    Key = GetFilePath(size, filename),
+                    Key = GetKey(size, filename),
                     Expires = DateTime.UtcNow.AddHours(1)
                 };
 
                 return _awsS3.GetPreSignedURL(request);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new BusinessException(_localizer["OperationNotPerformed"]);
+                throw new InternalErrorException(e.Message, (int)HttpStatusCode.InternalServerError, e.StackTrace);
             }
         }
 
@@ -106,7 +106,7 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
                 };
 
                 PutObjectResponse response = await _awsS3.PutObjectAsync(request);
-                if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                if (response.HttpStatusCode != HttpStatusCode.OK)
                     return false;
 
                 return true;
@@ -147,6 +147,32 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             }
             catch (Exception e)
             {
+                throw new InternalErrorException(e.Message, (int)HttpStatusCode.InternalServerError, e.StackTrace);
+            }
+        }
+
+        private string GetKey(EImageSize? size, string filename)
+        {
+            var filepath = GetFilePath(size, filename);
+
+            if (verifyKey(filepath)) return filepath;
+
+            return filename;
+        }
+
+        private bool verifyKey(string key)
+        {
+            try
+            {
+                var image = _awsS3.GetObjectAsync(_bucketName, key).Result;
+
+                return image != null;
+            }
+            catch(Exception e)
+            {
+                if (e.InnerException.GetType() == typeof(AmazonS3Exception) && ((AmazonS3Exception)e.InnerException).StatusCode == HttpStatusCode.NotFound)
+                    return false;
+
                 throw new InternalErrorException(e.Message, (int)HttpStatusCode.InternalServerError, e.StackTrace);
             }
         }
