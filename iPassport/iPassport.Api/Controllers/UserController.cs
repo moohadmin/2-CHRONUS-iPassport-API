@@ -190,9 +190,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [Authorize]
         [HttpGet("Current")]
-        public async Task<ActionResult> GetCurrentUser()
+        public async Task<ActionResult> GetCurrentUser([FromQuery]string imageSize)
         {
-            var res = await _service.GetCurrentUser();
+            var res = await _service.GetCurrentUser(imageSize);
             return Ok(res);
         }
 
@@ -317,6 +317,7 @@ namespace iPassport.Api.Controllers
 
             return Ok(res);
         }
+
         /// <summary>
         /// This API is responsible for Add Agent.
         /// </summary>
@@ -436,9 +437,9 @@ namespace iPassport.Api.Controllers
         [Authorize]
         [HttpGet("Citizen/{id}")]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.Business, RolesModel.HealthUnit)]
-        public async Task<ActionResult> GetCitizenById(Guid id)
+        public async Task<ActionResult> GetCitizenById(Guid id, [FromQuery] string imageSize)
         {
-            var res = await _service.GetCitizenById(id);
+            var res = await _service.GetCitizenById(id, imageSize);
             return Ok(res);
         }
 

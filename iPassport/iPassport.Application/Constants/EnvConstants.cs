@@ -37,7 +37,6 @@ namespace iPassport.Application.Services.Constants
             }
 
             return value;
-
         }
 
         public static string GetEnvironmentVariable(string name, string secretPayloadName, string payloadPath, bool errorIfEmpty = false)
@@ -56,7 +55,6 @@ namespace iPassport.Application.Services.Constants
                 return pathResult.Value.GetString();
 
             }, errorIfEmpty);
-
         }
 
         public static string GetEnvironmentVariable(string name)
@@ -74,7 +72,6 @@ namespace iPassport.Application.Services.Constants
             }
 
             return value;
-
         }
 
         public static string GetRequiredEnvironmentVariable(string name)
@@ -89,7 +86,6 @@ namespace iPassport.Application.Services.Constants
         public static readonly string DATABASE_CONNECTION_STRING = GetEnvironmentVariable("DATABASE_CONNECTION_STRING", AWS_SECRET_DATABASE, (jsonDocument) => {
             string username = jsonDocument.SelectElement("$.username").Value.GetString();
             string password = jsonDocument.SelectElement("$.password").Value.GetString();
-            // string engine = jsonDocument.SelectElement("$.engine").Value.GetString();
             string host = jsonDocument.SelectElement("$.host").Value.GetString();
             long port = jsonDocument.SelectElement("$.port").Value.GetInt64();
             string db_name = jsonDocument.SelectElement("$.db_name").Value.GetString();
@@ -117,6 +113,5 @@ namespace iPassport.Application.Services.Constants
 
         // JWT
         public static readonly string SECRET_JWT_TOKEN = GetEnvironmentVariable("SECRET_JWT_TOKEN", AWS_SECRET_JWT_TOKEN, ".jwt_token", true);
-
     }
 }

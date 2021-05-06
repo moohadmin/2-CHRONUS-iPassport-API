@@ -17,6 +17,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -128,13 +129,15 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
         }
 
-        public async Task<ResponseApi> GetCurrentUser()
+        public async Task<ResponseApi> GetCurrentUser(string imageSize)
         {
             var userId = _accessor.GetCurrentUserId();
             var authUser = await _userRepository.GetById(userId);
 
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
+
             if (authUser.IsCitizen())
-                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
 
             var userTypeIdentifyer = _accessor.GetCurrentUserTypeIdentifyer();
 
@@ -185,7 +188,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             if (user.UserHavePhoto())
-                throw new BusinessException("Usuário já Tem Foto Cadastrada");
+                throw new BusinessException(_localizer["UserAlreadyPhoto"]);
 
             user.PhotoNameGenerator(userImageDto);
             var imageUrl = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);
@@ -337,7 +340,7 @@ namespace iPassport.Application.Services
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
-        public async Task<ResponseApi> GetCitizenById(Guid id)
+        public async Task<ResponseApi> GetCitizenById(Guid id, string imageSize)
         {
             var authUser = await _userRepository.GetLoadedCitizenById(id);
 
@@ -349,8 +352,10 @@ namespace iPassport.Application.Services
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
 
-            if(!String.IsNullOrWhiteSpace(authUser.Photo))
-                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
+
+            if (string.IsNullOrWhiteSpace(authUser.Photo))
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
 
@@ -708,6 +713,7 @@ namespace iPassport.Application.Services
         }
 
         #region Private Methods
+
         private async Task<AccessControlDTO> GetCitizenControlData()
         {
             var accessControl = _accessor.GetAccessControlDTO();

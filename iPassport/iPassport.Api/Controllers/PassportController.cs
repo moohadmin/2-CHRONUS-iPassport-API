@@ -43,6 +43,7 @@ namespace iPassport.Api.Controllers
         /// <summary>
         /// This API is responsible for Get User Passport.
         /// </summary>
+        /// <param name="imageSize">User Image size</param>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
@@ -52,9 +53,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> Get([FromQuery] string imageSize)
         {
-            var res = await _service.Get();
+            var res = await _service.Get(imageSize);
             return Ok(res);
         }
 
@@ -98,6 +99,7 @@ namespace iPassport.Api.Controllers
         /// This API is responsible for Get the User Passport.
         /// </summary>
         /// <param name="passportDetailsId">Passport Details Id</param>
+        /// <param name="imageSize">User Image size</param>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
@@ -107,9 +109,9 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("User")]
-        public async Task<ActionResult> GetPassportUserToValidate(Guid passportDetailsId)
+        public async Task<ActionResult> GetPassportUserToValidate([FromQuery]Guid passportDetailsId, [FromQuery] string imageSize)
         {
-            var res = await _service.GetPassportUserToValidate(passportDetailsId);
+            var res = await _service.GetPassportUserToValidate(passportDetailsId, imageSize);
             return Ok(res);
         }
     }

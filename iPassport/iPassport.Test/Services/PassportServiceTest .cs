@@ -6,6 +6,7 @@ using iPassport.Application.Resources;
 using iPassport.Application.Services;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Test.Seeds;
@@ -32,7 +33,7 @@ namespace iPassport.Test.Services
         IMapper _mapper;
         PassportUseCreateDto _accessDto;
         Mock<IStorageExternalService> _externalStorageService;
-        Mock<IStringLocalizer<Resource>> _mockLocalizer;
+        IStringLocalizer<Resource> _mockLocalizer;
 
         [TestInitialize]
         public void Setup()
@@ -45,9 +46,9 @@ namespace iPassport.Test.Services
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepositoryPassportDetails = new Mock<IPassportDetailsRepository>();
             _externalStorageService = new Mock<IStorageExternalService>();
-            _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _mockLocalizer = ResourceFactory.GetStringLocalizer();
 
-            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object, _mockUserRepository.Object, _externalStorageService.Object, _mockLocalizer.Object);
+            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object, _mockUserRepository.Object, _externalStorageService.Object, _mockLocalizer);
 
             _accessDto = new PassportUseCreateDto()
             {
@@ -71,7 +72,7 @@ namespace iPassport.Test.Services
             _mockRepository.Setup(r => r.FindByUser(It.IsNotNull<Guid>()).Result).Returns(passportSeed);
             
             // Act
-            var result = _service.Get();
+            var result = _service.Get(It.IsAny<string>());
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
@@ -122,13 +123,14 @@ namespace iPassport.Test.Services
             var passportDetailsId = Guid.NewGuid();
             var mockPassport =  Mock.Of<Passport>(x => x.UserDetails == UserSeed.GetUserDetails());
             var urlPhoto = "https://teste.testes.com";
+            var size = "small";
 
             _mockRepository.Setup(r => r.FindByPassportDetailsValid(It.IsNotNull<Guid>()).Result).Returns(mockPassport);
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAgent());
-            _externalStorageService.Setup(x => x.GeneratePreSignedURL(It.IsAny<string>())).Returns(urlPhoto);
+            _externalStorageService.Setup(x => x.GeneratePreSignedURL(It.IsAny<string>(), It.IsAny<EImageSize>()).Result).Returns(urlPhoto);
 
             // Act
-            var result = _service.GetPassportUserToValidate(passportDetailsId);
+            var result = _service.GetPassportUserToValidate(passportDetailsId, size);
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));

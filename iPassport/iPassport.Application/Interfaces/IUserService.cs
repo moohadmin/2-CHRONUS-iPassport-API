@@ -13,7 +13,7 @@ namespace iPassport.Application.Interfaces
         Task<ResponseApi> AddCitizen(CitizenCreateDto dto);
         Task<ResponseApi> AssociatePlan(Guid planId);
         Task<ResponseApi> GetUserPlan();
-        Task<ResponseApi> GetCurrentUser();
+        Task<ResponseApi> GetCurrentUser(string imageSize);
         Task<ResponseApi> AddUserImage(UserImageDto userImageDto);
         Task<ResponseApi> RemoveUserImage(Guid userId);
         Task<ResponseApi> GetLoggedCitzenCount();
@@ -23,7 +23,7 @@ namespace iPassport.Application.Interfaces
         Task<PagedResponseApi> GetPagedAgent(GetAgentPagedFilter filter);
         Task<ResponseApi> EditAgent(UserAgentDto dto);
         Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter);
-        Task<ResponseApi> GetCitizenById(Guid id);
+        Task<ResponseApi> GetCitizenById(Guid id, string imageSize);
         Task<ResponseApi> EditCitizen(CitizenEditDto dto);
         Task ImportUsers(IFormFile file);
         Task<ResponseApi> AddAdmin(AdminDto dto);

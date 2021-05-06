@@ -909,4 +909,19 @@
   <data name="ImageRemoved" xml:space="preserve">
     <value>Imagem Removida.</value>
   </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Arquivo não encontrado.</value>
+  </data>
+  <data name="UserNotHavePhoto" xml:space="preserve">
+    <value>O usuário não possui foto cadastrada</value>
+  </data>
+  <data name="InvalidImageSize" xml:space="preserve">
+    <value>Tamanho de imagem inválido.</value>
+  </data>
+  <data name="PassaportToValidate" xml:space="preserve">
+    <value>Passport para validação</value>
+  </data>
+  <data name="UserPassport" xml:space="preserve">
+    <value>Passaport do Usuário</value>
+  </data>
 </root>

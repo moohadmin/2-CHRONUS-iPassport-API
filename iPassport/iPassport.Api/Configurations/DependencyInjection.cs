@@ -156,7 +156,8 @@ namespace iPassport.Api.Configurations
 
             // ASP.NET HttpContext dependency
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+            services.AddSingleton(AwsS3ClientConfiguration.AwsS3ClientSetup());
+            
             #endregion
 
             return services;

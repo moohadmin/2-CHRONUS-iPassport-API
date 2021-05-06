@@ -7,6 +7,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +27,7 @@ namespace iPassport.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IHttpContextAccessor _accessor;
-        private readonly IStorageExternalService  _storageExternalService;
+        private readonly IStorageExternalService _storageExternalService;
         private readonly IStringLocalizer<Resource> _localizer;
 
         public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository, IUserRepository userRepository
@@ -43,7 +44,7 @@ namespace iPassport.Application.Services
             _localizer = localizer;
         }
 
-        public async Task<ResponseApi> Get()
+        public async Task<ResponseApi> Get(string imageSize)
         {
             Guid UserId = _accessor.GetCurrentUserId();
 
@@ -64,25 +65,24 @@ namespace iPassport.Application.Services
 
                 await _repository.InsertAsync(passport);
             }
-            else
+            else if (passport.IsAllDetailsExpired())
             {
-                if (passport.IsAllDetailsExpired())
-                {
-                    var passportDetails = passport.NewPassportDetails(null);
-                    await _passportDetailsRepository.InsertAsync(passportDetails);
-                }
+                var passportDetails = passport.NewPassportDetails(null);
+                await _passportDetailsRepository.InsertAsync(passportDetails);
             }
 
             var viewModel = _mapper.Map<PassportViewModel>(passport);
             var authUser = await _userRepository.GetById(UserId);
-            
+
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
+
             viewModel.UserFullName = authUser.FullName;
-            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
             viewModel.UserPlan = userDetails.Plan?.Type;
             viewModel.PlanColorStart = userDetails.Plan?.ColorStart;
             viewModel.PlanColorEnd = userDetails.Plan?.ColorEnd;
 
-            return new ResponseApi(true, "User Passport", viewModel);
+            return new ResponseApi(true, _localizer["UserPassport"], viewModel);
         }
 
         public async Task<ResponseApi> AddAccessApproved(PassportUseCreateDto dto)
@@ -91,16 +91,16 @@ namespace iPassport.Application.Services
 
             var userDetails = await _userDetailsRepository.GetLoadedUserById(dto.CitizenId);
 
-            if(!userDetails.IsApprovedPassport())
+            if (!userDetails.IsApprovedPassport())
                 throw new BusinessException(_localizer["PassportNotApproved"]);
-            
+
             dto.AllowAccess = true;
 
             var passportUse = new PassportUse();
             passportUse = passportUse.Create(dto);
 
             var result = await _passportUseRepository.InsertAsync(passportUse);
-            
+
             if (!result)
                 throw new BusinessException(_localizer["OperationNotPerformed"]);
 
@@ -116,7 +116,7 @@ namespace iPassport.Application.Services
             passportUse = passportUse.Create(dto);
 
             var result = await _passportUseRepository.InsertAsync(passportUse);
-            
+
             if (!result)
                 throw new BusinessException(_localizer["OperationNotPerformed"]);
 
@@ -141,26 +141,28 @@ namespace iPassport.Application.Services
             return dto;
         }
 
-        public async Task<ResponseApi> GetPassportUserToValidate(Guid passportDetailsId)
+        public async Task<ResponseApi> GetPassportUserToValidate(Guid passportDetailsId, string imageSize)
         {
             var passport = await _repository.FindByPassportDetailsValid(passportDetailsId);
 
             if (passport == null)
                 throw new BusinessException(_localizer["PassportNotFound"]);
-            
+
             var authUser = await _userRepository.GetById(_accessor.GetCurrentUserId());
-            if(!authUser.IsAgent())
+            if (!authUser.IsAgent())
                 throw new BusinessException(_localizer["UserNotAgent"]);
-            
+
             var passportCitizen = await _userRepository.GetById(passport.UserDetails.Id);
+            
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;
-            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo);
+            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, imageEnum);
             viewModel.UserFullName = passportCitizen.FullName;
             viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
 
-            return new ResponseApi(true, "Passport para validação",viewModel);
+            return new ResponseApi(true, _localizer["PassaportToValidate"], viewModel);
         }
     }
 }
