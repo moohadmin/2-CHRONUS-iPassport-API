@@ -134,7 +134,7 @@ namespace iPassport.Application.Services
             var authUser = await _userRepository.GetById(userId);
 
             if (authUser.IsCitizen())
-                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
 
             var userTypeIdentifyer = _accessor.GetCurrentUserTypeIdentifyer();
 
@@ -350,7 +350,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             if(string.IsNullOrWhiteSpace(authUser.Photo))
-                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
 

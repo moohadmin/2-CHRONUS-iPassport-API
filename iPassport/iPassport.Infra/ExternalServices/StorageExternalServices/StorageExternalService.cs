@@ -1,5 +1,4 @@
-﻿using Amazon;
-using Amazon.S3;
+﻿using Amazon.S3;
 using Amazon.S3.Model;
 using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
@@ -21,19 +20,15 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 {
     public class StorageExternalService : IStorageExternalService
     {
-        private readonly IAmazonS3 _awsS3;
+        private readonly AmazonS3Client _awsS3;
         private readonly string _bucketName;
         private readonly IStringLocalizer<Resource> _localizer;
 
-        public StorageExternalService(IStringLocalizer<Resource> localizer)
+        public StorageExternalService(IStringLocalizer<Resource> localizer, AmazonS3Client awsS3)
         {
-            string awsAccesskey = EnvConstants.AWS_ACCESS_KEY_ID;
-            string awsSecret = EnvConstants.AWS_SECRET_ACCESS_KEY;
-            RegionEndpoint region = RegionEndpoint.GetBySystemName(EnvConstants.AWS_DEFAULT_REGION);
-
-            _bucketName = EnvConstants.STORAGE_S3_BUCKET_NAME;
-            _awsS3 = new AmazonS3Client(awsAccesskey, awsSecret, region);
+            _awsS3 = awsS3;
             _localizer = localizer;
+            _bucketName = EnvConstants.STORAGE_S3_BUCKET_NAME;
         }
 
         public async Task<string> UploadFileAsync(IFormFile imageFile, string fileName)
@@ -57,32 +52,17 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             return fileName;
         }
 
-        public async Task<ListVersionsResponse> FilesList()
-        {
-            return await _awsS3.ListVersionsAsync(_bucketName);
-        }
-
-        public async Task<Stream> GetFile(string key)
-        {
-            GetObjectResponse response = await _awsS3.GetObjectAsync(_bucketName, key);
-
-            if (response.HttpStatusCode != HttpStatusCode.OK)
-                throw new BusinessException(_localizer["FileNotFound"]);
-
-            return response.ResponseStream;
-        }
-
-        public string GeneratePreSignedURL(string filename, EImageSize? size)
+        public async Task<string> GeneratePreSignedURL(string filename, EImageSize? size)
         {
             if (string.IsNullOrWhiteSpace(filename))
                 throw new BusinessException(_localizer["UserNotHavePhoto"]);
 
             try
             {
-                GetPreSignedUrlRequest request = new GetPreSignedUrlRequest
+                GetPreSignedUrlRequest request = new()
                 {
                     BucketName = _bucketName,
-                    Key = GetKey(size, filename),
+                    Key = await GetKey(size, filename),
                     Expires = DateTime.UtcNow.AddHours(1)
                 };
 
@@ -98,7 +78,7 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
         {
             try
             {
-                PutObjectRequest request = new PutObjectRequest()
+                PutObjectRequest request = new()
                 {
                     InputStream = FileStream,
                     BucketName = _bucketName,
@@ -151,24 +131,24 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             }
         }
 
-        private string GetKey(EImageSize? size, string filename)
+        private async Task<string> GetKey(EImageSize? size, string filename)
         {
             var filepath = GetFilePath(size, filename);
 
-            if (verifyKey(filepath)) return filepath;
+            if (await VerifyKey(filepath)) return filepath;
 
             return filename;
         }
 
-        private bool verifyKey(string key)
+        private async Task<bool> VerifyKey(string key)
         {
             try
             {
-                var image = _awsS3.GetObjectAsync(_bucketName, key).Result;
+                var image = await _awsS3.GetObjectAsync(_bucketName, key);
 
                 return image != null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 if (e.InnerException.GetType() == typeof(AmazonS3Exception) && ((AmazonS3Exception)e.InnerException).StatusCode == HttpStatusCode.NotFound)
                     return false;

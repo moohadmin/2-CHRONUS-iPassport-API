@@ -73,13 +73,13 @@ namespace iPassport.Test.Controllers
         public void GetCurrentUser_MustReturnOk()
         {
             // Arrange
-            _mockService.Setup(r => r.GetCurrentUser());
+            _mockService.Setup(r => r.GetCurrentUser(It.IsAny<string>()));
 
             // Act
-            var result = _controller.GetCurrentUser();
+            var result = _controller.GetCurrentUser(It.IsAny<string>());
 
             // Assert
-            _mockService.Verify(a => a.GetCurrentUser(), Times.Once);
+            _mockService.Verify(a => a.GetCurrentUser(It.IsAny<string>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
@@ -323,16 +323,14 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetCitizenById_MustReturnOk()
         {
-            var mockRequest = Guid.NewGuid();
-
             // Arrange
-            _mockService.Setup(r => r.GetCitizenById(It.IsAny<Guid>()));
+            _mockService.Setup(r => r.GetCitizenById(It.IsAny<Guid>(), It.IsAny<string>()));
 
             // Act
-            var result = _controller.GetCitizenById(mockRequest);
+            var result = _controller.GetCitizenById(Guid.NewGuid(), "test");
 
             // Assert
-            _mockService.Verify(r => r.GetCitizenById(It.IsAny<Guid>()));
+            _mockService.Verify(r => r.GetCitizenById(It.IsAny<Guid>(), It.IsAny<string>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

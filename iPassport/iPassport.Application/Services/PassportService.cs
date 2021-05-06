@@ -75,7 +75,7 @@ namespace iPassport.Application.Services
             var authUser = await _userRepository.GetById(UserId);
 
             viewModel.UserFullName = authUser.FullName;
-            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
+            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, GetImageSize(imageSize));
             viewModel.UserPlan = userDetails.Plan?.Type;
             viewModel.PlanColorStart = userDetails.Plan?.ColorStart;
             viewModel.PlanColorEnd = userDetails.Plan?.ColorEnd;
@@ -154,7 +154,7 @@ namespace iPassport.Application.Services
 
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;
-            viewModel.UserPhoto = _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, GetImageSize(imageSize));
+            viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, GetImageSize(imageSize));
             viewModel.UserFullName = passportCitizen.FullName;
             viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
 

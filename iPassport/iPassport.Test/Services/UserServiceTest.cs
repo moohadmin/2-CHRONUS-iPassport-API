@@ -135,13 +135,11 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void GetCurrentUser()
         {
-            var detailsSeed = UserSeed.GetUserDetails();
-
             // Arrange
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.Get(EUserType.Citizen));
 
             // Act
-            var result = _service.GetCurrentUser();
+            var result = _service.GetCurrentUser("small");
 
             // Assert
             _mockUserRepository.Verify(a => a.GetById(It.IsAny<Guid>()), Times.Once);
@@ -153,7 +151,6 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void AddUserImage_SavesPhotoUrlIntoUserDetails()
         {
-            var authSeed = UserSeed.GetUser();
             var mockRequest = Mock.Of<UserImageDto>();
             mockRequest.ImageFile = Mock.Of<IFormFile>();
             var SaveUrl = "./Content/Image/Teste.jpg";
@@ -397,7 +394,7 @@ namespace iPassport.Test.Services
             _mockAddressRepository.Setup(r => r.Find(It.IsAny<Guid>()).Result).Returns(AddressSeed.Get());
 
             // Act
-            var result = _service.GetCitizenById(mockRequest);
+            var result = _service.GetCitizenById(mockRequest, "small");
 
             // Assert
             _mockUserRepository.Verify(x => x.GetLoadedCitizenById(It.IsAny<Guid>()));

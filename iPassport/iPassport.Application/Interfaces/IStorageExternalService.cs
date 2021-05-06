@@ -8,9 +8,6 @@ namespace iPassport.Application.Interfaces
     public interface IStorageExternalService
     {
         Task<string> UploadFileAsync(IFormFile imageFile, string fileName);
-
-        Task<Stream> GetFile(string key);
-
-        string GeneratePreSignedURL(string filename, EImageSize? size);
+        Task<string> GeneratePreSignedURL(string filename, EImageSize? size);
     }
 }
