@@ -177,7 +177,7 @@ namespace iPassport.Test.Services
             var mockUserId = Guid.NewGuid();
 
             // Arrange
-            _externalStorageService.Setup(x => x.DeleteFileAsync(It.IsAny<string>()).Result);
+            _externalStorageService.Setup(x => x.DeleteFileAsync(It.IsAny<string>()));
             _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(authSeed);
 
             // Act

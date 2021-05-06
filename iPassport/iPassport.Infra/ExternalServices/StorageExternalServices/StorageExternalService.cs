@@ -60,7 +60,7 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 
             foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
             {
-                string path = GetKey(size, fileName);
+                string path = await GetKey(size, fileName);
                 keyList.Add(path);
             }
             fileList = keyList.Distinct().Select(x => new KeyVersion() { Key = x }).ToList();
