@@ -9,10 +9,12 @@ using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -51,6 +53,20 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 
             return fileName;
         }
+        public async Task DeleteFileAsync(string fileName)
+        {
+            var fileList = new List<KeyVersion>();
+            var keyList = new List<string>();
+
+            foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
+            {
+                string path = await GetKey(size, fileName);
+                keyList.Add(path);
+            }
+            fileList = keyList.Distinct().Select(x => new KeyVersion() { Key = x }).ToList();
+
+            await DeleteFromS3Async(fileList);
+        }
 
         public async Task<string> GeneratePreSignedURL(string filename, EImageSize? size)
         {
@@ -87,6 +103,27 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 
                 PutObjectResponse response = await _awsS3.PutObjectAsync(request);
                 if (response.HttpStatusCode != HttpStatusCode.OK)
+                    return false;
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new PersistenceException(_localizer["OperationNotPerformed"], e);
+            }
+        }
+
+        private async Task<bool> DeleteFromS3Async(List<KeyVersion> fileList)
+        {
+            try
+            {
+                DeleteObjectsRequest request = new DeleteObjectsRequest
+                {
+                    BucketName = _bucketName,
+                    Objects = fileList
+                };
+                DeleteObjectsResponse response = await _awsS3.DeleteObjectsAsync(request);
+                if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
                     return false;
 
                 return true;

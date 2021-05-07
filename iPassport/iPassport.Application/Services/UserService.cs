@@ -209,6 +209,7 @@ namespace iPassport.Application.Services
             if (!user.UserHavePhoto())
                 throw new BusinessException(_localizer["UserNotHavePhoto"]);
 
+            await _storageExternalService.DeleteFileAsync(user.Photo);
             user.RemovePhoto();
 
             await _userManager.UpdateAsync(user);

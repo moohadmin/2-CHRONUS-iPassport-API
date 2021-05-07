@@ -12,6 +12,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -56,6 +57,22 @@ namespace iPassport.Test.Services
             Assert.IsInstanceOfType(result, typeof(Task<string>));
             Assert.IsNotNull(result.Result);
             Assert.AreEqual(filename, result.Result);
+        }
+
+        [TestMethod]
+        public void RemoveFileAsyncTest()
+        {
+            var filename = $"{Guid.NewGuid()}.jpg";
+
+            //Arrange
+            _mockS3Client.Setup(x => x.DeleteObjectsAsync(It.IsAny<DeleteObjectsRequest>(), It.IsAny<CancellationToken>()).Result)
+                .Returns(new DeleteObjectsResponse() { HttpStatusCode = HttpStatusCode.OK });
+
+            //Act
+           _service.DeleteFileAsync(filename);
+
+            // Assert
+            _mockS3Client.Verify(a => a.DeleteObjectsAsync(It.IsAny<DeleteObjectsRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         private static IFormFile GetIFormFile()
