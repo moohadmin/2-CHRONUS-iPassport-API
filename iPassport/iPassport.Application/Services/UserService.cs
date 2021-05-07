@@ -355,7 +355,7 @@ namespace iPassport.Application.Services
 
             EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
 
-            if (string.IsNullOrWhiteSpace(authUser.Photo))
+            if (!string.IsNullOrWhiteSpace(authUser.Photo))
                 authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
