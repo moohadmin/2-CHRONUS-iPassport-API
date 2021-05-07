@@ -177,12 +177,14 @@ namespace iPassport.Test.Services
             var mockUserId = Guid.NewGuid();
 
             // Arrange
+            _externalStorageService.Setup(x => x.DeleteFileAsync(It.IsAny<string>()));
             _mockUserManager.Setup(x => x.FindByIdAsync(It.IsAny<string>()).Result).Returns(authSeed);
 
             // Act
             var result = _service.RemoveUserImage(mockUserId);
 
             // Assert
+            _externalStorageService.Verify(a => a.DeleteFileAsync(It.IsAny<string>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNull(result.Result.Data);
             Assert.IsNull(authSeed.Photo);
