@@ -4,7 +4,6 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Resources;
-using iPassport.Domain.Enums;
 using iPassport.Infra.ExternalServices.StorageExternalServices;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Http;
