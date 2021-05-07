@@ -134,7 +134,6 @@ namespace iPassport.Test.Services
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
-            Assert.AreEqual("Passport para validação", result.Result.Message);
             Assert.IsNotNull(result.Result.Data);
         }
     }
