@@ -16,7 +16,7 @@ include:
 test:
   stage: test
   extends: .retry-on-system-failures
-  image: mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim
+  image: mcr.microsoft.com/dotnet/sdk:5.0
   variables:
     PROJECT_BASE: "."
     TEST_COVERAGE_FILE: coverage.opencover.xml
