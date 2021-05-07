@@ -9,12 +9,42 @@ include:
   ## build ##
   - project: devops/ship 
     file: /templates/build/.job-build-dotnet-core-sdk5.yml
-  ## test ##
-  - project: devops/ship 
-    file: /templates/test/unit/.job-test-unit-dotnet-core-sdk5.yml
   ## exceptions ##
   - project: devops/ship
     file: /templates/exceptions/.retry-on-system-failures.yml
+
+test:
+  stage: test
+  extends: .retry-on-system-failures
+  image: mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim
+  variables:
+    PROJECT_BASE: "."
+    TEST_COVERAGE_FILE: coverage.opencover.xml
+    TEST_COVERAGE_FORMAT: opencover
+  before_script:
+    - export NUGET_PACKAGES=$(pwd)/packages/
+    - dotnet restore $PROJECT_BASE
+  script:
+    - ln -s /lib/x86_64-linux-gnu/libdl.so.2 /lib/x86_64-linux-gnu/libdl.so
+    - apt update
+    - apt install -y libgdiplus
+    - apt install -y libc6-dev
+    - ln -s /usr/lib/libgdiplus.so /lib/x86_64-linux-gnu/libgdiplus.so  
+    - dotnet test --no-restore $PROJECT_BASE -m:1
+      /p:CollectCoverage=true
+      /p:CoverletOutput=../
+      /p:CoverletOutputFormat=\"$TEST_COVERAGE_FORMAT\"
+      /p:MergeWith=../coverage.json
+  coverage: /Total[^|]*\|[^|]*\s+([\d\.]+)/
+  artifacts:
+    paths:
+      - $PROJECT_BASE/$TEST_COVERAGE_FILE
+    expire_in: 1h
+  only:
+    - develop
+    - /^release\/[0-9.]+$/
+    - master
+    - tags
 
 quality:
   extends: .retry-on-system-failures
