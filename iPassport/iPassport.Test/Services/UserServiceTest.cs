@@ -266,6 +266,7 @@ namespace iPassport.Test.Services
         [DataRow("test agent")]
         [DataRow("test agent", "test.agent")]
         [DataRow("test cerqueira agent", "test.agent")]
+        [DataRow("test caratere êéspeÇiàáãlúû", "test.eespeciaaaluu")]
         public void AddAgent(string fullName, string repeatedName = null)
         {
             var mockRequest = Mock.Of<UserAgentDto>(x => x.Address == Mock.Of<AddressDto>(y => y.CityId == Guid.NewGuid()) && x.FullName == fullName);

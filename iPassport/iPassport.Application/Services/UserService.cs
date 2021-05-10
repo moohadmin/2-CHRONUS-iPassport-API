@@ -1364,7 +1364,7 @@ namespace iPassport.Application.Services
 
         private async Task<string> GenerateAgentUsername(string fullName)
         {
-            var nameList = fullName.Split(" ").Select(x => x.ToLower()).Reverse().ToList();
+            var nameList = fullName.Split(" ").Select(x => x.RemoveDiacritics().ToLower()).Reverse().ToList();
             var firstName = nameList.Last();
             
             var possibleNames = GeneratePossibleUsernames(nameList, firstName);
