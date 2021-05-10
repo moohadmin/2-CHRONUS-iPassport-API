@@ -156,7 +156,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet("Types")]
-        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetAllTypes()
         {
             var res = await _service.GetAllTypes();
