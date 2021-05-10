@@ -285,7 +285,7 @@ namespace iPassport.Application.Services
                 VerifyUniqueKeyErrors(ex);
                 throw;
             }
-            return new ResponseApi(true, _localizer["UserCreated"], user.Id);
+            return new ResponseApi(true, string.Format(_localizer["AgentCreatedWithLogin"], user.UserName), user.Id);
         }
 
         public async Task<ResponseApi> EditAgent(UserAgentDto dto)

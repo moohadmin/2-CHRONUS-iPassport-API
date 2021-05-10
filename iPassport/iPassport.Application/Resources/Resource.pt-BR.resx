@@ -924,4 +924,7 @@
   <data name="UserPassport" xml:space="preserve">
     <value>Passaport do Usuário</value>
   </data>
+  <data name="AgentCreatedWithLogin" xml:space="preserve">
+    <value>Usuário criado com sucesso! Login gerado: {0}</value>
+  </data>
 </root>
