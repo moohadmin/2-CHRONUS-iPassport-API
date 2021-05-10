@@ -35,12 +35,12 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<UserAgentCreateRequest, UserAgentDto>()
                 .ForMember(des => des.Password, act => act.MapFrom(src => src.Password))
-                .ForMember(des => des.Mobile, act => act.MapFrom(src => src.CellphoneNumber))
                 .ForMember(des => des.FullName, act => act.MapFrom(src => src.CompleteName))
                 .ForMember(des => des.CPF, act => act.MapFrom(src => src.Cpf))
                 .ForMember(des => des.Address, act => act.MapFrom(src => src.Address));
 
-            profile.CreateMap<UserAgentEditRequest, UserAgentDto>();
+            profile.CreateMap<UserAgentEditRequest, UserAgentDto>()
+                .ForMember(des => des.FullName, act => act.MapFrom(src => src.CompleteName));
 
             profile.CreateMap<CitizenCreateRequest, CitizenCreateDto>();
 

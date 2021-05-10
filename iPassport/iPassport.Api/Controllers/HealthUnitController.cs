@@ -55,7 +55,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
-        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government)]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Business, RolesModel.Government, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetByNameParts([FromQuery] GetHealthUnitPagedRequest request)
         {
             var res = await _service.FindByNameParts(_mapper.Map<GetHealthUnitPagedFilter>(request));

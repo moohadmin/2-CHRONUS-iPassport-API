@@ -31,5 +31,9 @@ namespace iPassport.Api.Models.Requests
         /// City Id
         /// </summary>
         public Guid CityId { get; set; }
+        /// <summary>
+        /// Complement
+        /// </summary>
+        public string Complement { get; set; }
     }
 }

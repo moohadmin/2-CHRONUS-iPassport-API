@@ -196,7 +196,6 @@ namespace iPassport.Application.Services
             
             var res = await _healthUnitRepository.GetPagedHealthUnits(filter, _accessor.GetAccessControlDTO());
 
-
             var result = _mapper.Map<IList<HealthUnitViewModel>>(res.Data);
 
             foreach (var item in result.Where(x => x.AddressId.HasValue))
