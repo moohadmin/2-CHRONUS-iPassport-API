@@ -169,7 +169,7 @@
     <value>Formato do arquivo de imagem não suportado. Formatos aceitos: jpeg, jpg, png.</value>
   </data>
   <data name="InitalsRequestMin" xml:space="preserve">
-    <value>Necessário o minimo {0} de caracteres para realizar a pesquisa.</value>
+    <value>Necessário o mínimo {0} de caracteres para realizar a pesquisa.</value>
   </data>
   <data name="InvalidDocLogin" xml:space="preserve">
     <value>O documento informado é inválido ou ainda não foi cadastrado. Atualmente, o acesso ao aplicativo é limitado para convidados. Em breve o acesso será liberado!</value>
@@ -211,7 +211,7 @@
     <value>Código de autenticação inválido. Favor conferir código enviado.</value>
   </data>
   <data name="PinResendTime" xml:space="preserve">
-    <value>Por favor aguarde o tempo minimo antes de solicitar um novo Código de autenticação.</value>
+    <value>Por favor aguarde o tempo mínimo antes de solicitar um novo Código de autenticação.</value>
   </data>
   <data name="PinSent" xml:space="preserve">
     <value>PIN enviado com sucesso.</value>
