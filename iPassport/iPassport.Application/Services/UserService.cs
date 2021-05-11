@@ -264,8 +264,6 @@ namespace iPassport.Application.Services
                 _unitOfWork.BeginTransactionIdentity();
                 _unitOfWork.BeginTransactionPassport();
                 
-                await ChangeUserActivationStatus(dto.IsActive, user, EUserType.Agent);
-
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user, dto.Password);
                 ValidateSaveUserIdentityResult(result);
