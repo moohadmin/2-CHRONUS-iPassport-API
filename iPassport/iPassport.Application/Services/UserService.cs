@@ -254,12 +254,17 @@ namespace iPassport.Application.Services
 
             dto.Username = await GenerateAgentUsername(dto.FullName);
 
-            var user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Agent)));
+            if (!dto.IsActive.GetValueOrDefault())
+                dto.DeactivationUserId = _accessor.GetCurrentUserId();
 
+            var user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Agent)));
+            
             try
             {
                 _unitOfWork.BeginTransactionIdentity();
                 _unitOfWork.BeginTransactionPassport();
+                
+                await ChangeUserActivationStatus(dto.IsActive, user, EUserType.Agent);
 
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user, dto.Password);
