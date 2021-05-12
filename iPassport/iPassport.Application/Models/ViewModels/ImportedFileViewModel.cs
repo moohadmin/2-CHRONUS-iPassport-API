@@ -28,10 +28,6 @@ namespace iPassport.Application.Models.ViewModels
         /// </summary>
         public int Status { get; set; }
         /// <summary>
-        /// User's Names
-        /// </summary>
-        public string UserName { get; set; }
-        /// <summary>
         /// User's Id
         /// </summary>
         public Guid UserId { get; set; }
@@ -43,6 +39,10 @@ namespace iPassport.Application.Models.ViewModels
         /// Unimported Lines
         /// </summary>
         public int UnImportedLines { get; set; }
+        /// <summary>
+        /// Complete User Name  
+        /// </summary>
+        public string CompleteName { get; set; }
 
     }
 }
