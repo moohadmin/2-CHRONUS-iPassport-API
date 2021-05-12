@@ -1396,7 +1396,7 @@ namespace iPassport.Application.Services
                     return username;
             }
 
-            possibleNames.Add(GenerateRandomUsername(nameList.Last(), firstName));
+            possibleNames.Add(GenerateRandomUsername(nameList.First(), firstName));
 
             return SetValidUsername(namesInDb, possibleNames, nameList, firstName);
         }
