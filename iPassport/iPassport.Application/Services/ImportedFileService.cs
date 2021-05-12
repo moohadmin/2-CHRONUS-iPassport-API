@@ -44,7 +44,7 @@ namespace iPassport.Application.Services
             foreach (var item in result)
             {
                 var user = await _userRepository.GetById(item.UserId);
-                item.UserName = user.UserName;
+                item.CompleteName = user.FullName;
             }
             return new PagedResponseApi(true, _localizer["ImportedFiles"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
