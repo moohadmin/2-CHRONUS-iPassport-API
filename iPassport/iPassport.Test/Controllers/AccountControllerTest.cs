@@ -116,7 +116,7 @@ namespace iPassport.Test.Controllers
             // Assert
             _mockService.Verify(a => a.ResendPin(It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            Assert.IsInstanceOfType(result.Result, typeof(NoContentResult));
         }
 
 
