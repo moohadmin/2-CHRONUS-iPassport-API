@@ -202,7 +202,7 @@ namespace iPassport.Domain.Entities.Authentication
                         dto.HumanRaceId,
                         dto.BloodTypeId,
                         dto.Occupation,
-                        new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District),
+                        new Address(dto.Address, dto.CityId, dto.Cep, dto.Number, dto.District, dto.Complement),
                         null,
                         null,
                         null,
