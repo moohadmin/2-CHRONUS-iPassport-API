@@ -45,7 +45,7 @@ namespace iPassport.Api.Models.Validators.Users
                 .Must(x => CpfUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cpf)).WithMessage(string.Format(localizer["InvalidField"], "CPF"));
 
             RuleFor(x => x.PassportDocument)
-                .Must(x => Regex.IsMatch(x[0].ToString(), "^[a-zA-Z]+$") && Regex.IsMatch(x[1].ToString(), "^[a-zA-Z]+$") && x.Length >= 3 && x.Length <= 15 && Regex.IsMatch(x[2..^(-1)], "^[0-9]+$"))
+                .Must(x => Regex.IsMatch(x[0].ToString(), "^[a-zA-Z]+$") && Regex.IsMatch(x[1].ToString(), "^[a-zA-Z]+$") && x.Length >= 3 && x.Length <= 15 && Regex.IsMatch(x[2..^(1)], "^[0-9]+$"))
                 .When(x => !string.IsNullOrWhiteSpace(x.PassportDocument))
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["PassportDocument"]));
 
