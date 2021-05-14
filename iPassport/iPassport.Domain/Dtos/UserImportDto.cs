@@ -151,5 +151,6 @@ namespace iPassport.Domain.Dtos
             get => Result.ToUpper() == Constants.CONST_NENHUM_VALUE ? null : Result.ToUpper() == Constants.CONST_POSITIVO_VALUE;
         }
         public Guid UserId { get; set; }
+        public string Complement { get; set; }
     }
 }

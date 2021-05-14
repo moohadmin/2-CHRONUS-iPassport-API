@@ -7,7 +7,7 @@ namespace iPassport.Domain.Entities
     {
         public Address() { }
 
-        public Address(string description, Guid cityId, string cep, string number, string district) : base()
+        public Address(string description, Guid cityId, string cep, string number, string district, string complement) : base()
         {
             Id = Guid.NewGuid();
             Description = description;
@@ -15,6 +15,7 @@ namespace iPassport.Domain.Entities
             CityId = cityId;
             Number = number;
             District = district;
+            Complement = complement;
         }
 
         public Address(AddressDto dto)
@@ -36,7 +37,7 @@ namespace iPassport.Domain.Entities
         
         public City City { get; set; }
 
-        public Address Create(AddressCreateDto dto) => new Address(dto.Description, dto.CityId, dto.Cep, dto.Number, dto.District);
+        public Address Create(AddressCreateDto dto) => new Address(dto.Description, dto.CityId, dto.Cep, dto.Number, dto.District, dto.Complement);
 
         public void ChangeAddress(AddressEditDto dto)
         {

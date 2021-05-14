@@ -39,7 +39,22 @@ namespace iPassport.Api.Models.Validators.Users
                 .SetValidator(new RequiredFieldValidator<string>("Cns", localizer)).When(x => string.IsNullOrWhiteSpace(x.Cpf))
                 .Length(15).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"))
                 .Must(y => Regex.IsMatch(y, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"));
-                       
+
+            RuleFor(x => x.PassportDocument)
+                .Must(x => Regex.IsMatch(x[0].ToString(), "^[a-zA-Z]+$") && Regex.IsMatch(x[1].ToString(), "^[a-zA-Z]+$") && x.Length >= 3 && x.Length <= 15 && Regex.IsMatch(x[2..^(1)], "^[0-9]+$"))
+                .When(x => !string.IsNullOrWhiteSpace(x.PassportDocument))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["PassportDocument"]));
+
+            RuleFor(x => x.Rg)
+                .Must(x => x.Length <= 15)
+                .When(x => !string.IsNullOrWhiteSpace(x.Rg))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["RgField"]));
+
+            RuleFor(x => x.InternationalDocument)
+                .Must(x => x.Length <= 15)
+                .When(x => !string.IsNullOrWhiteSpace(x.InternationalDocument))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["InternationalDocument"]));
+
             RuleFor(x => x.Email)
                 .EmailAddress()
                 .When(x => x != null)

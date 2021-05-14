@@ -927,4 +927,10 @@
   <data name="AgentCreatedWithLogin" xml:space="preserve">
     <value>Usuário criado com sucesso! Login gerado: {0}</value>
   </data>
+  <data name="PassportDocument" xml:space="preserve">
+    <value>Documento de Passaporte</value>
+  </data>
+  <data name="RgField" xml:space="preserve">
+    <value>Rg</value>
+  </data>
 </root>
