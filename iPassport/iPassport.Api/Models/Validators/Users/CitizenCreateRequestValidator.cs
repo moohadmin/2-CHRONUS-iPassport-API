@@ -55,10 +55,8 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(localizer["CnsAndCpfRequired"]);
 
             RuleFor(x => x.Telephone)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["Telephone"]))
                 .Must(y => PhoneNumberUtils.ValidMobile(y))
+                .When(x => !string.IsNullOrWhiteSpace(x.Telephone))
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]));
 
             RuleFor(x => x.NumberOfDoses)

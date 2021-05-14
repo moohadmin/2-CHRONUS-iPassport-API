@@ -149,7 +149,7 @@ namespace iPassport.Domain.Entities.Authentication
                                 dto.Cpf,
                                 dto.Rg,
                                 dto.Cns,
-                                null,
+                                dto.PassportDocument,
                                 dto.Birthday,
                                 dto.GenderId,
                                 dto.HumanRaceId,
@@ -157,7 +157,7 @@ namespace iPassport.Domain.Entities.Authentication
                                 dto.Occupation,
                                 CreateUserAddress(dto.Address),
                                 null,
-                                null,
+                                dto.InternationalDocument,
                                 null,
                                 dto.Email,
                                 dto.Telephone,
@@ -178,7 +178,9 @@ namespace iPassport.Domain.Entities.Authentication
             Email = dto.Email;
             Occupation = dto.Occupation;
             PhoneNumber = dto.Telephone;
-
+            RG = dto.Rg;
+            PassportDoc = dto.PassportDocument;
+            InternationalDocument = dto.InternationalDocument;
             CompanyId = dto.CompanyId;
             BloodTypeId = dto.BloodTypeId;
             GenderId = dto.GenderId;
