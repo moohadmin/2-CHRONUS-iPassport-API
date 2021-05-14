@@ -136,7 +136,7 @@ namespace iPassport.Application.Services.AuthenticationServices
                 throw new BusinessException(_localizer["InvalidDocLogin"]);
 
             if (!string.IsNullOrWhiteSpace(user.PhoneNumber) && user.PhoneNumber != phone)
-                throw new BusinessException(_localizer["UserNotFound"]);
+                throw new BusinessException(_localizer["UserOrPasswordInvalid"]);
 
             var pinresp = await _auth2FactService.SendPin(user.Id, phone);
 

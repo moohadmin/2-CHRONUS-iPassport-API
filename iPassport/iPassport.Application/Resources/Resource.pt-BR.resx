@@ -933,4 +933,13 @@
   <data name="RgField" xml:space="preserve">
     <value>Rg</value>
   </data>
+  <data name="Cns" xml:space="preserve">
+    <value>Cns</value>
+  </data>
+  <data name="Cpf" xml:space="preserve">
+    <value>CPF</value>
+  </data>
+  <data name="Doctype" xml:space="preserve">
+    <value>Tipo de Documento</value>
+  </data>
 </root>
