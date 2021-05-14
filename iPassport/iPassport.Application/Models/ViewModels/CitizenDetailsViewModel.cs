@@ -46,6 +46,13 @@ namespace iPassport.Application.Models.ViewModels
         public UserDiseaseTestViewModel Test { get; set; }
 
         public string ImportedFileName { get; set; }
+
         public DateTime? ImportedFileDate { get; set; }
+
+        public string Rg { get; set; }
+
+        public string PassportDocument { get; set; }
+
+        public string InternationalDocument { get; set; }
     }
 }

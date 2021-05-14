@@ -53,6 +53,9 @@ namespace iPassport.Domain.Dtos
             }).ToList() : null;
             ImportedFileName = userDetails.ImportedFile?.Name;
             ImportedFileDate = userDetails.ImportedFile?.CreateDate;
+            Rg = authUser.RG;
+            InternationalDocument = authUser.InternationalDocument;
+            PassportDocument = authUser.PassportDoc;
         }
 
         public string CompleteName { get; set; }
@@ -94,6 +97,13 @@ namespace iPassport.Domain.Dtos
         public UserDiseaseTestDto Test { get; set; }
 
         public string ImportedFileName { get; set; }
+        
         public DateTime? ImportedFileDate { get; set; }
+        
+        public string Rg { get; set; }
+
+        public string PassportDocument { get; set; }
+
+        public string InternationalDocument { get; set; }
     }
 }
