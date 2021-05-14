@@ -12,7 +12,5 @@ namespace iPassport.Test.Seeds
             address.City = CitySeed.GetLoaded();
             return address;
         }
-        
-
     }
 }
