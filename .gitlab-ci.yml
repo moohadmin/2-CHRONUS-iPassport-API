@@ -42,6 +42,7 @@ test:
     expire_in: 1h
   only:
     - develop
+    - /^feature\/.*$/
     - /^release\/[0-9.]+$/
     - master
     - tags
