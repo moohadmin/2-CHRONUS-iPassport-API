@@ -127,15 +127,14 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .When(x => !string.IsNullOrWhiteSpace(x.Result))
                 .WithMessage(localizer["NonstandardField"]);
 
-            RuleFor(x => x.ResultDate)
-                .NotNull()
-                .When(x => !string.IsNullOrWhiteSpace(x.Result) && x.ResultBool.HasValue)
-                .WithMessage(localizer["FieldRequired"]);
-
-            RuleFor(x => x.ResultDate)
-                .LessThanOrEqualTo(DateTime.UtcNow)
-                .When(x => !string.IsNullOrWhiteSpace(x.Result) && x.ResultBool.HasValue)
-                .WithMessage(localizer["TestResultDateCannotBeHiggerThenCurrentDate"]);
+            When(x => !string.IsNullOrWhiteSpace(x.Result) && x.ResultBool.HasValue, () =>
+            {
+                RuleFor(x => x.ResultDate).Cascade(CascadeMode.Stop)
+                    .NotNull()
+                    .WithMessage(localizer["FieldRequired"])
+                    .Must(x => x.Value.Date <= DateTime.UtcNow.Date)
+                    .WithMessage(localizer["TestResultDateCannotBeHiggerThenCurrentDate"]);
+            });
 
             RuleFor(x => x.ResultDate)
                 .GreaterThan(x => x.TestDate)
@@ -165,7 +164,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(localizer["FieldRequired"]);
             
             RuleFor(x => x.VaccinationDateUniqueDose)
-                .LessThanOrEqualTo(DateTime.UtcNow)
+                .Must(x => x.Value.Date <= DateTime.UtcNow.Date)
                 .When(x => x.HasVaccineUniqueDoseData)
                 .WithMessage(localizer["VaccinationDateCannotBeHiggerThenActualDate"]);
 
@@ -222,7 +221,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.VaccinationDateFirstDose)
-                .LessThanOrEqualTo(DateTime.UtcNow)
+                .Must(x => x.Value.Date <= DateTime.UtcNow.Date)
                 .When(x => x.HasVaccineFirstDoseData)
                 .WithMessage(localizer["VaccinationDateCannotBeHiggerThenActualDate"]);
 
@@ -279,7 +278,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(localizer["FieldRequired"]);
             
             RuleFor(x => x.VaccinationDateSecondDose)
-                .LessThanOrEqualTo(DateTime.UtcNow)
+                .Must(x => x.Value.Date <= DateTime.UtcNow.Date)
                 .When(x => x.HasVaccineSecondDoseData)
                 .WithMessage(localizer["VaccinationDateCannotBeHiggerThenActualDate"]);
 
@@ -332,7 +331,7 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .WithMessage(localizer["FieldRequired"]);
 
             RuleFor(x => x.VaccinationDateThirdDose)
-                .LessThanOrEqualTo(DateTime.UtcNow)
+                .Must(x => x.Value.Date <= DateTime.UtcNow.Date)
                 .When(x => x.HasVaccineThirdDoseData)
                 .WithMessage(localizer["VaccinationDateCannotBeHiggerThenActualDate"]);
 
