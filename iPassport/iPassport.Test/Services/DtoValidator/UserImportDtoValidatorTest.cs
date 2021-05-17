@@ -4,6 +4,7 @@ using iPassport.Test.Settings.Factories;
 using iPassport.Test.Settings.Seeds;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,8 +29,16 @@ namespace iPassport.Test.Services.DtoValidator
         [TestMethod]
         public void FullNameNullRequired()
         {
+            // Seed
+
+            var seed = UserImportDtoSeed.UserImportDtoWithFullNameNull();
             // Act
-            var validationResult = _validator.Validate(UserImportDtoSeed.UserImportDtoWithFullNameNull());
+            var validationResult = _validator.Validate(seed);
+
+            string uniqueDose = seed.VaccinationDateUniqueDose.Value.ToString("DD/MM/YYYY hh:mi:ss");
+            string now = DateTime.UtcNow.ToString("DD/MM/YYYY hh:mi:ss");
+
+            Assert.AreEqual(now, uniqueDose);
 
             validationResult.Errors.ToList().ForEach(x => Assert.AreEqual(resource.GetMessage("FieldRequired"), x.ErrorMessage));
 
