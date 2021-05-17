@@ -207,7 +207,7 @@ namespace iPassport.Domain.Entities.Authentication
                         null,
                         null,
                         dto.Email,
-                        string.Concat(dto.CountryCode, dto.PhoneNumber),
+                        dto.CountryCode == null || dto.PhoneNumber == null ? null : string.Concat(dto.CountryCode, dto.PhoneNumber),
                         dto.CompanyId);
 
             user.AddUserType(userTypeId);

@@ -45,8 +45,29 @@ namespace iPassport.Domain.Dtos.DtoValidator
                 .When(x => !string.IsNullOrWhiteSpace(x.Cns))
                 .WithMessage(string.Format(localizer["FieldMustHaveANumberOfDigits"], 15));
 
+            RuleFor(x => x.RG)
+                .MaximumLength(15)
+                .When(x => !string.IsNullOrWhiteSpace(x.RG))
+                .WithMessage(string.Format(localizer["FieldMustHaveANumberOfDigits"], 15));
+
+            RuleFor(x => x.PassportDoc)
+                .MinimumLength(3)
+                .When(x => !string.IsNullOrWhiteSpace(x.PassportDoc))
+                .WithMessage(string.Format(localizer["FieldMustHaveANumberOfDigitsBetween"], 3, 15));
+
+            RuleFor(x => x.PassportDoc)
+                .MaximumLength(15)
+                .When(x => !string.IsNullOrWhiteSpace(x.PassportDoc))
+                .WithMessage(string.Format(localizer["FieldMustHaveANumberOfDigitsBetween"], 3, 15));
+
+            RuleFor(x => x.InternationalDocument)
+                .MaximumLength(15)
+                .When(x => !string.IsNullOrWhiteSpace(x.InternationalDocument))
+                .WithMessage(string.Format(localizer["FieldMustHaveANumberOfDigits"], 15));
+
             RuleFor(x => x.PhoneNumber)
                 .Must(x => x.ToString().Length >= 10 && x.ToString().Length <= 11)
+                .When(x => x.PhoneNumber != null)
                 .WithMessage(localizer["NonstandardField"]);
 
             RuleFor(x => x.Email)

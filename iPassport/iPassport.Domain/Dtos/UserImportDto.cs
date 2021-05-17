@@ -16,8 +16,8 @@ namespace iPassport.Domain.Dtos
         public string PriorityGroup { get; set; }
         public string BloodType { get; set; }
         public string HumanRace { get; set; }
-        public int CountryCode { get; set; }
-        public ulong PhoneNumber { get; set; }
+        public int? CountryCode { get; set; }
+        public ulong? PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Cep { get; set; }
         public string Address { get; set; }
@@ -151,6 +151,10 @@ namespace iPassport.Domain.Dtos
             get => Result.ToUpper() == Constants.CONST_NENHUM_VALUE ? null : Result.ToUpper() == Constants.CONST_POSITIVO_VALUE;
         }
         public Guid UserId { get; set; }
+        
         public string Complement { get; set; }
+        public string RG { get; set; }
+        public string InternationalDocument { get; set; }
+        public string PassportDoc { get; set; }
     }
 }
