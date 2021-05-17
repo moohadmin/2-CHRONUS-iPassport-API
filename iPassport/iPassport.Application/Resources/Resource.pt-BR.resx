@@ -684,6 +684,9 @@
   <data name="FieldMustHaveANumberOfDigits" xml:space="preserve">
     <value>Este campo deve conter {0} dígitos.</value>
   </data>
+  <data name="FieldMustHaveANumberOfDigitsBetween" xml:space="preserve">
+    <value>Este campo deve conter entre {0} e {1} dígitos.</value>
+  </data>
   <data name="FieldValueInformedIsNotValidFem" xml:space="preserve">
     <value>A {0} informada é inválida.</value>
   </data>
@@ -941,5 +944,14 @@
   </data>
   <data name="Doctype" xml:space="preserve">
     <value>Tipo de Documento</value>
+  </data>
+  <data name="ColumnNameImportFileInternationalDocument" xml:space="preserve">
+    <value>Cód. de Identificação</value>
+  </data>
+  <data name="ColumnNameImportFilePassportDoc" xml:space="preserve">
+    <value>Passporte</value>
+  </data>
+  <data name="ColumnNameImportFileRG" xml:space="preserve">
+    <value>RG</value>
   </data>
 </root>
