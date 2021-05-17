@@ -36,7 +36,7 @@ namespace iPassport.Test.Services.DtoValidator
             var validationResult = _validator.Validate(seed);
 
             string uniqueDose = seed.VaccinationDateUniqueDose.Value.ToString("DD/MM/YYYY hh:mi:ss");
-            string now = DateTime.UtcNow.ToString("DD/MM/YYYY hh:mi:ss");
+            string now = DateTime.UtcNow.AddDays(1).ToString("DD/MM/YYYY hh:mi:ss");
 
             Assert.AreEqual(now, uniqueDose);
 
