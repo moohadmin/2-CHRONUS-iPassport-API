@@ -41,8 +41,10 @@ namespace iPassport.Application.Services
         }
 
         public async Task<PagedResponseApi> GetCurrentUserVaccines(PageFilter pageFilter)
-        { 
-            var res = await _repository.GetPagedUserVaccinesByUserId(new GetByIdPagedFilter(_accessor.GetCurrentUserId(), pageFilter));
+        {
+            var userBirthday = await  _userRepository.GetUserBirthdayDate(_accessor.GetCurrentUserId());
+
+            var res = await _repository.GetPagedUserVaccinesByUserId(new GetByIdPagedFilter(_accessor.GetCurrentUserId(), pageFilter), userBirthday);
 
             await GetVaccineDetailsStatus(res.Data);
 
@@ -51,15 +53,18 @@ namespace iPassport.Application.Services
             return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
-        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter) { 
-            var res = await _repository.GetPagedUserVaccinesByPassportId(pageFilter);
+        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter) {
+            
+            var user = await _userDetailsRepository.GetByPassportId(pageFilter.Id);
+            var userBirthday = await  _userRepository.GetUserBirthdayDate(user.Id);
+
+            var res = await _repository.GetPagedUserVaccinesByPassportId(pageFilter, userBirthday);
 
             await GetVaccineDetailsStatus(res.Data);
 
             var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
-
         }
 
         private async Task GetVaccineDetailsStatus(IList<UserVaccineDetailsDto> detailsDto)

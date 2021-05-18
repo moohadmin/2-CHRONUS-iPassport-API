@@ -15,7 +15,7 @@ namespace iPassport.Infra.Repositories
     {
         public UserVaccineRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByUserId(GetByIdPagedFilter pageFilter)
+        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByUserId(GetByIdPagedFilter pageFilter, DateTime userBirthday)
         {
             var q = await _DbSet
                .Include(v => v.HealthUnit).ThenInclude(y => y.Type)
@@ -24,10 +24,10 @@ namespace iPassport.Infra.Repositories
                .Where(v => v.ExclusionDate == null && v.UserDetails.Id == pageFilter.Id)
                .ToListAsync();
 
-            return GeneratePaggedVaccineDetails(q, pageFilter);
+            return GeneratePaggedVaccineDetails(q, userBirthday, pageFilter);
         }
 
-        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByPassportId(GetByIdPagedFilter pageFilter)
+        public async Task<PagedData<UserVaccineDetailsDto>> GetPagedUserVaccinesByPassportId(GetByIdPagedFilter pageFilter, DateTime userBirthday)
         {
             var q = await _DbSet
                 .Include(v => v.HealthUnit).ThenInclude(v => v.Type)
@@ -36,7 +36,7 @@ namespace iPassport.Infra.Repositories
                 .Where(v => v.ExclusionDate == null && v.UserDetails.Passport.ListPassportDetails.Any(x => x.Id == pageFilter.Id))
                 .ToListAsync();
 
-            return GeneratePaggedVaccineDetails(q, pageFilter);
+            return GeneratePaggedVaccineDetails(q, userBirthday, pageFilter);
         }
 
         public async Task<int> GetVaccinatedCount(GetVaccinatedCountFilter filter)
@@ -44,10 +44,13 @@ namespace iPassport.Infra.Repositories
             return await _DbSet
                 .Include(v => v.Vaccine).ThenInclude(v => v.Manufacturer)
                 .Include(v => v.Vaccine).ThenInclude(v => v.Diseases)
+                .Include(v => v.Vaccine).ThenInclude(v => v.GeneralVaccineDosage)
+                .Include(v => v.Vaccine).ThenInclude(v => v.AgeGroupVaccineDosage)
                 .Where(v => v.ExclusionDate == null && (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (filter.DiseaseId == null || v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
-                    && (filter.DosageCount == 0 ? v.Vaccine.GetRequiredDoses() == 1 : v.Dose == filter.DosageCount && v.Vaccine.GetRequiredDoses() > 1))
+                    && (filter.DosageCount == 0 ? v.Vaccine.GeneralVaccineDosage.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.GeneralVaccineDosage.RequiredDoses > 1)
+                    && (filter.DosageCount == 0 ? v.Vaccine.AgeGroupVaccineDosage.Any(y => y.RequiredDoses == 1): v.Dose == filter.DosageCount && v.Vaccine.AgeGroupVaccineDosage.Any(y => y.RequiredDoses > 1)))
                 .CountAsync();
         }
 
@@ -59,7 +62,8 @@ namespace iPassport.Infra.Repositories
                 .Where(v => v.ExclusionDate == null && (v.VaccinationDate >= filter.StartTime && v.VaccinationDate <= filter.EndTime)
                     && (filter.ManufacturerId == null || v.Vaccine.ManufacturerId == filter.ManufacturerId)
                     && (filter.DiseaseId == null || v.Vaccine.Diseases.Any(d => d.Id == filter.DiseaseId))
-                    && (filter.DosageCount == 0 ? v.Vaccine.GetRequiredDoses() == 1 : v.Dose == filter.DosageCount && v.Vaccine.GetRequiredDoses() > 1))
+                    && (filter.DosageCount == 0 ? v.Vaccine.GeneralVaccineDosage.RequiredDoses == 1 : v.Dose == filter.DosageCount && v.Vaccine.GeneralVaccineDosage.RequiredDoses > 1)
+                    && (filter.DosageCount == 0 ? v.Vaccine.AgeGroupVaccineDosage.Any(y => y.RequiredDoses == 1) : v.Dose == filter.DosageCount && v.Vaccine.AgeGroupVaccineDosage.Any(y => y.RequiredDoses > 1)))
                 .ToListAsync();
 
             var result = query.GroupBy(v => new { v.Dose, v.VaccineId, v.Vaccine.ManufacturerId })
@@ -71,7 +75,7 @@ namespace iPassport.Infra.Repositories
                     ManufacturerId = v.Key.ManufacturerId,
                     ManufacturerName = v.FirstOrDefault().Vaccine.Manufacturer.Name,
                     Dose = v.Key.Dose,
-                    UniqueDose = v.FirstOrDefault().Vaccine.RequiredDoses == 1,
+                    UniqueDose = v.FirstOrDefault().Vaccine.GeneralVaccineDosage.RequiredDoses == 1,
                     Count = v.Count()
 
                 }).OrderBy(v => v.Disease).ToList();
