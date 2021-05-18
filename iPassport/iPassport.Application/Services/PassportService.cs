@@ -90,8 +90,9 @@ namespace iPassport.Application.Services
             dto = await ValidPassportToAcess(dto);
 
             var userDetails = await _userDetailsRepository.GetLoadedUserById(dto.CitizenId);
+            var userBirthday = await _userRepository.GetUserBirthdayDate(userDetails.Id);
 
-            if (!userDetails.IsApprovedPassport())
+            if (!userDetails.IsApprovedPassport(userBirthday))
                 throw new BusinessException(_localizer["PassportNotApproved"]);
 
             dto.AllowAccess = true;
@@ -160,7 +161,7 @@ namespace iPassport.Application.Services
             viewModel.Cpf = passportCitizen.CPF;
             viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, imageEnum);
             viewModel.UserFullName = passportCitizen.FullName;
-            viewModel.Immunized = passport.UserDetails.IsApprovedPassport();
+            viewModel.Immunized = passport.UserDetails.IsApprovedPassport(authUser.Birthday);
 
             return new ResponseApi(true, _localizer["PassaportToValidate"], viewModel);
         }

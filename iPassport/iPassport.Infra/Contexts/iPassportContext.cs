@@ -34,6 +34,10 @@ namespace iPassport.Infra.Contexts
         public DbSet<PriorityGroup> PriorityGroups { get; set; }
         public DbSet<ImportedFile> ImportedFiles { get; set; }
         public DbSet<ImportedFileDetails> ImportedFileDetails { get; set; }
+        public DbSet<VaccineDosageType> VaccineDosageTypes { get; set; }
+        public DbSet<VaccinePeriodType> VaccinePeriodTypes { get; set; }
+        public DbSet<AgeGroupVaccineDosageType> AgeGroupVaccineDosageTypes { get; set; }
+        public DbSet<GeneralVaccineDosageType> GeneralVaccineDosageTypes { get; set; }
 
         /// <summary>
         ///  Usado para aplicar os Mappings das Entidades
@@ -55,6 +59,11 @@ namespace iPassport.Infra.Contexts
             modelBuilder.ApplyConfiguration(new PriorityGroupMap());
             modelBuilder.ApplyConfiguration(new ImportedFileMap());
             modelBuilder.ApplyConfiguration(new ImportedFileDetailsMap());
+            modelBuilder.ApplyConfiguration(new VaccineDosageTypeMap());
+            modelBuilder.ApplyConfiguration(new VaccinePeriodTypeMap());
+            modelBuilder.ApplyConfiguration(new AgeGroupVaccineDosageTypeMap());
+            modelBuilder.ApplyConfiguration(new GeneralVaccineDosageTypeMap());
+
             //To avoid delete cascade.
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {

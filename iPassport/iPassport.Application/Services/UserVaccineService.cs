@@ -7,6 +7,7 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
@@ -20,16 +21,23 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
         private readonly IUserVaccineRepository _repository;
         private readonly IUserDetailsRepository _userDetailsRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IHttpContextAccessor _accessor;
 
-        public UserVaccineService(IMapper mapper, IUserVaccineRepository repository, IUserDetailsRepository userDetailsRepository, IStringLocalizer<Resource> localizer, IHttpContextAccessor accessor)
+        public UserVaccineService(IMapper mapper,
+            IUserVaccineRepository repository,
+            IUserDetailsRepository userDetailsRepository,
+            IUserRepository userRepository,
+            IStringLocalizer<Resource> localizer,
+            IHttpContextAccessor accessor)
         {
             _mapper = mapper;
             _repository = repository;
             _localizer = localizer;
             _accessor = accessor;
             _userDetailsRepository = userDetailsRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<PagedResponseApi> GetCurrentUserVaccines(PageFilter pageFilter)
@@ -59,8 +67,10 @@ namespace iPassport.Application.Services
             if (detailsDto.Any())
             {
                 var user = await _userDetailsRepository.GetLoadedUserById(detailsDto.FirstOrDefault().UserId);
+                var userBirthday = await _userRepository.GetUserBirthdayDate(user.Id);
+
                 foreach (var d in detailsDto)
-                    d.Status = user.GetUserVaccineStatus(d.VaccineId);
+                    d.Status = user.GetUserVaccineStatus(d.VaccineId, userBirthday);
             }
         }
     }

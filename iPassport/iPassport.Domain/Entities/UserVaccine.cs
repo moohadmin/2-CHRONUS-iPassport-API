@@ -53,7 +53,6 @@ namespace iPassport.Domain.Entities
         public virtual Vaccine Vaccine { get; set; }
         public virtual HealthUnit HealthUnit { get; set; }
 
-
         public UserVaccine Create(UserVaccineCreateDto dto)
             => new UserVaccine(dto.VaccinationDate, dto.Dose, dto.VaccineId, dto.UserId, dto.Batch, dto.EmployeeName, dto.EmployeeCpf, dto.EmployeeCoren, dto.HealthUnitId);
         public UserVaccine Create(UserVaccineEditDto dto)
@@ -61,7 +60,7 @@ namespace iPassport.Domain.Entities
 
         public DateTime GetExpirationDate(Vaccine vaccine) => VaccinationDate.AddMonths(vaccine.ExpirationTimeInMonths);
 
-        public bool IsImmunized()
+        public bool IsImmunized(DateTime userBirthday)
         {
             var today = DateTime.UtcNow.Date;
             if (Vaccine == null)
@@ -69,7 +68,7 @@ namespace iPassport.Domain.Entities
 
             if (VaccinationDate.Date.AddDays(Vaccine.ImmunizationTimeInDays) <= today // Time for the vaccine to start taking effect
                 && VaccinationDate.Date.AddMonths(Vaccine.ExpirationTimeInMonths) >= today // Vaccine shelf life
-                && Dose == Vaccine.RequiredDoses) // Amount of required dosage
+                && Dose == Vaccine.GetRequiredDoses(userBirthday)) // Amount of required dosage
                 return true;
 
             return false;
