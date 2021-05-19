@@ -44,11 +44,18 @@ namespace iPassport.Infra.Migrations
                 });
 
             migrationBuilder
-                    .Sql("Insert into \"VaccinePeriodTypes\" (\"Id\", \"Description\", \"Identifyer\", \"CreateDate\", \"UpdateDate\") VALUES(uuid_generate_v4(), 'Fixo', 1, timezone('utc', now()), timezone('utc', now()));"
-                    + "Insert into \"VaccinePeriodTypes\" (\"Id\", \"Description\", \"Identifyer\",  \"CreateDate\", \"UpdateDate\") VALUES(uuid_generate_v4(), 'Variável', 2, timezone('utc', now()), timezone('utc', now()));");
+                    .Sql("Insert into \"VaccinePeriodTypes\" (\"Id\", \"Description\", \"Identifyer\", \"CreateDate\", \"UpdateDate\") VALUES(uuid_generate_v4(), 'Fixo', 1, timezone('utc', now()), timezone('utc', now())),"
+                    + "(uuid_generate_v4(), 'Variável', 2, timezone('utc', now()), timezone('utc', now()));");
+
+            migrationBuilder
+                    .Sql("Insert into \"VaccineDosageTypes\" (\"Id\", \"Description\", \"CreateDate\", \"UpdateDate\") VALUES(uuid_generate_v4(), 'Geral', timezone('utc', now()), timezone('utc', now())),"
+                    + "(uuid_generate_v4(), 'Por Faixa Etária', timezone('utc', now()), timezone('utc', now()));");
+
+            migrationBuilder
+                   .Sql("UPDATE \"Vaccines\" SET \"DosageTypeId\" = (select vt.\"Id\" from \"VaccineDosageTypes\" vt where vt.\"Description\" = 'Geral')");
 
             migrationBuilder.CreateTable(
-                name: "AgeGroupVaccineDosageTypes",
+                name: "AgeGroupVaccines",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -64,15 +71,15 @@ namespace iPassport.Infra.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AgeGroupVaccineDosageTypes", x => x.Id);
+                    table.PrimaryKey("PK_AgeGroupVaccines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AgeGroupVaccineDosageTypes_VaccinePeriodTypes_PeriodTypeId",
+                        name: "FK_AgeGroupVaccines_VaccinePeriodTypes_PeriodTypeId",
                         column: x => x.PeriodTypeId,
                         principalTable: "VaccinePeriodTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AgeGroupVaccineDosageTypes_Vaccines_VaccineId",
+                        name: "FK_AgeGroupVaccines_Vaccines_VaccineId",
                         column: x => x.VaccineId,
                         principalTable: "Vaccines",
                         principalColumn: "Id",
@@ -80,7 +87,7 @@ namespace iPassport.Infra.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GeneralVaccineDosageTypes",
+                name: "GeneralGroupVaccines",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -94,15 +101,15 @@ namespace iPassport.Infra.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GeneralVaccineDosageTypes", x => x.Id);
+                    table.PrimaryKey("PK_GeneralGroupVaccines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GeneralVaccineDosageTypes_VaccinePeriodTypes_PeriodTypeId",
+                        name: "FK_GeneralGroupVaccines_VaccinePeriodTypes_PeriodTypeId",
                         column: x => x.PeriodTypeId,
                         principalTable: "VaccinePeriodTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GeneralVaccineDosageTypes_Vaccines_VaccineId",
+                        name: "FK_GeneralGroupVaccines_Vaccines_VaccineId",
                         column: x => x.VaccineId,
                         principalTable: "Vaccines",
                         principalColumn: "Id",
@@ -115,23 +122,23 @@ namespace iPassport.Infra.Migrations
                 column: "DosageTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgeGroupVaccineDosageTypes_PeriodTypeId",
-                table: "AgeGroupVaccineDosageTypes",
+                name: "IX_AgeGroupVaccines_PeriodTypeId",
+                table: "AgeGroupVaccines",
                 column: "PeriodTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgeGroupVaccineDosageTypes_VaccineId",
-                table: "AgeGroupVaccineDosageTypes",
+                name: "IX_AgeGroupVaccines_VaccineId",
+                table: "AgeGroupVaccines",
                 column: "VaccineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GeneralVaccineDosageTypes_PeriodTypeId",
-                table: "GeneralVaccineDosageTypes",
+                name: "IX_GeneralGroupVaccines_PeriodTypeId",
+                table: "GeneralGroupVaccines",
                 column: "PeriodTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GeneralVaccineDosageTypes_VaccineId",
-                table: "GeneralVaccineDosageTypes",
+                name: "IX_GeneralGroupVaccines_VaccineId",
+                table: "GeneralGroupVaccines",
                 column: "VaccineId",
                 unique: true);
 
@@ -142,6 +149,17 @@ namespace iPassport.Infra.Migrations
                 principalTable: "VaccineDosageTypes",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder
+                .Sql("INSERT INTO \"GeneralGroupVaccines\" (\"Id\", \"PeriodTypeId\", \"VaccineId\", \"RequiredDoses\", \"MaxTimeNextDose\", \"MinTimeNextDose\", \"CreateDate\", \"UpdateDate\")\n"
+                        + "select uuid_generate_v4(),"
+                        + "(select v.\"Id\" from \"VaccinePeriodTypes\" v where v.\"Description\" = 'Fixo'),"
+                        + "\"Id\","
+                        + "\"RequiredDoses\","
+                        + "\"MaxTimeNextDose\","
+                        + "\"MinTimeNextDose\","
+                        + "timezone('utc', now()),"
+                        + "timezone('utc', now()) FROM \"Vaccines\"");
 
             migrationBuilder.DropColumn(
                 name: "MaxTimeNextDose",
@@ -163,10 +181,10 @@ namespace iPassport.Infra.Migrations
                 table: "Vaccines");
 
             migrationBuilder.DropTable(
-                name: "AgeGroupVaccineDosageTypes");
+                name: "AgeGroupVaccines");
 
             migrationBuilder.DropTable(
-                name: "GeneralVaccineDosageTypes");
+                name: "GeneralGroupVaccines");
 
             migrationBuilder.DropTable(
                 name: "VaccineDosageTypes");

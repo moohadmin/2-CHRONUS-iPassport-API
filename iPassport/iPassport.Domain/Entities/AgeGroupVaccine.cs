@@ -2,7 +2,7 @@
 
 namespace iPassport.Domain.Entities
 {
-    public class AgeGroupVaccineDosageType : Entity
+    public class AgeGroupVaccine : Entity
     {
         public Guid VaccineId { get; private set; }
         public Guid PeriodTypeId { get; private set; }

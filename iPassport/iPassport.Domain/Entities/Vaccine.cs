@@ -29,31 +29,31 @@ namespace iPassport.Domain.Entities
         public virtual IEnumerable<Disease> Diseases { get; set; }
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
         public virtual VaccineDosageType DosageType { get; set; }
-        public virtual IEnumerable<AgeGroupVaccineDosageType> AgeGroupVaccineDosage { get; set; }
-        public virtual GeneralVaccineDosageType GeneralVaccineDosage { get; set; }
+        public virtual IEnumerable<AgeGroupVaccine> AgeGroupVaccines { get; set; }
+        public virtual GeneralGroupVaccine GeneralGroupVaccine { get; set; }
 
         public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Name, dto.ManufacturerId, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime, dto.MaxTimeNextDose, dto.MinTimeNextDose);
 
         public bool UniqueDose()
         {
-            return (GeneralVaccineDosage != null && GeneralVaccineDosage.RequiredDoses == 1)
-                || (AgeGroupVaccineDosage.Any() && AgeGroupVaccineDosage.All(x => x.RequiredDoses == 1));
+            return (GeneralGroupVaccine != null && GeneralGroupVaccine.RequiredDoses == 1)
+                || (AgeGroupVaccines.Any() && AgeGroupVaccines.All(x => x.RequiredDoses == 1));
         }
 
         public int GetRequiredDoses(DateTime userBirthday)
         {
-            if (AgeGroupVaccineDosage.Any())
+            if (AgeGroupVaccines.Any())
             {
                 var today = DateTime.Now.Date;
                 var age = today.Year - userBirthday.Year;
 
-                var ageGroup = AgeGroupVaccineDosage.FirstOrDefault(v => v.InitalAgeGroup >= age && v.FinalAgeGroup <= age);
+                var ageGroup = AgeGroupVaccines.FirstOrDefault(v => v.InitalAgeGroup >= age && v.FinalAgeGroup <= age);
 
                 if (ageGroup != null) return ageGroup.RequiredDoses;
             }
-            else if(GeneralVaccineDosage != null)
+            else if(GeneralGroupVaccine != null)
             {
-                return GeneralVaccineDosage.RequiredDoses;
+                return GeneralGroupVaccine.RequiredDoses;
             }
 
             return 0;
@@ -61,29 +61,29 @@ namespace iPassport.Domain.Entities
 
         public EVaccinePeriodType GetVaccinePeriodType()
         {
-            if (AgeGroupVaccineDosage.Any())
-                return (EVaccinePeriodType)AgeGroupVaccineDosage.FirstOrDefault().PeriodType.Identifyer;
+            if (AgeGroupVaccines.Any())
+                return (EVaccinePeriodType)AgeGroupVaccines.FirstOrDefault().PeriodType.Identifyer;
          
             else
-                return (EVaccinePeriodType)GeneralVaccineDosage.PeriodType.Identifyer;
+                return (EVaccinePeriodType)GeneralGroupVaccine.PeriodType.Identifyer;
         }
 
         public double GetMinTimeNextDose()
         {
-            if (AgeGroupVaccineDosage.Any())
-                return AgeGroupVaccineDosage.FirstOrDefault().MinTimeNextDose;
+            if (AgeGroupVaccines.Any())
+                return AgeGroupVaccines.FirstOrDefault().MinTimeNextDose;
 
             else
-                return GeneralVaccineDosage.MinTimeNextDose;
+                return GeneralGroupVaccine.MinTimeNextDose;
         }
 
         public double GetMaxTimeNextDose()
         {
-            if (AgeGroupVaccineDosage.Any())
-                return AgeGroupVaccineDosage.FirstOrDefault().MaxTimeNextDose;
+            if (AgeGroupVaccines.Any())
+                return AgeGroupVaccines.FirstOrDefault().MaxTimeNextDose;
 
             else
-                return GeneralVaccineDosage.MaxTimeNextDose;
+                return GeneralGroupVaccine.MaxTimeNextDose;
         }
     }
 }

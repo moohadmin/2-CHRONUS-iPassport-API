@@ -10,7 +10,7 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    [Migration("20210518132246_Update_Vaccine_AddNewVaccineTypes")]
+    [Migration("20210519205500_Update_Vaccine_AddNewVaccineTypes")]
     partial class Update_Vaccine_AddNewVaccineTypes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("DiseaseVaccine");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.AgeGroupVaccineDosageType", b =>
+            modelBuilder.Entity("iPassport.Domain.Entities.AgeGroupVaccine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,7 +75,7 @@ namespace iPassport.Infra.Migrations
 
                     b.HasIndex("VaccineId");
 
-                    b.ToTable("AgeGroupVaccineDosageTypes");
+                    b.ToTable("AgeGroupVaccines");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Auth2FactMobile", b =>
@@ -135,7 +135,7 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("Diseases");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.GeneralVaccineDosageType", b =>
+            modelBuilder.Entity("iPassport.Domain.Entities.GeneralGroupVaccine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,7 +169,7 @@ namespace iPassport.Infra.Migrations
                     b.HasIndex("VaccineId")
                         .IsUnique();
 
-                    b.ToTable("GeneralVaccineDosageTypes");
+                    b.ToTable("GeneralGroupVaccines");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.Health", b =>
@@ -767,15 +767,15 @@ namespace iPassport.Infra.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.AgeGroupVaccineDosageType", b =>
+            modelBuilder.Entity("iPassport.Domain.Entities.AgeGroupVaccine", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.VaccinePeriodType", "PeriodType")
-                        .WithMany("AgeGroupVaccineDosageTypes")
+                        .WithMany("AgeGroupVaccines")
                         .HasForeignKey("PeriodTypeId")
                         .IsRequired();
 
                     b.HasOne("iPassport.Domain.Entities.Vaccine", "Vaccine")
-                        .WithMany("AgeGroupVaccineDosage")
+                        .WithMany("AgeGroupVaccines")
                         .HasForeignKey("VaccineId")
                         .IsRequired();
 
@@ -784,16 +784,16 @@ namespace iPassport.Infra.Migrations
                     b.Navigation("Vaccine");
                 });
 
-            modelBuilder.Entity("iPassport.Domain.Entities.GeneralVaccineDosageType", b =>
+            modelBuilder.Entity("iPassport.Domain.Entities.GeneralGroupVaccine", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.VaccinePeriodType", "PeriodType")
-                        .WithMany("GeneralVaccineDosageTypes")
+                        .WithMany("GeneralGroupVaccine")
                         .HasForeignKey("PeriodTypeId")
                         .IsRequired();
 
                     b.HasOne("iPassport.Domain.Entities.Vaccine", "Vaccine")
-                        .WithOne("GeneralVaccineDosage")
-                        .HasForeignKey("iPassport.Domain.Entities.GeneralVaccineDosageType", "VaccineId")
+                        .WithOne("GeneralGroupVaccine")
+                        .HasForeignKey("iPassport.Domain.Entities.GeneralGroupVaccine", "VaccineId")
                         .IsRequired();
 
                     b.Navigation("PeriodType");
@@ -988,9 +988,9 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.Vaccine", b =>
                 {
-                    b.Navigation("AgeGroupVaccineDosage");
+                    b.Navigation("AgeGroupVaccines");
 
-                    b.Navigation("GeneralVaccineDosage");
+                    b.Navigation("GeneralGroupVaccine");
 
                     b.Navigation("UserVaccines");
                 });
@@ -1002,9 +1002,9 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.VaccinePeriodType", b =>
                 {
-                    b.Navigation("AgeGroupVaccineDosageTypes");
+                    b.Navigation("AgeGroupVaccines");
 
-                    b.Navigation("GeneralVaccineDosageTypes");
+                    b.Navigation("GeneralGroupVaccine");
                 });
 #pragma warning restore 612, 618
         }

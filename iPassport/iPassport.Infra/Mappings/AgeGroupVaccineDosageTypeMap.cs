@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace iPassport.Infra.Mappings
 {
-    public class AgeGroupVaccineDosageTypeMap : IEntityTypeConfiguration<AgeGroupVaccineDosageType>
+    public class AgeGroupVaccineDosageTypeMap : IEntityTypeConfiguration<AgeGroupVaccine>
     {
-        public void Configure(EntityTypeBuilder<AgeGroupVaccineDosageType> builder)
+        public void Configure(EntityTypeBuilder<AgeGroupVaccine> builder)
         {
             builder.HasKey(p => p.Id);
 
@@ -16,8 +16,7 @@ namespace iPassport.Infra.Mappings
             builder.Property(p => p.FinalAgeGroup)
                 .IsRequired();
 
-            builder.Property(p => p.MaxTimeNextDose)
-                .IsRequired();
+            builder.Property(p => p.MaxTimeNextDose);
 
             builder.Property(p => p.MinTimeNextDose)
                 .IsRequired();
@@ -38,11 +37,11 @@ namespace iPassport.Infra.Mappings
                 .IsRequired();
 
             builder.HasOne(c => c.PeriodType)
-                .WithMany(c => c.AgeGroupVaccineDosageTypes)
+                .WithMany(c => c.AgeGroupVaccines)
                 .HasForeignKey(c => c.PeriodTypeId);
 
             builder.HasOne(c => c.Vaccine)
-                .WithMany(c => c.AgeGroupVaccineDosage)
+                .WithMany(c => c.AgeGroupVaccines)
                 .HasForeignKey(c => c.VaccineId);
         }
     }

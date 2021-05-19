@@ -7,7 +7,7 @@ namespace iPassport.Domain.Entities
         public string Description { get; set; }
         public int Identifyer { get; private set; }
 
-        public virtual IEnumerable<AgeGroupVaccineDosageType> AgeGroupVaccineDosageTypes { get; set; }
-        public virtual IEnumerable<GeneralVaccineDosageType> GeneralVaccineDosageTypes { get; set; }
+        public virtual IEnumerable<AgeGroupVaccine> AgeGroupVaccines { get; set; }
+        public virtual IEnumerable<GeneralGroupVaccine> GeneralGroupVaccine { get; set; }
     }
 }
