@@ -17,10 +17,6 @@ namespace iPassport.Api.Models.Validators.HealthUnit
         /// <param name="localizer">String localizer</param>
         public HealthUnitResponsibleEditRequestValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.Id)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "Id"));
-
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["ResponsiblePersonName"]));

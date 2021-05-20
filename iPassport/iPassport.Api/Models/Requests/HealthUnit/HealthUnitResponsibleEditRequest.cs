@@ -8,10 +8,6 @@ namespace iPassport.Api.Models.Requests
     public class HealthUnitResponsibleEditRequest
     {
         /// <summary>
-        /// Responsible Id
-        /// </summary>
-        public Guid? Id { get; set; }
-        /// <summary>
         /// Responsible Name
         /// </summary>
         public string Name { get; set; }
