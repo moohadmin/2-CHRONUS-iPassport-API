@@ -10,7 +10,8 @@ namespace iPassport.Domain.Dtos
         public string Ine { get; set; }
         public string Email { get; set; }
         public string ResponsiblePersonName { get; set; }
-        public string ResponsiblePersonPhone { get; set; }
+        public string ResponsiblePersonLandline { get; set; }
+        public string ResponsiblePersonMobilePhone { get; set; }
         public string ResponsiblePersonOccupation { get; set; }
         public DateTime? DeactivationDate { get; set; }
         public Guid? TypeId { get; set; }

@@ -23,9 +23,10 @@ namespace iPassport.Api.AutoMapper.Mappers
                  .ForMember(des => des.Name, act => act.MapFrom(src => src.Name))
                  .ForMember(des => des.Cnpj, act => act.MapFrom(src => src.Cnpj))
                  .ForMember(des => des.Email, act => act.MapFrom(src => src.Email))
-                 .ForMember(des => des.ResponsiblePersonName, act => act.MapFrom(src => src.ResponsiblePersonName))
-                 .ForMember(des => des.ResponsiblePersonPhone, act => act.MapFrom(src => src.ResponsiblePersonPhone))
-                 .ForMember(des => des.ResponsiblePersonOccupation, act => act.MapFrom(src => src.ResponsiblePersonOccupation))
+                 .ForPath(des => des.Responsible.Name, act => act.MapFrom(src => src.ResponsiblePersonName))
+                 .ForPath(des => des.Responsible.MobilePhone, act => act.MapFrom(src => src.ResponsiblePersonMobilePhone))
+                 .ForPath(des => des.Responsible.Landline, act => act.MapFrom(src => src.ResponsiblePersonLandline))
+                 .ForPath(des => des.Responsible.Occupation, act => act.MapFrom(src => src.ResponsiblePersonOccupation))
                  .ForMember(des => des.IsActive, act => act.MapFrom(src => src.Active))
                  .ForMember(des => des.Type, act => act.MapFrom(src => src.Type))
                  .ForMember(des => des.AddressId, act => act.MapFrom(src => src.AddressId));
@@ -34,9 +35,17 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id))
                  .ForMember(des => des.Name, act => act.MapFrom(src => src.Name));
 
-            profile.CreateMap<HealthUnitCreateRequest, HealthUnitCreateDto>();
+            profile.CreateMap<HealthUnitCreateRequest, HealthUnitCreateDto>()
+                .ForMember(des => des.ResponsiblePersonName, act => act.MapFrom(src => src.Responsible.Name))
+                .ForMember(des => des.ResponsiblePersonOccupation, act => act.MapFrom(src => src.Responsible.Occupation))
+                .ForMember(des => des.ResponsiblePersonLandline, act => act.MapFrom(src => src.Responsible.Landline))
+                .ForMember(des => des.ResponsiblePersonMobilePhone, act => act.MapFrom(src => src.Responsible.MobilePhone));
 
-            profile.CreateMap<HealthUnitEditRequest, HealthUnitEditDto>();
+            profile.CreateMap<HealthUnitEditRequest, HealthUnitEditDto>()
+                .ForMember(des => des.ResponsiblePersonName, act => act.MapFrom(src => src.Responsible.Name))
+                .ForMember(des => des.ResponsiblePersonOccupation, act => act.MapFrom(src => src.Responsible.Occupation))
+                .ForMember(des => des.ResponsiblePersonLandline, act => act.MapFrom(src => src.Responsible.Landline))
+                .ForMember(des => des.ResponsiblePersonMobilePhone, act => act.MapFrom(src => src.Responsible.MobilePhone));
 
             profile.CreateMap<HealthUnitTypeDto, HealthUnitTypeViewModel>();
 
