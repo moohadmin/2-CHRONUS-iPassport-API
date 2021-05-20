@@ -22,10 +22,11 @@ namespace iPassport.Infra.Repositories
             var today = DateTime.UtcNow.Date;
             return await _DbSet.Where(x => x.ListPassportDetails.Any(z => z.Id == passportDetailsId && z.ExpirationDate.Date > today))
                         .Include(x => x.ListPassportDetails)
-                        .Include(x => x.UserDetails).ThenInclude(y => y.UserVaccines).ThenInclude(z => z.Vaccine)                        
+                        .Include(x => x.UserDetails).ThenInclude(y => y.UserVaccines).ThenInclude(z => z.Vaccine).ThenInclude(v => v.Diseases)
+                        .Include(x => x.UserDetails).ThenInclude(y => y.UserVaccines).ThenInclude(z => z.Vaccine).ThenInclude(v => v.AgeGroupVaccines).ThenInclude(v => v.PeriodType)
+                        .Include(x => x.UserDetails).ThenInclude(y => y.UserVaccines).ThenInclude(z => z.Vaccine).ThenInclude(v => v.GeneralGroupVaccine).ThenInclude(v => v.PeriodType)
                         .Include(x => x.UserDetails).ThenInclude(y => y.UserDiseaseTests)
                         .FirstOrDefaultAsync();
         }
-
     }
 }
