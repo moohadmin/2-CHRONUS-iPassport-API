@@ -19,19 +19,10 @@ namespace iPassport.Infra.Mappings
             builder.Property(p => p.ImmunizationTimeInDays)
                 .IsRequired();
 
-            builder.Property(p => p.RequiredDoses)
-                .IsRequired();
-
             builder.Property(c => c.CreateDate)
                 .IsRequired();
 
             builder.Property(c => c.UpdateDate)
-                .IsRequired();
-
-            builder.Property(c => c.MaxTimeNextDose)
-                .IsRequired();
-
-            builder.Property(c => c.MinTimeNextDose)
                 .IsRequired();
 
             builder.HasMany(c => c.Diseases)

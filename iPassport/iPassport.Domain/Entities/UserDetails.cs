@@ -86,7 +86,7 @@ namespace iPassport.Domain.Entities
 
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
 
-        public bool IsApprovedPassport()
+        public bool IsApprovedPassport(DateTime userBirthday)
         {
             bool isApproved = true;
 
@@ -103,7 +103,7 @@ namespace iPassport.Domain.Entities
             {
                 foreach (var vaccine in vacinnes)
                 {
-                    if (vaccine == null || GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
+                    if (vaccine == null || GetUserVaccineStatus(vaccine.Id, userBirthday) != EUserVaccineStatus.Immunized)
                         isApproved = false;
                 }
             }
@@ -120,7 +120,7 @@ namespace iPassport.Domain.Entities
             return isApproved;
         }
 
-        public EUserVaccineStatus GetUserVaccineStatus(Guid vaccineId)
+        public EUserVaccineStatus GetUserVaccineStatus(Guid vaccineId, DateTime userBirthday)
         {
             if (UserVaccines == null || !UserVaccines.Any(x => x.VaccineId == vaccineId && x.ExclusionDate == null))
                 return EUserVaccineStatus.Unvaccinated;
@@ -133,15 +133,27 @@ namespace iPassport.Domain.Entities
             foreach (var userVaccine in UserVaccines.Where(x => x.VaccineId == vaccineId && x.ExclusionDate == null).OrderBy(x => x.Dose))
             {
                 if (vaccine.UniqueDose())
-                    return userVaccine.IsImmunized() ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
+                    return userVaccine.IsImmunized(userBirthday) ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
 
                 else if (!userVaccine.IsFirstDose())
                 {
-                    if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.MinTimeNextDose)
-                        && userVaccine.VaccinationDate <= lastVaccineDate.AddDays(vaccine.MaxTimeNextDose))
-                        validDoses += 1;
+                    if (vaccine.GetVaccinePeriodType() == EVaccinePeriodType.Variable)
+                    {
+                        if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.GetMinTimeNextDose())
+                            && userVaccine.VaccinationDate <= lastVaccineDate.AddDays(vaccine.GetMaxTimeNextDose()))
+                            validDoses += 1;
+
+                        else
+                            return EUserVaccineStatus.NotImmunized;
+                    }
                     else
-                        return EUserVaccineStatus.NotImmunized;
+                    {
+                        if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.GetMinTimeNextDose()))
+                            validDoses += 1;
+
+                        else
+                            return EUserVaccineStatus.NotImmunized;
+                    }
                 }
                 else
                     validDoses += 1;
@@ -149,11 +161,11 @@ namespace iPassport.Domain.Entities
                 lastVaccineDate = userVaccine.VaccinationDate;
             }
 
-            if (validDoses == vaccine.RequiredDoses)
+            if (validDoses == vaccine.GetRequiredDoses(userBirthday))
             {
-                var lastDose = UserVaccines.FirstOrDefault(x => x.VaccineId == vaccineId && x.Dose == vaccine.RequiredDoses && x.ExclusionDate == null);
+                var lastDose = UserVaccines.FirstOrDefault(x => x.VaccineId == vaccineId && x.Dose == vaccine.GetRequiredDoses(userBirthday) && x.ExclusionDate == null);
 
-                return lastDose.IsImmunized() ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
+                return lastDose.IsImmunized(userBirthday) ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
             }
             else
                 return EUserVaccineStatus.Waiting;

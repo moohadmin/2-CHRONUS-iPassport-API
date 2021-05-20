@@ -247,6 +247,8 @@ namespace iPassport.Infra.Repositories.AuthenticationRepositories
                 .Include(x => x.Address).ThenInclude(x => x.City).ThenInclude(x => x.State).ThenInclude(x => x.Country)
                 .FirstOrDefaultAsync(x => x.Id == id && x.UserUserTypes.Any(x => x.UserType.Identifyer == (int)EUserType.Agent));
 
+        public async Task<DateTime> GetUserBirthdayDate(Guid id) =>
+            await _context.Users.Where(x => x.Id == id).Select(x => x.Birthday).FirstOrDefaultAsync();
 
         protected virtual async Task<PagedData<Users>> Paginate(IQueryable<Users> dbSet, PageFilter filter)
         {
