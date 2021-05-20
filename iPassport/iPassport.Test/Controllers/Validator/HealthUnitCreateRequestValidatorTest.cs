@@ -43,9 +43,13 @@ namespace iPassport.Test.Controllers.Validator
                     Email = "test@test.com",
                     Ine = "0123456789",
                     IsActive = true,
-                    ResponsiblePersonName = "test",
-                    ResponsiblePersonOccupation = "test",
-                    ResponsiblePersonPhone = "557199999999",
+                    Responsible = new HealthUnitResponsibleCreateRequest()
+                    {
+                        Name = "Responsible Name",
+                        Occupation = "Occupation",
+                        MobilePhone = "5571986865544",
+                        Landline = "557133335555"
+                    },
                     TypeId = Guid.NewGuid()
                 }).IsValid);
         }
@@ -73,9 +77,13 @@ namespace iPassport.Test.Controllers.Validator
                 Email = email,
                 Ine = "0123456789",
                 IsActive = true,
-                ResponsiblePersonName = "test",
-                ResponsiblePersonOccupation = "test",
-                ResponsiblePersonPhone = "557199999999",
+                Responsible = new HealthUnitResponsibleCreateRequest()
+                {
+                    Name = "Responsible Name",
+                    Occupation = "Occupation",
+                    MobilePhone = "5571986865544",
+                    Landline = "557133335555"
+                },
                 TypeId = Guid.NewGuid()
             };
 
@@ -106,9 +114,13 @@ namespace iPassport.Test.Controllers.Validator
                 Email = "test@test.com",
                 Ine = "0123456789",
                 IsActive = true,
-                ResponsiblePersonName = "test",
-                ResponsiblePersonOccupation = "test",
-                ResponsiblePersonPhone = "557199999999",
+                Responsible = new HealthUnitResponsibleCreateRequest()
+                {
+                    Name = "Responsible Name",
+                    Occupation = "Occupation",
+                    MobilePhone = "5571986865544",
+                    Landline = "557133335555"
+                },
                 TypeId = null
             };
 
@@ -139,9 +151,13 @@ namespace iPassport.Test.Controllers.Validator
                 Email = "test@test.com",
                 Ine = "0123456789",
                 IsActive = true,
-                ResponsiblePersonName = "test",
-                ResponsiblePersonOccupation = "test",
-                ResponsiblePersonPhone = "557199999999",
+                Responsible = new HealthUnitResponsibleCreateRequest()
+                {
+                    Name = "Responsible Name",
+                    Occupation = "Occupation",
+                    MobilePhone = "5571986865544",
+                    Landline = "557133335555"
+                },
                 TypeId = Guid.NewGuid()
             };
 
@@ -177,9 +193,13 @@ namespace iPassport.Test.Controllers.Validator
                 Email = "test@test.com",
                 Ine = "0123456789",
                 IsActive = true,
-                ResponsiblePersonName = "test",
-                ResponsiblePersonOccupation = "test",
-                ResponsiblePersonPhone = "557199999999",
+                Responsible = new HealthUnitResponsibleCreateRequest()
+                {
+                    Name = "Responsible Name",
+                    Occupation = "Occupation",
+                    MobilePhone = "5571986865544",
+                    Landline = "557133335555"
+                },
                 TypeId = Guid.NewGuid()
             };
 
@@ -212,9 +232,13 @@ namespace iPassport.Test.Controllers.Validator
                 Email = "test@test.com",
                 Ine = ine,
                 IsActive = true,
-                ResponsiblePersonName = "test",
-                ResponsiblePersonOccupation = "test",
-                ResponsiblePersonPhone = "557199999999",
+                Responsible = new HealthUnitResponsibleCreateRequest()
+                {
+                    Name = "Responsible Name",
+                    Occupation = "Occupation",
+                    MobilePhone = "5571986865544",
+                    Landline = "557133335555"
+                },
                 TypeId = Guid.NewGuid()
             };
 
@@ -249,9 +273,13 @@ namespace iPassport.Test.Controllers.Validator
                 Email = "test@test.com",
                 Ine = "0123456789",
                 IsActive = true,
-                ResponsiblePersonName = "test",
-                ResponsiblePersonOccupation = "test",
-                ResponsiblePersonPhone = phone,
+                Responsible = new HealthUnitResponsibleCreateRequest()
+                {
+                    Name = "Responsible Name",
+                    Occupation = "Occupation",
+                    MobilePhone = phone,
+                    Landline = "557133335555"
+                },
                 TypeId = Guid.NewGuid()
             };
 
@@ -260,7 +288,48 @@ namespace iPassport.Test.Controllers.Validator
 
             // Assert
             Assert.AreEqual(1, validationResult.Errors.Count());
-            Assert.AreEqual(string.Format(resource.GetMessage("InvalidField"), resource.GetMessage("ResponsiblePersonPhone")), validationResult.Errors.Single().ErrorMessage);
+            Assert.AreEqual(string.Format(resource.GetMessage("InvalidField"), resource.GetMessage("ResponsiblePersonMobilePhone")), validationResult.Errors.Single().ErrorMessage);
+        }
+
+        [TestMethod]
+        [DataRow("1234!@#$%")]
+        [DataRow("AAABBBCCCCEEEE")]
+        [DataRow("123456789012334454545aaa!@3")]
+        [DataRow("test Invalid !@#$%")]
+        public void InvalidResponsiblePersonLandline(string landlineNumber)
+        {
+            var seed = new HealthUnitCreateRequest()
+            {
+                Cnpj = "57807521000172",
+                Name = "test",
+                Address = new AddressCreateRequest()
+                {
+                    Cep = "41000000",
+                    CityId = Guid.NewGuid(),
+                    Description = "test",
+                    District = "test",
+                    Number = "12"
+                },
+                CompanyId = Guid.NewGuid(),
+                Email = "test@test.com",
+                Ine = "0123456789",
+                IsActive = true,
+                Responsible = new HealthUnitResponsibleCreateRequest()
+                {
+                    Name = "Responsible Name",
+                    Occupation = "Occupation",
+                    MobilePhone = "5571986865544",
+                    Landline = landlineNumber
+                },
+                TypeId = Guid.NewGuid()
+            };
+
+            // Act
+            var validationResult = _validator.Validate(seed);
+
+            // Assert
+            Assert.AreEqual(1, validationResult.Errors.Count());
+            Assert.AreEqual(string.Format(resource.GetMessage("InvalidField"), resource.GetMessage("ResponsiblePersonLandline")), validationResult.Errors.Single().ErrorMessage);
         }
     }
 }

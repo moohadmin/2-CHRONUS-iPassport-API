@@ -15,7 +15,8 @@ namespace iPassport.Domain.Dtos
             Name = healthUnit.Name;
             ResponsiblePersonName = healthUnit.ResponsiblePersonName;
             ResponsiblePersonOccupation = healthUnit.ResponsiblePersonOccupation;
-            ResponsiblePersonPhone = healthUnit.ResponsiblePersonPhone;
+            ResponsiblePersonLandline = healthUnit.ResponsiblePersonLandline;
+            ResponsiblePersonMobilePhone = healthUnit.ResponsiblePersonMobilePhone;
             Type = new HealthUnitTypeDto(healthUnit.Type);
             Address = new AddressDto() { Id = healthUnit.AddressId };
             Company = new CompanyDto() { Id = healthUnit.CompanyId };
@@ -30,7 +31,8 @@ namespace iPassport.Domain.Dtos
         public string Name { get; set; }
         public string ResponsiblePersonName { get; set; }
         public string ResponsiblePersonOccupation { get; set; }
-        public string ResponsiblePersonPhone { get; set; }
+        public string ResponsiblePersonLandline { get; set; }
+        public string ResponsiblePersonMobilePhone { get; set; }
         public HealthUnitTypeDto Type { get; set; }
         public AddressDto Address { get; set; }
         public CompanyDto Company { get; set; }

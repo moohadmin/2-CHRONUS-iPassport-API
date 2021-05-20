@@ -13,7 +13,8 @@ namespace iPassport.Domain.Entities
         public string Ine { get; private set; }
         public string Email { get; private set; }        
         public string ResponsiblePersonName { get; private set; }
-        public string ResponsiblePersonPhone { get; private set; }
+        public string ResponsiblePersonLandline { get; private set; }
+        public string ResponsiblePersonMobilePhone { get; private set; }
         public string ResponsiblePersonOccupation { get; private set; }
         public DateTime? DeactivationDate { get; private set; }
         public Guid TypeId { get; private set; }
@@ -40,7 +41,8 @@ namespace iPassport.Domain.Entities
                 Ine = dto.Ine,
                 Email = dto.Email,
                 ResponsiblePersonName = dto.ResponsiblePersonName,
-                ResponsiblePersonPhone = dto.ResponsiblePersonPhone,
+                ResponsiblePersonLandline = dto.ResponsiblePersonLandline,
+                ResponsiblePersonMobilePhone = dto.ResponsiblePersonMobilePhone,
                 ResponsiblePersonOccupation = dto.ResponsiblePersonOccupation,
                 TypeId = (Guid)dto.TypeId,
                 AddressId = dto.Address.Id,
@@ -56,7 +58,8 @@ namespace iPassport.Domain.Entities
             Email = dto.Email;
             ResponsiblePersonName = dto.ResponsiblePersonName;
             ResponsiblePersonOccupation = dto.ResponsiblePersonOccupation;
-            ResponsiblePersonPhone = dto.ResponsiblePersonPhone;
+            ResponsiblePersonLandline = dto.ResponsiblePersonLandline;
+            ResponsiblePersonMobilePhone = dto.ResponsiblePersonMobilePhone;
             TypeId = dto.TypeId.Value;
             AddressId = dto.Address.Id;
             CompanyId = dto.CompanyId;

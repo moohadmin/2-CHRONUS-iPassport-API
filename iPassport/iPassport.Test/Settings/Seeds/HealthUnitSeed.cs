@@ -39,7 +39,8 @@ namespace iPassport.Test.Seeds
                 Name = "test",
                 ResponsiblePersonName = "test",
                 ResponsiblePersonOccupation = "test",
-                ResponsiblePersonPhone = "test",
+                ResponsiblePersonMobilePhone = "test",
+                ResponsiblePersonLandline = "test",
                 TypeId = Guid.NewGuid()
             });
     }

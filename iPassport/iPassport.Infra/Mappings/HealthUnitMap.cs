@@ -32,7 +32,9 @@ namespace iPassport.Infra.Mappings
 
             builder.Property(p => p.ResponsiblePersonName);
 
-            builder.Property(p => p.ResponsiblePersonPhone);
+            builder.Property(p => p.ResponsiblePersonMobilePhone);
+
+            builder.Property(p => p.ResponsiblePersonLandline);
 
             builder.Property(p => p.ResponsiblePersonOccupation);
 
