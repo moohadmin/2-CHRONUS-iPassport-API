@@ -13,5 +13,6 @@ namespace iPassport.Domain.Repositories
         Task<IList<ImportedUserDto>> GetImportedUserById(Guid[] ids);
         Task<UserDetails> GetWithHealtUnityById(Guid id);
         Task<Guid[]> GetVaccinatedUsersWithHealtUnityById(Guid id);
+        Task<UserDetails> GetByPassportId(Guid id);
     }
 }

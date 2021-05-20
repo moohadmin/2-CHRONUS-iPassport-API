@@ -35,7 +35,7 @@ namespace iPassport.Domain.Dtos
                 UserId = v.FirstOrDefault().UserId,
                 VaccineId = v.Key.VaccineId,
                 VaccineName = v.FirstOrDefault().Vaccine?.Name,
-                RequiredDoses = v.FirstOrDefault().Vaccine?.RequiredDoses,
+                RequiredDoses = v.FirstOrDefault().Vaccine?.GetRequiredDoses(authUser.Birthday),
                 ImmunizationTime = v.FirstOrDefault().Vaccine?.ImmunizationTimeInDays,
                 Doses = v.Select(x => new VaccineDoseDto()
                 {
