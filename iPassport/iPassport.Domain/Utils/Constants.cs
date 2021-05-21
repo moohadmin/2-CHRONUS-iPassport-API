@@ -30,5 +30,7 @@
         public const string TOKEN_CLAIM_HEALTH_UNITY_ID = "HealthUnityId";
 
         public const string S3_USER_IMAGES_PATH = "images/users";
+
+        public const string DISEASE_NAME_COVID_19 = "Covid-19";
     }
 }
