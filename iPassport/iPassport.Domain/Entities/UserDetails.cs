@@ -84,16 +84,25 @@ namespace iPassport.Domain.Entities
             return userDiseaseTests;
         }
 
+        /// <summary>
+        /// 2021-05-19 : Added condition to consider only COVID vaccines in passport validation - must be removed when a corporate solution is implemented
+        /// </summary>
+        public IEnumerable<UserVaccine> GetOnlyCovid19UserVaccines()
+        {
+            return this.UserVaccines.Where(uv => uv.Vaccine.Diseases.Any(d => d.Name == Constants.DISEASE_NAME_COVID_19));
+        }
+
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
 
         public bool IsApprovedPassport(DateTime userBirthday)
         {
             bool isApproved = true;
 
-            if (UserVaccines == null || !UserVaccines.Any(x => x.ExclusionDate == null))
+            if (UserVaccines == null || !GetOnlyCovid19UserVaccines().Any(x => x.ExclusionDate == null))
                 isApproved = false;
 
-            var vacinnes = UserVaccines.Where(x => x.ExclusionDate == null).Select(x => x.Vaccine).Distinct().ToList();
+            var vacinnes = GetOnlyCovid19UserVaccines().Where(x => x.ExclusionDate == null)
+                                .Select(x => x.Vaccine).Distinct().ToList();
 
             if (vacinnes == null || !vacinnes.Any())
             {

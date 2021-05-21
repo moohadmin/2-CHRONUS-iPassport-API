@@ -16,6 +16,8 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -122,6 +124,9 @@ namespace iPassport.Test.Services
             // Arrange
             var passportDetailsId = Guid.NewGuid();
             var mockPassport =  Mock.Of<Passport>(x => x.UserDetails == UserSeed.GetUserDetails());
+            mockPassport.UserDetails.UserVaccines.ToList().ForEach(v => v.Vaccine = new Vaccine("", Guid.NewGuid(), 2, 2, 2, 2, 2));
+            mockPassport.UserDetails.UserVaccines.ToList().ForEach(v => v.Vaccine.Diseases = new List<Disease> { new Disease("Covid-19", "Covid-19") });
+
             var urlPhoto = "https://teste.testes.com";
             var size = "small";
 
