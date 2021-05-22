@@ -51,7 +51,7 @@ namespace iPassport.Test.Controllers
         public void GetByManufacturerId_MustReturnOk()
         {
             var seed = VaccineSeed.GetVaccines();
-            var mockRequest = Mock.Of<GetPagedVaccinesByManufacuterRequest>();
+            var mockRequest = Mock.Of<GetPagedVaccinesRequest>();
 
             // Arrange
             _mockService.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()).Result).Returns(new ResponseApi(true, "Test Success!", seed));
