@@ -21,10 +21,10 @@ namespace iPassport.Domain.Entities
         {
             Id = Guid.NewGuid(),
             VaccineId = vaccineId,
-            FinalAgeGroup = dto.FinalAgeGroup,
-            InitalAgeGroup = dto.InitalAgeGroup,
-            MaxTimeNextDose = dto.MaxTimeNextDose,
-            MinTimeNextDose = dto.MinTimeNextDose,
+            FinalAgeGroup = dto.AgeGroupFinal,
+            InitalAgeGroup = dto.AgeGroupInital,
+            MaxTimeNextDose = dto.TimeNextDoseMax,
+            MinTimeNextDose = dto.TimeNextDoseMin,
             PeriodTypeId = dto.PeriodTypeId,
             RequiredDoses = dto.RequiredDoses
         };

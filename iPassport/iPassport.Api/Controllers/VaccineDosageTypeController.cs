@@ -30,7 +30,7 @@ namespace iPassport.Api.Controllers
         }
 
         /// <summary>
-        /// This API is responsible for get Vaccine Fosage Type list.
+        /// This API is responsible for get Vaccine Dosage Type list.
         /// </summary>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>

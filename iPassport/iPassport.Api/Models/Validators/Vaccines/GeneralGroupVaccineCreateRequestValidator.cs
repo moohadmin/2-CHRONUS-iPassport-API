@@ -21,11 +21,11 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccinePeriodType"]));
 
-            RuleFor(x => x.MinTimeNextDose)
+            RuleFor(x => x.TimeNextDoseMin)
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMinTimeNextDose"]));
 
-            RuleFor(x => x.MaxTimeNextDose)
+            RuleFor(x => x.TimeNextDoseMax)
                 .NotNull()
                 .When(x => x.PeriodType == EVaccinePeriodType.Variable)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMaxTimeNextDose"]));

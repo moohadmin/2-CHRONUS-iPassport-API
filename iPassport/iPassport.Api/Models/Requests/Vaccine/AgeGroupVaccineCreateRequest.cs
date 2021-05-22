@@ -19,18 +19,18 @@ namespace iPassport.Api.Models.Requests.Vaccine
         /// <summary>
         /// Max Time Next Dose
         /// </summary>
-        public int MaxTimeNextDose { get; set; }
+        public int TimeNextDoseMin { get; set; }
         /// <summary>
         /// Min Time Next Dose
         /// </summary>
-        public int MinTimeNextDose { get; set; }
+        public int TimeNextDoseMax { get; set; }
         /// <summary>
         /// Inital Age Group
         /// </summary>
-        public int InitalAgeGroup { get; set; }
+        public int AgeGroupInital { get; set; }
         /// <summary>
         /// Final Age Group
         /// </summary>
-        public int FinalAgeGroup { get; set; }
+        public int AgeGroupFinal { get; set; }
     }
 }
