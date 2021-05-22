@@ -3,6 +3,7 @@ using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Api.Models.Requests.Vaccine;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -40,6 +41,10 @@ namespace iPassport.Api.AutoMapper.Mappers
            profile.CreateMap<UserVaccineEditRequest, UserVaccineEditDto>()
                 .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine))
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
+
+            profile.CreateMap<VaccineCreateRequest, VaccineDto>();
+            profile.CreateMap<AgeGroupVaccineCreateRequest, AgeGroupVaccineDto>();
+            profile.CreateMap<GeneralGroupVaccineCreateRequest, GeneralGroupVaccineCreateRequest>();
         }
     }
 }

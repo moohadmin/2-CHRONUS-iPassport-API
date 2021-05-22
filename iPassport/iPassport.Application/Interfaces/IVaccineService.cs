@@ -1,4 +1,5 @@
 ﻿using iPassport.Application.Models;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using System.Threading.Tasks;
 
@@ -8,5 +9,6 @@ namespace iPassport.Application.Interfaces
     {
         Task<ResponseApi> GetVaccinatedCount(GetVaccinatedCountFilter filter);
         Task<ResponseApi> GetByManufacturerId(GetByIdAndNamePartsPagedFilter filter);
+        Task<ResponseApi> Add(VaccineDto dto);
     }
 }

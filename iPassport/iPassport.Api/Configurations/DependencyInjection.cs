@@ -150,6 +150,10 @@ namespace iPassport.Api.Configurations
             services.AddScoped<ICompanyResponsibleRepository, CompanyResponsibleRepository>();
             
             services.AddScoped<IUserTypeRepository, UserTypeRepository>();
+
+            services.AddScoped<IVaccinePeriodTypeRepository, VaccinePeriodTypeRepository>();
+
+            services.AddScoped<IVaccineDosageTypeRepository, VaccineDosageTypeRepository>();
             #endregion
 
             #region DI Settings

@@ -19,6 +19,8 @@ namespace iPassport.Test.Services
     public class VaccineServiceTest
     {
         Mock<IUserVaccineRepository> _userVaccineRepository;
+        Mock<IVaccineDosageTypeRepository> _vaccineDosageTypeRepository;
+        Mock<IVaccinePeriodTypeRepository> _vaccinePeriodTypeRepository;
         Mock<IVaccineRepository> _vaccineRepository;
         IVaccineService _service;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
@@ -28,11 +30,13 @@ namespace iPassport.Test.Services
         public void Setup()
         {
             _userVaccineRepository = new Mock<IUserVaccineRepository>();
+            _vaccineDosageTypeRepository = new Mock<IVaccineDosageTypeRepository>();
+            _vaccinePeriodTypeRepository = new Mock<IVaccinePeriodTypeRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
             _vaccineRepository = new Mock<IVaccineRepository>();
             _mapper = AutoMapperFactory.Create();
 
-            _service = new VaccineService(_vaccineRepository.Object, _userVaccineRepository.Object, _mockLocalizer.Object, _mapper);
+            _service = new VaccineService(_vaccineRepository.Object, _userVaccineRepository.Object, _vaccinePeriodTypeRepository.Object, _vaccineDosageTypeRepository.Object, _mockLocalizer.Object, _mapper);
         }
 
         [TestMethod]
