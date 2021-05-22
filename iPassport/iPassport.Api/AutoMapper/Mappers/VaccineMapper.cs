@@ -43,8 +43,13 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
 
             profile.CreateMap<VaccineCreateRequest, VaccineDto>();
+            
             profile.CreateMap<AgeGroupVaccineCreateRequest, AgeGroupVaccineDto>();
+            
             profile.CreateMap<GeneralGroupVaccineCreateRequest, GeneralGroupVaccineCreateRequest>();
+            
+            profile.CreateMap<VaccinePeriodType, VaccinePeriodTypeViewModel>();
+            profile.CreateMap<VaccineDosageType, VaccineDosageTypeViewModel>();
         }
     }
 }

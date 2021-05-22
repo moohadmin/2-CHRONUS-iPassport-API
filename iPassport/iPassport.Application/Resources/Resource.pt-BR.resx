@@ -990,4 +990,10 @@
   <data name="VaccineRequiredDoses" xml:space="preserve">
     <value>Doses Necessárias</value>
   </data>
+  <data name="VaccineDosageTypes" xml:space="preserve">
+    <value>Tipos de dosagem</value>
+  </data>
+  <data name="VaccinePeriodTypes" xml:space="preserve">
+    <value>Tipos de período</value>
+  </data>
 </root>

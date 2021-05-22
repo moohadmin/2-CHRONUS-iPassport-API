@@ -80,6 +80,10 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IHealthUnitTypeService, HealthUnitTypeService>();
 
+            services.AddScoped<IVaccinePeriodTypeService, VaccinePeriodTypeService>();
+
+            services.AddScoped<IVaccineDosageTypeService, VaccineDosageTypeService>();
+
             #endregion
 
             #region DI Repositories
