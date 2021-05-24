@@ -75,7 +75,7 @@ namespace iPassport.Test.Controllers
             var mockRequest = Mock.Of<VaccineCreateRequest>(x => x.DosageType == EVaccineDosageType.GeneralGroup && x.GeneralGroupVaccine == new GeneralGroupVaccineCreateRequest() { PeriodType = EVaccinePeriodType.Variable, RequiredDoses = 2, TimeNextDoseMax = 2, TimeNextDoseMin = 1 });
 
             // Arrange
-            _mockService.Setup(r => r.Add(It.IsAny<VaccineDto>()));
+            _mockService.Setup(r => r.Add(It.IsAny<VaccineDto>()).Result).Returns(new ResponseApi(true, "Test Success!", null));
 
             // Act
             var result = _controller.Add(mockRequest);
