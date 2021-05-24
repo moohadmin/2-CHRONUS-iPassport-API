@@ -55,12 +55,15 @@ namespace iPassport.Domain.Entities
             return vaccine;
         }
 
+        public bool IsActive() => DeactivationUserId == null && DeactivationDate == null;
+
         public void Deactivate(Guid deactivationUserId)
         {
             DeactivationUserId = deactivationUserId;
             DeactivationDate = DateTime.UtcNow;
             UpdateDate = DateTime.UtcNow;
         }
+
         public void Activate()
         {
             DeactivationUserId = null;

@@ -70,7 +70,9 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> GetPagged(GetPagedVaccinesFilter filter)
         {
             var res = await _vaccineRepository.GetPagged(filter);
-            var data = _mapper.Map<IList<VaccineViewModel>>(res.Data);
+            
+            var data = _mapper.Map<List<VaccineViewModel>>(res.Data);
+            data.ForEach(x => x.DiseaseNames = string.Join(", ", res.Data.FirstOrDefault(y => y.Id == x.Id).Diseases.Select(z => z.Name)));
 
             return new PagedResponseApi(true, _localizer["Vaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, data);
         }

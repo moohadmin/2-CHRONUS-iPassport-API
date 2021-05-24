@@ -15,5 +15,7 @@ namespace iPassport.Application.Models.ViewModels
         public int MinTimeNextDose { get; set; }
         public Guid DosagetypeId { get; set; }
         public string DosagetypeName { get; set; }
+        public string DiseaseNames { get; set; }
+        public bool IsActive { get; set; }
     }
 }
