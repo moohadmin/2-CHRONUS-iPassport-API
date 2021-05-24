@@ -77,7 +77,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
-        public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesRequest request)
+        public async Task<ActionResult> GetPagged([FromQuery] GetPagedVaccinesRequest request)
         {
             var res = await _service.GetPagged(_mapper.Map<GetPagedVaccinesFilter>(request));
             return Ok(res);

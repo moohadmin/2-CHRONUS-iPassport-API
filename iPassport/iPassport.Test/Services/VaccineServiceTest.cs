@@ -57,18 +57,18 @@ namespace iPassport.Test.Services
         }
 
         [TestMethod]
-        public void GetByManufacturerId()
+        public void GetPagged()
         {
-            var mockFilter = Mock.Of<GetByIdAndNamePartsPagedFilter>();
+            var mockFilter = Mock.Of<GetPagedVaccinesFilter>();
 
             // Arrange
-            _vaccineRepository.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()).Result).Returns(new PagedData<Vaccine>() { Data = VaccineSeed.GetVaccines() });
+            _vaccineRepository.Setup(r => r.GetPagged(It.IsAny<GetPagedVaccinesFilter>()).Result).Returns(new PagedData<Vaccine>() { Data = VaccineSeed.GetVaccines() });
 
             // Act
-            var result = _service.GetByManufacturerId(mockFilter);
+            var result = _service.GetPagged(mockFilter);
 
             // Assert
-            _vaccineRepository.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()), Times.Once);
+            _vaccineRepository.Verify(a => a.GetPagged(It.IsAny<GetPagedVaccinesFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }

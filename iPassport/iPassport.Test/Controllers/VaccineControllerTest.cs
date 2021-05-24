@@ -48,19 +48,19 @@ namespace iPassport.Test.Controllers
         }
 
         [TestMethod]
-        public void GetByManufacturerId_MustReturnOk()
+        public void GetPagged_MustReturnOk()
         {
             var seed = VaccineSeed.GetVaccines();
             var mockRequest = Mock.Of<GetPagedVaccinesRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()).Result).Returns(new ResponseApi(true, "Test Success!", seed));
+            _mockService.Setup(r => r.GetPagged(It.IsAny<GetPagedVaccinesFilter>()).Result).Returns(new ResponseApi(true, "Test Success!", seed));
 
             // Act
-            var result = _controller.GetByManufacturerId(mockRequest);
+            var result = _controller.GetPagged(mockRequest);
 
             // Assert
-            _mockService.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()), Times.Once);
+            _mockService.Verify(a => a.GetPagged(It.IsAny<GetPagedVaccinesFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
