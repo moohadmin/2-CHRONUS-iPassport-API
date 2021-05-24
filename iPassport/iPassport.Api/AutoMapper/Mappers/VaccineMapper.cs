@@ -30,7 +30,7 @@ namespace iPassport.Api.AutoMapper.Mappers
             profile.CreateMap<Disease, DiseaseViewModel>()
                 .ReverseMap();
 
-            profile.CreateMap<Vaccine, VaccineManufacturerViewModel>()
+            profile.CreateMap<Vaccine, VaccineGetByManufacturerViewModel>()
                 .ForMember(des => des.ManufacturerName, act => act.MapFrom(src => src.Manufacturer != null ? src.Manufacturer.Name : null))
                 .ForMember(des => des.MaxTimeNextDose, act => act.MapFrom(src => src.GetMaxTimeNextDose()))
                 .ForMember(des => des.MinTimeNextDose, act => act.MapFrom(src => src.GetMinTimeNextDose()));

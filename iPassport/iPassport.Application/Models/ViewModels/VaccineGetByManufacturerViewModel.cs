@@ -2,7 +2,7 @@
 
 namespace iPassport.Application.Models.ViewModels
 {
-    public class VaccineManufacturerViewModel
+    public class VaccineGetByManufacturerViewModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
