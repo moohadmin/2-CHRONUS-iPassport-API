@@ -47,7 +47,7 @@ namespace iPassport.Api.AutoMapper.Mappers
             
             profile.CreateMap<AgeGroupVaccineCreateRequest, AgeGroupVaccineDto>();
             
-            profile.CreateMap<GeneralGroupVaccineCreateRequest, GeneralGroupVaccineCreateRequest>();
+            profile.CreateMap<GeneralGroupVaccineCreateRequest, GeneralGroupVaccineDto>();
             
             profile.CreateMap<VaccinePeriodType, VaccinePeriodTypeViewModel>();
             profile.CreateMap<VaccineDosageType, VaccineDosageTypeViewModel>();
