@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Dtos;
+using System;
 
 namespace iPassport.Domain.Entities
 {
@@ -14,5 +15,18 @@ namespace iPassport.Domain.Entities
 
         public virtual VaccinePeriodType PeriodType { get; set; }
         public virtual Vaccine Vaccine { get; set; }
+
+        public static AgeGroupVaccine Create(AgeGroupVaccineDto dto, Guid vaccineId)
+        => new()
+        {
+            Id = Guid.NewGuid(),
+            VaccineId = vaccineId,
+            FinalAgeGroup = dto.AgeGroupFinal,
+            InitalAgeGroup = dto.AgeGroupInital,
+            MaxTimeNextDose = dto.TimeNextDoseMax,
+            MinTimeNextDose = dto.TimeNextDoseMin,
+            PeriodTypeId = dto.PeriodTypeId,
+            RequiredDoses = dto.RequiredDoses
+        };
     }
 }

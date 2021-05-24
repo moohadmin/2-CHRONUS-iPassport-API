@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using iPassport.Api.Models;
 using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Vaccine;
 using iPassport.Api.Models.Responses;
 using iPassport.Api.Security;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,11 +75,30 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [HttpGet("Manufacturer")]
+        [HttpGet]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
-        public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesByManufacuterRequest request)
+        public async Task<ActionResult> GetPagged([FromQuery] GetPagedVaccinesRequest request)
         {
-            var res = await _service.GetByManufacturerId(_mapper.Map<GetByIdAndNamePartsPagedFilter>(request));
+            var res = await _service.GetPagged(_mapper.Map<GetPagedVaccinesFilter>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API add Vaccine
+        /// </summary>
+        /// <param name="request">Vaccine Create Request</param>
+        /// <returns>Created Vaccine id</returns>
+        /// <response code="200">Ok.</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpPost]
+        [AuthorizeRole(RolesModel.Admin)]
+        public async Task<ActionResult> Add([FromBody] VaccineCreateRequest request)
+        {
+            var res = await _service.Add(_mapper.Map<VaccineDto>(request));
             return Ok(res);
         }
     }

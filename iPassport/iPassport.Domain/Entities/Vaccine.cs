@@ -10,7 +10,7 @@ namespace iPassport.Domain.Entities
     {
         public Vaccine() { }
 
-        public Vaccine(string name, Guid manufacturerId, int requiredDoses, int expirationTime, int imunizationTime,int maxTimeNextDose, int minTimeNextDose) : base()
+        public Vaccine(string name, Guid manufacturerId, int expirationTime, int imunizationTime) : base()
         {
             Id = Guid.NewGuid();
             Name = name;
@@ -32,8 +32,27 @@ namespace iPassport.Domain.Entities
         public virtual IEnumerable<AgeGroupVaccine> AgeGroupVaccines { get; set; }
         public virtual GeneralGroupVaccine GeneralGroupVaccine { get; set; }
 
-        public Vaccine Create(VaccineCreateDto dto) => new Vaccine(dto.Name, dto.ManufacturerId, dto.RequiredDoses, dto.ExpirationTime, dto.ImunizationTime, dto.MaxTimeNextDose, dto.MinTimeNextDose);
+        public static Vaccine Create(VaccineDto dto)
+        {
+            var vaccineId = Guid.NewGuid();
+            var generalGroup = dto.GeneralGroupVaccine != null ? GeneralGroupVaccine.Create(dto.GeneralGroupVaccine, vaccineId) : null;
+            var ageGroup = dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.Any() ? dto.AgeGroupVaccines.Select(a => AgeGroupVaccine.Create(a, vaccineId)) : null;
+            var vaccine = new Vaccine()
+            {
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                DosageTypeId = dto.DosageTypeId,
+                ExpirationTimeInMonths = dto.ExpirationTimeInMonths,
+                ImmunizationTimeInDays = dto.ImmunizationTimeInDays,
+                ManufacturerId = dto.Manufacturer,
+                GeneralGroupVaccine = generalGroup,
+                AgeGroupVaccines = ageGroup,
+                Diseases = dto.Diseases.Select(d => new Disease(d))
+            };
 
+            return vaccine;
+        }
+        
         public bool UniqueDose()
         {
             return (GeneralGroupVaccine != null && GeneralGroupVaccine.RequiredDoses == 1)

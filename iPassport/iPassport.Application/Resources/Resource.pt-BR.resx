@@ -954,4 +954,46 @@
   <data name="ColumnNameImportFileRG" xml:space="preserve">
     <value>RG</value>
   </data>
+  <data name="VaccineCreated" xml:space="preserve">
+    <value>Vacina criada com sucesso!</value>
+  </data>
+  <data name="VaccineDosageType" xml:space="preserve">
+    <value>Tipo de Dosagem</value>
+  </data>
+  <data name="VaccineExpirationTimeInMonths" xml:space="preserve">
+    <value>Validade da Vacina (meses)</value>
+  </data>
+  <data name="VaccineFinalAgeGroup" xml:space="preserve">
+    <value>Faixa Etária Final</value>
+  </data>
+  <data name="VaccineImmunizationTimeInDays" xml:space="preserve">
+    <value>Tempo de Imunização (dias)</value>
+  </data>
+  <data name="VaccineInitalAgeGroup" xml:space="preserve">
+    <value>Faixa Etária Inicial</value>
+  </data>
+  <data name="VaccineManufacturer" xml:space="preserve">
+    <value>Fabricante da Vacina</value>
+  </data>
+  <data name="VaccineMaxTimeNextDose" xml:space="preserve">
+    <value>Período Máximo Próxima Dose (dias)</value>
+  </data>
+  <data name="VaccineMinTimeNextDose" xml:space="preserve">
+    <value>Período Mínimo Próxima Dose (dias)</value>
+  </data>
+  <data name="VaccineName" xml:space="preserve">
+    <value>Noma da Vacina</value>
+  </data>
+  <data name="VaccinePeriodType" xml:space="preserve">
+    <value>Tipo de Período Entre Doses</value>
+  </data>
+  <data name="VaccineRequiredDoses" xml:space="preserve">
+    <value>Doses Necessárias</value>
+  </data>
+  <data name="VaccineDosageTypes" xml:space="preserve">
+    <value>Tipos de dosagem</value>
+  </data>
+  <data name="VaccinePeriodTypes" xml:space="preserve">
+    <value>Tipos de período</value>
+  </data>
 </root>

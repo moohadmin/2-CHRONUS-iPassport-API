@@ -13,12 +13,15 @@ namespace iPassport.Infra.Repositories
     {
         public VaccineRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<Vaccine>> GetByManufacturerId(GetByIdAndNamePartsPagedFilter filter)
+        public async Task<PagedData<Vaccine>> GetPagged(GetPagedVaccinesFilter filter)
         {
             var query = _DbSet
                 .Include(x => x.Manufacturer)
-                .Where(m => m.ManufacturerId == filter.Id
-                    && (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower())))
+                .Include(x => x.Diseases)
+                .Where(v => (filter.ManufacuterId == null || v.ManufacturerId == filter.ManufacuterId.Value)
+                            && (filter.DiseaseId == null || v.Diseases.Any(x => x.Id == filter.DiseaseId.Value))
+                            && (filter.DosageTypeId == null || v.DosageTypeId == filter.DosageTypeId.Value)
+                            && (string.IsNullOrWhiteSpace(filter.Initials) || v.Name.ToLower().Contains(filter.Initials.ToLower())))
                 .OrderBy(m => m.Name);
 
             return await Paginate(query, filter);
@@ -28,6 +31,5 @@ namespace iPassport.Infra.Repositories
             => await _DbSet.Include(v => v.Manufacturer)
                 .Where(m => filter.Any(f => f == m.Name.ToUpper() + m.Manufacturer.Name.ToUpper()))
                 .ToListAsync();
-
     }
 }

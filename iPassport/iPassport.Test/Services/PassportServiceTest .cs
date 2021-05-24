@@ -124,7 +124,7 @@ namespace iPassport.Test.Services
             // Arrange
             var passportDetailsId = Guid.NewGuid();
             var mockPassport =  Mock.Of<Passport>(x => x.UserDetails == UserSeed.GetUserDetails());
-            mockPassport.UserDetails.UserVaccines.ToList().ForEach(v => v.Vaccine = new Vaccine("", Guid.NewGuid(), 2, 2, 2, 2, 2));
+            mockPassport.UserDetails.UserVaccines.ToList().ForEach(v => v.Vaccine = new Vaccine("", Guid.NewGuid(), 2, 2));
             mockPassport.UserDetails.UserVaccines.ToList().ForEach(v => v.Vaccine.Diseases = new List<Disease> { new Disease("Covid-19", "Covid-19") });
 
             var urlPhoto = "https://teste.testes.com";

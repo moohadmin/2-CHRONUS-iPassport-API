@@ -31,7 +31,6 @@ namespace iPassport.Application.Services
             var result = _mapper.Map<IList<BloodTypeViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["BloodTypes"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
-
         }
     }
 }

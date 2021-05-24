@@ -3,6 +3,7 @@ using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Api.Models.Requests.Vaccine;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -31,6 +32,7 @@ namespace iPassport.Api.AutoMapper.Mappers
 
             profile.CreateMap<Vaccine, VaccineViewModel>()
                 .ForMember(des => des.ManufacturerName, act => act.MapFrom(src => src.Manufacturer != null ? src.Manufacturer.Name : null))
+                .ForMember(des => des.DosagetypeName, act => act.MapFrom(src => src.DosageType != null ? src.DosageType.Description : null))
                 .ForMember(des => des.MaxTimeNextDose, act => act.MapFrom(src => src.GetMaxTimeNextDose()))
                 .ForMember(des => des.MinTimeNextDose, act => act.MapFrom(src => src.GetMinTimeNextDose()));
 
@@ -40,6 +42,15 @@ namespace iPassport.Api.AutoMapper.Mappers
            profile.CreateMap<UserVaccineEditRequest, UserVaccineEditDto>()
                 .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine))
                 .ForMember(des => des.Id, act => act.MapFrom(src => src.Id));
+
+            profile.CreateMap<VaccineCreateRequest, VaccineDto>();
+            
+            profile.CreateMap<AgeGroupVaccineCreateRequest, AgeGroupVaccineDto>();
+            
+            profile.CreateMap<GeneralGroupVaccineCreateRequest, GeneralGroupVaccineCreateRequest>();
+            
+            profile.CreateMap<VaccinePeriodType, VaccinePeriodTypeViewModel>();
+            profile.CreateMap<VaccineDosageType, VaccineDosageTypeViewModel>();
         }
     }
 }
