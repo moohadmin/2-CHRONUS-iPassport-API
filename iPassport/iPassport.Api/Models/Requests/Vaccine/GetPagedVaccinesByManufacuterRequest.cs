@@ -15,5 +15,9 @@ namespace iPassport.Api.Models.Requests.Vaccine
         /// Manufacuter Id
         /// </summary>
         public Guid ManufacuterId { get; set; }
+        /// <summary>
+        /// Birthday
+        /// </summary>
+        public DateTime Birthday { get; set; }
     }
 }
