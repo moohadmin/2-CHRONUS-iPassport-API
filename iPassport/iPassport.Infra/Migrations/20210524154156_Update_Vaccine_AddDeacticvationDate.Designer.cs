@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iPassport.Infra.Contexts;
@@ -9,9 +10,10 @@ using iPassport.Infra.Contexts;
 namespace iPassport.Infra.Migrations
 {
     [DbContext(typeof(iPassportContext))]
-    partial class iPassportContextModelSnapshot : ModelSnapshot
+    [Migration("20210524154156_Update_Vaccine_AddDeacticvationDate")]
+    partial class Update_Vaccine_AddDeacticvationDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,13 +226,16 @@ namespace iPassport.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ResponsiblePersonLandline")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResponsiblePersonMobilePhone")
+                        .HasColumnType("text");
+
                     b.Property<string>("ResponsiblePersonName")
                         .HasColumnType("text");
 
                     b.Property<string>("ResponsiblePersonOccupation")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ResponsiblePersonPhone")
                         .HasColumnType("text");
 
                     b.Property<Guid>("TypeId")

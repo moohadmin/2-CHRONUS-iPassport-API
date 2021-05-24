@@ -24,7 +24,8 @@ namespace iPassport.Domain.Entities
         public int ImmunizationTimeInDays { get; private set; }
         public Guid ManufacturerId { get; private set; }
         public Guid DosageTypeId { get; private set; }
-        public Guid? DeactivationUserId { get; set; }
+        public Guid? DeactivationUserId { get; private set; }
+        public DateTime? DeactivationDate { get; private set; }
 
         public virtual VaccineManufacturer Manufacturer { get; set; }
         public virtual IList<Disease> Diseases { get; set; }
@@ -53,7 +54,20 @@ namespace iPassport.Domain.Entities
 
             return vaccine;
         }
-        
+
+        public void Deactivate(Guid deactivationUserId)
+        {
+            DeactivationUserId = deactivationUserId;
+            DeactivationDate = DateTime.UtcNow;
+            UpdateDate = DateTime.UtcNow;
+        }
+        public void Activate()
+        {
+            DeactivationUserId = null;
+            DeactivationDate = null;
+            UpdateDate = DateTime.UtcNow;
+        }
+
         public bool UniqueDose()
         {
             return (GeneralGroupVaccine != null && GeneralGroupVaccine.RequiredDoses == 1)

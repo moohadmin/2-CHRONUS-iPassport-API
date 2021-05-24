@@ -73,12 +73,12 @@ namespace iPassport.Application.Services
             {
                 await GetvaccinePeriodType(dto);
                 await GetVaccineDosageType(dto);
-                
-                if (!dto.IsActive.GetValueOrDefault())
-                    dto.DeactivationUserId = _accessor.GetCurrentUserId();
 
                 var vaccine = Vaccine.Create(dto);
                 var diseases = await _diseaseRepository.GetByIdList(dto.Diseases);
+                
+                if (!dto.IsActive.GetValueOrDefault())
+                    vaccine.Deactivate(_accessor.GetCurrentUserId());
 
                 _unitOfWork.BeginTransactionPassport();
 
