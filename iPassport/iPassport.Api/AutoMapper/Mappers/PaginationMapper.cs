@@ -21,8 +21,7 @@ namespace iPassport.Api.AutoMapper.Mappers
         {
             profile.CreateMap<PageFilterRequest, PageFilter>();
 
-            profile.CreateMap<GetPagedVaccinesByManufacuterRequest, GetByIdAndNamePartsPagedFilter>()
-                    .ForMember(des => des.Id, act => act.MapFrom(src => src.ManufacuterId));
+            profile.CreateMap<GetPagedVaccinesByManufacuterRequest, GetPagedVaccinesFilter>();
 
             profile.CreateMap<GetPagedVaccinesRequest, GetPagedVaccinesFilter>();
 

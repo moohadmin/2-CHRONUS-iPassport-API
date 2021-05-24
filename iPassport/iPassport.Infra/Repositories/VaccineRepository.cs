@@ -16,17 +16,6 @@ namespace iPassport.Infra.Repositories
     {
         public VaccineRepository(iPassportContext context) : base(context) { }
 
-        public async Task<PagedData<Vaccine>> GetByManufacturerId(GetByIdAndNamePartsPagedFilter filter)
-        {
-            var query = _DbSet
-                .Include(x => x.Manufacturer)
-                .Where(m => m.ManufacturerId == filter.Id
-                    && (string.IsNullOrWhiteSpace(filter.Initials) || m.Name.ToLower().Contains(filter.Initials.ToLower())))
-                .OrderBy(m => m.Name);
-
-            return await Paginate(query, filter);
-        }
-
         public async Task<bool> AssociateDiseases(Vaccine vaccine, IList<Disease> diseases)
         {
             try
