@@ -61,7 +61,7 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> GetByManufacturerId(GetPagedVaccinesFilter filter)
         {
             var res = await _vaccineRepository.GetPagged(filter);
-            var data = _mapper.Map<IList<VaccineManufecturerViewModel>>(res.Data);
+            var data = _mapper.Map<IList<VaccineManufacturerViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["Vaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, data);
         }
