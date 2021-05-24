@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -71,10 +72,17 @@ namespace iPassport.Test.Services
         [TestMethod]
         public void GetByManufacturerId()
         {
-            var mockFilter = Mock.Of<GetPagedVaccinesFilter>();
+            var mockFilter = Mock.Of<GetVaccineByManufacturerFilter>();
+
+            var vaccines = VaccineSeed.GetVaccines();
+            vaccines.ToList().ForEach(x =>
+            {
+                x.AgeGroupVaccines = new List<AgeGroupVaccine>();
+                x.GeneralGroupVaccine = new GeneralGroupVaccine();
+            });
 
             // Arrange
-            _vaccineRepository.Setup(r => r.GetPagged(It.IsAny<GetPagedVaccinesFilter>()).Result).Returns(new PagedData<Vaccine>() { Data = VaccineSeed.GetVaccines() });
+            _vaccineRepository.Setup(r => r.GetPagged(It.IsAny<GetPagedVaccinesFilter>()).Result).Returns(new PagedData<Vaccine>() { Data = vaccines });
 
             // Act
             var result = _service.GetByManufacturerId(mockFilter);
