@@ -1,6 +1,6 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using FluentValidation;
+﻿using FluentValidation;
 using iPassport.Api.Models.Requests.Vaccine;
+using iPassport.Application.Resources;
 using iPassport.Domain.Enums;
 using Microsoft.Extensions.Localization;
 using System.Linq;

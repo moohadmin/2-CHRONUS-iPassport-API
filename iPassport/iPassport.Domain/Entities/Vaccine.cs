@@ -23,17 +23,8 @@ namespace iPassport.Domain.Entities
         public int ExpirationTimeInMonths { get; private set; }
         public int ImmunizationTimeInDays { get; private set; }
         public Guid ManufacturerId { get; private set; }
-
-        public void AddDiseases(IList<Disease> diseases)
-        {
-            if (Diseases == null)
-                Diseases = new List<Disease>();
-
-            foreach (var d in diseases)
-                Diseases.Add(d);
-        }
-
         public Guid DosageTypeId { get; private set; }
+        public Guid? DeactivationUserId { get; set; }
 
         public virtual VaccineManufacturer Manufacturer { get; set; }
         public virtual IList<Disease> Diseases { get; set; }
@@ -56,7 +47,8 @@ namespace iPassport.Domain.Entities
                 ImmunizationTimeInDays = dto.ImmunizationTimeInDays,
                 ManufacturerId = dto.Manufacturer,
                 GeneralGroupVaccine = generalGroup,
-                AgeGroupVaccines = ageGroup
+                AgeGroupVaccines = ageGroup,
+                DeactivationUserId = dto.DeactivationUserId
             };
 
             return vaccine;
@@ -112,6 +104,15 @@ namespace iPassport.Domain.Entities
 
             else
                 return GeneralGroupVaccine.MaxTimeNextDose;
+        }
+
+        public void AddDiseases(IList<Disease> diseases)
+        {
+            if (Diseases == null)
+                Diseases = new List<Disease>();
+
+            foreach (var d in diseases)
+                Diseases.Add(d);
         }
     }
 }

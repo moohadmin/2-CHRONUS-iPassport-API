@@ -1,6 +1,6 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using FluentValidation;
+﻿using FluentValidation;
 using iPassport.Api.Models.Requests.Vaccine;
+using iPassport.Application.Resources;
 using iPassport.Domain.Enums;
 using Microsoft.Extensions.Localization;
 
@@ -28,13 +28,12 @@ namespace iPassport.Api.Models.Validators.Vaccines
             RuleFor(x => x.TimeNextDoseMax)
                 .NotNull()
                 .When(x => x.RequiredDoses > 1 && x.PeriodType == EVaccinePeriodType.Variable)
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMinTimeNextDose"]));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMaxTimeNextDose"]));
 
             RuleFor(x => x.TimeNextDoseMin)
                 .NotNull()
                 .When(x => x.RequiredDoses > 1)
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMaxTimeNextDose"]));
-
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMinTimeNextDose"]));
 
             RuleFor(x => x.AgeGroupInital)
                 .NotNull()

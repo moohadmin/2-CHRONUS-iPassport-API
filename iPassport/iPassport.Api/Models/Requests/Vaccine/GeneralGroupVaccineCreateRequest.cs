@@ -14,7 +14,7 @@ namespace iPassport.Api.Models.Requests.Vaccine
         /// <summary>
         /// Required Doses
         /// </summary>
-        public int RequiredDoses { get; set; }
+        public int? RequiredDoses { get; set; }
         /// <summary>
         /// Max Time Next Dose
         /// </summary>

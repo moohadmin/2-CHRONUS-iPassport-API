@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -9,6 +10,7 @@ using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,7 @@ namespace iPassport.Application.Services
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _accessor;
 
         public VaccineService(IVaccineRepository vaccineRepository,
             IUserVaccineRepository userVaccineRepository,
@@ -34,6 +37,7 @@ namespace iPassport.Application.Services
             IVaccineDosageTypeRepository vaccineDosageTypeRepository,
             IDiseaseRepository diseaseRepository,
             IUnitOfWork unitOfWork,
+            IHttpContextAccessor accessor,
             IStringLocalizer<Resource> localizer,
             IMapper mapper)
         {
@@ -43,6 +47,7 @@ namespace iPassport.Application.Services
             _vaccineDosageTypeRepository = vaccineDosageTypeRepository;
             _diseaseRepository = diseaseRepository;
             _unitOfWork = unitOfWork;
+            _accessor = accessor;
             _localizer = localizer;
             _mapper = mapper;
         }
@@ -68,9 +73,11 @@ namespace iPassport.Application.Services
             {
                 await GetvaccinePeriodType(dto);
                 await GetVaccineDosageType(dto);
+                
+                if (!dto.IsActive.GetValueOrDefault())
+                    dto.DeactivationUserId = _accessor.GetCurrentUserId();
 
                 var vaccine = Vaccine.Create(dto);
-
                 var diseases = await _diseaseRepository.GetByIdList(dto.Diseases);
 
                 _unitOfWork.BeginTransactionPassport();

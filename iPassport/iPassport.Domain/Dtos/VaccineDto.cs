@@ -12,10 +12,11 @@ namespace iPassport.Domain.Dtos
         public IEnumerable<Guid> Diseases { get; set; }
         public int ExpirationTimeInMonths { get; set; }
         public int ImmunizationTimeInDays { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         public EVaccineDosageType DosageType { get; set; }
         public Guid DosageTypeId { get; set; }
         public GeneralGroupVaccineDto GeneralGroupVaccine { get; set; }
         public IEnumerable<AgeGroupVaccineDto> AgeGroupVaccines { get; set; }
+        public Guid? DeactivationUserId { get; set; }
     }
 }
