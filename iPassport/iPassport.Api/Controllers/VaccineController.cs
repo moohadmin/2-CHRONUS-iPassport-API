@@ -19,7 +19,7 @@ namespace iPassport.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class VaccineController : ControllerBase
     {
         /// <summary>
@@ -95,7 +95,7 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpPost]
-        //[AuthorizeRole(RolesModel.Admin)]        //[AuthorizeRole(RolesModel.Admin)]
+        [AuthorizeRole(RolesModel.Admin)]
         public async Task<ActionResult> Add([FromBody] VaccineCreateRequest request)
         {
             var res = await _service.Add(_mapper.Map<VaccineDto>(request));

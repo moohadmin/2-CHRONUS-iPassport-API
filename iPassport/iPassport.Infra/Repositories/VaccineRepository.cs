@@ -25,7 +25,6 @@ namespace iPassport.Infra.Repositories
                 vaccine.AddDiseases(diseases);
                 
                 _context.Entry(vaccine).State = EntityState.Modified;
-                _context.Entry(vaccine.Diseases).State = EntityState.Modified;
 
                 var result = await _context.SaveChangesAsync();
 
