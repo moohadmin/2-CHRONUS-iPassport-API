@@ -10,7 +10,7 @@ namespace iPassport.Api.AutoMapper.Mappers
     /// <summary>
     /// Pagination Mapper Class
     /// </summary>
-    public class PaginationMapper
+    public static class PaginationMapper
     {
         /// <summary>
         /// Map Method
@@ -20,8 +20,7 @@ namespace iPassport.Api.AutoMapper.Mappers
         {
             profile.CreateMap<PageFilterRequest, PageFilter>();
 
-            profile.CreateMap<GetPagedVaccinesByManufacuterRequest, GetByIdAndNamePartsPagedFilter>()
-                    .ForMember(des => des.Id, act => act.MapFrom(src => src.ManufacuterId));
+            profile.CreateMap<GetPagedVaccinesRequest, GetPagedVaccinesFilter>();
 
             profile.CreateMap<GetByNamePartsPagedRequest, GetByNamePartsPagedFilter>();
 

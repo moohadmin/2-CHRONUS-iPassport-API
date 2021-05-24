@@ -75,11 +75,11 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
-        [HttpGet("Manufacturer")]
+        [HttpGet]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
-        public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesByManufacuterRequest request)
+        public async Task<ActionResult> GetPagged([FromQuery] GetPagedVaccinesRequest request)
         {
-            var res = await _service.GetByManufacturerId(_mapper.Map<GetByIdAndNamePartsPagedFilter>(request));
+            var res = await _service.GetPagged(_mapper.Map<GetPagedVaccinesFilter>(request));
             return Ok(res);
         }
 

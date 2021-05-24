@@ -8,16 +8,17 @@ namespace iPassport.Api.Models.Validators.Vaccines
     /// <summary>
     /// Get Paged Vaccines By Manufacuter Request Validator
     /// </summary>
-    public class GetPagedVaccinesByManufacuterRequestValidator : AbstractValidator<GetPagedVaccinesByManufacuterRequest>
+    public class GetPagedVaccinesRequestValidator : AbstractValidator<GetPagedVaccinesRequest>
     {
         /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="localizer">localizer</param>
-        public GetPagedVaccinesByManufacuterRequestValidator(IStringLocalizer<Resource> localizer)
+        public GetPagedVaccinesRequestValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.ManufacuterId)
-                .SetValidator(new GuidValidator("ManufacuterId", localizer));
+            RuleFor(x => x.Initials)
+                .Must(x => string.IsNullOrWhiteSpace(x) || x.Length >= 3).WithMessage(string.Format(localizer["InitalsRequestMin"], "3"))
+                .SetValidator(new RequiredFieldValidator<string>("Initials", localizer));
 
             RuleFor(x => x.PageNumber)
                 .SetValidator(new RequiredFieldValidator<int>("PageNumber", localizer));
