@@ -42,6 +42,11 @@ namespace iPassport.Api.Models.Validators.Vaccines
             RuleFor(x => x.AgeGroupFinal)
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineFinalAgeGroup"]));
+
+            RuleFor(x => x.AgeGroupFinal)
+                .GreaterThanOrEqualTo(x => x.AgeGroupInital)
+                .When(x => x.AgeGroupInital != null)
+                .WithMessage(localizer["VaccineFinalAgeGroupNotBeLowerThenInital"]);
         }
     }
 }

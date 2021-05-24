@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using iPassport.Api.Models.Requests.Vaccine;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Resources;
 using iPassport.Application.Services;
+using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
+using iPassport.Domain.Enums;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Test.Seeds;
@@ -12,6 +15,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Services
@@ -78,6 +83,29 @@ namespace iPassport.Test.Services
             _vaccineRepository.Verify(a => a.GetByManufacturerId(It.IsAny<GetByIdAndNamePartsPagedFilter>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
             Assert.IsNotNull(result.Result.Data);
+        }
+
+        [TestMethod]
+        public void Add()
+        {
+            var mockRequest = Mock.Of<VaccineDto>(x => x.DosageType == EVaccineDosageType.GeneralGroup && x.GeneralGroupVaccine == new GeneralGroupVaccineDto() { PeriodType = EVaccinePeriodType.Variable, RequiredDoses = 2, TimeNextDoseMax = 2, TimeNextDoseMin = 1 });
+
+            //Arranje
+            _vaccinePeriodTypeRepository.Setup(x => x.GetByIdentifyer(It.IsAny<int>()).Result).Returns(Mock.Of<VaccinePeriodType>());
+            _vaccineDosageTypeRepository.Setup(x => x.GetByIdentifyer(It.IsAny<int>()).Result).Returns(Mock.Of<VaccineDosageType>());
+            _diseaseRepository.Setup(x => x.GetByIdList(It.IsAny<IList<Guid>>()).Result).Returns(Mock.Of<IList<Disease>>());
+            _vaccineRepository.Setup(x => x.InsertAsync(It.IsAny<Vaccine>()).Result).Returns(true);
+            _vaccineRepository.Setup(x => x.AssociateDiseases(It.IsAny<Vaccine>(), It.IsAny<IList<Disease>>()).Result).Returns(true);
+
+            // Act
+            var result = _service.Add(mockRequest);
+
+            // Assert
+            _vaccineRepository.Verify(a => a.InsertAsync(It.IsAny<Vaccine>()), Times.Once);
+            _vaccineRepository.Verify(a => a.AssociateDiseases(It.IsAny<Vaccine>(), It.IsAny<IList<Disease>>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ResponseApi>));
+            Assert.IsNotNull(result.Result.Data);
+
         }
     }
 }

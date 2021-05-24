@@ -173,5 +173,28 @@ namespace iPassport.Test.Controllers.Validator
             Assert.AreEqual(1, validationResult.Errors.Count());
             Assert.AreEqual(expetedMessage, validationResult.Errors.Single().ErrorMessage);
         }
+
+        [TestMethod]
+        public void AgeGroupFinalInvalid()
+        {
+            var seed = new AgeGroupVaccineCreateRequest()
+            {
+                PeriodType = EVaccinePeriodType.Variable,
+                RequiredDoses = 2,
+                TimeNextDoseMax = 1,
+                TimeNextDoseMin = 2,
+                AgeGroupFinal = 20,
+                AgeGroupInital = 50,
+            };
+
+            // Act
+            var validationResult = _validator.Validate(seed);
+
+            var expetedMessage = resource.GetMessage("VaccineFinalAgeGroupNotBeLowerThenInital");
+
+            // Assert
+            Assert.AreEqual(1, validationResult.Errors.Count());
+            Assert.AreEqual(expetedMessage, validationResult.Errors.Single().ErrorMessage);
+        }
     }
 }

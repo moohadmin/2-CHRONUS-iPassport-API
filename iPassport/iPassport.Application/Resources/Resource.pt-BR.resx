@@ -996,4 +996,7 @@
   <data name="VaccinePeriodTypes" xml:space="preserve">
     <value>Tipos de período</value>
   </data>
+  <data name="VaccineFinalAgeGroupNotBeLowerThenInital" xml:space="preserve">
+    <value>A faixa etária final não pode ser menor que a faica etária inicial.</value>
+  </data>
 </root>
