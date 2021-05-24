@@ -47,7 +47,7 @@ namespace iPassport.Infra.Repositories
             }
         }
 
-        public async Task<PagedData<Vaccine>> GetByManufacturerId(GetByIdAndNamePartsPagedFilter filter)
+        public async Task<PagedData<Vaccine>> GetPagged(GetPagedVaccinesFilter filter)
         {
             var query = _DbSet
                 .Include(x => x.Manufacturer)

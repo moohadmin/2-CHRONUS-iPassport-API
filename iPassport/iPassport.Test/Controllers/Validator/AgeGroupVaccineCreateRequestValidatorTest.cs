@@ -31,7 +31,7 @@ namespace iPassport.Test.Controllers.Validator
                     RequiredDoses = 1,
                     TimeNextDoseMax = 2,
                     TimeNextDoseMin = 3,
-                    AgeGroupFinal = 30,
+                    AgeGroupFinal = 70,
                     AgeGroupInital = 60,
                 }).IsValid);
         }
@@ -45,7 +45,7 @@ namespace iPassport.Test.Controllers.Validator
                 RequiredDoses = 1,
                 TimeNextDoseMax = 2,
                 TimeNextDoseMin = 3,
-                AgeGroupFinal = 30,
+                AgeGroupFinal = 70,
                 AgeGroupInital = 60,
             };
 
@@ -68,7 +68,7 @@ namespace iPassport.Test.Controllers.Validator
                 RequiredDoses = null,
                 TimeNextDoseMax = 2,
                 TimeNextDoseMin = 3,
-                AgeGroupFinal = 30,
+                AgeGroupFinal = 70,
                 AgeGroupInital = 60,
             };
 
@@ -91,7 +91,7 @@ namespace iPassport.Test.Controllers.Validator
                 RequiredDoses = 2,
                 TimeNextDoseMax = null,
                 TimeNextDoseMin = 3,
-                AgeGroupFinal = 30,
+                AgeGroupFinal = 70,
                 AgeGroupInital = 60,
             };
 
@@ -114,7 +114,7 @@ namespace iPassport.Test.Controllers.Validator
                 RequiredDoses = 2,
                 TimeNextDoseMax = 1,
                 TimeNextDoseMin = null,
-                AgeGroupFinal = 30,
+                AgeGroupFinal = 70,
                 AgeGroupInital = 60,
             };
 

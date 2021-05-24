@@ -426,6 +426,7 @@ namespace iPassport.Api.Controllers
         /// This API is responsible for get Citizen By Id.
         /// </summary>
         /// <param name="id">User Id</param>
+        /// <param name="imageSize">Image Size</param>
         /// <response code="200">Server returns Ok</response>
         /// <response code="400">Bussiness Exception</response>
         /// <response code="401">Token invalid or expired</response>
