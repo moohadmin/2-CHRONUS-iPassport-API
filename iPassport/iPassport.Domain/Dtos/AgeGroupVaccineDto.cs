@@ -7,7 +7,7 @@ namespace iPassport.Domain.Dtos
     {
         public Guid? Id { get; set; }
         public EVaccinePeriodType? PeriodType { get; set; }
-        public Guid PeriodTypeId { get; set; }
+        public Guid? PeriodTypeId { get; set; }
         public int RequiredDoses { get; set; }
         public int TimeNextDoseMax { get; set; }
         public int TimeNextDoseMin { get; set; }
