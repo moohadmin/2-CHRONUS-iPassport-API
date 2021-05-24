@@ -79,7 +79,7 @@ namespace iPassport.Api.Controllers
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesByManufacuterRequest request)
         {
-            var res = await _service.GetByManufacturerId(_mapper.Map<GetPagedVaccinesFilter>(request));
+            var res = await _service.GetByManufacturerId(_mapper.Map<GetVaccineByManufacturerFilter>(request));
             return Ok(res);
         }
 
