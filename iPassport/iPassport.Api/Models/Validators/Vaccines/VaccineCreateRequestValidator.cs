@@ -43,7 +43,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["IsActive"]));
 
             RuleFor(x => x.DosageType)
-                .NotNull()
+                .Must( x => x != null && x > 0)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineDosageType"]));
 
             RuleFor(x => x.GeneralGroupVaccine)

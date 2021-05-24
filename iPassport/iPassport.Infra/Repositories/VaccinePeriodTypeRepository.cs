@@ -1,5 +1,4 @@
 ﻿using iPassport.Domain.Entities;
-using iPassport.Domain.Enums;
 using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,7 @@ namespace iPassport.Infra.Repositories
     {
         public VaccinePeriodTypeRepository(iPassportContext context) : base(context) { }
 
-        public async Task<VaccinePeriodType> GetByIdentifyer(EVaccinePeriodType identifyer)
-            => await _DbSet.FirstOrDefaultAsync(x => x.Identifyer == (int)identifyer);
+        public async Task<VaccinePeriodType> GetByIdentifyer(int identifyer)
+            => await _DbSet.FirstOrDefaultAsync(x => x.Identifyer == identifyer);
     }
 }

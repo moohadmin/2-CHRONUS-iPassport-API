@@ -18,7 +18,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
         public GeneralGroupVaccineCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.PeriodType)
-                .NotNull()
+                .Must(x => x != null && x > 0)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccinePeriodType"]));
 
             RuleFor(x => x.RequiredDoses)

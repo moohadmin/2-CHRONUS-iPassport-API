@@ -39,7 +39,6 @@ namespace iPassport.Api.Configurations
 #else
             services.AddDbContext<iPassportContext>(opt => opt
                 .UseLoggerFactory(MyLoggerFactory)
-                .EnableSensitiveDataLogging(true)
                 .EnableDetailedErrors());
 #endif
 

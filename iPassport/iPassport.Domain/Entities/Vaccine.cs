@@ -23,31 +23,40 @@ namespace iPassport.Domain.Entities
         public int ExpirationTimeInMonths { get; private set; }
         public int ImmunizationTimeInDays { get; private set; }
         public Guid ManufacturerId { get; private set; }
+
+        public void AddDiseases(IList<Disease> diseases)
+        {
+            if (Diseases == null)
+                Diseases = new List<Disease>();
+
+            foreach (var d in diseases)
+                Diseases.Add(d);
+        }
+
         public Guid DosageTypeId { get; private set; }
 
         public virtual VaccineManufacturer Manufacturer { get; set; }
-        public virtual IEnumerable<Disease> Diseases { get; set; }
-        public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
+        public virtual IList<Disease> Diseases { get; set; }
+        public virtual IList<UserVaccine> UserVaccines { get; set; }
         public virtual VaccineDosageType DosageType { get; set; }
-        public virtual IEnumerable<AgeGroupVaccine> AgeGroupVaccines { get; set; }
+        public virtual IList<AgeGroupVaccine> AgeGroupVaccines { get; set; }
         public virtual GeneralGroupVaccine GeneralGroupVaccine { get; set; }
 
         public static Vaccine Create(VaccineDto dto)
         {
             var vaccineId = Guid.NewGuid();
             var generalGroup = dto.GeneralGroupVaccine != null ? GeneralGroupVaccine.Create(dto.GeneralGroupVaccine, vaccineId) : null;
-            var ageGroup = dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.Any() ? dto.AgeGroupVaccines.Select(a => AgeGroupVaccine.Create(a, vaccineId)) : null;
+            var ageGroup = dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.Any() ? dto.AgeGroupVaccines.Select(a => AgeGroupVaccine.Create(a, vaccineId)).ToList() : null;
             var vaccine = new Vaccine()
             {
-                Id = Guid.NewGuid(),
+                Id = vaccineId,
                 Name = dto.Name,
                 DosageTypeId = dto.DosageTypeId,
                 ExpirationTimeInMonths = dto.ExpirationTimeInMonths,
                 ImmunizationTimeInDays = dto.ImmunizationTimeInDays,
                 ManufacturerId = dto.Manufacturer,
                 GeneralGroupVaccine = generalGroup,
-                AgeGroupVaccines = ageGroup,
-                Diseases = dto.Diseases.Select(d => new Disease(d))
+                AgeGroupVaccines = ageGroup
             };
 
             return vaccine;
