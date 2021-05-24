@@ -2,7 +2,7 @@
 
 namespace iPassport.Application.Models.ViewModels
 {
-    public class VaccineViewModel
+    public class VaccineManufecturerViewModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -13,9 +13,5 @@ namespace iPassport.Application.Models.ViewModels
         public string ManufacturerName { get; set; }
         public int MaxTimeNextDose { get; set; }
         public int MinTimeNextDose { get; set; }
-        public Guid DosagetypeId { get; set; }
-        public string DosagetypeName { get; set; }
-
-        // Enfermidades
     }
 }

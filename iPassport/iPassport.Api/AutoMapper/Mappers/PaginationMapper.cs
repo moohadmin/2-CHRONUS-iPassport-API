@@ -1,9 +1,10 @@
-﻿using AutoM = AutoMapper;
-using iPassport.Api.Models.Requests;
+﻿using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Company;
 using iPassport.Api.Models.Requests.Shared;
 using iPassport.Api.Models.Requests.User;
+using iPassport.Api.Models.Requests.Vaccine;
 using iPassport.Domain.Filters;
-using iPassport.Api.Models.Requests.Company;
+using AutoM = AutoMapper;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -19,6 +20,9 @@ namespace iPassport.Api.AutoMapper.Mappers
         public static void Map(AutoM.Profile profile)
         {
             profile.CreateMap<PageFilterRequest, PageFilter>();
+
+            profile.CreateMap<GetPagedVaccinesByManufacuterRequest, GetByIdAndNamePartsPagedFilter>()
+                    .ForMember(des => des.Id, act => act.MapFrom(src => src.ManufacuterId));
 
             profile.CreateMap<GetPagedVaccinesRequest, GetPagedVaccinesFilter>();
 
