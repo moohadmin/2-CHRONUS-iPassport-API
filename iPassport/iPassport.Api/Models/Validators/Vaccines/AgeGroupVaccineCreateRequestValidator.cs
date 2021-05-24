@@ -19,6 +19,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
         {
             RuleFor(x => x.PeriodType)
                 .Must(x => x != null && x > 0)
+                .When(x => x.RequiredDoses > 1)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccinePeriodType"]));
 
             RuleFor(x => x.RequiredDoses)
@@ -35,7 +36,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .When(x => x.RequiredDoses > 1)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMinTimeNextDose"]));
 
-            RuleFor(x => x.AgeGroupInital)
+            RuleFor(x => x.AgeGroupInitial)
                 .NotNull()
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineInitalAgeGroup"]));
 
@@ -44,8 +45,8 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineFinalAgeGroup"]));
 
             RuleFor(x => x.AgeGroupFinal)
-                .GreaterThanOrEqualTo(x => x.AgeGroupInital)
-                .When(x => x.AgeGroupInital != null)
+                .GreaterThanOrEqualTo(x => x.AgeGroupInitial)
+                .When(x => x.AgeGroupInitial != null)
                 .WithMessage(localizer["VaccineFinalAgeGroupNotBeLowerThenInital"]);
         }
     }

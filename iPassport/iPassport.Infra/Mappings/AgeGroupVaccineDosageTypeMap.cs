@@ -24,8 +24,7 @@ namespace iPassport.Infra.Mappings
             builder.Property(p => p.RequiredDoses)
                 .IsRequired();
 
-            builder.Property(p => p.PeriodTypeId)
-                .IsRequired();
+            builder.Property(p => p.PeriodTypeId);
 
             builder.Property(c => c.CreateDate)
                 .IsRequired();

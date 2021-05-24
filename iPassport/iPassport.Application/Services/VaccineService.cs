@@ -108,12 +108,12 @@ namespace iPassport.Application.Services
 
         private async Task GetvaccinePeriodType(VaccineDto dto)
         {
-            if (dto.GeneralGroupVaccine != null)
+            if (dto.GeneralGroupVaccine != null && dto.GeneralGroupVaccine.PeriodType != null)
             {
                 var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer((int)dto.GeneralGroupVaccine.PeriodType);
                 dto.GeneralGroupVaccine.PeriodTypeId = periodType.Id;
             }
-            else if (dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.Any())
+            else if (dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.All(x => x.PeriodType != null))
             {
                 var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer((int)dto.AgeGroupVaccines.FirstOrDefault().PeriodType);
 

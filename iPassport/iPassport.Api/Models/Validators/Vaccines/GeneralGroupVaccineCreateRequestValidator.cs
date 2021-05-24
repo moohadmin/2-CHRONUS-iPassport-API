@@ -19,6 +19,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
         {
             RuleFor(x => x.PeriodType)
                 .Must(x => x != null && x > 0)
+                .When(x => x.RequiredDoses > 1)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccinePeriodType"]));
 
             RuleFor(x => x.RequiredDoses)
