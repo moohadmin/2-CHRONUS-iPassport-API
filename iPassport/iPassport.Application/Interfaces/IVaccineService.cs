@@ -8,6 +8,7 @@ namespace iPassport.Application.Interfaces
     public interface IVaccineService
     {
         Task<ResponseApi> GetVaccinatedCount(GetVaccinatedCountFilter filter);
+        Task<ResponseApi> GetByManufacturerId(GetPagedVaccinesFilter filter);
         Task<ResponseApi> GetPagged(GetPagedVaccinesFilter filter);
         Task<ResponseApi> Add(VaccineDto dto);
     }

@@ -75,6 +75,26 @@ namespace iPassport.Api.Controllers
         [ProducesResponseType(typeof(ResponseApi), 200)]
         [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
         [ProducesResponseType(typeof(ServerErrorResponse), 500)]
+        [HttpGet("Manufacturer")]
+        [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
+        public async Task<ActionResult> GetByManufacturerId([FromQuery] GetPagedVaccinesByManufacuterRequest request)
+        {
+            var res = await _service.GetByManufacturerId(_mapper.Map<GetPagedVaccinesFilter>(request));
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// This API is responsible for Get paged list of Vacinne by name and Manufacutrer.
+        /// </summary>
+        /// <param name="request">Get Vaccines Paged Request</param>
+        /// <response code="200">Server returns Ok</response>
+        /// <response code="400">Bussiness Exception</response>
+        /// <response code="401">Token invalid or expired</response>
+        /// <response code="500">Due to server problems, it is not possible to get your data now</response> 
+        /// <returns>Paged Vaccines list.</returns>
+        [ProducesResponseType(typeof(ResponseApi), 200)]
+        [ProducesResponseType(typeof(BussinessExceptionResponse), 400)]
+        [ProducesResponseType(typeof(ServerErrorResponse), 500)]
         [HttpGet]
         [AuthorizeRole(RolesModel.Admin, RolesModel.Government, RolesModel.HealthUnit)]
         public async Task<ActionResult> GetPagged([FromQuery] GetPagedVaccinesRequest request)
