@@ -72,7 +72,8 @@ namespace iPassport.Application.Services
             var res = await _vaccineRepository.GetPagged(filter);
             
             var data = _mapper.Map<List<VaccineViewModel>>(res.Data);
-            data.ForEach(x => x.DiseaseNames = string.Join(", ", res.Data.FirstOrDefault(y => y.Id == x.Id).Diseases.Select(z => z.Name)));
+            
+            data.ForEach(x => x.DiseaseNames = res.Data.FirstOrDefault(y => y.Id == x.Id).Diseases != null ? string.Join(", ", res.Data.FirstOrDefault(y => y.Id == x.Id).Diseases.Select(z => z.Name)) : null);
 
             return new PagedResponseApi(true, _localizer["Vaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, data);
         }
