@@ -15,22 +15,22 @@ namespace iPassport.Api.Models.Requests.Vaccine
         /// <summary>
         /// Required Doses
         /// </summary>
-        public int RequiredDoses { get; set; }
+        public int? RequiredDoses { get; set; }
         /// <summary>
         /// Max Time Next Dose
         /// </summary>
-        public int TimeNextDoseMin { get; set; }
+        public int? TimeNextDoseMin { get; set; }
         /// <summary>
         /// Min Time Next Dose
         /// </summary>
-        public int TimeNextDoseMax { get; set; }
+        public int? TimeNextDoseMax { get; set; }
         /// <summary>
         /// Inital Age Group
         /// </summary>
-        public int AgeGroupInital { get; set; }
+        public int? AgeGroupInital { get; set; }
         /// <summary>
         /// Final Age Group
         /// </summary>
-        public int AgeGroupFinal { get; set; }
+        public int? AgeGroupFinal { get; set; }
     }
 }

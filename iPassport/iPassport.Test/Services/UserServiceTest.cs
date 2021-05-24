@@ -270,7 +270,7 @@ namespace iPassport.Test.Services
         public void AddAgent(string fullName, string repeatedName = null)
         {
             var mockRequest = Mock.Of<UserAgentDto>(x => x.Address == Mock.Of<AddressDto>(y => y.CityId == Guid.NewGuid()) && x.FullName == fullName);
-            var identyResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+            var identyResult = Mock.Of<IdentityResult>(x => x.Succeeded);
 
             // Arrange
             if (repeatedName != null)
@@ -411,7 +411,7 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<CitizenEditDto>(x => x.PriorityGroupId == Guid.NewGuid() && x.Address == Mock.Of<AddressEditDto>());
-            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded);
 
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserCitizen());
             _mockRepository.Setup(r => r.GetLoadedUserById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
@@ -443,7 +443,7 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<AdminDto>(x => x.CompanyId == Guid.NewGuid() && x.IsActive == true);
-            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded);
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());
             _mockProfileRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(ProfileSeed.Get());
             _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<Users>(), It.IsAny<string>()).Result).Returns(identityResult);
@@ -506,7 +506,7 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<AdminDto>(x => x.CompanyId == Guid.NewGuid() && x.Id == Guid.NewGuid());
-            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded == true);
+            var identityResult = Mock.Of<IdentityResult>(x => x.Succeeded);
             _mockUserRepository.Setup(x => x.GetById(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserAdmin());
             _mockRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(UserSeed.GetUserDetails());
             _mockCompanyRepository.Setup(x => x.Find(It.IsAny<Guid>()).Result).Returns(CompanySeed.Get());

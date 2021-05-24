@@ -1,6 +1,6 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using FluentValidation;
+﻿using FluentValidation;
 using iPassport.Api.Models.Requests.Vaccine;
+using iPassport.Application.Resources;
 using iPassport.Domain.Enums;
 using Microsoft.Extensions.Localization;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace iPassport.Api.Models.Validators.Vaccines
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["IsActive"]));
 
             RuleFor(x => x.DosageType)
-                .NotNull()
+                .Must( x => x != null && x > 0)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineDosageType"]));
 
             RuleFor(x => x.GeneralGroupVaccine)

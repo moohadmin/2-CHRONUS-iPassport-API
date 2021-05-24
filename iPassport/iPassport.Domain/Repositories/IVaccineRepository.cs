@@ -9,5 +9,6 @@ namespace iPassport.Domain.Repositories
     {
         Task<PagedData<Vaccine>> GetPagged(GetPagedVaccinesFilter filter);
         Task<IList<Vaccine>> GetByVaccineAndManufacturerNames(List<string> filter);
+        Task<bool> AssociateDiseases(Vaccine vaccine, IList<Disease> diseases);
     }
 }

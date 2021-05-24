@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iPassport.Application.Exceptions;
+using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Application.Models.Pagination;
@@ -9,7 +10,9 @@ using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,13 +25,19 @@ namespace iPassport.Application.Services
         private readonly IVaccinePeriodTypeRepository _vaccinePeriodTypeRepository;
         private readonly IUserVaccineRepository _userVaccineRepository;
         private readonly IVaccineRepository _vaccineRepository;
+        private readonly IDiseaseRepository _diseaseRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _accessor;
 
         public VaccineService(IVaccineRepository vaccineRepository,
             IUserVaccineRepository userVaccineRepository,
             IVaccinePeriodTypeRepository vaccinePeriodTypeRepository,
             IVaccineDosageTypeRepository vaccineDosageTypeRepository,
+            IDiseaseRepository diseaseRepository,
+            IUnitOfWork unitOfWork,
+            IHttpContextAccessor accessor,
             IStringLocalizer<Resource> localizer,
             IMapper mapper)
         {
@@ -36,6 +45,9 @@ namespace iPassport.Application.Services
             _userVaccineRepository = userVaccineRepository;
             _vaccinePeriodTypeRepository = vaccinePeriodTypeRepository;
             _vaccineDosageTypeRepository = vaccineDosageTypeRepository;
+            _diseaseRepository = diseaseRepository;
+            _unitOfWork = unitOfWork;
+            _accessor = accessor;
             _localizer = localizer;
             _mapper = mapper;
         }
@@ -57,20 +69,40 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> Add(VaccineDto dto)
         {
-            await GetvaccinePeriodType(dto);
-            await GetVaccineDosageType(dto);
+            try
+            {
+                await GetvaccinePeriodType(dto);
+                await GetVaccineDosageType(dto);
 
-            var vaccine = Vaccine.Create(dto);
+                var vaccine = Vaccine.Create(dto);
+                var diseases = await _diseaseRepository.GetByIdList(dto.Diseases);
+                
+                if (!dto.IsActive.GetValueOrDefault())
+                    vaccine.Deactivate(_accessor.GetCurrentUserId());
 
-            if (!await _vaccineRepository.InsertAsync(vaccine))
-                throw new BusinessException(_localizer["OperationNotPeformed"]);
+                _unitOfWork.BeginTransactionPassport();
 
-            return new ResponseApi(true, _localizer["VaccineCreated"], vaccine.Id);
+                if (!await _vaccineRepository.InsertAsync(vaccine))
+                    throw new BusinessException(_localizer["OperationNotPeformed"]);
+
+                if (!await _vaccineRepository.AssociateDiseases(vaccine, diseases))
+                    throw new BusinessException(_localizer["OperationNotPeformed"]);
+
+                _unitOfWork.CommitPassport();
+
+                return new ResponseApi(true, _localizer["VaccineCreated"], vaccine.Id);
+            }
+            catch (Exception)
+            {
+                _unitOfWork.RollbackPassport();
+
+                throw;
+            }
         }
 
         private async Task GetVaccineDosageType(VaccineDto dto)
         {
-            var dosageType = await _vaccineDosageTypeRepository.GetByIdentifyer(dto.DosageType);
+            var dosageType = await _vaccineDosageTypeRepository.GetByIdentifyer((int)dto.DosageType);
             dto.DosageTypeId = dosageType.Id;
         }
 
@@ -78,12 +110,12 @@ namespace iPassport.Application.Services
         {
             if (dto.GeneralGroupVaccine != null)
             {
-                var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer(dto.GeneralGroupVaccine.PeriodType);
+                var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer((int)dto.GeneralGroupVaccine.PeriodType);
                 dto.GeneralGroupVaccine.PeriodTypeId = periodType.Id;
             }
             else if (dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.Any())
             {
-                var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer(dto.AgeGroupVaccines.FirstOrDefault().PeriodType);
+                var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer((int)dto.AgeGroupVaccines.FirstOrDefault().PeriodType);
 
                 foreach (var ageGroup in dto.AgeGroupVaccines)
                     ageGroup.PeriodTypeId = periodType.Id;

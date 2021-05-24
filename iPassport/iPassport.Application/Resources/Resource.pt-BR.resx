@@ -982,7 +982,7 @@
     <value>Período Mínimo Próxima Dose (dias)</value>
   </data>
   <data name="VaccineName" xml:space="preserve">
-    <value>Noma da Vacina</value>
+    <value>Nome da Vacina</value>
   </data>
   <data name="VaccinePeriodType" xml:space="preserve">
     <value>Tipo de Período Entre Doses</value>
@@ -995,5 +995,8 @@
   </data>
   <data name="VaccinePeriodTypes" xml:space="preserve">
     <value>Tipos de período</value>
+  </data>
+  <data name="VaccineFinalAgeGroupNotBeLowerThenInital" xml:space="preserve">
+    <value>A faixa etária final não pode ser menor que a faixa etária inicial.</value>
   </data>
 </root>

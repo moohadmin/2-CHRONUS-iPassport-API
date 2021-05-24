@@ -1,6 +1,6 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using FluentValidation;
+﻿using FluentValidation;
 using iPassport.Api.Models.Requests.Vaccine;
+using iPassport.Application.Resources;
 using iPassport.Domain.Enums;
 using Microsoft.Extensions.Localization;
 
@@ -18,21 +18,23 @@ namespace iPassport.Api.Models.Validators.Vaccines
         public GeneralGroupVaccineCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.PeriodType)
-                .NotNull()
+                .Must(x => x != null && x > 0)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccinePeriodType"]));
+
+            RuleFor(x => x.RequiredDoses)
+               .NotNull()
+               .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineRequiredDoses"]));
 
             RuleFor(x => x.TimeNextDoseMin)
                 .NotNull()
+                .When(x => x.RequiredDoses > 1)
                 .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMinTimeNextDose"]));
 
             RuleFor(x => x.TimeNextDoseMax)
-                .NotNull()
-                .When(x => x.PeriodType == EVaccinePeriodType.Variable)
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMaxTimeNextDose"]));
-
-            RuleFor(x => x.RequiredDoses)
-                .NotNull()
-                .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineRequiredDoses"]));
+               .NotNull()
+               .When(x => x.RequiredDoses > 1 && x.PeriodType == EVaccinePeriodType.Variable)
+               .WithMessage(string.Format(localizer["RequiredField"], localizer["VaccineMaxTimeNextDose"]));
+           
         }
     }
 }

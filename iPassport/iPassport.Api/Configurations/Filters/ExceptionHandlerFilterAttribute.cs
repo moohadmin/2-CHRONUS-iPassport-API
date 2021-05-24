@@ -95,7 +95,7 @@ namespace iPassport.Api.Configurations.Filters
                     context.Exception.Message,
                     _devEnv ? context.Exception.InnerException?.Message : null,
                     _devEnv ? context.Exception.StackTrace : null
-                )); ;
+                ));
 
                 LogError(context.Exception);
                 return;
