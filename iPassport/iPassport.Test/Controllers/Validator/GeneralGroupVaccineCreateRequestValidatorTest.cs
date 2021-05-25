@@ -40,7 +40,7 @@ namespace iPassport.Test.Controllers.Validator
             var seed = new GeneralGroupVaccineCreateRequest()
             {
                 PeriodType = null,
-                RequiredDoses = 1,
+                RequiredDoses = 2,
                 TimeNextDoseMax = 2,
                 TimeNextDoseMin = 3
             };

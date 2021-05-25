@@ -54,6 +54,7 @@ namespace iPassport.Infra.Repositories
                 .Include(x => x.Diseases)
                 .Include(x => x.AgeGroupVaccines)
                 .Include(x => x.GeneralGroupVaccine)
+                .Include(x => x.DosageType)
                 .Where(v => (filter.ManufacuterId == null || v.ManufacturerId == filter.ManufacuterId.Value)
                             && (filter.DiseaseId == null || v.Diseases.Any(x => x.Id == filter.DiseaseId.Value))
                             && (filter.DosageTypeId == null || v.DosageTypeId == filter.DosageTypeId.Value)

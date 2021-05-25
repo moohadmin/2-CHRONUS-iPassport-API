@@ -62,7 +62,7 @@ namespace iPassport.Application.Services
         {
             var res = await _vaccineRepository.GetPagged(filter);
             var data = _mapper.Map<IList<VaccineGetByManufacturerViewModel>>(res.Data);
-            data.ToList().ForEach(x => x.RequiredDoses = res.Data.Where(r => r.Id == x.Id).Single().GetRequiredDoses(filter.Birthday));
+            data.ToList().ForEach(x => x.RequiredDoses = res.Data.Single(r => r.Id == x.Id).GetRequiredDoses(filter.Birthday));
 
             return new PagedResponseApi(true, _localizer["Vaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, data);
         }
@@ -70,7 +70,10 @@ namespace iPassport.Application.Services
         public async Task<ResponseApi> GetPagged(GetPagedVaccinesFilter filter)
         {
             var res = await _vaccineRepository.GetPagged(filter);
-            var data = _mapper.Map<IList<VaccineViewModel>>(res.Data);
+            
+            var data = _mapper.Map<List<VaccineViewModel>>(res.Data);
+            
+            data.ForEach(x => x.DiseaseNames = res.Data.FirstOrDefault(y => y.Id == x.Id).Diseases != null ? string.Join(", ", res.Data.FirstOrDefault(y => y.Id == x.Id).Diseases.Select(z => z.Name)) : null);
 
             return new PagedResponseApi(true, _localizer["Vaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, data);
         }
@@ -116,12 +119,12 @@ namespace iPassport.Application.Services
 
         private async Task GetvaccinePeriodType(VaccineDto dto)
         {
-            if (dto.GeneralGroupVaccine != null)
+            if (dto.GeneralGroupVaccine != null && dto.GeneralGroupVaccine.PeriodType != null)
             {
                 var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer((int)dto.GeneralGroupVaccine.PeriodType);
                 dto.GeneralGroupVaccine.PeriodTypeId = periodType.Id;
             }
-            else if (dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.Any())
+            else if (dto.AgeGroupVaccines != null && dto.AgeGroupVaccines.All(x => x.PeriodType != null))
             {
                 var periodType = await _vaccinePeriodTypeRepository.GetByIdentifyer((int)dto.AgeGroupVaccines.FirstOrDefault().PeriodType);
 

@@ -27,7 +27,7 @@ namespace iPassport.Api.Models.Requests.Vaccine
         /// <summary>
         /// Inital Age Group
         /// </summary>
-        public int? AgeGroupInital { get; set; }
+        public int? AgeGroupInitial { get; set; }
         /// <summary>
         /// Final Age Group
         /// </summary>
