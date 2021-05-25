@@ -84,7 +84,7 @@ namespace iPassport.Domain.Entities
                 var today = DateTime.Now.Date;
                 var age = today.Year - userBirthday.Year;
 
-                var ageGroup = AgeGroupVaccines.FirstOrDefault(v => v.InitalAgeGroup >= age && v.FinalAgeGroup <= age);
+                var ageGroup = AgeGroupVaccines.FirstOrDefault(v => v.InitalAgeGroup <= age && v.FinalAgeGroup >= age);
 
                 if (ageGroup != null) return ageGroup.RequiredDoses;
             }
