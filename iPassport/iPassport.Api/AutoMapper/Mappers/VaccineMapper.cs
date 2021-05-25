@@ -4,6 +4,7 @@ using iPassport.Application.Models.ViewModels;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Entities;
 using iPassport.Api.Models.Requests.Vaccine;
+using System.Linq;
 
 namespace iPassport.Api.AutoMapper.Mappers
 {
@@ -39,7 +40,8 @@ namespace iPassport.Api.AutoMapper.Mappers
                 .ForMember(des => des.ManufacturerName, act => act.MapFrom(src => src.Manufacturer != null ? src.Manufacturer.Name : null))
                 .ForMember(des => des.DosagetypeName, act => act.MapFrom(src => src.DosageType != null ? src.DosageType.Description : null))
                 .ForMember(des => des.MaxTimeNextDose, act => act.MapFrom(src => src.GetMaxTimeNextDose()))
-                .ForMember(des => des.MinTimeNextDose, act => act.MapFrom(src => src.GetMinTimeNextDose()));
+                .ForMember(des => des.MinTimeNextDose, act => act.MapFrom(src => src.GetMinTimeNextDose()))
+                .ForMember(des => des.IsActive, act => act.MapFrom(src => src.IsActive()));
 
             profile.CreateMap<UserVaccineCreateRequest, UserVaccineCreateDto>()
                 .ForMember(des => des.VaccineId, act => act.MapFrom(src => src.Vaccine));
