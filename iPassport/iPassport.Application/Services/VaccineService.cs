@@ -62,7 +62,7 @@ namespace iPassport.Application.Services
         {
             var res = await _vaccineRepository.GetPagged(filter);
             var data = _mapper.Map<IList<VaccineGetByManufacturerViewModel>>(res.Data);
-            data.ToList().ForEach(x => x.RequiredDoses = res.Data.Where(r => r.Id == x.Id).Single().GetRequiredDoses(filter.Birthday));
+            data.ToList().ForEach(x => x.RequiredDoses = res.Data.Single(r => r.Id == x.Id).GetRequiredDoses(filter.Birthday));
 
             return new PagedResponseApi(true, _localizer["Vaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, data);
         }

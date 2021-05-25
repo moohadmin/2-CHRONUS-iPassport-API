@@ -6,7 +6,6 @@ namespace iPassport.Application.Models.ViewModels
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public int RequiredDoses { get; set; }
         public int ExpirationTimeInMonths { get; set; }
         public int ImmunizationTimeInDays { get; set; }
         public Guid ManufacturerId { get; set; }
