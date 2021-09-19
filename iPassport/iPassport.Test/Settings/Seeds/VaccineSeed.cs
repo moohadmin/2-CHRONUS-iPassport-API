@@ -21,11 +21,11 @@ namespace iPassport.Test.Seeds
         {
             return new List<Vaccine>()
             { 
-                new Vaccine("test", Guid.NewGuid(), 1, 1, 1, 1, 1),
-                new Vaccine("test1", Guid.NewGuid(), 12, 13, 1, 1, 1),
-                new Vaccine("test2", Guid.NewGuid(), 13, 14, 1, 1, 1),
-                new Vaccine("test3", Guid.NewGuid(), 14, 15, 1, 1, 1),
-                new Vaccine("test4", Guid.NewGuid(), 15, 16, 1, 1, 1)
+                new Vaccine("test", Guid.NewGuid(), 1, 1),
+                new Vaccine("test1", Guid.NewGuid(), 12, 13),
+                new Vaccine("test2", Guid.NewGuid(), 13, 14),
+                new Vaccine("test3", Guid.NewGuid(), 14, 15),
+                new Vaccine("test4", Guid.NewGuid(), 15, 16)
             };
         }
     }

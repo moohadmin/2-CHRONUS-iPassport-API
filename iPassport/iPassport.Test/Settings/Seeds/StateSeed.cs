@@ -21,8 +21,6 @@ namespace iPassport.Test.Seeds
 
         public static PagedData<State> GetPaged()
         {
-            
-
             return new PagedData<State>() { Data = GetStates() };
         }
     }

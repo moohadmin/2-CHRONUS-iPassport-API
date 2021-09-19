@@ -5,8 +5,15 @@ using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
+    /// <summary>
+    /// Get Manufacturer By Name Initals Request Validator
+    /// </summary>
     public class GetManufacturerByNameInitalsRequestValidator : AbstractValidator<GetByNamePartsPagedRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">localizer</param>
         public GetManufacturerByNameInitalsRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Initials)

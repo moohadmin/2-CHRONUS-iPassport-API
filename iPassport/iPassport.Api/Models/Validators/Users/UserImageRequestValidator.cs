@@ -6,8 +6,15 @@ using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Users
 {
+    /// <summary>
+    /// User Image Request Validator
+    /// </summary>
     public class UserImageRequestValidator : AbstractValidator<UserImageRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">localizer</param>
         public UserImageRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.ImageFile)

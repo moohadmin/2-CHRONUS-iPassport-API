@@ -15,8 +15,14 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(x => x.Name)
                 .IsRequired();
 
+            builder.Property(x => x.TradeName);
+
             builder.Property(x => x.Cnpj)
                 .IsRequired();
+
+            builder.Property(x => x.IsHeadquarters);
+
+            builder.Property(x => x.DeactivationDate);
 
             builder.Property(x => x.UpdateDate)
                 .IsRequired();
@@ -24,11 +30,29 @@ namespace iPassport.Infra.Mappings.IdentityMaps
             builder.Property(x => x.CreateDate)
                 .IsRequired();
 
+            builder.HasIndex(x => x.Cnpj)
+                .IsUnique();
+
+            builder.HasIndex(x => x.Name);
+
             builder.HasOne(x => x.Address)
                 .WithMany()
                 .HasForeignKey(x => x.AddressId);
+            
+            builder.HasOne(x => x.Segment)
+                .WithMany()
+                .HasForeignKey(x => x.SegmentId)
+                .IsRequired(false);
 
-            builder.HasIndex(x => x.Cnpj);
+            builder.HasOne(x => x.ParentCompany)
+                .WithMany(x => x.Subsidiaries)
+                .HasForeignKey(x => x.ParentId)
+                .IsRequired(false);
+
+            builder.HasOne(x => x.DeactivationUser)
+                .WithMany()
+                .HasForeignKey(x => x.DeactivationUserId)
+                .IsRequired(false);
         }
     }
 }

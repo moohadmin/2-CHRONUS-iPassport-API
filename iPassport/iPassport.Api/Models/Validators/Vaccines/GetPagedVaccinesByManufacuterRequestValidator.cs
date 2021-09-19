@@ -1,14 +1,26 @@
 ﻿using FluentValidation;
-using iPassport.Api.Models.Requests;
+using iPassport.Api.Models.Requests.Vaccine;
 using iPassport.Application.Resources;
 using Microsoft.Extensions.Localization;
+using System;
 
 namespace iPassport.Api.Models.Validators.Vaccines
 {
+    /// <summary>
+    /// Get Paged Vaccines By Manufacuter Request Validator
+    /// </summary>
     public class GetPagedVaccinesByManufacuterRequestValidator : AbstractValidator<GetPagedVaccinesByManufacuterRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">localizer</param>
         public GetPagedVaccinesByManufacuterRequestValidator(IStringLocalizer<Resource> localizer)
         {
+            RuleFor(x => x.Birthday)
+                .Must(x => x != DateTime.MinValue)
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Birthday"]));
+
             RuleFor(x => x.ManufacuterId)
                 .SetValidator(new GuidValidator("ManufacuterId", localizer));
 

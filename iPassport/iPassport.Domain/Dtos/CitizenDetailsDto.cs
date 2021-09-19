@@ -20,21 +20,22 @@ namespace iPassport.Domain.Dtos
             NumberOfDoses = userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.Count();
             Telephone = authUser.PhoneNumber;
             Birthday = authUser.Birthday;
-            WasTestPerformed = userDetails.UserDiseaseTests?.Any();
-            Test = userDetails.UserDiseaseTests != null ? new UserDiseaseTestDto(userDetails.UserDiseaseTests?.OrderByDescending(x => x.CreateDate).FirstOrDefault()) : null;
+            Photo = authUser.Photo;
+            WasTestPerformed = userDetails.WasTestPerformed;
+            Test = userDetails.UserDiseaseTests.Any() ? new UserDiseaseTestDto(userDetails.UserDiseaseTests?.OrderByDescending(x => x.CreateDate).FirstOrDefault()) : null;
             Address = authUser.Address != null ? new AddressDto(authUser.Address) : null;
-            PriorityGroup = userDetails.PPriorityGroup != null ? new PriorityGroupDto(userDetails.PPriorityGroup) : null;
-            BloodType = authUser.BBloodType != null ? new BloodTypeDto(authUser.BBloodType) : null;
+            PriorityGroup = userDetails.PriorityGroup != null ? new PriorityGroupDto(userDetails.PriorityGroup) : null;
+            BloodType = authUser.BloodType != null ? new BloodTypeDto(authUser.BloodType) : null;
             HumanRace = authUser.HumanRace != null ? new HumanRaceDto(authUser.HumanRace) : null;
             Company = authUser.Company != null ? new CompanyDto(authUser.Company) : null;
-            Gender = authUser.GGender != null ? new GenderDto(authUser.GGender) : null;
+            Gender = authUser.Gender != null ? new GenderDto(authUser.Gender) : null;
             Doses = userDetails.UserVaccines != null ? userDetails.UserVaccines?.Where(x => x.ExclusionDate == null)?.GroupBy(v => new { v.VaccineId })
             .Select(v => new UserVaccineDetailsDto()
             {
                 UserId = v.FirstOrDefault().UserId,
                 VaccineId = v.Key.VaccineId,
                 VaccineName = v.FirstOrDefault().Vaccine?.Name,
-                RequiredDoses = v.FirstOrDefault().Vaccine?.RequiredDoses,
+                RequiredDoses = v.FirstOrDefault().Vaccine?.GetRequiredDoses(authUser.Birthday),
                 ImmunizationTime = v.FirstOrDefault().Vaccine?.ImmunizationTimeInDays,
                 Doses = v.Select(x => new VaccineDoseDto()
                 {
@@ -50,6 +51,11 @@ namespace iPassport.Domain.Dtos
                 }),
                 Manufacturer = v.FirstOrDefault().Vaccine?.Manufacturer != null ? new VaccineManufacturerDto(v.FirstOrDefault().Vaccine.Manufacturer) : null
             }).ToList() : null;
+            ImportedFileName = userDetails.ImportedFile?.Name;
+            ImportedFileDate = userDetails.ImportedFile?.CreateDate;
+            Rg = authUser.RG;
+            InternationalDocument = authUser.InternationalDocument;
+            PassportDocument = authUser.PassportDoc;
         }
 
         public string CompleteName { get; set; }
@@ -79,7 +85,7 @@ namespace iPassport.Domain.Dtos
         public int? NumberOfDoses { get; set; }
 
         public string Telephone { get; set; }
-
+        public string Photo { get; set; }
         public AddressDto Address { get; set; }
 
         public IList<UserVaccineDetailsDto> Doses { get; set; }
@@ -89,5 +95,15 @@ namespace iPassport.Domain.Dtos
         public bool? WasTestPerformed { get; set; }
 
         public UserDiseaseTestDto Test { get; set; }
+
+        public string ImportedFileName { get; set; }
+        
+        public DateTime? ImportedFileDate { get; set; }
+        
+        public string Rg { get; set; }
+
+        public string PassportDocument { get; set; }
+
+        public string InternationalDocument { get; set; }
     }
 }

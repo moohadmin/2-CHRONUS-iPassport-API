@@ -12,7 +12,7 @@ namespace iPassport.Domain.Entities
         public UserDetails() { }
 
         public UserDetails(Guid userId, Guid? planId = null, IList<UserVaccine> userVaccines = null, bool? wasCovidInfected = null, string bond = null, Guid? priorityGroupId = null,
-            IList<UserDiseaseTest> userDiseaseTests = null) : base()
+            IList<UserDiseaseTest> userDiseaseTests = null, bool? wasTestPerformed = null) : base()
         {
             Id = userId;
 
@@ -33,34 +33,35 @@ namespace iPassport.Domain.Entities
 
             if (userDiseaseTests != null)
                 UserDiseaseTests = userDiseaseTests;
+
+            WasTestPerformed = wasTestPerformed;
         }
 
         public bool? WasCovidInfected { get; private set; }
         public string Bond { get; private set; }
-        /// <summary>
-        /// Depreciated must use PriorityGroupId
-        /// </summary>
-        public string PriorityGroup { get; private set; }
-
         public Guid? PlanId { get; private set; }
         public Guid? PriorityGroupId { get; private set; }
         public virtual Guid? ImportedFileId { get; set; }
+        public bool? WasTestPerformed { get; private set; }
+        public Guid? HealthUnitId { get; private set; }
 
         public virtual Plan Plan { get; set; }
         public virtual Passport Passport { get; set; }
-        public virtual PriorityGroup PPriorityGroup { get; set; }
+        public virtual PriorityGroup PriorityGroup { get; set; }
 
         public virtual IEnumerable<UserVaccine> UserVaccines { get; set; }
         public virtual IEnumerable<UserDiseaseTest> UserDiseaseTests { get; set; }
 
         public virtual ImportedFile ImportedFile { get; set; }
+        public virtual HealthUnit HealthUnit { get; set; }
 
-        public UserDetails Create(UserAgentCreateDto dto) =>
-            new UserDetails(dto.UserId);
+
+        public UserDetails Create(UserAgentDto dto) =>
+            new UserDetails(dto.Id);
 
         public UserDetails Create(CitizenCreateDto dto) =>
             new UserDetails(dto.Id, userVaccines: CreateUservaccine(dto.Doses), wasCovidInfected: dto.WasCovidInfected, bond: dto.Bond, priorityGroupId: dto.PriorityGroupId,
-                userDiseaseTests: CreateUserDiseaseTest(dto.Test));
+                userDiseaseTests: CreateUserDiseaseTest(dto.Test), wasTestPerformed: dto.WasTestPerformed);
 
         private IList<UserVaccine> CreateUservaccine(IList<UserVaccineCreateDto> dto)
         {
@@ -83,24 +84,37 @@ namespace iPassport.Domain.Entities
             return userDiseaseTests;
         }
 
+        /// <summary>
+        /// 2021-05-19 : Added condition to consider only COVID vaccines in passport validation - must be removed when a corporate solution is implemented
+        /// </summary>
+        public IEnumerable<UserVaccine> GetOnlyCovid19UserVaccines()
+        {
+            return this.UserVaccines.Where(uv => uv.Vaccine.Diseases.Any(d => d.Name == Constants.DISEASE_NAME_COVID_19));
+        }
+
         public void AssociatePlan(Guid plandId) => PlanId = plandId;
 
-        public bool IsApprovedPassport()
+        public bool IsApprovedPassport(DateTime userBirthday)
         {
             bool isApproved = true;
 
-            if (UserVaccines == null || !UserVaccines.Any(x => x.ExclusionDate == null))
+            if (UserVaccines == null || !GetOnlyCovid19UserVaccines().Any(x => x.ExclusionDate == null))
                 isApproved = false;
 
-            var vacinnes = UserVaccines.Where(x => x.ExclusionDate == null).Select(x => x.Vaccine).Distinct().ToList();
+            var vacinnes = GetOnlyCovid19UserVaccines().Where(x => x.ExclusionDate == null)
+                                .Select(x => x.Vaccine).Distinct().ToList();
 
             if (vacinnes == null || !vacinnes.Any())
-                isApproved = false;
-
-            foreach (var vaccine in vacinnes)
             {
-                if (vaccine == null || GetUserVaccineStatus(vaccine.Id) != EUserVaccineStatus.Immunized)
-                    isApproved = false;
+                isApproved = false;
+            }
+            else
+            {
+                foreach (var vaccine in vacinnes)
+                {
+                    if (vaccine == null || GetUserVaccineStatus(vaccine.Id, userBirthday) != EUserVaccineStatus.Immunized)
+                        isApproved = false;
+                }
             }
 
             if (!isApproved)
@@ -115,7 +129,7 @@ namespace iPassport.Domain.Entities
             return isApproved;
         }
 
-        public EUserVaccineStatus GetUserVaccineStatus(Guid vaccineId)
+        public EUserVaccineStatus GetUserVaccineStatus(Guid vaccineId, DateTime userBirthday)
         {
             if (UserVaccines == null || !UserVaccines.Any(x => x.VaccineId == vaccineId && x.ExclusionDate == null))
                 return EUserVaccineStatus.Unvaccinated;
@@ -128,15 +142,27 @@ namespace iPassport.Domain.Entities
             foreach (var userVaccine in UserVaccines.Where(x => x.VaccineId == vaccineId && x.ExclusionDate == null).OrderBy(x => x.Dose))
             {
                 if (vaccine.UniqueDose())
-                    return userVaccine.IsImmunized() ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
+                    return userVaccine.IsImmunized(userBirthday) ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
 
                 else if (!userVaccine.IsFirstDose())
                 {
-                    if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.MinTimeNextDose)
-                        && userVaccine.VaccinationDate <= lastVaccineDate.AddDays(vaccine.MaxTimeNextDose))
-                        validDoses += 1;
+                    if (vaccine.GetVaccinePeriodType() == EVaccinePeriodType.Variable)
+                    {
+                        if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.GetMinTimeNextDose())
+                            && userVaccine.VaccinationDate <= lastVaccineDate.AddDays(vaccine.GetMaxTimeNextDose()))
+                            validDoses += 1;
+
+                        else
+                            return EUserVaccineStatus.NotImmunized;
+                    }
                     else
-                        return EUserVaccineStatus.NotImmunized;
+                    {
+                        if (userVaccine.VaccinationDate >= lastVaccineDate.AddDays(vaccine.GetMinTimeNextDose()))
+                            validDoses += 1;
+
+                        else
+                            return EUserVaccineStatus.NotImmunized;
+                    }
                 }
                 else
                     validDoses += 1;
@@ -144,11 +170,11 @@ namespace iPassport.Domain.Entities
                 lastVaccineDate = userVaccine.VaccinationDate;
             }
 
-            if (validDoses == vaccine.RequiredDoses)
+            if (validDoses == vaccine.GetRequiredDoses(userBirthday))
             {
-                var lastDose = UserVaccines.FirstOrDefault(x => x.VaccineId == vaccineId && x.Dose == vaccine.RequiredDoses && x.ExclusionDate == null);
+                var lastDose = UserVaccines.FirstOrDefault(x => x.VaccineId == vaccineId && x.Dose == vaccine.GetRequiredDoses(userBirthday) && x.ExclusionDate == null);
 
-                return lastDose.IsImmunized() ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
+                return lastDose.IsImmunized(userBirthday) ? EUserVaccineStatus.Immunized : EUserVaccineStatus.Vaccinated;
             }
             else
                 return EUserVaccineStatus.Waiting;
@@ -175,20 +201,40 @@ namespace iPassport.Domain.Entities
         {
             Bond = dto.Bond;
             WasCovidInfected = dto.WasCovidInfected;
-
+            WasTestPerformed = dto.WasTestPerformed;
             PriorityGroupId = dto.PriorityGroupId;
         }
 
         public static UserDetails CreateUserDetail(UserImportDto dto, Guid importedFileId)
-            => new ()
+            => new()
             {
                 Id = dto.UserId,
                 Bond = dto.Bond,
                 PriorityGroupId = dto.PriorityGroupId,
                 WasCovidInfected = dto.WasCovidInfectedBool,
-                UserDiseaseTests = dto.WasTestPerformed == "Sim" ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
+                WasTestPerformed = dto.WasTestPerformed.ToUpper() == Constants.CONST_NENHUM_VALUE ? null : dto.WasTestPerformed.ToUpper() == Constants.CONST_SIM_VALUE,
+                UserDiseaseTests = dto.WasTestPerformed.ToUpper() == Constants.CONST_SIM_VALUE ? new List<UserDiseaseTest> { new UserDiseaseTest(dto.UserId, dto.ResultBool, dto.TestDate.Value, dto.ResultDate, null) } : null,
                 UserVaccines = UserVaccine.CreateListUserVaccine(dto),
                 ImportedFileId = importedFileId
             };
+
+        public static UserDetails CreateUserDetail(AdminDto dto)
+            => new()
+            {
+                Id = dto.Id.Value,
+                HealthUnitId = dto.HealthUnitId
+            };
+
+        public void ChangeUserDetail(AdminDto dto) => HealthUnitId = dto.HealthUnitId;
+
+        public bool CanEditCitizenFields(CitizenEditDto dto, AccessControlDTO accessControl)
+        {
+            if (accessControl.Profile == EProfileKey.government.ToString() || accessControl.Profile == EProfileKey.healthUnit.ToString())
+                return Bond == dto.Bond
+                && WasCovidInfected == dto.WasCovidInfected
+                && PriorityGroupId == dto.PriorityGroupId;
+
+            return accessControl.Profile == EProfileKey.admin.ToString();
+        }
     }
 }

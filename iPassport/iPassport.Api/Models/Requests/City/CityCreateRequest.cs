@@ -1,5 +1,8 @@
 ﻿namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// City Create Request model
+    /// </summary>
     public class CityCreateRequest
     {
         /// <summary>

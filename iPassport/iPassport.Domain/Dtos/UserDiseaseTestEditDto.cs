@@ -10,5 +10,8 @@ namespace iPassport.Domain.Dtos
         public DateTime TestDate { get;  set; }
         public DateTime? ResultDate { get;  set; }
         public string Name { get; set; }
+
+        public bool IsEmpty() => Result == default && TestDate == default && ResultDate == default && Id == default;
+        
     }
 }

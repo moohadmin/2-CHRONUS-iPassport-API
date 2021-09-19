@@ -6,6 +6,7 @@ using iPassport.Application.Interfaces;
 using iPassport.Application.Models;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
+using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -72,13 +73,13 @@ namespace iPassport.Test.Controllers
         public void GetCurrentUser_MustReturnOk()
         {
             // Arrange
-            _mockService.Setup(r => r.GetCurrentUser());
+            _mockService.Setup(r => r.GetCurrentUser(It.IsAny<string>()));
 
             // Act
-            var result = _controller.GetCurrentUser();
+            var result = _controller.GetCurrentUser(It.IsAny<string>());
 
             // Assert
-            _mockService.Verify(a => a.GetCurrentUser(), Times.Once);
+            _mockService.Verify(a => a.GetCurrentUser(It.IsAny<string>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
@@ -96,6 +97,23 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockService.Verify(a => a.AddUserImage(It.IsAny<UserImageDto>()), Times.Once);
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void UserImageRemove_MustReturnOk()
+        {
+            var mockUserId = Guid.NewGuid();
+
+            // Arrange
+            _mockService.Setup(r => r.RemoveUserImage(It.IsAny<Guid>()));
+
+            // Act
+            var result = _controller.UserImageRemove(mockUserId);
+
+            // Assert
+            _mockService.Verify(a => a.RemoveUserImage(It.IsAny<Guid>()), Times.Once);
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
@@ -183,6 +201,24 @@ namespace iPassport.Test.Controllers
         }
 
         [TestMethod]
+        public void PaggedUserAgent_MustReturnOk()
+        {
+            var mockrequest = Mock.Of<GetAgentPagedRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.GetPagedAgent(It.IsAny<GetAgentPagedFilter>()).Result)
+                .Returns(UserSeed.GetPagedAgent());
+
+            // Act
+            var result = _controller.GetAgentByNameParts(mockrequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetPagedAgent(It.IsAny<GetAgentPagedFilter>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
         public void GetLoggedAgentCount_MustReturnOk()
         {
             var seed = new Random().Next(99999);
@@ -205,13 +241,30 @@ namespace iPassport.Test.Controllers
             var mockrequest = Mock.Of<UserAgentCreateRequest>();
 
             // Arrange
-            _mockService.Setup(r => r.AddAgent(It.IsAny<UserAgentCreateDto>()));
+            _mockService.Setup(r => r.AddAgent(It.IsAny<UserAgentDto>()));
 
             // Act
             var result = _controller.AddAgent(mockrequest);
 
             // Assert
-            _mockService.Verify(r => r.AddAgent(It.IsAny<UserAgentCreateDto>()));
+            _mockService.Verify(r => r.AddAgent(It.IsAny<UserAgentDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void EditAgent_MustReturnOk()
+        {
+            var mockRequest = Mock.Of<UserAgentEditRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.EditAgent(It.IsAny<UserAgentDto>()));
+
+            // Act
+            var result = _controller.EditAgent(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.EditAgent(It.IsAny<UserAgentDto>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
@@ -270,16 +323,14 @@ namespace iPassport.Test.Controllers
         [TestMethod]
         public void GetCitizenById_MustReturnOk()
         {
-            var mockRequest = Guid.NewGuid();
-
             // Arrange
-            _mockService.Setup(r => r.GetCitizenById(It.IsAny<Guid>()));
+            _mockService.Setup(r => r.GetCitizenById(It.IsAny<Guid>(), It.IsAny<string>()));
 
             // Act
-            var result = _controller.GetCitizenById(mockRequest);
+            var result = _controller.GetCitizenById(Guid.NewGuid(), "test");
 
             // Assert
-            _mockService.Verify(r => r.GetCitizenById(It.IsAny<Guid>()));
+            _mockService.Verify(r => r.GetCitizenById(It.IsAny<Guid>(), It.IsAny<string>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
@@ -297,6 +348,94 @@ namespace iPassport.Test.Controllers
 
             // Assert
             _mockService.Verify(r => r.EditCitizen(It.IsAny<CitizenEditDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void AddAdmin_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<AdminCreateRequest>();
+            _mockService.Setup(r => r.AddAdmin(It.IsAny<AdminDto>()));
+
+            // Act
+            var result = _controller.AddAdmin(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.AddAdmin(It.IsAny<AdminDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            
+        }
+
+        [TestMethod]
+        public void GetAdminById_MustReturnOk()
+        {
+            var mockRequest = Guid.NewGuid();
+
+            // Arrange
+            _mockService.Setup(r => r.GetAdminById(It.IsAny<Guid>()).Result)
+                .Returns(new ResponseApi(true, "test", UserSeed.GetAdminDetails()));
+
+            // Act
+            var result = _controller.GetAdminById(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetAdminById(It.IsAny<Guid>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void PaggedUserAdmin_MustReturnOk()
+        {
+            var mockrequest = Mock.Of<GetAdminUserPagedRequest>();
+
+            // Arrange
+            _mockService.Setup(r => r.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()).Result)
+                .Returns(UserSeed.GetPagedAdmins());
+
+            // Act
+            var result = _controller.GetPagedAdmins(mockrequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetPagedAdmins(It.IsAny<GetAdminUserPagedFilter>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        }
+
+        [TestMethod]
+        public void EditAdmin_MustReturnOk()
+        {
+            // Arrange
+            var mockRequest = Mock.Of<AdminEditRequest>();
+            _mockService.Setup(r => r.EditAdmin(It.IsAny<AdminDto>()));
+
+            // Act
+            var result = _controller.EditAdmin(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.EditAdmin(It.IsAny<AdminDto>()));
+            Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+
+        }
+
+        [TestMethod]
+        public void GetAgentById_MustReturnOk()
+        {
+            var mockRequest = Guid.NewGuid();
+
+            // Arrange
+            _mockService.Setup(r => r.GetAgentById(It.IsAny<Guid>()).Result)
+                .Returns(new ResponseApi(true, "test", UserSeed.GetUserDetails()));
+
+            // Act
+            var result = _controller.GetAgentById(mockRequest);
+
+            // Assert
+            _mockService.Verify(r => r.GetAgentById(It.IsAny<Guid>()));
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }

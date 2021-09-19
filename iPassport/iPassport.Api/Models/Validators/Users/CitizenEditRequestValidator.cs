@@ -39,22 +39,30 @@ namespace iPassport.Api.Models.Validators.Users
                 .SetValidator(new RequiredFieldValidator<string>("Cns", localizer)).When(x => string.IsNullOrWhiteSpace(x.Cpf))
                 .Length(15).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"))
                 .Must(y => Regex.IsMatch(y, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Cns)).WithMessage(string.Format(localizer["InvalidField"], "CNS"));
-                       
+
+            RuleFor(x => x.PassportDocument)
+                .Must(x => Regex.IsMatch(x[0].ToString(), "^[a-zA-Z]+$") && Regex.IsMatch(x[1].ToString(), "^[a-zA-Z]+$") && x.Length >= 3 && x.Length <= 15 && Regex.IsMatch(x[2..^(1)], "^[0-9]+$"))
+                .When(x => !string.IsNullOrWhiteSpace(x.PassportDocument))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["PassportDocument"]));
+
+            RuleFor(x => x.Rg)
+                .Must(x => x.Length <= 15)
+                .When(x => !string.IsNullOrWhiteSpace(x.Rg))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["RgField"]));
+
+            RuleFor(x => x.InternationalDocument)
+                .Must(x => x.Length <= 15)
+                .When(x => !string.IsNullOrWhiteSpace(x.InternationalDocument))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["InternationalDocument"]));
+
             RuleFor(x => x.Email)
                 .EmailAddress()
                 .When(x => x != null)
-                .WithMessage(string.Format(localizer["InvalidField"], "E-mail"));
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["Email"]));
 
             RuleFor(x => x.Telephone)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y =>
-                {
-                    return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13);
-                })
-                .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
+                .Must(y => PhoneNumberUtils.ValidMobile(y))
+                .When(x => !string.IsNullOrWhiteSpace(x.Telephone))
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]));
 
             RuleFor(x => x.Address)
@@ -70,13 +78,20 @@ namespace iPassport.Api.Models.Validators.Users
                 .Cascade(CascadeMode.Stop)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], localizer["Birthday"]))
                 .SetValidator(new RequiredFieldValidator<DateTime?>(localizer["Birthday"], localizer))
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"])
+                .Must(x => x.Value.Date <= DateTime.UtcNow.Date).WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"])
                 .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage(string.Format(localizer["InvalidField"], localizer["Birthday"]));
 
             RuleFor(x => x.Test)
-                .NotEmpty().When(x => x.WasTestPerformed.GetValueOrDefault())
-                .SetValidator(new UserDiseaseTestEditRequestValidator(localizer))
-                .When(x => x.WasTestPerformed.GetValueOrDefault());
+                .Null()
+                    .When(x => !x.WasTestPerformed.GetValueOrDefault())
+                    .WithMessage(localizer["TestMustBeNull"]);
+
+            RuleFor(y => y.Test)
+                 .NotNull()
+                     .When(x => x.WasTestPerformed.GetValueOrDefault())
+                     .WithMessage(localizer["TestNotMustBeNullOrEmpty"])
+                 .SetValidator(new UserDiseaseTestEditRequestValidator(localizer))
+                     .When(x => x.WasTestPerformed.GetValueOrDefault());                
         }
     }
 }

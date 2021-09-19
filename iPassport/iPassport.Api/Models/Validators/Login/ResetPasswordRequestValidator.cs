@@ -5,8 +5,15 @@ using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Login
 {
+    /// <summary>
+    /// Reset Password Request Validator
+    /// </summary>
     public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">string localizer</param>
         public ResetPasswordRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.Password)

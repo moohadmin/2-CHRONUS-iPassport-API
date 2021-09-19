@@ -1,4 +1,5 @@
 ﻿using iPassport.Domain.Dtos;
+using iPassport.Domain.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -52,7 +53,6 @@ namespace iPassport.Domain.Entities
         public virtual Vaccine Vaccine { get; set; }
         public virtual HealthUnit HealthUnit { get; set; }
 
-
         public UserVaccine Create(UserVaccineCreateDto dto)
             => new UserVaccine(dto.VaccinationDate, dto.Dose, dto.VaccineId, dto.UserId, dto.Batch, dto.EmployeeName, dto.EmployeeCpf, dto.EmployeeCoren, dto.HealthUnitId);
         public UserVaccine Create(UserVaccineEditDto dto)
@@ -60,7 +60,7 @@ namespace iPassport.Domain.Entities
 
         public DateTime GetExpirationDate(Vaccine vaccine) => VaccinationDate.AddMonths(vaccine.ExpirationTimeInMonths);
 
-        public bool IsImmunized()
+        public bool IsImmunized(DateTime userBirthday)
         {
             var today = DateTime.UtcNow.Date;
             if (Vaccine == null)
@@ -68,7 +68,7 @@ namespace iPassport.Domain.Entities
 
             if (VaccinationDate.Date.AddDays(Vaccine.ImmunizationTimeInDays) <= today // Time for the vaccine to start taking effect
                 && VaccinationDate.Date.AddMonths(Vaccine.ExpirationTimeInMonths) >= today // Vaccine shelf life
-                && Dose == Vaccine.RequiredDoses) // Amount of required dosage
+                && Dose == Vaccine.GetRequiredDoses(userBirthday)) // Amount of required dosage
                 return true;
 
             return false;
@@ -93,7 +93,7 @@ namespace iPassport.Domain.Entities
 
         public static IEnumerable<UserVaccine> CreateListUserVaccine(UserImportDto dto)
         {
-            List<UserVaccine> userVacines = new ();
+            List<UserVaccine> userVacines = new();
             if (dto.HasVaccineUniqueDoseData)
                 userVacines.Add(new UserVaccine(dto.VaccinationDateUniqueDose.Value, 1, dto.VaccineIdUniqueDose.Value, dto.UserId, dto.BatchUniqueDose, dto.EmployeeNameVaccinationUniqueDose, dto.EmployeeCpfVaccinationUniqueDose, dto.EmployeeCorenVaccinationUniqueDose, dto.HealthUnityIdUniqueDose.Value));
 
@@ -107,6 +107,22 @@ namespace iPassport.Domain.Entities
                 userVacines.Add(new UserVaccine(dto.VaccinationDateThirdDose.Value, 3, dto.VaccineIdThirdDose.Value, dto.UserId, dto.BatchThirdDose, dto.EmployeeNameVaccinationThirdDose, dto.EmployeeCpfVaccinationThirdDose, dto.EmployeeCorenVaccinationThirdDose, dto.HealthUnityIdThirdDose.Value));
 
             return userVacines;
+        }
+
+        public bool CanEditVaccineFields(AccessControlDTO accessControl, UserVaccineEditDto itemChangedDto)
+        {
+
+            if (accessControl.Profile == EProfileKey.government.ToString() || accessControl.Profile == EProfileKey.healthUnit.ToString())
+                return Batch == itemChangedDto.Batch
+                    && Dose == itemChangedDto.Dose
+                    && EmployeeCoren == itemChangedDto.EmployeeCoren
+                    && EmployeeCpf == itemChangedDto.EmployeeCpf
+                    && EmployeeName == itemChangedDto.EmployeeName
+                    && VaccinationDate.Date == itemChangedDto.VaccinationDate.Date
+                    && VaccineId == itemChangedDto.VaccineId
+                    && HealthUnitId == itemChangedDto.HealthUnitId;
+
+            return accessControl.Profile == EProfileKey.admin.ToString();
         }
     }
 }

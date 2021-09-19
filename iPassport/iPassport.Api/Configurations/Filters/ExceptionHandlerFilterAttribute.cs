@@ -19,7 +19,9 @@ namespace iPassport.Api.Configurations.Filters
     {
         private readonly Logger logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
         private readonly IStringLocalizer<Resource> _localizer;
-        private bool _devEnv;
+        
+        private readonly bool _devEnv;
+        
         /// <summary>
         /// Class Constructor
         /// </summary>
@@ -60,7 +62,7 @@ namespace iPassport.Api.Configurations.Filters
                 context.HttpContext.Response.StatusCode = statusCode;
                 context.Result = new JsonResult(new BussinessExceptionResponse
                 (
-                    string.Format(_localizer["DataAlreadyRegistered"], ((UniqueKeyException)context.Exception).Key)
+                    new List<string>() { string.Format(_localizer["DataAlreadyRegistered"], ((UniqueKeyException)context.Exception).Key) }
                 ));
 
                 LogError(context.Exception);
@@ -93,7 +95,7 @@ namespace iPassport.Api.Configurations.Filters
                     context.Exception.Message,
                     _devEnv ? context.Exception.InnerException?.Message : null,
                     _devEnv ? context.Exception.StackTrace : null
-                )); ;
+                ));
 
                 LogError(context.Exception);
                 return;

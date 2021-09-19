@@ -6,9 +6,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "IbgeCode",
-                table: "Countries");
+            // migrationBuilder.DropColumn( name: "IbgeCode", table: "Countries");
 
             migrationBuilder.AlterColumn<long>(
                 name: "Population",

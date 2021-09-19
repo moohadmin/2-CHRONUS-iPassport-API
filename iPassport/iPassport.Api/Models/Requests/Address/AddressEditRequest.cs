@@ -3,12 +3,12 @@
 namespace iPassport.Api.Models.Requests
 {
     /// <summary>
-    /// AddressEditRequest Class
+    /// Address Edit Request Class
     /// </summary>
     public class AddressEditRequest
     {
         /// <summary>
-        /// AddressId
+        /// Address Id
         /// </summary>
         public Guid? Id { get; set; }
         /// <summary>
@@ -28,8 +28,12 @@ namespace iPassport.Api.Models.Requests
         /// </summary>
         public string District { get; set; }
         /// <summary>
-        /// CityId
+        /// City Id
         /// </summary>
         public Guid CityId { get; set; }
+        /// <summary>
+        /// Complement
+        /// </summary>
+        public string Complement { get; set; }
     }
 }

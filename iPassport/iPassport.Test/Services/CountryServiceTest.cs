@@ -10,6 +10,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories.PassportIdentityContext;
 using iPassport.Test.Seeds;
 using iPassport.Test.Settings.Factories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -25,6 +26,7 @@ namespace iPassport.Test.Services
         ICountryService _service;
         IMapper _mapper;
         Mock<IStringLocalizer<Resource>> _mockLocalizer;
+        IHttpContextAccessor _accessor;
 
         [TestInitialize]
         public void Setup()
@@ -32,8 +34,9 @@ namespace iPassport.Test.Services
             _mapper = AutoMapperFactory.Create();
             _mockRepository = new Mock<ICountryRepository>();
             _mockLocalizer = new Mock<IStringLocalizer<Resource>>();
+            _accessor = HttpContextAccessorFactory.Create();
 
-            _service = new CountryService(_mockRepository.Object, _mockLocalizer.Object, _mapper);
+            _service = new CountryService(_mockRepository.Object, _mockLocalizer.Object, _mapper, _accessor);
         }
 
         [TestMethod]
@@ -73,16 +76,15 @@ namespace iPassport.Test.Services
         {
             // Arrange
             var mockRequest = Mock.Of<GetByNamePartsPagedFilter>();
-            _mockRepository.Setup(x => x.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()).Result).Returns(CountrySeed.GetPaged());
+            _mockRepository.Setup(x => x.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>(), It.IsAny<AccessControlDTO>()).Result).Returns(CountrySeed.GetPaged());
 
             // Act
             var result = _service.FindByNameParts(mockRequest);
 
             // Assert
-            _mockRepository.Verify(a => a.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>()));
+            _mockRepository.Verify(a => a.FindByNameParts(It.IsAny<GetByNamePartsPagedFilter>(), It.IsAny<AccessControlDTO>()));
             Assert.IsInstanceOfType(result, typeof(Task<PagedResponseApi>));
             Assert.IsNotNull(result.Result.Data);
         }
-
     }
 }

@@ -15,13 +15,9 @@ namespace iPassport.Infra.Migrations
                 name: "IX_UserVaccines_UserDetailsId",
                 table: "UserVaccines");
 
-            migrationBuilder.DropColumn(
-                name: "UserDetailsId",
-                table: "UserVaccines");
+            // migrationBuilder.DropColumn( name: "UserDetailsId", table: "UserVaccines");
 
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "UserDetails");
+            // migrationBuilder.DropColumn(name: "UserId",table: "UserDetails");
 
             migrationBuilder.RenameColumn(
                 name: "ImunizationTime",

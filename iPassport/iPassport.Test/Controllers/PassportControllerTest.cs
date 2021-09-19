@@ -44,10 +44,10 @@ namespace iPassport.Test.Controllers
             var seed = PassportSeed.Get();
 
             // Arrange
-            _mockService.Setup(r => r.Get()).Returns(Task.FromResult(new ResponseApi(true, "Test Success!", seed)));
+            _mockService.Setup(r => r.Get(It.IsAny<string>())).Returns(Task.FromResult(new ResponseApi(true, "Test Success!", seed)));
 
             // Act
-            var result = _controller.Get();
+            var result = _controller.Get(It.IsAny<string>());
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));
@@ -76,7 +76,7 @@ namespace iPassport.Test.Controllers
             var mockRequest = _requestAccess;
 
             // Arrange
-            _mockService.Setup(r => r.Get()).Returns(Task.FromResult(new ResponseApi(true, "Acesso Recusado")));
+            _mockService.Setup(r => r.Get(It.IsAny<string>())).Returns(Task.FromResult(new ResponseApi(true, "Acesso Recusado")));
 
             // Act
             var result = _controller.AccessDenied(mockRequest);
@@ -90,11 +90,10 @@ namespace iPassport.Test.Controllers
         public void GetPassportUserToValidate_MustReturnOk()
         {
             // Arrange
-            var passportDetailsId = Guid.NewGuid();
-            _mockService.Setup(r => r.GetPassportUserToValidate(passportDetailsId)).Returns(Task.FromResult(new ResponseApi(true, "Passport para validação")));
+            _mockService.Setup(r => r.GetPassportUserToValidate(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.FromResult(new ResponseApi(true, "Passport para validação")));
 
             // Act
-            var result = _controller.GetPassportUserToValidate(passportDetailsId);
+            var result = _controller.GetPassportUserToValidate(Guid.NewGuid(), "small");
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(Task<ActionResult>));

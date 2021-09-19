@@ -76,8 +76,14 @@ namespace iPassport.Api.Configurations
 
             services.AddScoped<IImportedFileService, ImportedFileService>();
 
+            services.AddScoped<IProfileService, ProfileService>();
 
             services.AddScoped<IHealthUnitTypeService, HealthUnitTypeService>();
+
+            services.AddScoped<IVaccinePeriodTypeService, VaccinePeriodTypeService>();
+
+            services.AddScoped<IVaccineDosageTypeService, VaccineDosageTypeService>();
+
             #endregion
 
             #region DI Repositories
@@ -136,15 +142,30 @@ namespace iPassport.Api.Configurations
             services.AddScoped<IImportedFileDetailsRepository, ImportedFileDetailsRepository>();
 
             services.AddScoped<IImportedFileRepository, ImportedFileRepository>();
-            
+
+            services.AddScoped<IProfileRepository, ProfileRepository>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<ICompanyTypeRepository, CompanyTypeRepository>();
+
+            services.AddScoped<ICompanySegmentRepository, CompanySegmentRepository>();
+
+            services.AddScoped<ICompanyResponsibleRepository, CompanyResponsibleRepository>();
+            
+            services.AddScoped<IUserTypeRepository, UserTypeRepository>();
+
+            services.AddScoped<IVaccinePeriodTypeRepository, VaccinePeriodTypeRepository>();
+
+            services.AddScoped<IVaccineDosageTypeRepository, VaccineDosageTypeRepository>();
             #endregion
 
             #region DI Settings
 
-            /// ASP.NET HttpContext dependency
+            // ASP.NET HttpContext dependency
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+            services.AddSingleton(AwsS3ClientConfiguration.AwsS3ClientSetup());
+            
             #endregion
 
             return services;

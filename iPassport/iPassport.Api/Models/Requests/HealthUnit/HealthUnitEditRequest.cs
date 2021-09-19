@@ -33,19 +33,9 @@ namespace iPassport.Api.Models.Requests.HealthUnit
         public string Email { get; set; }
 
         /// <summary>
-        /// Responsible Person Name
+        /// Health Unit Responsible
         /// </summary>
-        public string ResponsiblePersonName { get; set; }
-
-        /// <summary>
-        /// Responsible Person Phone
-        /// </summary>
-        public string ResponsiblePersonPhone { get; set; }
-
-        /// <summary>
-        /// Responsible Person Occupation
-        /// </summary>
-        public string ResponsiblePersonOccupation { get; set; }
+        public HealthUnitResponsibleEditRequest Responsible { get; set; }
 
         /// <summary>
         /// Deactivation Date
@@ -66,5 +56,10 @@ namespace iPassport.Api.Models.Requests.HealthUnit
         /// Is Active?
         /// </summary>
         public bool? IsActive { get; set; }
+
+        /// <summary>
+        /// Company Id
+        /// </summary>
+        public Guid? CompanyId { get; set; }
     }
 }

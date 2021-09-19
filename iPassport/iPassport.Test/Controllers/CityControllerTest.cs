@@ -1,17 +1,12 @@
 ﻿using AutoMapper;
 using iPassport.Api.Controllers;
 using iPassport.Api.Models.Requests;
-using iPassport.Api.Models.Requests.Shared;
-using iPassport.Api.Models.Requests.User;
 using iPassport.Application.Interfaces;
-using iPassport.Application.Models;
-using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Test.Settings.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using System.Threading.Tasks;
 
 namespace iPassport.Test.Controllers
@@ -47,6 +42,6 @@ namespace iPassport.Test.Controllers
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
         }
 
-        
+
     }
 }

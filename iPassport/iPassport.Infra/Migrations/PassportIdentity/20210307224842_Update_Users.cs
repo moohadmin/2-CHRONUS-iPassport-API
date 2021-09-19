@@ -7,9 +7,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Address",
-                table: "Users");
+            // migrationBuilder.DropColumn( name: "Address", table: "Users");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "AddressId",

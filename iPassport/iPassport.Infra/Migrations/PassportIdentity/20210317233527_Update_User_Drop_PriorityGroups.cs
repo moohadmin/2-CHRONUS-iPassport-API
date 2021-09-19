@@ -7,8 +7,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "PriorityGroups");
+            // migrationBuilder.DropTable(name: "PriorityGroups");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "BloodTypeId",

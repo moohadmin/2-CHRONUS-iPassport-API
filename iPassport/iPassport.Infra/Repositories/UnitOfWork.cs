@@ -1,4 +1,5 @@
-﻿using iPassport.Domain.Repositories;
+﻿using iPassport.Application.Exceptions;
+using iPassport.Domain.Repositories;
 using iPassport.Infra.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -48,8 +49,9 @@ namespace iPassport.Infra.Repositories
                        .ForEach(e => e.State = EntityState.Detached);
                     _transactionPassport.Dispose();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    throw new PersistenceException(e);
                 }
             }
         }
@@ -82,8 +84,9 @@ namespace iPassport.Infra.Repositories
                 {
                     _transactionIdentity.Dispose();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    throw new PersistenceException(e);
                 }
             }
         }

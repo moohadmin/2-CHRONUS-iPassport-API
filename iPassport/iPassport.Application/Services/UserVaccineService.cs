@@ -7,6 +7,7 @@ using iPassport.Application.Resources;
 using iPassport.Domain.Dtos;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
+using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
@@ -20,21 +21,30 @@ namespace iPassport.Application.Services
         private readonly IMapper _mapper;
         private readonly IUserVaccineRepository _repository;
         private readonly IUserDetailsRepository _userDetailsRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IStringLocalizer<Resource> _localizer;
         private readonly IHttpContextAccessor _accessor;
 
-        public UserVaccineService(IMapper mapper, IUserVaccineRepository repository, IUserDetailsRepository userDetailsRepository, IStringLocalizer<Resource> localizer, IHttpContextAccessor accessor)
+        public UserVaccineService(IMapper mapper,
+            IUserVaccineRepository repository,
+            IUserDetailsRepository userDetailsRepository,
+            IUserRepository userRepository,
+            IStringLocalizer<Resource> localizer,
+            IHttpContextAccessor accessor)
         {
             _mapper = mapper;
             _repository = repository;
             _localizer = localizer;
             _accessor = accessor;
             _userDetailsRepository = userDetailsRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<PagedResponseApi> GetCurrentUserVaccines(PageFilter pageFilter)
-        { 
-            var res = await _repository.GetPagedUserVaccinesByUserId(new GetByIdPagedFilter(_accessor.GetCurrentUserId(), pageFilter));
+        {
+            var userBirthday = await  _userRepository.GetUserBirthdayDate(_accessor.GetCurrentUserId());
+
+            var res = await _repository.GetPagedUserVaccinesByUserId(new GetByIdPagedFilter(_accessor.GetCurrentUserId(), pageFilter), userBirthday);
 
             await GetVaccineDetailsStatus(res.Data);
 
@@ -43,15 +53,18 @@ namespace iPassport.Application.Services
             return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
         }
 
-        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter) { 
-            var res = await _repository.GetPagedUserVaccinesByPassportId(pageFilter);
+        public async Task<PagedResponseApi> GetUserVaccines(GetByIdPagedFilter pageFilter) {
+            
+            var user = await _userDetailsRepository.GetByPassportId(pageFilter.Id);
+            var userBirthday = await  _userRepository.GetUserBirthdayDate(user.Id);
+
+            var res = await _repository.GetPagedUserVaccinesByPassportId(pageFilter, userBirthday);
 
             await GetVaccineDetailsStatus(res.Data);
 
             var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data);
 
             return new PagedResponseApi(true, _localizer["UserVaccines"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
-
         }
 
         private async Task GetVaccineDetailsStatus(IList<UserVaccineDetailsDto> detailsDto)
@@ -59,8 +72,10 @@ namespace iPassport.Application.Services
             if (detailsDto.Any())
             {
                 var user = await _userDetailsRepository.GetLoadedUserById(detailsDto.FirstOrDefault().UserId);
+                var userBirthday = await _userRepository.GetUserBirthdayDate(user.Id);
+
                 foreach (var d in detailsDto)
-                    d.Status = user.GetUserVaccineStatus(d.VaccineId);
+                    d.Status = user.GetUserVaccineStatus(d.VaccineId, userBirthday);
             }
         }
     }

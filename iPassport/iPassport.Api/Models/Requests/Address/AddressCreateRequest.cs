@@ -3,7 +3,7 @@
 namespace iPassport.Api.Models.Requests
 {
     /// <summary>
-    /// AddressCreateRequest Class
+    /// Address Create Request Class
     /// </summary>
     public class AddressCreateRequest
     {
@@ -26,6 +26,10 @@ namespace iPassport.Api.Models.Requests
         /// <summary>
         /// CityId
         /// </summary>
-        public Guid CityId { get; set; }
+        public Guid? CityId { get; set; }
+        /// <summary>
+        /// Complement
+        /// </summary>
+        public string Complement { get; set; }
     }
 }

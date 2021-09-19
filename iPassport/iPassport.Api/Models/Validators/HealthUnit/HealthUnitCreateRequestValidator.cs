@@ -20,31 +20,40 @@ namespace iPassport.Api.Models.Validators.HealthUnit
         public HealthUnitCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(x => x.Name)
-                .SetValidator(new RequiredFieldValidator<string>("Name", localizer));
-
-            RuleFor(x => x.Cnpj)
-                .Cascade(CascadeMode.Stop)
-                .SetValidator(new RequiredFieldValidator<string>("Cnpj", localizer)).When(x => string.IsNullOrWhiteSpace(x.Ine))
-                .Must(x => CnpjUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cnpj)).WithMessage(string.Format(localizer["InvalidField"], "CNPJ"));
-
-            RuleFor(x => x.Ine)
-                .Cascade(CascadeMode.Stop)
-                .SetValidator(new RequiredFieldValidator<string>("Ine", localizer)).When(x => string.IsNullOrWhiteSpace(x.Cnpj))
-                .MaximumLength(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"))
-                .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"));
+                .SetValidator(new RequiredFieldValidator<string>(localizer["Name"], localizer));
 
             RuleFor(x => x.Email)
-                .EmailAddress().WithMessage(string.Format(localizer["InvalidField"], "E-mail")).When(x => !string.IsNullOrWhiteSpace(x.Email));
+                .EmailAddress().WithMessage(string.Format(localizer["InvalidField"], localizer["Email"])).When(x => !string.IsNullOrWhiteSpace(x.Email));
 
             RuleFor(x => x.IsActive)
-                .SetValidator(new RequiredFieldValidator<bool?>("IsActive", localizer));
+                .SetValidator(new RequiredFieldValidator<bool?>(localizer["IsActive"], localizer));
 
             RuleFor(x => x.TypeId)
                 .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "TypeId"));
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Type"]));
+
+            RuleFor(x => x.CompanyId)
+                .NotEmpty()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Company"]));
+
+            RuleFor(s => s.Address)
+                .NotNull()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Address"]));
 
             RuleFor(x => x.Address)
-                .SetValidator(new AddressValidator(localizer, false));
+                .SetValidator(new AddressValidator(localizer));
+
+            RuleFor(x => x.Cnpj)
+                .Must(x => CnpjUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cnpj)).WithMessage(string.Format(localizer["InvalidField"], "CNPJ"));
+
+            RuleFor(x => x.Ine)
+                .MaximumLength(10).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"))
+                .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Ine)).WithMessage(string.Format(localizer["InvalidField"], "INE"));
+
+            RuleFor(s => s.Responsible)
+                .SetValidator(new HealthUnitResponsibleCreateRequestValidator(localizer))
+                .When(x => x.Responsible != null);
+
         }
     }
 }

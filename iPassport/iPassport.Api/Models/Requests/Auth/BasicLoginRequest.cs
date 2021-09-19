@@ -1,5 +1,8 @@
 namespace iPassport.Api.Models.Requests
 {
+    /// <summary>
+    /// Basic Login Request model
+    /// </summary>
     public class BasicLoginRequest
     {
         /// <summary>

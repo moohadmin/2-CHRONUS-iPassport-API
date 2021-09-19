@@ -15,6 +15,11 @@ namespace iPassport.Domain.Entities
             Description = description;
         }
 
+        public Disease(Guid d)
+        {
+            Id = d;
+        }
+
         public Disease Create(DiseaseCreateDto dto) => new Disease(dto.Name, dto.Description);
 
         public string Name { get; private set; }

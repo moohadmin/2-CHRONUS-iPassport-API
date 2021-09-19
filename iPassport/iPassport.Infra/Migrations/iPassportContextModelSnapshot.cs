@@ -34,6 +34,48 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("DiseaseVaccine");
                 });
 
+            modelBuilder.Entity("iPassport.Domain.Entities.AgeGroupVaccine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("FinalAgeGroup")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("InitalAgeGroup")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxTimeNextDose")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinTimeNextDose")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("PeriodTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("RequiredDoses")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("VaccineId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PeriodTypeId");
+
+                    b.HasIndex("VaccineId");
+
+                    b.ToTable("AgeGroupVaccines");
+                });
+
             modelBuilder.Entity("iPassport.Domain.Entities.Auth2FactMobile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -91,6 +133,43 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("Diseases");
                 });
 
+            modelBuilder.Entity("iPassport.Domain.Entities.GeneralGroupVaccine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("MaxTimeNextDose")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinTimeNextDose")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("PeriodTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("RequiredDoses")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("VaccineId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PeriodTypeId");
+
+                    b.HasIndex("VaccineId")
+                        .IsUnique();
+
+                    b.ToTable("GeneralGroupVaccines");
+                });
+
             modelBuilder.Entity("iPassport.Domain.Entities.Health", b =>
                 {
                     b.Property<Guid>("Id")
@@ -126,6 +205,9 @@ namespace iPassport.Infra.Migrations
                     b.Property<string>("Cnpj")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -154,6 +236,9 @@ namespace iPassport.Infra.Migrations
                     b.Property<Guid>("TypeId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("UniqueCode")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -166,6 +251,9 @@ namespace iPassport.Infra.Migrations
 
                     b.HasIndex("TypeId");
 
+                    b.HasIndex("UniqueCode")
+                        .IsUnique();
+
                     b.ToTable("HealthUnits");
                 });
 
@@ -177,6 +265,9 @@ namespace iPassport.Infra.Migrations
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Identifyer")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -424,14 +515,14 @@ namespace iPassport.Infra.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<Guid?>("HealthUnitId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("ImportedFileId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("PlanId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("PriorityGroup")
-                        .HasColumnType("text");
 
                     b.Property<Guid?>("PriorityGroupId")
                         .HasColumnType("uuid");
@@ -442,7 +533,12 @@ namespace iPassport.Infra.Migrations
                     b.Property<bool?>("WasCovidInfected")
                         .HasColumnType("boolean");
 
+                    b.Property<bool?>("WasTestPerformed")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("HealthUnitId");
 
                     b.HasIndex("ImportedFileId");
 
@@ -558,6 +654,15 @@ namespace iPassport.Infra.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<DateTime?>("DeactivationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeactivationUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DosageTypeId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("ExpirationTimeInMonths")
                         .HasColumnType("integer");
 
@@ -567,17 +672,38 @@ namespace iPassport.Infra.Migrations
                     b.Property<Guid>("ManufacturerId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("MaxTimeNextDose")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MinTimeNextDose")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RequiredDoses")
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DosageTypeId");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("Vaccines");
+                });
+
+            modelBuilder.Entity("iPassport.Domain.Entities.VaccineDosageType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Identifyer")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdateDate")
@@ -585,11 +711,7 @@ namespace iPassport.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("Vaccines");
+                    b.ToTable("VaccineDosageTypes");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.VaccineManufacturer", b =>
@@ -615,6 +737,30 @@ namespace iPassport.Infra.Migrations
                     b.ToTable("VaccineManufacturers");
                 });
 
+            modelBuilder.Entity("iPassport.Domain.Entities.VaccinePeriodType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Identifyer")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VaccinePeriodTypes");
+                });
+
             modelBuilder.Entity("DiseaseVaccine", b =>
                 {
                     b.HasOne("iPassport.Domain.Entities.Disease", null)
@@ -626,6 +772,38 @@ namespace iPassport.Infra.Migrations
                         .WithMany()
                         .HasForeignKey("VaccinesId")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("iPassport.Domain.Entities.AgeGroupVaccine", b =>
+                {
+                    b.HasOne("iPassport.Domain.Entities.VaccinePeriodType", "PeriodType")
+                        .WithMany("AgeGroupVaccines")
+                        .HasForeignKey("PeriodTypeId");
+
+                    b.HasOne("iPassport.Domain.Entities.Vaccine", "Vaccine")
+                        .WithMany("AgeGroupVaccines")
+                        .HasForeignKey("VaccineId")
+                        .IsRequired();
+
+                    b.Navigation("PeriodType");
+
+                    b.Navigation("Vaccine");
+                });
+
+            modelBuilder.Entity("iPassport.Domain.Entities.GeneralGroupVaccine", b =>
+                {
+                    b.HasOne("iPassport.Domain.Entities.VaccinePeriodType", "PeriodType")
+                        .WithMany("GeneralGroupVaccine")
+                        .HasForeignKey("PeriodTypeId");
+
+                    b.HasOne("iPassport.Domain.Entities.Vaccine", "Vaccine")
+                        .WithOne("GeneralGroupVaccine")
+                        .HasForeignKey("iPassport.Domain.Entities.GeneralGroupVaccine", "VaccineId")
+                        .IsRequired();
+
+                    b.Navigation("PeriodType");
+
+                    b.Navigation("Vaccine");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.HealthUnit", b =>
@@ -704,6 +882,10 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.UserDetails", b =>
                 {
+                    b.HasOne("iPassport.Domain.Entities.HealthUnit", "HealthUnit")
+                        .WithMany()
+                        .HasForeignKey("HealthUnitId");
+
                     b.HasOne("iPassport.Domain.Entities.ImportedFile", "ImportedFile")
                         .WithMany()
                         .HasForeignKey("ImportedFileId");
@@ -712,15 +894,17 @@ namespace iPassport.Infra.Migrations
                         .WithMany("Users")
                         .HasForeignKey("PlanId");
 
-                    b.HasOne("iPassport.Domain.Entities.PriorityGroup", "PPriorityGroup")
+                    b.HasOne("iPassport.Domain.Entities.PriorityGroup", "PriorityGroup")
                         .WithMany()
                         .HasForeignKey("PriorityGroupId");
+
+                    b.Navigation("HealthUnit");
 
                     b.Navigation("ImportedFile");
 
                     b.Navigation("Plan");
 
-                    b.Navigation("PPriorityGroup");
+                    b.Navigation("PriorityGroup");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.UserDiseaseTest", b =>
@@ -758,10 +942,17 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.Vaccine", b =>
                 {
+                    b.HasOne("iPassport.Domain.Entities.VaccineDosageType", "DosageType")
+                        .WithMany()
+                        .HasForeignKey("DosageTypeId")
+                        .IsRequired();
+
                     b.HasOne("iPassport.Domain.Entities.VaccineManufacturer", "Manufacturer")
                         .WithMany("Vaccines")
                         .HasForeignKey("ManufacturerId")
                         .IsRequired();
+
+                    b.Navigation("DosageType");
 
                     b.Navigation("Manufacturer");
                 });
@@ -802,12 +993,23 @@ namespace iPassport.Infra.Migrations
 
             modelBuilder.Entity("iPassport.Domain.Entities.Vaccine", b =>
                 {
+                    b.Navigation("AgeGroupVaccines");
+
+                    b.Navigation("GeneralGroupVaccine");
+
                     b.Navigation("UserVaccines");
                 });
 
             modelBuilder.Entity("iPassport.Domain.Entities.VaccineManufacturer", b =>
                 {
                     b.Navigation("Vaccines");
+                });
+
+            modelBuilder.Entity("iPassport.Domain.Entities.VaccinePeriodType", b =>
+                {
+                    b.Navigation("AgeGroupVaccines");
+
+                    b.Navigation("GeneralGroupVaccine");
                 });
 #pragma warning restore 612, 618
         }

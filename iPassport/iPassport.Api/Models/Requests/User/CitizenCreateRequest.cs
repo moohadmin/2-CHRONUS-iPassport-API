@@ -1,5 +1,4 @@
-﻿using iPassport.Domain.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace iPassport.Api.Models.Requests.User
@@ -78,6 +77,21 @@ namespace iPassport.Api.Models.Requests.User
         /// Telephone
         /// </summary>
         public string Telephone { get; set; }
+
+        /// <summary>
+        /// Rg
+        /// </summary>
+        public string Rg { get; set; }
+
+        /// <summary>
+        /// Passport Document
+        /// </summary>
+        public string PassportDocument { get; set; }
+
+        /// <summary>
+        /// International Code Document
+        /// </summary>
+        public string InternationalDocument { get; set; }
 
         /// <summary>
         /// Address

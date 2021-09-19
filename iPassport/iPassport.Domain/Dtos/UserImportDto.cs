@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iPassport.Domain.Utils;
+using System;
 
 namespace iPassport.Domain.Dtos
 {
@@ -15,8 +16,8 @@ namespace iPassport.Domain.Dtos
         public string PriorityGroup { get; set; }
         public string BloodType { get; set; }
         public string HumanRace { get; set; }
-        public int CountryCode { get; set; }
-        public ulong PhoneNumber { get; set; }
+        public int? CountryCode { get; set; }
+        public ulong? PhoneNumber { get; set; }
         public string Email { get; set; }
         public string Cep { get; set; }
         public string Address { get; set; }
@@ -40,6 +41,7 @@ namespace iPassport.Domain.Dtos
         public string EmployeeCorenVaccinationUniqueDose { get; set; }
         public string HealthUnityCnpjUniqueDose { get; set; }
         public string HealthUnityIneUniqueDose { get; set; }
+        public int? HealthUnityCodeUniqueDose { get; set; }
         public bool HasVaccineUniqueDoseData
         {
             get => !string.IsNullOrEmpty(VaccineNameUniqueDose)
@@ -50,7 +52,8 @@ namespace iPassport.Domain.Dtos
                 || !string.IsNullOrEmpty(EmployeeCpfVaccinationUniqueDose)
                 || !string.IsNullOrEmpty(EmployeeCorenVaccinationUniqueDose)
                 || !string.IsNullOrEmpty(HealthUnityCnpjUniqueDose)
-                || !string.IsNullOrEmpty(HealthUnityIneUniqueDose);
+                || !string.IsNullOrEmpty(HealthUnityIneUniqueDose)
+                || HealthUnityCodeUniqueDose.HasValue;
         }
 
         public string VaccineNameFirstDose { get; set; }
@@ -62,6 +65,7 @@ namespace iPassport.Domain.Dtos
         public string EmployeeCorenVaccinationFirstDose { get; set; }
         public string HealthUnityCnpjFirstDose { get; set; }
         public string HealthUnityIneFirstDose { get; set; }
+        public int? HealthUnityCodeFirstDose { get; set; }
         public bool HasVaccineFirstDoseData
         {
             get => !string.IsNullOrEmpty(VaccineNameFirstDose)
@@ -72,7 +76,8 @@ namespace iPassport.Domain.Dtos
                 || !string.IsNullOrEmpty(EmployeeCpfVaccinationFirstDose)
                 || !string.IsNullOrEmpty(EmployeeCorenVaccinationFirstDose)
                 || !string.IsNullOrEmpty(HealthUnityCnpjFirstDose)
-                || !string.IsNullOrEmpty(HealthUnityIneFirstDose);
+                || !string.IsNullOrEmpty(HealthUnityIneFirstDose)
+                || HealthUnityCodeFirstDose.HasValue;
         }
 
         public string VaccineNameSecondDose { get; set; }
@@ -84,6 +89,7 @@ namespace iPassport.Domain.Dtos
         public string EmployeeCorenVaccinationSecondDose { get; set; }
         public string HealthUnityCnpjSecondDose { get; set; }
         public string HealthUnityIneSecondDose { get; set; }
+        public int? HealthUnityCodeSecondDose { get; set; }
         public bool HasVaccineSecondDoseData
         {
             get => !string.IsNullOrEmpty(VaccineNameSecondDose)
@@ -94,7 +100,8 @@ namespace iPassport.Domain.Dtos
                 || !string.IsNullOrEmpty(EmployeeCpfVaccinationSecondDose)
                 || !string.IsNullOrEmpty(EmployeeCorenVaccinationSecondDose)
                 || !string.IsNullOrEmpty(HealthUnityCnpjSecondDose)
-                || !string.IsNullOrEmpty(HealthUnityIneSecondDose);
+                || !string.IsNullOrEmpty(HealthUnityIneSecondDose)
+                || HealthUnityCodeSecondDose.HasValue;
         }
 
         public string VaccineNameThirdDose { get; set; }
@@ -106,6 +113,7 @@ namespace iPassport.Domain.Dtos
         public string EmployeeCorenVaccinationThirdDose { get; set; }
         public string HealthUnityCnpjThirdDose { get; set; }
         public string HealthUnityIneThirdDose { get; set; }
+        public int? HealthUnityCodeThirdDose { get; set; }
         public bool HasVaccineThirdDoseData
         {
             get => !string.IsNullOrEmpty(VaccineNameThirdDose)
@@ -116,7 +124,8 @@ namespace iPassport.Domain.Dtos
                 || !string.IsNullOrEmpty(EmployeeCpfVaccinationThirdDose)
                 || !string.IsNullOrEmpty(EmployeeCorenVaccinationThirdDose)
                 || !string.IsNullOrEmpty(HealthUnityCnpjThirdDose)
-                || !string.IsNullOrEmpty(HealthUnityIneThirdDose);
+                || !string.IsNullOrEmpty(HealthUnityIneThirdDose)
+                || HealthUnityCodeThirdDose.HasValue;
         }
 
         public Guid? GenderId { get; set; }
@@ -135,12 +144,17 @@ namespace iPassport.Domain.Dtos
         public Guid? HealthUnityIdThirdDose { get; set; }
         public bool? WasCovidInfectedBool
         {
-            get => string.IsNullOrEmpty(WasCovidInfected) ? null : WasCovidInfected == "Sim";
+            get => WasCovidInfected.ToUpper() == Constants.CONST_NENHUM_VALUE ? null : WasCovidInfected.ToUpper() == Constants.CONST_SIM_VALUE;
         }
         public bool? ResultBool
         {
-            get => string.IsNullOrEmpty(Result) ? null : Result == "Positivo";
+            get => Result.ToUpper() == Constants.CONST_NENHUM_VALUE ? null : Result.ToUpper() == Constants.CONST_POSITIVO_VALUE;
         }
         public Guid UserId { get; set; }
+        
+        public string Complement { get; set; }
+        public string RG { get; set; }
+        public string InternationalDocument { get; set; }
+        public string PassportDoc { get; set; }
     }
 }

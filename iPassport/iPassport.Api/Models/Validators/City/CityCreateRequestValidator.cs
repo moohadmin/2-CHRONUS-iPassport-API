@@ -5,8 +5,15 @@ using Microsoft.Extensions.Localization;
 
 namespace iPassport.Api.Models.Validators.Plans
 {
+    /// <summary>
+    /// City Create Request Validator
+    /// </summary>
     public class CityCreateRequestValidator : AbstractValidator<CityCreateRequest>
     {
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="localizer">String localizer</param>
         public CityCreateRequestValidator(IStringLocalizer<Resource> localizer)
         {
             RuleFor(s => s.Name)

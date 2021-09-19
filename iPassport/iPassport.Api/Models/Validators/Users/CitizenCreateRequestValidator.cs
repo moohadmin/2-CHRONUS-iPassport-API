@@ -23,14 +23,18 @@ namespace iPassport.Api.Models.Validators.Users
             RuleFor(x => x.CompleteName)
                 .SetValidator(new RequiredFieldValidator<string>(localizer["CompleteName"], localizer));
 
+            RuleFor(s => s.Address)
+                .NotNull()
+                .WithMessage(string.Format(localizer["RequiredField"], localizer["Address"]));
+
             RuleFor(x => x.Address)
-                .SetValidator(new AddressValidator(localizer, false));
+                .SetValidator(new AddressValidator(localizer));
 
             RuleFor(x => x.Birthday)
                 .Cascade(CascadeMode.Stop)
                 .Must(x => x.HasValue).WithMessage(string.Format(localizer["RequiredField"], localizer["Birthday"]))
                 .SetValidator(new RequiredFieldValidator<DateTime?>(localizer["Birthday"], localizer))
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"])
+                .Must(x => x.Value.Date <= DateTime.UtcNow.Date).WithMessage(localizer["BirthdayCannotBeHiggerThenActualDate"])
                 .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-200)).WithMessage(string.Format(localizer["InvalidField"], localizer["Birthday"]));
 
             RuleFor(x => x.Cpf)
@@ -39,6 +43,21 @@ namespace iPassport.Api.Models.Validators.Users
                 .Length(11).When(x => !string.IsNullOrWhiteSpace(x.Cpf)).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
                 .Must(x => Regex.IsMatch(x, "^[0-9]+$")).When(x => !string.IsNullOrWhiteSpace(x.Cpf)).WithMessage(string.Format(localizer["InvalidField"], "CPF"))
                 .Must(x => CpfUtils.Valid(x)).When(x => !string.IsNullOrWhiteSpace(x.Cpf)).WithMessage(string.Format(localizer["InvalidField"], "CPF"));
+
+            RuleFor(x => x.PassportDocument)
+                .Must(x => Regex.IsMatch(x[0].ToString(), "^[a-zA-Z]+$") && Regex.IsMatch(x[1].ToString(), "^[a-zA-Z]+$") && x.Length >= 3 && x.Length <= 15 && Regex.IsMatch(x[2..^(1)], "^[0-9]+$"))
+                .When(x => !string.IsNullOrWhiteSpace(x.PassportDocument))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["PassportDocument"]));
+
+            RuleFor(x => x.Rg)
+                .Must(x => x.Length <= 15)
+                .When(x => !string.IsNullOrWhiteSpace(x.Rg))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["RgField"]));
+
+            RuleFor(x => x.InternationalDocument)
+                .Must(x => x.Length <= 15)
+                .When(x => !string.IsNullOrWhiteSpace(x.InternationalDocument))
+                .WithMessage(string.Format(localizer["InvalidField"], localizer["InternationalDocument"]));
 
             RuleFor(x => x.Cns)
                 .Cascade(CascadeMode.Stop)
@@ -51,23 +70,17 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(localizer["CnsAndCpfRequired"]);
 
             RuleFor(x => x.Telephone)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y =>
-                {
-                    return !y.StartsWith("55") || (y.Substring(4, 1).Equals("9") && y.Length == 13);
-                })
-                .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]))
-                .Must(y => Regex.IsMatch(y, "^[0-9]+$"))
+                .Must(y => PhoneNumberUtils.ValidMobile(y))
+                .When(x => !string.IsNullOrWhiteSpace(x.Telephone))
                 .WithMessage(string.Format(localizer["InvalidField"], localizer["Telephone"]));
 
             RuleFor(x => x.NumberOfDoses)
                 .Must(x => x >= 0).WithMessage(string.Format(localizer["RequiredField"], localizer["NumberOfDoses"]));
 
             RuleForEach(x => x.Doses)
-                .Cascade(CascadeMode.Stop)
-                .NotNull().When(x => x.NumberOfDoses > 0).WithMessage(string.Format(localizer["RequiredField"], "Doses"))
+                .NotNull().When(x => x.NumberOfDoses > 0).WithMessage(string.Format(localizer["RequiredField"], "Doses"));
+            
+            RuleForEach(x => x.Doses)
                 .SetValidator(new UserVaccineCreateRequestValidator(localizer)).When(x => x.NumberOfDoses > 0);
 
             RuleFor(x => x.Email)
@@ -76,9 +89,16 @@ namespace iPassport.Api.Models.Validators.Users
                 .WithMessage(string.Format(localizer["InvalidField"], "E-mail"));
 
             RuleFor(x => x.Test)
-                .NotEmpty()
-                .SetValidator(new UserDiseaseTestCreateRequestValidator(localizer))
-                .When(x => x.WasTestPerformed.GetValueOrDefault());
+                .Null()
+                    .When(x => !x.WasTestPerformed.GetValueOrDefault())
+                    .WithMessage(localizer["TestMustBeNull"]);
+
+            RuleFor(y => y.Test)
+                 .NotNull()
+                     .When(x => x.WasTestPerformed.GetValueOrDefault())
+                     .WithMessage(localizer["TestNotMustBeNullOrEmpty"])
+                 .SetValidator(new UserDiseaseTestCreateRequestValidator(localizer))
+                     .When(x => x.WasTestPerformed.GetValueOrDefault());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using iPassport.Api.Models.Requests.Shared;
+using System;
 
 namespace iPassport.Api.Models.Requests.HealthUnit
 {
@@ -16,5 +17,15 @@ namespace iPassport.Api.Models.Requests.HealthUnit
         /// Ine
         /// </summary>
         public string Ine { get; set; }
+
+        /// <summary>
+        /// Company Id
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// TypeId
+        /// </summary>
+        public Guid? TypeId { get; set; }
     }
 }

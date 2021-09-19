@@ -6,9 +6,7 @@ namespace iPassport.Infra.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Profile",
-                table: "UserDetails");
+            // migrationBuilder.DropColumn(name: "Profile", table: "UserDetails");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

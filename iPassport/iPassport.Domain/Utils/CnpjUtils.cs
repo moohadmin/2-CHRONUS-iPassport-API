@@ -15,6 +15,8 @@
             cnpj = cnpj.Replace(".", "").Replace("-", "").Replace("/", "");
             if (cnpj.Length != 14)
                 return false;
+            if(cnpj.Equals("00000000000000"))
+                return false;
             var tempCnpj = cnpj.Substring(0, 12);
             var sum = 0;
             for (var i = 0; i < 12; i++)

@@ -84,6 +84,21 @@ namespace iPassport.Api.Models.Requests.User
         public string Telephone { get; set; }
 
         /// <summary>
+        /// Rg
+        /// </summary>
+        public string Rg { get; set; }
+
+        /// <summary>
+        /// Passport Document
+        /// </summary>
+        public string PassportDocument { get; set; }
+
+        /// <summary>
+        /// International Code Document
+        /// </summary>
+        public string InternationalDocument { get; set; }
+
+        /// <summary>
         /// Address
         /// </summary>
         public AddressEditRequest Address { get; set; }

@@ -169,7 +169,7 @@
     <value>Formato do arquivo de imagem não suportado. Formatos aceitos: jpeg, jpg, png.</value>
   </data>
   <data name="InitalsRequestMin" xml:space="preserve">
-    <value>Necessário o minimo {0} de caracteres para realizar a pesquisa.</value>
+    <value>Necessário o mínimo {0} de caracteres para realizar a pesquisa.</value>
   </data>
   <data name="InvalidDocLogin" xml:space="preserve">
     <value>O documento informado é inválido ou ainda não foi cadastrado. Atualmente, o acesso ao aplicativo é limitado para convidados. Em breve o acesso será liberado!</value>
@@ -211,7 +211,7 @@
     <value>Código de autenticação inválido. Favor conferir código enviado.</value>
   </data>
   <data name="PinResendTime" xml:space="preserve">
-    <value>Por favor aguarde o tempo minimo antes de solicitar um novo Código de autenticação.</value>
+    <value>Por favor aguarde o tempo mínimo antes de solicitar um novo Código de autenticação.</value>
   </data>
   <data name="PinSent" xml:space="preserve">
     <value>PIN enviado com sucesso.</value>
@@ -534,6 +534,30 @@
   <data name="ColumnNameImportFileWasTestPerformed" xml:space="preserve">
     <value>Realizou o teste PCR</value>
   </data>
+  <data name="ColumnNameImportFileHealthUnityCodeUniqueDose" xml:space="preserve">
+    <value>Código da Unidade - Dose Única</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityCodeFirstDose" xml:space="preserve">
+    <value>Código da Unidade - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityCodeSecondDose" xml:space="preserve">
+    <value>Código da Unidade - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileHealthUnityCodeThirdDose" xml:space="preserve">
+    <value>Código da Unidade - Dose III</value>
+  </data>
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationFirstDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose I</value>
+  </data>
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationUniqueDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose Única</value>
+  </data>
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationSecondDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose II</value>
+  </data>
+  <data name="ColumnNameImportFileEmployeeCpfVaccinationThirdDose" xml:space="preserve">
+    <value>CPF Prof Aplicou Vacina - Dose III</value>
+  </data>
   <data name="IneDoesntExistsInDataBase" xml:space="preserve">
     <value>Não existe o cadastro deste INE na base.</value>
   </data>
@@ -606,7 +630,373 @@
   <data name="Vaccine" xml:space="preserve">
     <value>Vacina</value>
   </data>
-<data name="InvalidVaccineDoseDate" xml:space="preserve">
-    <value>A data de vacinação não pode ser anterior à última dose cadastrada. Favor verificar.</value>
+  <data name="EndTime" xml:space="preserve">
+    <value>período final</value>
+  </data>
+  <data name="StartTime" xml:space="preserve">
+    <value>período inicial</value>
+  </data>
+  <data name="TestMustBeNull" xml:space="preserve">
+    <value>O teste tem que ser nulo</value>
+  </data>
+  <data name="TestNotMustBeNullOrEmpty" xml:space="preserve">
+    <value>O teste não pode ser nulo ou vazio</value>
+  </data>
+  <data name="TestDate" xml:space="preserve">
+    <value>Data do Teste</value>
+  </data>
+  <data name="HealthUnitTypeNotFound" xml:space="preserve">
+    <value>Tipo de unidade de saúde não encontrado.</value>
+  </data>
+  <data name="UserAccessProfileNotFound" xml:space="preserve">
+    <value>O usuário não tem perfil de acesso associado</value>
+  </data>
+  <data name="ProfileNotFound" xml:space="preserve">
+    <value>Perfil de acesso não encontrado</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Perfil de Acesso</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Ativo</value>
+  </data>
+  <data name="HealthUnitRequiredToProfile" xml:space="preserve">
+    <value>Para o perfil {0} deve ser inserida a informação da Unidade de Saúde referente. Favor verificar.</value>
+  </data>
+  <data name="HealthUnitMustNotBeInsertedToProfile" xml:space="preserve">
+    <value>Para o perfil {0} não deve ser inserida a informação da Unidade de Saúde. Favor verificar.</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
+    <value>Perfis de Acesso.</value>
+  </data>
+  <data name="ColumnNameImportFileCep" xml:space="preserve">
+    <value>CEP</value>
+  </data>
+  <data name="FieldMustHaveANumberOfDigits" xml:space="preserve">
+    <value>Este campo deve conter {0} dígitos.</value>
+  </data>
+  <data name="FieldMustHaveANumberOfDigitsBetween" xml:space="preserve">
+    <value>Este campo deve conter entre {0} e {1} dígitos.</value>
+  </data>
+  <data name="FieldValueInformedIsNotValidFem" xml:space="preserve">
+    <value>A {0} informada é inválida.</value>
+  </data>
+  <data name="FieldValueInformedIsNotValidMasc" xml:space="preserve">
+    <value>O {0} informado é inválido.</value>
+  </data>
+  <data name="HelthUnityCodeDoesntExistsInDataBase" xml:space="preserve">
+    <value>Não existe o cadastro deste código na base.</value>
+  </data>
+  <data name="TestResultDateCannotBeEqualOrLessThenTestDate" xml:space="preserve">
+    <value>A data do resultado não pode ser menor ou igual à data do teste.</value>
+  </data>
+  <data name="TestResultDateCannotBeHiggerThenCurrentDate" xml:space="preserve">
+    <value>A data do resultado não pode ser maior que a data atual.</value>
+  </data>
+  <data name="ImportUsersFileMaxSize" xml:space="preserve">
+    <value>Tamanho do arquivo de importação maior que o máximo permitido: {0} Kb.</value>
+  </data>
+  <data name="AdminUser" xml:space="preserve">
+    <value>Usuário Administrativo</value>
+  </data>
+  <data name="AdminUsers" xml:space="preserve">
+    <value>Usuários Administrativos</value>
+  </data>
+  <data name="PageNumber" xml:space="preserve">
+    <value>Numero da página</value>
+  </data>
+  <data name="PageSize" xml:space="preserve">
+    <value>Tamanho da página</value>
+  </data>
+  <data name="InactiveUser" xml:space="preserve">
+    <value>O usuário se encontra Inativo. Favor verificar.</value>
+  </data>
+  <data name="InternationalDocument" xml:space="preserve">
+    <value>Documento Internacional</value>
+  </data>
+  <data name="PassportDoc" xml:space="preserve">
+    <value>Passaporte</value>
+  </data>
+  <data name="ResponsiblePersonPhone" xml:space="preserve">
+    <value>Telefone do Responsável</value>
+  </data>
+  <data name="ResponsiblePersonName" xml:space="preserve">
+    <value>Nome do Responsável</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="CompanyTypes" xml:space="preserve">
+    <value>Tipos de Empresa</value>
+  </data>
+  <data name="CompanySegments" xml:space="preserve">
+    <value>Segmentos de Empresa</value>
+  </data>
+  <data name="VaccineDoseDateCannoteBeEquals" xml:space="preserve">
+    <value>As datas de vacinação entre as doses não podem ser iguais</value>
+  </data>
+  <data name="CnpjRequiredForPrivateCompany" xml:space="preserve">
+    <value>Os 8 primeiros números do Cnpj são necessários para realizar a pesquisa</value>
+  </data>
+  <data name="CompanySegmentType" xml:space="preserve">
+    <value>Segmento da Empresa</value>
+  </data>
+  <data name="CompanyType" xml:space="preserve">
+    <value>Tipo de Empresa</value>
+  </data>
+  <data name="Locality" xml:space="preserve">
+    <value>Localidade</value>
+  </data>
+  <data name="Segment" xml:space="preserve">
+    <value>Segmento</value>
+  </data>
+  <data name="Responsible" xml:space="preserve">
+    <value>Responsável</value>
+  </data>
+  <data name="ResponsiblePersonLandline" xml:space="preserve">
+    <value>Telefone do Responsável (Fixo)</value>
+  </data>
+  <data name="ResponsiblePersonMobilePhone" xml:space="preserve">
+    <value>Telefone do Responsável (Celular)</value>
+  </data>
+  <data name="SegmentNotFound" xml:space="preserve">
+    <value>Segmento não encontrado.</value>
+  </data>
+  <data name="ResponsiblePersonEmail" xml:space="preserve">
+    <value>E-mail do Responsável</value>
+  </data>
+  <data name="IsHeadquarters" xml:space="preserve">
+    <value>Hierarquia</value>
+  </data>
+  <data name="FieldMustBeNull" xml:space="preserve">
+    <value>O campo {0} tem que ser nulo</value>
+  </data>
+  <data name="ParentId" xml:space="preserve">
+    <value>Identificador da Empresa Matriz</value>
+  </data>
+  <data name="BranchCnpjNotValid" xml:space="preserve">
+    <value>O CNPJ informado no cadastro não se refere a um CNPJ filial da {0}</value>
+  </data>
+  <data name="HeadquarterNotFoundOrNotValid" xml:space="preserve">
+    <value>Empresa matriz não encontrada ou inválida.</value>
+  </data>
+  <data name="CompanyAlreadyRegisteredToSegmentAndLocal" xml:space="preserve">
+    <value>Já existe empresa cadastrada com esse segmento nesse {0}</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Cidade</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Cnpj" xml:space="preserve">
+    <value>CNPJ</value>
+  </data>
+  <data name="PasswordChangeError" xml:space="preserve">
+    <value>Erro ao alterar a senha do usuário.</value>
+  </data>
+  <data name="CompanyEdited" xml:space="preserve">
+    <value>Empresa Editada com sucesso!</value>
+  </data>
+  <data name="SubsidiariesCandidatesCompanies" xml:space="preserve">
+    <value>Empresas Candidatas</value>
+  </data>
+  <data name="VaccineNextDoseDateCannoteBeLowerToPrevious" xml:space="preserve">
+    <value>A data da próxima dose não pode ser menor que a data da dose anterior.</value>
+  </data>
+  <data name="AssociateAll" xml:space="preserve">
+    <value>Associar todos</value>
+  </data>
+  <data name="AssociateAllMustBeNullWhenSubsidiariesIsNotNull" xml:space="preserve">
+    <value>Não é possivel associar todas as empresas canditadas quando a lista de candidatas estiver preenchida.</value>
+  </data>
+  <data name="Subsidiaries" xml:space="preserve">
+    <value>Subsidiárias</value>
+  </data>
+  <data name="SubsidiariesCompaniesAssociated" xml:space="preserve">
+    <value>Empresas associadas com sucesso.</value>
+  </data>
+  <data name="InactiveUserCompany" xml:space="preserve">
+    <value>A empresa do usuário se encontra Inativa. Favor verificar.</value>
+  </data>
+  <data name="OnlyAllowSubsidiaryCompaniesRegister" xml:space="preserve">
+    <value>Somente é permitido o cadastro de empresas filiais</value>
+  </data>
+  <data name="LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar cidadãos com a mesma localidade do seu cadastro.</value>
+  </data>
+  <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithPublicType" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar unidades de saúde do tipo Pública.</value>
+  </data>
+  <data name="LoggedInUserCanOnlyRegisterHealthUnitiesWithSameLocationAsHis" xml:space="preserve">
+    <value>O usuário logado só pode cadastrar unidades de saúde com a mesma localidade do seu cadastro.</value>
+  </data>
+  <data name="UserCompanyNotFound" xml:space="preserve">
+    <value>A empresa do usuário não foi encontrada. Favor verificar.</value>
+  </data>
+  <data name="NotAllowEditedFieldsToLoggedUser" xml:space="preserve">
+    <value>Há campos alterados não permitidos para o usuário logado.</value>
+  </data>
+  <data name="LoggedInUserCanOnlyEditCompanyWithSameLocationAsHis" xml:space="preserve">
+    <value>O usuário logado só pode editar empresas com a mesma localidade do seu cadastro.</value>
+  </data>
+  <data name="LoggedUserCannotRegisterHigherSegmentCompanies" xml:space="preserve">
+    <value>O usuário logado não pode cadastrar empresas de segmento superior ao seu.</value>
+  </data>
+  <data name="OnlyAdminCanDeleteVaccineData" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem excluir dados de vacinação</value>
+  </data>
+  <data name="ProfileNotAuthorizedToChangeRegistration" xml:space="preserve">
+    <value>Este perfil não possui permissão para realizar alterações de cadastros.</value>
+  </data>
+  <data name="OnlyAdminCanEditCitizenOutOfLocality" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de um cidadão fora da sua localidade</value>
+  </data>
+  <data name="OnlyAdminCanEditVaccineData" xml:space="preserve">
+    <value>Apenas Usuários Administradores podem alterar dados de vacinação</value>
+  </data>
+  <data name="ThereIsMoreThanOneHealthUnityWithInformedData" xml:space="preserve">
+    <value>Há mais de uma unidade de saúde cadastrada com os dados informados.</value>
+  </data>
+  <data name="AlreadyExistActiveHeadquartersWithSameCnpjCompanyIdentifyPart" xml:space="preserve">
+    <value>Já existe o cadastro de uma empresa matriz para este número de inscrição ({0}). Favor verificar.</value>
+  </data>
+  <data name="NotAllowEditCompanyHeadquarters" xml:space="preserve">
+    <value>Não é possível mudar a hierarquia da empresa.</value>
+  </data>
+  <data name="NotAllowDeactivateCompanyWithActiveSubsidiaries" xml:space="preserve">
+    <value>Há empresas filiais associadas. Inativação não permitida.</value>
+  </data>
+  <data name="UserTypeNotFound" xml:space="preserve">
+    <value>Tipo de usuário não encontrado. Favor verificar.</value>
+  </data>
+  <data name="UserNotHaveAdminAccess" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo administrativo.</value>
+  </data>
+  <data name="UserNotHaveCitizenAccess" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo cidadão.</value>
+  </data>
+  <data name="UserNotHaveAgentAccess" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo agente.</value>
+  </data>
+  <data name="UserNotHaveAccessOfType" xml:space="preserve">
+    <value>O usuário não tem acesso do tipo {0}.</value>
+  </data>
+  <data name="Agent" xml:space="preserve">
+    <value>Agente</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Administrativo</value>
+  </data>
+  <data name="Agents" xml:space="preserve">
+    <value>Agentes.</value>
+  </data>
+  <data name="CellphoneNumber" xml:space="preserve">
+    <value>Celular</value>
+  </data>
+  <data name="CorporateCellphoneNumber" xml:space="preserve">
+    <value>Celular Corporativo</value>
+  </data>
+  <data name="ImageRemoved" xml:space="preserve">
+    <value>Imagem Removida.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Arquivo não encontrado.</value>
+  </data>
+  <data name="UserNotHavePhoto" xml:space="preserve">
+    <value>O usuário não possui foto cadastrada</value>
+  </data>
+  <data name="InvalidImageSize" xml:space="preserve">
+    <value>Tamanho de imagem inválido.</value>
+  </data>
+  <data name="PassaportToValidate" xml:space="preserve">
+    <value>Passport para validação</value>
+  </data>
+  <data name="UserPassport" xml:space="preserve">
+    <value>Passaport do Usuário</value>
+  </data>
+  <data name="AgentCreatedWithLogin" xml:space="preserve">
+    <value>Usuário criado com sucesso! Login gerado: {0}</value>
+  </data>
+  <data name="PassportDocument" xml:space="preserve">
+    <value>Documento de Passaporte</value>
+  </data>
+  <data name="RgField" xml:space="preserve">
+    <value>Rg</value>
+  </data>
+  <data name="Cns" xml:space="preserve">
+    <value>Cns</value>
+  </data>
+  <data name="Cpf" xml:space="preserve">
+    <value>CPF</value>
+  </data>
+  <data name="Doctype" xml:space="preserve">
+    <value>Tipo de Documento</value>
+  </data>
+  <data name="ColumnNameImportFileInternationalDocument" xml:space="preserve">
+    <value>Cód. de Identificação</value>
+  </data>
+  <data name="ColumnNameImportFilePassportDoc" xml:space="preserve">
+    <value>Passporte</value>
+  </data>
+  <data name="ColumnNameImportFileRG" xml:space="preserve">
+    <value>RG</value>
+  </data>
+  <data name="VaccineCreated" xml:space="preserve">
+    <value>Vacina criada com sucesso!</value>
+  </data>
+  <data name="VaccineDosageType" xml:space="preserve">
+    <value>Tipo de Dosagem</value>
+  </data>
+  <data name="VaccineExpirationTimeInMonths" xml:space="preserve">
+    <value>Validade da Vacina (meses)</value>
+  </data>
+  <data name="VaccineFinalAgeGroup" xml:space="preserve">
+    <value>Faixa Etária Final</value>
+  </data>
+  <data name="VaccineImmunizationTimeInDays" xml:space="preserve">
+    <value>Tempo de Imunização (dias)</value>
+  </data>
+  <data name="VaccineInitalAgeGroup" xml:space="preserve">
+    <value>Faixa Etária Inicial</value>
+  </data>
+  <data name="VaccineManufacturer" xml:space="preserve">
+    <value>Fabricante da Vacina</value>
+  </data>
+  <data name="VaccineMaxTimeNextDose" xml:space="preserve">
+    <value>Período Máximo Próxima Dose (dias)</value>
+  </data>
+  <data name="VaccineMinTimeNextDose" xml:space="preserve">
+    <value>Período Mínimo Próxima Dose (dias)</value>
+  </data>
+  <data name="VaccineName" xml:space="preserve">
+    <value>Nome da Vacina</value>
+  </data>
+  <data name="VaccinePeriodType" xml:space="preserve">
+    <value>Tipo de Período Entre Doses</value>
+  </data>
+  <data name="VaccineRequiredDoses" xml:space="preserve">
+    <value>Doses Necessárias</value>
+  </data>
+  <data name="VaccineDosageTypes" xml:space="preserve">
+    <value>Tipos de dosagem</value>
+  </data>
+  <data name="VaccinePeriodTypes" xml:space="preserve">
+    <value>Tipos de período</value>
+  </data>
+  <data name="VaccineFinalAgeGroupNotBeLowerThenInital" xml:space="preserve">
+    <value>A faixa etária final não pode ser menor que a faixa etária inicial.</value>
   </data>
 </root>

@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace iPassport.Api.Configurations
 {
+    /// <summary>
+    /// iPassport Context Configurations
+    /// </summary>
     public static class iPassportContextConfigurations
     {
         /// <summary>
@@ -13,6 +16,11 @@ namespace iPassport.Api.Configurations
         /// </summary>
         public static readonly ILoggerFactory MyLoggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
+        /// <summary>
+        /// Add Custom Data Context
+        /// </summary>
+        /// <param name="services">Service Collection</param>
+        /// <returns>Service Collection</returns>
         public static IServiceCollection AddCustomDataContext(this IServiceCollection services)
         {
             string connection = EnvConstants.DATABASE_CONNECTION_STRING;
@@ -31,7 +39,6 @@ namespace iPassport.Api.Configurations
 #else
             services.AddDbContext<iPassportContext>(opt => opt
                 .UseLoggerFactory(MyLoggerFactory)
-                .EnableSensitiveDataLogging(true)
                 .EnableDetailedErrors());
 #endif
 

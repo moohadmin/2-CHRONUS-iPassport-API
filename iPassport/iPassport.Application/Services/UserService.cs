@@ -17,6 +17,7 @@ using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using iPassport.Domain.Repositories.PassportIdentityContext;
+using iPassport.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -54,11 +55,15 @@ namespace iPassport.Application.Services
         private readonly IAddressRepository _addressRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImportedFileRepository _importedFileRepository;
+        private readonly IProfileRepository _profileRepository;
+        private readonly IUserTokenRepository _userTokenRepository;
+        private readonly IUserTypeRepository _userTypeRepository;
 
         public UserService(IUserRepository userRepository, IUserDetailsRepository detailsRepository, IPlanRepository planRepository, IMapper mapper, IHttpContextAccessor accessor, UserManager<Users> userManager,
             IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer, ICompanyRepository companyRepository, ICityRepository cityRepository, IVaccineRepository vaccineRepository,
             IGenderRepository genderRepository, IBloodTypeRepository bloodTypeRepository, IHumanRaceRepository humanRaceRepository, IPriorityGroupRepository priorityGroupRepository, IHealthUnitRepository healthUnitRepository,
-            IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IImportedFileRepository importedFileRepository)
+            IUserVaccineRepository userVaccineRepository, IUserDiseaseTestRepository userDiseaseTestRepository, IAddressRepository addressRepository, IUnitOfWork unitOfWork, IImportedFileRepository importedFileRepository
+            , IProfileRepository profileRepository, IUserTokenRepository userTokenRepository, IUserTypeRepository userTypeRepository)
         {
             _userRepository = userRepository;
             _detailsRepository = detailsRepository;
@@ -81,47 +86,16 @@ namespace iPassport.Application.Services
             _addressRepository = addressRepository;
             _unitOfWork = unitOfWork;
             _importedFileRepository = importedFileRepository;
+            _profileRepository = profileRepository;
+            _userTokenRepository = userTokenRepository;
+            _userTypeRepository = userTypeRepository;
         }
 
         public async Task<ResponseApi> AddCitizen(CitizenCreateDto dto)
         {
-            var user = new Users().CreateCitizen(dto);
+            await ValidateAddCitizen(dto);
 
-            if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
-                throw new BusinessException(_localizer["CompanyNotFound"]);
-
-            if (dto.GenderId.HasValue && await _genderRepository.Find(dto.GenderId.Value) == null)
-                throw new BusinessException(_localizer["GenderNotFound"]);
-
-            if (dto.BloodTypeId.HasValue && await _bloodTypeRepository.Find(dto.BloodTypeId.Value) == null)
-                throw new BusinessException(_localizer["BloodTypeNotFound"]);
-
-            if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
-                throw new BusinessException(_localizer["HumanRaceNotFound"]);
-
-            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
-                throw new BusinessException(_localizer["PriorityGroupNotFound"]);
-
-            if (dto.Address == null || await _cityRepository.Find(dto.Address.CityId) == null)
-                throw new BusinessException(_localizer["CityNotFound"]);
-
-            if (dto.Doses != null && dto.Doses.Any())
-            {
-                if (await _vaccineRepository.Find(dto.Doses.FirstOrDefault().VaccineId) == null)
-                    throw new BusinessException(_localizer["VaccineNotFound"]);
-
-                if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
-                    throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
-
-                foreach (var item in dto.Doses)
-                {
-                    if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
-                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
-                                                 
-                    if(dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
-                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
-                }
-            }
+            var user = new Users().CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen)));
 
             try
             {
@@ -130,7 +104,7 @@ namespace iPassport.Application.Services
 
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 /// Re-Hidrated UserId to UserDetails
                 dto.Id = user.Id;
@@ -148,35 +122,27 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                VerifyUniqueKeyErrors(ex);
 
                 throw;
             }
             return new ResponseApi(true, _localizer["UserCreated"], user.Id);
         }
 
-        public async Task<ResponseApi> GetCurrentUser()
+        public async Task<ResponseApi> GetCurrentUser(string imageSize)
         {
             var userId = _accessor.GetCurrentUserId();
-            var authUser = await _userManager.FindByIdAsync(userId.ToString());
+            var authUser = await _userRepository.GetById(userId);
+
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
 
             if (authUser.IsCitizen())
-                authUser.Photo = _storageExternalService.GeneratePreSignedURL(authUser.Photo);
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
+
+            var userTypeIdentifyer = _accessor.GetCurrentUserTypeIdentifyer();
 
             var userDetailsViewModel = _mapper.Map<UserDetailsViewModel>(authUser);
+            userDetailsViewModel.LastLogin = !userTypeIdentifyer.HasValue? null : authUser.GetLastLogin(userTypeIdentifyer.Value);
 
             return new ResponseApi(true, "User Loged", userDetailsViewModel);
         }
@@ -222,7 +188,7 @@ namespace iPassport.Application.Services
                 throw new BusinessException(_localizer["UserNotFound"]);
 
             if (user.UserHavePhoto())
-                throw new BusinessException("Usuário já Tem Foto Cadastrada");
+                throw new BusinessException(_localizer["UserAlreadyPhoto"]);
 
             user.PhotoNameGenerator(userImageDto);
             var imageUrl = await _storageExternalService.UploadFileAsync(userImageDto.ImageFile, userImageDto.FileName);
@@ -231,6 +197,24 @@ namespace iPassport.Application.Services
             await _userManager.UpdateAsync(user);
 
             return new ResponseApi(true, _localizer["ImageAdded"], user.Photo);
+        }
+
+        public async Task<ResponseApi> RemoveUserImage(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            if (!user.UserHavePhoto())
+                throw new BusinessException(_localizer["UserNotHavePhoto"]);
+
+            await _storageExternalService.DeleteFileAsync(user.Photo);
+            user.RemovePhoto();
+
+            await _userManager.UpdateAsync(user);
+
+            return new ResponseApi(true, _localizer["ImageRemoved"]);
         }
 
         public async Task<ResponseApi> GetLoggedCitzenCount()
@@ -253,34 +237,44 @@ namespace iPassport.Application.Services
 
             return new ResponseApi(true, _localizer["AgentCount"], res);
         }
-
-        public async Task<ResponseApi> AddAgent(UserAgentCreateDto dto)
+        public async Task<PagedResponseApi> GetPagedAgent(GetAgentPagedFilter filter)
         {
-            var company = await _companyRepository.Find(dto.CompanyId);
-            if (company == null)
-                throw new BusinessException(_localizer["CompanyNotFound"]);
+            AccessControlDTO accessControl = _accessor.GetAccessControlDTO();
 
-            if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId) == null)
-                throw new BusinessException(_localizer["CityNotFound"]);
+            var res = await _userRepository.GetPagedAgent(filter, accessControl);
 
-            var user = new Users().CreateAgent(dto);
+            var result = _mapper.Map<IList<AgentViewModel>>(res.Data);           
 
+            return new PagedResponseApi(true, _localizer["Agents"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
+        }
 
+        public async Task<ResponseApi> AddAgent(UserAgentDto dto)
+        {
+            await ValidateAgentRequest(dto);
+
+            dto.Username = await GenerateAgentUsername(dto.FullName);
+
+            if (!dto.IsActive.GetValueOrDefault())
+                dto.DeactivationUserId = _accessor.GetCurrentUserId();
+
+            var user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Agent)));
+            
             try
             {
                 _unitOfWork.BeginTransactionIdentity();
                 _unitOfWork.BeginTransactionPassport();
-
+                
                 /// Add User in iPassportIdentityContext
                 var result = await _userManager.CreateAsync(user, dto.Password);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 /// Re-Hidrated UserId to UserDetails
-                dto.UserId = user.Id;
+                dto.Id = user.Id;
 
                 /// Add Details to User in iPassportContext
                 var _userDetails = new UserDetails();
                 var userDetails = _userDetails.Create(dto);
+
                 await _detailsRepository.InsertAsync(userDetails);
 
                 _unitOfWork.CommitIdentity();
@@ -291,39 +285,68 @@ namespace iPassport.Application.Services
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
-
+                VerifyUniqueKeyErrors(ex);
                 throw;
             }
-            return new ResponseApi(true, _localizer["UserCreated"], user.Id);
+            return new ResponseApi(true, string.Format(_localizer["AgentCreatedWithLogin"], user.UserName), user.Id);
+        }
+
+        public async Task<ResponseApi> EditAgent(UserAgentDto dto)
+        {
+            await ValidateAgentRequest(dto);
+
+            var currentUser = await _userRepository.GetById(dto.Id);
+            if (currentUser == null || await _detailsRepository.Find(dto.Id) == null)
+                throw new BusinessException(_localizer["AgentNotFound"]);
+
+            try
+            {
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
+                currentUser.ChangeAgent(dto);
+
+                await ChangeUserActivationStatus(dto.IsActive, currentUser, EUserType.Agent);
+
+                if (!string.IsNullOrEmpty(dto.Password))
+                    await ChangeUserPassword(currentUser, dto.Password);
+
+                await _userRepository.Update(currentUser);
+
+                _unitOfWork.CommitIdentity();
+                _unitOfWork.CommitPassport();
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                VerifyUniqueKeyErrors(ex);
+                throw;
+            }
+            return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
         }
 
         public async Task<PagedResponseApi> GetPaggedCizten(GetCitzenPagedFilter filter)
         {
-            var res = await _userRepository.GetPaggedCizten(filter);
+            AccessControlDTO accessControl = await GetCitizenControlData();
+
+            var res = await _userRepository.GetPaggedCizten(filter, accessControl);
+
+            var ImportedInfo = await _detailsRepository.GetImportedUserById(res.Data.Select(x => x.Id).ToArray());
 
             var result = _mapper.Map<IList<CitizenViewModel>>(res.Data);
+            result.ToList().ForEach(x =>
+            {
+                x.WasImported = (ImportedInfo.FirstOrDefault(y => y.UserId == x.Id)?.WasImported).GetValueOrDefault();
+            });
 
             return new PagedResponseApi(true, _localizer["Citizens"], res.PageNumber, res.PageSize, res.TotalPages, res.TotalRecords, result);
-
         }
 
-        public async Task<ResponseApi> GetCitizenById(Guid id)
+        public async Task<ResponseApi> GetCitizenById(Guid id, string imageSize)
         {
-            var authUser = await _userRepository.GetLoadedUsersById(id);
+            var authUser = await _userRepository.GetLoadedCitizenById(id);
 
             if (authUser == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
@@ -332,6 +355,11 @@ namespace iPassport.Application.Services
 
             if (userDetails == null)
                 throw new BusinessException(_localizer["UserNotFound"]);
+
+            EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
+
+            if (!string.IsNullOrWhiteSpace(authUser.Photo))
+                authUser.Photo = await _storageExternalService.GeneratePreSignedURL(authUser.Photo, imageEnum);
 
             var citizenDto = new CitizenDetailsDto(authUser, userDetails);
 
@@ -344,7 +372,10 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> EditCitizen(CitizenEditDto dto)
         {
+            AccessControlDTO accessControl = await GetCitizenControlData();
+
             var currentUser = await _userRepository.GetById(dto.Id);
+
             if (currentUser == null)
                 throw new BusinessException(_localizer["CitizenNotFound"]);
 
@@ -352,7 +383,7 @@ namespace iPassport.Application.Services
             if (currentUserDetails == null)
                 throw new BusinessException(_localizer["CitizenNotFound"]);
 
-            await ValidEditCitizen(dto);
+            await ValidateEditCitizen(dto, accessControl, currentUserDetails, currentUser);
 
             try
             {
@@ -363,14 +394,20 @@ namespace iPassport.Application.Services
                 _unitOfWork.BeginTransactionPassport();
 
                 var result = await _userManager.UpdateAsync(currentUser);
-                ValidSaveUserIdentityResult(result);
+                ValidateSaveUserIdentityResult(result);
 
                 if (!(await _detailsRepository.Update(currentUserDetails)))
                     throw new BusinessException(_localizer["UserNotUpdated"]);
 
+                var isAdmin = accessControl.Profile == EProfileKey.admin.ToString();
+
                 if (dto.Doses == null && currentUserDetails.UserVaccines.Any(x => !x.ExclusionDate.HasValue))
                 {
+                    if (!isAdmin)
+                        throw new BusinessException(_localizer["OnlyAdminCanDeleteVaccineData"]);
+
                     var toRemove = currentUserDetails.UserVaccines.Where(x => !x.ExclusionDate.HasValue);
+
                     foreach (var item in toRemove)
                     {
                         item.Delete();
@@ -383,12 +420,27 @@ namespace iPassport.Application.Services
                 {
                     var toInclude = dto.Doses.Where(x => !currentUserDetails.UserVaccines.Any(y => y.Id == x.Id));
                     var toChange = currentUserDetails.UserVaccines.Where(x => dto.Doses.Any(y => y.Id == x.Id));
-                    var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id));
+                    var toRemove = currentUserDetails.UserVaccines.Where(x => !dto.Doses.Any(y => y.Id == x.Id && !x.ExclusionDate.HasValue));
+
+                    if (!isAdmin && toRemove.Any())
+                        throw new BusinessException(_localizer["OnlyAdminCanDeleteVaccineData"]);
+
+                    ValidateVaccineDates(toInclude);
+                    ValidateVaccineDates(dto.Doses.Where(x => currentUserDetails.UserVaccines.Any(y => y.Id == x.Id)));
 
                     foreach (var item in currentUserDetails.UserVaccines.Where(x => !x.ExclusionDate.HasValue))
                     {
-                        if (toChange.Any(x => x.Id == item.Id))
-                            item.Change(dto.Doses.FirstOrDefault(x => x.Id == item.Id));
+                        var itemToChange = toChange.FirstOrDefault(x => x.Id == item.Id);
+                        var itemChangedDto = dto.Doses.FirstOrDefault(x => x.Id == item.Id);
+
+                        if (itemToChange != null)
+                        {
+                            if (!itemToChange.CanEditVaccineFields(accessControl, itemChangedDto))
+                                throw new BusinessException(_localizer["OnlyAdminCanEditVaccineData"]);
+
+                            item.Change(itemChangedDto);
+                        }
+
                         else if (toRemove.Any(x => x.Id == item.Id))
                             item.Delete();
 
@@ -407,6 +459,9 @@ namespace iPassport.Application.Services
 
                 if (dto.Test != null)
                 {
+                    if (dto.Test.IsEmpty())
+                        throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
+
                     if (dto.Test.Id.HasValue)
                     {
                         var test = currentUserDetails.UserDiseaseTests.FirstOrDefault(x => x.Id == dto.Test.Id);
@@ -434,25 +489,19 @@ namespace iPassport.Application.Services
                 _unitOfWork.CommitIdentity();
                 _unitOfWork.CommitPassport();
             }
+            catch (BusinessException)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                throw;
+            }
             catch (Exception ex)
             {
                 _unitOfWork.RollbackIdentity();
                 _unitOfWork.RollbackPassport();
 
-                if (ex.ToString().Contains("IX_Users_CNS"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
-                if (ex.ToString().Contains("IX_Users_CPF"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
-                if (ex.ToString().Contains("IX_Users_RG"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
-                if (ex.ToString().Contains("IX_Users_InternationalDocument"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "InternationalDocument"));
-                if (ex.ToString().Contains("IX_Users_PassportDoc"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "PassportDoc"));
-                if (ex.ToString().Contains("IX_Users_Email"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "E-mail"));
-                if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                    throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "Phone"));
+                VerifyUniqueKeyErrors(ex);
 
                 throw;
             }
@@ -460,8 +509,285 @@ namespace iPassport.Application.Services
             return new ResponseApi(true, _localizer["UserUpdated"], currentUser.Id);
         }
 
-        public async Task<bool> ValidEditCitizen(CitizenEditDto dto)
+        private void ValidateVaccineDates(IEnumerable<UserVaccineAbstractDto> doses)
         {
+            var listDoses = doses.OrderBy(x => x.Dose).ToList();
+
+            if (listDoses.Any(x => doses.Any(y => y.Dose != x.Dose && y.VaccinationDate.Date == x.VaccinationDate.Date)))
+                throw new BusinessException(_localizer["VaccineDoseDateCannoteBeEquals"]);
+
+            listDoses.ForEach(x =>
+            {
+                var nextIndex = listDoses.IndexOf(x) <= listDoses.IndexOf(listDoses.Last()) ? listDoses.IndexOf(x) + 1 : listDoses.IndexOf(x);
+
+                if (listDoses.Find(y => listDoses.IndexOf(y) == nextIndex)?.VaccinationDate.Date <= x.VaccinationDate.Date)
+                    throw new BusinessException(_localizer["VaccineNextDoseDateCannoteBeLowerToPrevious"]);
+            });
+        }
+        public async Task<ResponseApi> AddAdmin(AdminDto dto)
+        {
+            await ValidateToSaveAdmin(dto);
+
+            if (!dto.IsActive.GetValueOrDefault())
+                dto.DeactivationUserId = _accessor.GetCurrentUserId();
+
+            Users user = Users.CreateUser(dto, (await GetUserTypeIdByIdentifierWhenExists(EUserType.Admin)));
+
+            try
+            {
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
+                /// Add User in iPassportIdentityContext
+                var result = await _userManager.CreateAsync(user, dto.Password);
+                ValidateSaveUserIdentityResult(result);
+
+                /// Re-Hidrated UserId to UserDetails
+                dto.Id = user.Id;
+
+                /// Add Details to User in iPassportContext
+                var userDetails = UserDetails.CreateUserDetail(dto);
+
+                await _detailsRepository.InsertAsync(userDetails);
+
+                _unitOfWork.CommitIdentity();
+                _unitOfWork.CommitPassport();
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                VerifyUniqueKeyErrors(ex);
+
+                throw;
+            }
+
+            return new ResponseApi(true, _localizer["UserCreated"], user.Id);
+        }
+
+        public async Task ImportUsers(IFormFile file)
+        {
+            ValidateFileLenght(file);
+            List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
+            ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
+
+            await _importedFileRepository.InsertAsync(importedFile);
+
+            importedFile.ImportedFileDetails = GetExtractionErrors(fileData, importedFile.Id);
+            ValidateExtractedData(fileData, importedFile);
+
+            var validData = fileData.Where(f => f.IsValid).ToList();
+            await GetComplementaryDatForUserImport(validData, importedFile);
+            var citizenUserTypeId = await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen);
+            foreach (var data in validData.Where(d => d.IsValid))
+            {
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
+                try
+                {
+                    Users user = Users.CreateUser(data.Result, citizenUserTypeId);
+
+                    // Add User in iPassportIdentityContext
+                    var result = await _userManager.CreateAsync(user);
+                    ValidateSaveUserIdentityResult(result);
+
+                    // Re-Hidrated UserId to UserDetails
+                    data.Result.UserId = user.Id;
+
+                    // Add Details to User in iPassportContext
+                    UserDetails UserDetail = UserDetails.CreateUserDetail(data.Result, importedFile.Id);
+                    await _detailsRepository.InsertAsync(UserDetail);
+
+                    _unitOfWork.CommitIdentity();
+                    _unitOfWork.CommitPassport();
+                }
+                catch (Exception ex)
+                {
+                    _unitOfWork.RollbackIdentity();
+                    _unitOfWork.RollbackPassport();
+
+                    if (ex.ToString().Contains("IX_Users_CNS"))
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cns.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileCns"]), data.RowIndex + 1, importedFile.Id));
+                    else if (ex.ToString().Contains("IX_Users_CPF"))
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cpf.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileCpf"]), data.RowIndex + 1, importedFile.Id));
+                    else if (ex.ToString().Contains("IX_Users_Email"))
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Email.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileEmail"]), data.RowIndex + 1, importedFile.Id));
+                    else if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PhoneNumber.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFilePhoneNumber"]), data.RowIndex + 1, importedFile.Id));
+                    else
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails("", ex.Message, data.RowIndex + 1, importedFile.Id));
+                }
+            }
+
+            await _importedFileRepository.InsertDetailsAsync(importedFile.ImportedFileDetails);
+
+            return;
+        }
+
+        public async Task<ResponseApi> GetAdminById(Guid id)
+        {
+            var authUser = await _userRepository.GetAdminById(id);
+
+            if (authUser == null)
+                return new ResponseApi(true, _localizer["AdminUser"], null);
+
+            var details = await _detailsRepository.GetWithHealtUnityById(authUser.Id);
+            var adminDetails = new AdminDetailsDto(authUser, details);
+
+            return new ResponseApi(true, _localizer["AdminUser"], _mapper.Map<AdminDetailsViewModel>(adminDetails));
+        }
+
+        public async Task<ResponseApi> EditAdmin(AdminDto dto)
+        {
+            var currentAdminUser = await _userRepository.GetById(dto.Id.Value);
+            if (currentAdminUser == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            var currentAdminUserDetails = await _detailsRepository.Find(dto.Id.Value);
+            if (currentAdminUserDetails == null)
+                throw new BusinessException(_localizer["UserNotFound"]);
+
+            await ValidateToSaveAdmin(dto);
+
+            currentAdminUser.ChangeUser(dto);
+            currentAdminUserDetails.ChangeUserDetail(dto);
+
+            ValidateUserType(currentAdminUser, EUserType.Admin);
+
+            try
+            {
+                _unitOfWork.BeginTransactionIdentity();
+                _unitOfWork.BeginTransactionPassport();
+
+                var result = await _userManager.UpdateAsync(currentAdminUser);
+            
+                await ChangeUserActivationStatus(dto.IsActive, currentAdminUser, EUserType.Admin);
+
+                if (!string.IsNullOrEmpty(dto.Password))
+                    await ChangeUserPassword(currentAdminUser, dto.Password);
+
+                ValidateSaveUserIdentityResult(result);
+
+                if (!(await _detailsRepository.Update(currentAdminUserDetails)))
+                    throw new BusinessException(_localizer["UserNotUpdated"]);
+
+                _unitOfWork.CommitIdentity();
+                _unitOfWork.CommitPassport();
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.RollbackIdentity();
+                _unitOfWork.RollbackPassport();
+
+                VerifyUniqueKeyErrors(ex);
+
+                throw;
+            }
+
+            return new ResponseApi(true, _localizer["UserUpdated"], currentAdminUser.Id);
+        }
+
+        public async Task<PagedResponseApi> GetPagedAdmins(GetAdminUserPagedFilter filter)
+        {
+            var res = await _userRepository.GetPagedAdmins(filter, _accessor.GetAccessControlDTO());
+
+            if (res.Data == null)
+                return new PagedResponseApi(true, _localizer["AdminUsers"], 0, 0, 0, 0);
+
+            return new PagedResponseApi(
+                true,
+                _localizer["AdminUsers"],
+                res.PageNumber,
+                res.PageSize,
+                res.TotalPages,
+                res.TotalRecords,
+                _mapper.Map<IList<AdminUserViewModel>>(res.Data));
+        }
+
+        public async Task<ResponseApi> GetAgentById(Guid id)
+        {
+            var agentUser = await _userRepository.GetAgentById(id);
+
+            if (agentUser == null)
+                return new ResponseApi(true, _localizer["Agent"], null);
+            
+            return new ResponseApi(true, _localizer["Agent"], _mapper.Map<AgentDetailsViewModel>(agentUser));
+        }
+
+        #region Private Methods
+
+        private async Task<AccessControlDTO> GetCitizenControlData()
+        {
+            var accessControl = _accessor.GetAccessControlDTO();
+
+            if (accessControl.Profile == EProfileKey.healthUnit.ToString())
+                accessControl.FilterIds = await _detailsRepository.GetVaccinatedUsersWithHealtUnityById(accessControl.HealthUnityId.GetValueOrDefault());
+
+            return accessControl;
+        }
+
+        private async Task ValidateAddCitizen(CitizenCreateDto dto)
+        {
+            if (dto.CompanyId.HasValue && await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            if (dto.GenderId.HasValue && await _genderRepository.Find(dto.GenderId.Value) == null)
+                throw new BusinessException(_localizer["GenderNotFound"]);
+
+            if (dto.BloodTypeId.HasValue && await _bloodTypeRepository.Find(dto.BloodTypeId.Value) == null)
+                throw new BusinessException(_localizer["BloodTypeNotFound"]);
+
+            if (dto.HumanRaceId.HasValue && await _humanRaceRepository.Find(dto.HumanRaceId.Value) == null)
+                throw new BusinessException(_localizer["HumanRaceNotFound"]);
+
+            if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
+                throw new BusinessException(_localizer["PriorityGroupNotFound"]);
+
+            var citizenCity = await _cityRepository.FindLoadedById(dto.Address.CityId);
+
+            if (dto.Address == null || citizenCity == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+
+            if (dto.Test != null && dto.Test.IsEmpty())
+                throw new BusinessException(_localizer["TestNotMustBeNullOrEmpty"]);
+
+            if (dto.Doses != null && dto.Doses.Any())
+            {
+                if (!dto.Doses.All(x => x.VaccineId == dto.Doses.FirstOrDefault().VaccineId))
+                    throw new BusinessException(_localizer["DifferentVaccinesDoses"]);
+
+                ValidateVaccineDates(dto.Doses);
+
+                foreach (var item in dto.Doses)
+                {
+                    if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
+                        throw new BusinessException(_localizer["HealthUnitNotFound"]);
+
+                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
+                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
+                }
+            }
+
+            ValidateAddCitizenPermission(citizenCity);
+        }
+        
+        private async Task ValidateAgentRequest(UserAgentDto dto)
+        {
+            var company = await _companyRepository.GetPrivateActiveCompanies(dto.CompanyId);
+
+            if (company?.FirstOrDefault() == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            if (dto.Address != null && await _cityRepository.Find(dto.Address.CityId.Value) == null)
+                throw new BusinessException(_localizer["CityNotFound"]);
+        }
+
+        private async Task ValidateEditCitizen(CitizenEditDto dto, AccessControlDTO accessControl, UserDetails userDetails, Users user)
+        {
+            ValidateUserType(user, EUserType.Citizen);
+
             if (dto.Address == null || await _addressRepository.Find(dto.Address.Id) == null)
                 throw new BusinessException(_localizer["AddressNotFound"]);
 
@@ -480,7 +806,8 @@ namespace iPassport.Application.Services
             if (dto.PriorityGroupId.HasValue && await _priorityGroupRepository.Find(dto.PriorityGroupId.Value) == null)
                 throw new BusinessException(_localizer["PriorityGroupNotFound"]);
 
-            if (await _cityRepository.Find(dto.Address.CityId) == null)
+            var city = await _cityRepository.FindLoadedById(dto.Address.CityId);
+            if (city == null)
                 throw new BusinessException(_localizer["CityNotFound"]);
 
             if (dto.Doses != null && dto.Doses.Any())
@@ -498,18 +825,38 @@ namespace iPassport.Application.Services
 
                     if (await _healthUnitRepository.Find(item.HealthUnitId) == null)
                         throw new BusinessException(_localizer["HealthUnitNotFound"]);
-
-                    if (dto.Doses.Any(x => x.VaccineId == item.VaccineId && x.Dose < item.Dose && x.VaccinationDate > item.VaccinationDate))
-                        throw new BusinessException(_localizer["InvalidVaccineDoseDate"]);
                 }
             }
 
             if (dto.Test?.Id != null && await _userDiseaseTestRepository.Find(dto.Test.Id.Value) == null)
                 throw new BusinessException(_localizer["UserDiseaseTestsNotFound"]);
 
-            return true;
+            ValidateEditCitizenAccessControl(accessControl, city, userDetails, user, dto);
         }
-        private void ValidSaveUserIdentityResult(IdentityResult result)
+
+        private void ValidateEditCitizenAccessControl(AccessControlDTO accessControl, City city, UserDetails userDetails, Users user, CitizenEditDto citizenEditDto)
+        {
+            //se perfil gov:
+            // - mesma cidade/estado/país
+            if (accessControl.Profile == EProfileKey.government.ToString()
+                && ((accessControl.CityId.HasValue && accessControl.CityId.Value != city.Id)
+                    || (accessControl.StateId.HasValue && accessControl.StateId.Value != city.StateId)
+                    || (accessControl.CountryId.HasValue && accessControl.CountryId.Value != city.State.CountryId)))
+                throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
+
+            //se perfil unidade de saude
+            // - mesma localidade ou vacinado na unidade
+            if (accessControl.Profile == EProfileKey.healthUnit.ToString()
+                && ((accessControl.CityId.HasValue && accessControl.CityId.Value != city.Id)
+                    && accessControl.HealthUnityId.HasValue && !userDetails.UserVaccines.Any(x => x.HealthUnitId == accessControl.HealthUnityId.Value)))
+                throw new BusinessException(_localizer["OnlyAdminCanEditCitizenOutOfLocality"]);
+
+            // validar campos permitidos na alteração
+            if (!user.CanEditCitizenFields(citizenEditDto, accessControl) || !userDetails.CanEditCitizenFields(citizenEditDto, accessControl))
+                throw new BusinessException(_localizer["ProfileNotAuthorizedToChangeRegistration"]);
+        }
+
+        private void ValidateSaveUserIdentityResult(IdentityResult result)
         {
             if (!result.Succeeded)
             {
@@ -545,65 +892,6 @@ namespace iPassport.Application.Services
             userVaccines = loadedUserVaccines;
         }
 
-        public async Task ImportUsers(IFormFile file)
-        {
-            List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
-            ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
-
-            await _importedFileRepository.InsertAsync(importedFile);
-
-            importedFile.ImportedFileDetails = GetExtractionErrors(fileData, importedFile.Id);
-            ValidateExtractedData(fileData, importedFile);
-
-            var validData = fileData.Where(f => f.IsValid).ToList();
-            await GetComplementaryDatForUserImport(validData, importedFile);
-
-            foreach (var data in validData.Where(d => d.IsValid))
-            {
-                _unitOfWork.BeginTransactionIdentity();
-                _unitOfWork.BeginTransactionPassport();
-
-                try
-                {
-                    Users user = Users.CreateCitizen(data.Result);
-
-                    // Add User in iPassportIdentityContext
-                    var result = await _userManager.CreateAsync(user);
-                    ValidSaveUserIdentityResult(result);
-
-                    // Re-Hidrated UserId to UserDetails
-                    data.Result.UserId = user.Id;
-
-                    // Add Details to User in iPassportContext
-                    UserDetails UserDetail = UserDetails.CreateUserDetail(data.Result, importedFile.Id);
-                    await _detailsRepository.InsertAsync(UserDetail);
-
-                    _unitOfWork.CommitIdentity();
-                    _unitOfWork.CommitPassport();
-                }
-                catch (Exception ex)
-                {
-                    _unitOfWork.RollbackIdentity();
-                    _unitOfWork.RollbackPassport();
-
-                    if (ex.ToString().Contains("IX_Users_CNS"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cns.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "CNS"), data.RowIndex + 1, importedFile.Id));
-                    else if (ex.ToString().Contains("IX_Users_CPF"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cpf.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "CPF"), data.RowIndex + 1, importedFile.Id));
-                    else if (ex.ToString().Contains("IX_Users_Email"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Email.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "E-mail"), data.RowIndex + 1, importedFile.Id));
-                    else if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PhoneNumber.ToString()], string.Format(_localizer["DataAlreadyRegistered"], "Phone"), data.RowIndex + 1, importedFile.Id));
-                    else
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails("", ex.Message, data.RowIndex + 1, importedFile.Id));
-                }
-            }
-
-            await _importedFileRepository.InsertDetailsAsync(importedFile.ImportedFileDetails);
-
-            return;
-        }
-
         private void ValidateExtractedData(List<CsvMappingResult<UserImportDto>> fileData, ImportedFile importedFile)
         {
             ValidationResult validationResult;
@@ -628,7 +916,7 @@ namespace iPassport.Application.Services
 
         private List<CsvMappingResult<UserImportDto>> ReadCsvData(IFormFile file)
         {
-            CsvParserOptions csvParserOptions = new(true, ';');
+            CsvParserOptions csvParserOptions = new(true, ';', 10, true);
             UserImportCsvMapper csvMapper = new();
             CsvParser<UserImportDto> csvParser = new(csvParserOptions, csvMapper);
 
@@ -646,23 +934,19 @@ namespace iPassport.Application.Services
             var bloodTypes = await _bloodTypeRepository.FindByListName(validData.Select(f => f.Result.BloodType.Trim().ToUpper()).Distinct().ToList());
             var humanRaces = await _humanRaceRepository.FindByListName(validData.Select(f => f.Result.HumanRace.Trim().ToUpper()).Distinct().ToList());
             var cities = await _cityRepository.FindByCityStateAndCountryNames(validData.Select(f => f.Result.City.Trim().ToUpper() + f.Result.State.Trim().ToUpper() + f.Result.Country.Trim().ToUpper()).Distinct().ToList());
-            var vaccineFilter = validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => f.Result.VaccineNameUniqueDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameUniqueDose.Trim().ToUpper()).Distinct().ToList();
-            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => f.Result.VaccineNameFirstDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameFirstDose.Trim().ToUpper()).Distinct().ToList());
-            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => f.Result.VaccineNameSecondDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameSecondDose.Trim().ToUpper()).Distinct().ToList());
-            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => f.Result.VaccineNameThirdDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameThirdDose.Trim().ToUpper()).Distinct().ToList());
-            var vaccines = await _vaccineRepository.GetByVaccineAndManufacturerNames(vaccineFilter.Distinct().ToList());
-            var healthUnityFilter = validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjUniqueDose, Ine = f.Result.HealthUnityIneUniqueDose }).Distinct().ToList();
-            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjFirstDose, Ine = f.Result.HealthUnityIneFirstDose }).Distinct().ToList());
-            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjSecondDose, Ine = f.Result.HealthUnityIneSecondDose }).Distinct().ToList());
-            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => new GetHealthyUnityByCnpjAndIne { Cnpj = f.Result.HealthUnityCnpjThirdDose, Ine = f.Result.HealthUnityIneThirdDose }).Distinct().ToList());
-            var healthUnits = await _healthUnitRepository.FindByCnpjAndIne(healthUnityFilter.Select(h => h.Cnpj).Distinct().ToList(), healthUnityFilter.Select(h => h.Ine).Distinct().ToList());
+            var vaccines = await GetVaccinesToImportUser(validData);
+            var healthUnits = await GetHealthUnitiesToImportUser(validData);
 
             Guid? id;
 
             validData.ForEach(v =>
             {
                 id = genders.Where(g => g.Name.ToUpper() == v.Result.Gender.ToUpper()).Select(g => g.Id).SingleOrDefault();
-                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.Gender))
+                if (string.IsNullOrWhiteSpace(v.Result.Gender))
+                {
+                    v.Result.GenderId = null;
+                }
+                else if (id == Guid.Empty && !string.IsNullOrWhiteSpace(v.Result.Gender))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Gender.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
                     v.Error = new CsvMappingError();
@@ -673,7 +957,11 @@ namespace iPassport.Application.Services
                 }
 
                 id = companies.Where(c => c.Cnpj == v.Result.Cnpj).Select(c => c.Id).SingleOrDefault();
-                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.Cnpj))
+                if (string.IsNullOrWhiteSpace(v.Result.Cnpj))
+                {
+                    v.Result.CompanyId = null;
+                }
+                else if (id == Guid.Empty && !string.IsNullOrWhiteSpace(v.Result.Cnpj))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cnpj.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     v.Error = new CsvMappingError();
@@ -684,7 +972,11 @@ namespace iPassport.Application.Services
                 }
 
                 id = priorityGroups.Where(p => p.Name.ToUpper() == v.Result.PriorityGroup.ToUpper()).Select(p => p.Id).SingleOrDefault();
-                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.PriorityGroup))
+                if (string.IsNullOrWhiteSpace(v.Result.PriorityGroup))
+                {
+                    v.Result.PriorityGroupId = null;
+                }
+                else if (id == Guid.Empty && !string.IsNullOrWhiteSpace(v.Result.PriorityGroup))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PriorityGroup.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
                     v.Error = new CsvMappingError();
@@ -695,7 +987,11 @@ namespace iPassport.Application.Services
                 }
 
                 id = bloodTypes.Where(b => b.Name.ToUpper() == v.Result.BloodType.ToUpper()).Select(b => b.Id).SingleOrDefault();
-                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.BloodType))
+                if (string.IsNullOrWhiteSpace(v.Result.BloodType))
+                {
+                    v.Result.BloodTypeId = null;
+                }
+                else if (id == Guid.Empty && !string.IsNullOrWhiteSpace(v.Result.BloodType))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.BloodType.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
                     v.Error = new CsvMappingError();
@@ -706,7 +1002,11 @@ namespace iPassport.Application.Services
                 }
 
                 id = humanRaces.Where(h => h.Name.ToUpper() == v.Result.HumanRace.ToUpper()).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.HumanRace))
+                if (string.IsNullOrWhiteSpace(v.Result.HumanRace))
+                {
+                    v.Result.HumanRaceId = null;
+                }
+                else if (id == Guid.Empty && !string.IsNullOrWhiteSpace(v.Result.HumanRace))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HumanRace.ToString()], _localizer["NonstandardField"], v.RowIndex + 1, importedFile.Id));
                     v.Error = new CsvMappingError();
@@ -716,9 +1016,8 @@ namespace iPassport.Application.Services
                     v.Result.HumanRaceId = id;
                 }
 
-                id = cities.Where(c => c.Name.ToUpper() == v.Result.City.ToUpper() && c.State.Name.ToUpper() == v.Result.State.ToUpper()
-                                    && c.State.Country.Name.ToUpper() == v.Result.Country.ToUpper()).Select(c => c.Id).SingleOrDefault();
-                if (id == Guid.Empty && !string.IsNullOrEmpty(v.Result.City))
+                id = cities.Where(c => c.Name.ToUpper() == v.Result.City.ToUpper() && c.State.Name.ToUpper() == v.Result.State.ToUpper() && c.State.Country.Name.ToUpper() == v.Result.Country.ToUpper()).Select(c => c.Id).SingleOrDefault();
+                if (id == Guid.Empty && !string.IsNullOrWhiteSpace(v.Result.City))
                 {
                     importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.City.ToString()], _localizer["CityDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
                     v.Error = new CsvMappingError();
@@ -728,110 +1027,416 @@ namespace iPassport.Application.Services
                     v.Result.CityId = id.Value;
                 }
 
-                v.Result.VaccineIdUniqueDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameUniqueDose.ToUpper()
-                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameUniqueDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-
-                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) || v.Result.HealthUnityCnpjUniqueDose == h.Cnpj)
-                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose) || v.Result.HealthUnityIneUniqueDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose)))
-                {
-                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneUniqueDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjUniqueDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneUniqueDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    v.Error = new CsvMappingError();
-                }
-                else
-                {
-                    v.Result.HealthUnityIdUniqueDose = id.Value;
-                }
-
-                v.Result.VaccineIdFirstDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameFirstDose.ToUpper()
-                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameFirstDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-
-                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || v.Result.HealthUnityCnpjFirstDose == h.Cnpj)
-                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose) || v.Result.HealthUnityIneFirstDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose)))
-                {
-                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneFirstDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjFirstDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneFirstDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    v.Error = new CsvMappingError();
-                }
-                else
-                {
-                    v.Result.HealthUnityIdFirstDose = id.Value;
-                }
-
-                v.Result.VaccineIdSecondDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameSecondDose.ToUpper()
-                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameSecondDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-
-                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || v.Result.HealthUnityCnpjSecondDose == h.Cnpj)
-                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose) || v.Result.HealthUnityIneSecondDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose)))
-                {
-                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneSecondDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjSecondDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneSecondDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    v.Error = new CsvMappingError();
-                }
-                else
-                {
-                    v.Result.HealthUnityIdSecondDose = id.Value;
-                }
-
-                v.Result.VaccineIdThirdDose = vaccines.Where(vac => vac.Name.ToUpper() == v.Result.VaccineNameThirdDose.ToUpper()
-                                                                    && vac.Manufacturer.Name.ToUpper() == v.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
-
-                id = healthUnits.Where(h => (string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || v.Result.HealthUnityCnpjThirdDose == h.Cnpj)
-                                        && (string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose) || v.Result.HealthUnityIneThirdDose == h.Ine)).Select(h => h.Id).SingleOrDefault();
-                if (id == Guid.Empty && (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) || !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose)))
-                {
-                    if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose) && !string.IsNullOrEmpty(v.Result.HealthUnityIneThirdDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else if (!string.IsNullOrEmpty(v.Result.HealthUnityCnpjThirdDose))
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    else
-                    {
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneThirdDose.ToString()], _localizer["IneDoesntExistsInDataBase"], v.RowIndex + 1, importedFile.Id));
-                    }
-                    v.Error = new CsvMappingError();
-                }
-                else
-                {
-                    v.Result.HealthUnityIdThirdDose = id.Value;
-                }
+                ValidateVaccineUniqueDose(v, vaccines, healthUnits, importedFile);
+                ValidateVaccineFirstDose(v, vaccines, healthUnits, importedFile);
+                ValidateVaccineSecondDose(v, vaccines, healthUnits, importedFile);
+                ValidateVaccineThirdDose(v, vaccines, healthUnits, importedFile);
             });
         }
+
+        private async Task<IList<Vaccine>> GetVaccinesToImportUser(List<CsvMappingResult<UserImportDto>> validData)
+        {
+            var vaccineFilter = validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => f.Result.VaccineNameUniqueDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameUniqueDose.Trim().ToUpper()).Distinct().ToList();
+            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => f.Result.VaccineNameFirstDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameFirstDose.Trim().ToUpper()).Distinct().ToList());
+            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => f.Result.VaccineNameSecondDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameSecondDose.Trim().ToUpper()).Distinct().ToList());
+            vaccineFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => f.Result.VaccineNameThirdDose.Trim().ToUpper() + f.Result.VaccineManufacturerNameThirdDose.Trim().ToUpper()).Distinct().ToList());
+            return await _vaccineRepository.GetByVaccineAndManufacturerNames(vaccineFilter.Distinct().ToList());
+        }
+
+        private async Task<IList<HealthUnit>> GetHealthUnitiesToImportUser(List<CsvMappingResult<UserImportDto>> validData)
+        {
+            List<GetHealthyUnityByCnpjIneAndUniqueCodeFilter> healthUnityFilter = new();
+            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineUniqueDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjUniqueDose, Ine = f.Result.HealthUnityIneUniqueDose, UniqueCode = f.Result.HealthUnityCodeUniqueDose }).Distinct().ToList());
+            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineFirstDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjFirstDose, Ine = f.Result.HealthUnityIneFirstDose, UniqueCode = f.Result.HealthUnityCodeFirstDose }).Distinct().ToList());
+            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineSecondDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjSecondDose, Ine = f.Result.HealthUnityIneSecondDose, UniqueCode = f.Result.HealthUnityCodeSecondDose }).Distinct().ToList());
+            healthUnityFilter.AddRange(validData.Where(f => f.Result.HasVaccineThirdDoseData).Select(f => new GetHealthyUnityByCnpjIneAndUniqueCodeFilter { Cnpj = f.Result.HealthUnityCnpjThirdDose, Ine = f.Result.HealthUnityIneThirdDose, UniqueCode = f.Result.HealthUnityCodeThirdDose }).Distinct().ToList());
+            return await _healthUnitRepository.FindByCnpjIneAndCode(healthUnityFilter.Where(h => !string.IsNullOrWhiteSpace(h.Cnpj)).Select(h => h.Cnpj).Distinct().ToList(),
+                                                                   healthUnityFilter.Where(h => !string.IsNullOrWhiteSpace(h.Ine)).Select(h => h.Ine).Distinct().ToList(),
+                                                                   healthUnityFilter.Where(h => h.UniqueCode.HasValue).Select(h => h.UniqueCode).Distinct().ToList());
+        }
+
+        private void ValidateVaccineUniqueDose(CsvMappingResult<UserImportDto> mappingResult, IList<Vaccine> vaccines, IList<HealthUnit> healthUnits, ImportedFile importedFile)
+        {
+            if (mappingResult.Result.HasVaccineUniqueDoseData)
+            {
+                Guid? id = vaccines.Where(vac => vac.Name.ToUpper() == mappingResult.Result.VaccineNameUniqueDose.ToUpper()
+                                                                    && vac.Manufacturer.Name.ToUpper() == mappingResult.Result.VaccineManufacturerNameUniqueDose.ToUpper())
+                                                        .Select(vac => vac.Id).SingleOrDefault();
+
+                if (string.IsNullOrWhiteSpace(mappingResult.Result.VaccineNameUniqueDose) || string.IsNullOrWhiteSpace(mappingResult.Result.VaccineManufacturerNameUniqueDose))
+                {
+                    mappingResult.Result.VaccineIdUniqueDose = null;
+                }
+                else
+                {
+                    mappingResult.Result.VaccineIdUniqueDose = id;
+                }
+
+                var listHealthUnityIds = healthUnits.Where(h => (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjUniqueDose) || mappingResult.Result.HealthUnityCnpjUniqueDose == h.Cnpj)
+                                                             && (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneUniqueDose) || mappingResult.Result.HealthUnityIneUniqueDose == h.Ine)
+                                                            && (!mappingResult.Result.HealthUnityCodeUniqueDose.HasValue || mappingResult.Result.HealthUnityCodeUniqueDose == h.UniqueCode)).Select(h => h.Id).ToList();
+                if (listHealthUnityIds.Count > 1)
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["ThereIsMoreThanOneHealthUnityWithInformedData"], mappingResult.RowIndex + 1, importedFile.Id));
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else if (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjUniqueDose) && string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneUniqueDose) && !mappingResult.Result.HealthUnityCodeUniqueDose.HasValue)
+                {
+                    mappingResult.Result.HealthUnityIdUniqueDose = null;
+                }
+                else if (listHealthUnityIds.Count == 0 && (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjUniqueDose) || !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneUniqueDose) || mappingResult.Result.HealthUnityCodeUniqueDose.HasValue))
+                {
+                    if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjUniqueDose) && !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneUniqueDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjUniqueDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjUniqueDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneUniqueDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneUniqueDose.ToString()], _localizer["IneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeUniqueDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else
+                {
+                    mappingResult.Result.HealthUnityIdUniqueDose = listHealthUnityIds.First();
+                }
+            }
+            else
+            {
+                mappingResult.Result.VaccineIdUniqueDose = null;
+                mappingResult.Result.HealthUnityIdUniqueDose = null;
+            }
+        }
+
+        private void ValidateVaccineFirstDose(CsvMappingResult<UserImportDto> mappingResult, IList<Vaccine> vaccines, IList<HealthUnit> healthUnits, ImportedFile importedFile)
+        {
+            if (mappingResult.Result.HasVaccineFirstDoseData)
+            {
+                Guid? id = vaccines.Where(vac => vac.Name.ToUpper() == mappingResult.Result.VaccineNameFirstDose.ToUpper()
+                                                    && vac.Manufacturer.Name.ToUpper() == mappingResult.Result.VaccineManufacturerNameFirstDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+
+                if (string.IsNullOrWhiteSpace(mappingResult.Result.VaccineNameFirstDose) || string.IsNullOrWhiteSpace(mappingResult.Result.VaccineManufacturerNameFirstDose))
+                {
+                    mappingResult.Result.VaccineIdFirstDose = null;
+                }
+                else
+                {
+                    mappingResult.Result.VaccineIdFirstDose = id;
+                }
+
+                var listHealthUnityIds = healthUnits.Where(h => (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjFirstDose) || mappingResult.Result.HealthUnityCnpjFirstDose == h.Cnpj)
+                                                            && (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneFirstDose) || mappingResult.Result.HealthUnityIneFirstDose == h.Ine)
+                                                            && (!mappingResult.Result.HealthUnityCodeFirstDose.HasValue || mappingResult.Result.HealthUnityCodeFirstDose == h.UniqueCode)).Select(h => h.Id).ToList();
+                if (listHealthUnityIds.Count > 1)
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["ThereIsMoreThanOneHealthUnityWithInformedData"], mappingResult.RowIndex + 1, importedFile.Id));
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else if (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjFirstDose) && string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneFirstDose) && !mappingResult.Result.HealthUnityCodeFirstDose.HasValue)
+                {
+                    mappingResult.Result.HealthUnityIdFirstDose = null;
+                }
+                else if (listHealthUnityIds.Count == 0 && (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjFirstDose) || !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneFirstDose) || mappingResult.Result.HealthUnityCodeFirstDose.HasValue))
+                {
+                    if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjFirstDose) && !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneFirstDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjFirstDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjFirstDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneFirstDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneFirstDose.ToString()], _localizer["IneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeFirstDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else
+                {
+                    mappingResult.Result.HealthUnityIdFirstDose = listHealthUnityIds.First();
+                }
+            }
+            else
+            {
+                mappingResult.Result.VaccineIdFirstDose = null;
+                mappingResult.Result.HealthUnityIdFirstDose = null;
+            }
+        }
+
+        private void ValidateVaccineSecondDose(CsvMappingResult<UserImportDto> mappingResult, IList<Vaccine> vaccines, IList<HealthUnit> healthUnits, ImportedFile importedFile)
+        {
+            if (mappingResult.Result.HasVaccineSecondDoseData)
+            {
+                Guid? id = vaccines.Where(vac => vac.Name.ToUpper() == mappingResult.Result.VaccineNameSecondDose.ToUpper()
+                                                                    && vac.Manufacturer.Name.ToUpper() == mappingResult.Result.VaccineManufacturerNameSecondDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+
+                if (string.IsNullOrWhiteSpace(mappingResult.Result.VaccineNameSecondDose) || string.IsNullOrWhiteSpace(mappingResult.Result.VaccineManufacturerNameSecondDose))
+                {
+                    mappingResult.Result.VaccineIdSecondDose = null;
+                }
+                else
+                {
+                    mappingResult.Result.VaccineIdSecondDose = id;
+                }
+
+                var listHealthUnityIds = healthUnits.Where(h => (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjSecondDose) || mappingResult.Result.HealthUnityCnpjSecondDose == h.Cnpj)
+                                                            && (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneSecondDose) || mappingResult.Result.HealthUnityIneSecondDose == h.Ine)
+                                                            && (!mappingResult.Result.HealthUnityCodeSecondDose.HasValue || mappingResult.Result.HealthUnityCodeSecondDose == h.UniqueCode)).Select(h => h.Id).ToList();
+                if (listHealthUnityIds.Count > 1)
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["ThereIsMoreThanOneHealthUnityWithInformedData"], mappingResult.RowIndex + 1, importedFile.Id));
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else if (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjSecondDose) && string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneSecondDose) && !mappingResult.Result.HealthUnityCodeSecondDose.HasValue)
+                {
+                    mappingResult.Result.HealthUnityIdSecondDose = null;
+                }
+                else if (listHealthUnityIds.Count == 0 && (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjSecondDose) || !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneSecondDose) || mappingResult.Result.HealthUnityCodeSecondDose.HasValue))
+                {
+                    if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjSecondDose) && !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneSecondDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjSecondDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjSecondDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneSecondDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneSecondDose.ToString()], _localizer["IneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeSecondDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else
+                {
+                    mappingResult.Result.HealthUnityIdSecondDose = listHealthUnityIds.First();
+                }
+            }
+            else
+            {
+                mappingResult.Result.VaccineIdSecondDose = null;
+                mappingResult.Result.HealthUnityIdSecondDose = null;
+            }
+        }
+
+        private void ValidateVaccineThirdDose(CsvMappingResult<UserImportDto> mappingResult, IList<Vaccine> vaccines, IList<HealthUnit> healthUnits, ImportedFile importedFile)
+        {
+            if (mappingResult.Result.HasVaccineThirdDoseData)
+            {
+                Guid? id = vaccines.Where(vac => vac.Name.ToUpper() == mappingResult.Result.VaccineNameThirdDose.ToUpper()
+                                                                && vac.Manufacturer.Name.ToUpper() == mappingResult.Result.VaccineManufacturerNameThirdDose.ToUpper()).Select(vac => vac.Id).SingleOrDefault();
+
+                if (string.IsNullOrWhiteSpace(mappingResult.Result.VaccineNameThirdDose) || string.IsNullOrWhiteSpace(mappingResult.Result.VaccineManufacturerNameThirdDose))
+                {
+                    mappingResult.Result.VaccineIdThirdDose = null;
+                }
+                else
+                {
+                    mappingResult.Result.VaccineIdThirdDose = id;
+                }
+
+                var listHealthUnityIds = healthUnits.Where(h => (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjThirdDose) || mappingResult.Result.HealthUnityCnpjThirdDose == h.Cnpj)
+                                                              && (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneThirdDose) || mappingResult.Result.HealthUnityIneThirdDose == h.Ine)
+                                                              && (!mappingResult.Result.HealthUnityCodeThirdDose.HasValue || mappingResult.Result.HealthUnityCodeThirdDose == h.UniqueCode)).Select(h => h.Id).ToList();
+
+                if (listHealthUnityIds.Count > 1)
+                {
+                    importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["ThereIsMoreThanOneHealthUnityWithInformedData"], mappingResult.RowIndex + 1, importedFile.Id));
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else if (string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjThirdDose) && string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneThirdDose) && !mappingResult.Result.HealthUnityCodeThirdDose.HasValue)
+                {
+                    mappingResult.Result.HealthUnityIdThirdDose = null;
+                }
+                else if (listHealthUnityIds.Count == 0 && (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjThirdDose) || !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneThirdDose) || mappingResult.Result.HealthUnityCodeThirdDose.HasValue))
+                {
+                    if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjThirdDose) && !string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneThirdDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjIneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityCnpjThirdDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCnpjThirdDose.ToString()], _localizer["CnpjDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mappingResult.Result.HealthUnityIneThirdDose))
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityIneThirdDose.ToString()], _localizer["IneDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    else
+                    {
+                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.HealthUnityCodeThirdDose.ToString()], _localizer["HelthUnityCodeDoesntExistsInDataBase"], mappingResult.RowIndex + 1, importedFile.Id));
+                    }
+                    mappingResult.Error = new CsvMappingError();
+                }
+                else
+                {
+                    mappingResult.Result.HealthUnityIdThirdDose = listHealthUnityIds.First();
+                }
+            }
+            else
+            {
+                mappingResult.Result.VaccineIdThirdDose = null;
+                mappingResult.Result.HealthUnityIdThirdDose = null;
+            }
+        }
+
+        private void ValidateFileLenght(IFormFile file)
+        {
+            if (file.Length > Domain.Utils.Constants.MAX_LENGHT_IMPORT_USERS_FILE)
+                throw new BusinessException(string.Format(_localizer["ImportUsersFileMaxSize"], Domain.Utils.Constants.MAX_LENGHT_IMPORT_USERS_FILE / 1024));
+        }
+
+        private async Task<bool> ValidateToSaveAdmin(AdminDto dto)
+        {
+            if (!dto.CompanyId.HasValue || await _companyRepository.Find(dto.CompanyId.Value) == null)
+                throw new BusinessException(_localizer["CompanyNotFound"]);
+
+            var Profile = await _profileRepository.Find(dto.ProfileId.GetValueOrDefault());
+            if (Profile == null)
+                throw new BusinessException(_localizer["ProfileNotFound"]);
+
+            if (Profile.Key == Enum.GetName(EProfileKey.healthUnit)
+                && (!dto.HealthUnitId.HasValue || await _healthUnitRepository.Find(dto.HealthUnitId.Value) == null))
+                throw new BusinessException(string.Format(_localizer["HealthUnitRequiredToProfile"], Profile.Name));
+
+            if (dto.HealthUnitId.HasValue && Profile.Key != Enum.GetName(EProfileKey.healthUnit))
+                throw new BusinessException(string.Format(_localizer["HealthUnitMustNotBeInsertedToProfile"], Profile.Name));
+
+            return true;
+        }
+
+        private void VerifyUniqueKeyErrors(Exception ex)
+        {
+            if (ex.ToString().Contains("IX_Users_CNS"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CNS"));
+            if (ex.ToString().Contains("IX_Users_CPF"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "CPF"));
+            if (ex.ToString().Contains("IX_Users_RG"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], "RG"));
+            if (ex.ToString().Contains("IX_Users_InternationalDocument"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["InternationalDocument"]));
+            if (ex.ToString().Contains("IX_Users_PassportDoc"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["PassportDoc"]));
+            if (ex.ToString().Contains("IX_Users_Email"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Email"]));
+            if (ex.ToString().Contains("IX_Users_PhoneNumber"))
+                throw new BusinessException(string.Format(_localizer["DataAlreadyRegistered"], _localizer["Telephone"]));
+        }
+
+        private void ValidateAddCitizenPermission(City citizenCity)
+        {
+            var acessControll = _accessor.GetAccessControlDTO();
+            if ((acessControll.Profile == EProfileKey.government.ToString()) &&
+                ((acessControll.CityId.HasValue && acessControll.CityId.Value != citizenCity.Id) ||
+                    (acessControll.StateId.HasValue && acessControll.StateId.Value != citizenCity?.StateId) ||
+                    (acessControll.CountryId.HasValue && acessControll.CountryId.Value != citizenCity?.State.CountryId)))
+                throw new BusinessException(_localizer["LoggedInUserCanOnlyRegisterCitizensWithSameLocationAsHis"]);
+        }
+
+        private async Task<Guid> GetUserTypeIdByIdentifierWhenExists(EUserType userTypeIdentifyer)
+        {
+            var userType = await _userTypeRepository.GetByIdentifier((int)userTypeIdentifyer);
+            if (userType == null)
+                throw new BusinessException(_localizer["UserTypeNotFound"]);
+
+            return userType.Id;
+        }
+
+        private void ValidateUserType(Users editedUser, EUserType userTypeIdentifyer)
+        {
+            if (!editedUser.HasType(userTypeIdentifyer))
+                throw new BusinessException(string.Format(_localizer["UserNotHaveAccessOfType"], _localizer[userTypeIdentifyer.ToString()]));
+        }
+
+        private async Task<string> GenerateAgentUsername(string fullName)
+        {
+            var nameList = fullName.Split(" ").Select(x => x.RemoveDiacritics().ToLower()).Reverse().ToList();
+            var firstName = nameList.Last();
+            
+            var possibleNames = GeneratePossibleUsernames(nameList, firstName);
+
+            var namesInDb = await _userRepository.GetUsernamesList(possibleNames);
+
+            return SetValidUsername(namesInDb.ToList(), possibleNames, nameList, firstName);
+        }
+
+        private List<string> GeneratePossibleUsernames(List<string> nameList, string firstName)
+        {
+            var separator = '.';
+            var possibleNames = new List<string>();
+
+            nameList.Remove(firstName);
+            nameList.ForEach(x => possibleNames.Add($"{firstName}{separator}{x}"));
+
+            return possibleNames;
+        }
+
+        private string SetValidUsername(IList<string> namesInDb, IList<string> possibleNames, IList<string> nameList, string firstName)
+        {
+            foreach (var username in possibleNames)
+            {
+                if (!namesInDb.Any(x => x.ToUpper() == username.ToUpper()))
+                    return username;
+            }
+
+            possibleNames.Add(GenerateRandomUsername(nameList.First(), firstName));
+
+            return SetValidUsername(namesInDb, possibleNames, nameList, firstName);
+        }
+
+        private string GenerateRandomUsername(string lastName, string firstName)
+        {
+            var random = new Random();
+            var separator = '.';
+            var randomNumber = random.Next(0, 9999).ToString("D4");
+
+            return $"{firstName}{separator}{lastName}{randomNumber}";
+        }
+
+        private async Task ChangeUserActivationStatus(bool? isActive, Users currentUser, EUserType type)
+        {
+            UserToken currentUserActiveToken = null;
+            if (!isActive.GetValueOrDefault() && currentUser.IsActive(type))
+            {
+                currentUser.Deactivate(_accessor.GetCurrentUserId(), type);
+
+                currentUserActiveToken = await _userTokenRepository.GetActive(currentUser.Id);
+                currentUserActiveToken?.Deactivate();
+            }
+
+            if (isActive.GetValueOrDefault() && currentUser.IsInactive(type))
+                currentUser.Activate(type);
+
+            if (currentUserActiveToken != null && !(await _userTokenRepository.Update(currentUserActiveToken)))
+                throw new BusinessException(_localizer["UserNotUpdated"]);
+        }
+
+        private async Task ChangeUserPassword(Users user, string password)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var changeResult = await _userManager.ResetPasswordAsync(user, token, password);
+
+            if (!changeResult.Succeeded)
+                throw new BusinessException(_localizer["PasswordChangeError"]);
+        }
+
+        #endregion
     }
 }

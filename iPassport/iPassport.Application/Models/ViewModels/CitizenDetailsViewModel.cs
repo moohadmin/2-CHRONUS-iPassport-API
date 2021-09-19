@@ -33,6 +33,8 @@ namespace iPassport.Application.Models.ViewModels
 
         public string Telephone { get; set; }
 
+        public string Photo { get; set; }
+
         public AddressViewModel Address { get; set; }
 
         public IList<UserVaccineViewModel> Doses { get; set; }
@@ -42,5 +44,15 @@ namespace iPassport.Application.Models.ViewModels
         public bool? WasTestPerformed { get; set; }
 
         public UserDiseaseTestViewModel Test { get; set; }
+
+        public string ImportedFileName { get; set; }
+
+        public DateTime? ImportedFileDate { get; set; }
+
+        public string Rg { get; set; }
+
+        public string PassportDocument { get; set; }
+
+        public string InternationalDocument { get; set; }
     }
 }

@@ -23,8 +23,10 @@ namespace iPassport.Domain.Dtos
         public bool? WasCovidInfected { get; set; }
         public int NumberOfDoses { get; set; }
         public string Telephone { get; set; }
+        public string InternationalDocument { get; set; }
         public AddressCreateDto Address { get; set; }
         public IList<UserVaccineCreateDto> Doses { get; set; }
         public UserDiseaseTestCreateDto Test { get; set; }
+        public bool? WasTestPerformed { get; set; }
     }
 }

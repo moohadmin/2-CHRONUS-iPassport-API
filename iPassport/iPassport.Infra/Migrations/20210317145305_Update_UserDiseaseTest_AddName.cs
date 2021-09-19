@@ -15,9 +15,7 @@ namespace iPassport.Infra.Migrations
                 name: "IX_UserDiseaseTests_DiseaseId",
                 table: "UserDiseaseTests");
 
-            migrationBuilder.DropColumn(
-                name: "DiseaseId",
-                table: "UserDiseaseTests");
+            // migrationBuilder.DropColumn( name: "DiseaseId", table: "UserDiseaseTests");
 
             migrationBuilder.AddColumn<string>(
                 name: "Name",
