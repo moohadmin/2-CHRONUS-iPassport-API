@@ -7,41 +7,17 @@ namespace iPassport.Infra.Migrations.PassportIdentity
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Users_Users_DeactivationUserId",
-                table: "Users");
+            migrationBuilder.DropForeignKey( name: "FK_Users_Users_DeactivationUserId", table: "Users");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Users_DeactivationUserId",
-                table: "Users");
+            migrationBuilder.DropIndex( name: "IX_Users_DeactivationUserId", table: "Users");
 
-            migrationBuilder.DropColumn(
-                name: "BloodType",
-                table: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "Breed",
-                table: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "DeactivationDate",
-                table: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "DeactivationUserId",
-                table: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "Gender",
-                table: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "LastLogin",
-                table: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "UserType",
-                table: "Users");
+            // migrationBuilder.DropColumn( name: "BloodType", table: "Users");
+            // migrationBuilder.DropColumn( name: "Breed", table: "Users");
+            // migrationBuilder.DropColumn( name: "DeactivationDate", table: "Users");
+            // migrationBuilder.DropColumn( name: "DeactivationUserId", table: "Users");
+            // migrationBuilder.DropColumn( name: "Gender", table: "Users");
+            // migrationBuilder.DropColumn( name: "LastLogin", table: "Users");
+            // migrationBuilder.DropColumn( name: "UserType", table: "Users");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

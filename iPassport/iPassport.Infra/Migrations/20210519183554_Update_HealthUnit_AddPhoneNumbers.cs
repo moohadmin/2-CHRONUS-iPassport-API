@@ -18,9 +18,7 @@ namespace iPassport.Infra.Migrations
                 type: "text",
                 nullable: true);
 
-            migrationBuilder.DropColumn(
-               name: "ResponsiblePersonPhone",
-               table: "HealthUnits");
+            // migrationBuilder.DropColumn( name: "ResponsiblePersonPhone", table: "HealthUnits");
 
         }
 

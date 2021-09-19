@@ -102,13 +102,9 @@ namespace iPassport.Infra.Migrations.PassportIdentity
             migrationBuilder.DropTable(
                 name: "UserTypes");
 
-            migrationBuilder.DropColumn(
-                name: "CorporateCellphoneNumber",
-                table: "Users");
+            migrationBuilder.DropColumn( name: "CorporateCellphoneNumber", table: "Users");
 
-            migrationBuilder.DropColumn(
-                name: "Complement",
-                table: "Adresses");
+            migrationBuilder.DropColumn( name: "Complement", table: "Adresses");
         }
     }
 }

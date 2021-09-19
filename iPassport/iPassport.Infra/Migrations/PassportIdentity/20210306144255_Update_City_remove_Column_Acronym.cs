@@ -6,9 +6,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Acronym",
-                table: "Cities");
+            // migrationBuilder.DropColumn( name: "Acronym", table: "Cities");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -15,9 +15,7 @@ namespace iPassport.Infra.Migrations.PassportIdentity
                 name: "IX_Companies_ResponsibleId",
                 table: "Companies");
 
-            migrationBuilder.DropColumn(
-                name: "ResponsibleId",
-                table: "Companies");
+            // migrationBuilder.DropColumn( name: "ResponsibleId", table: "Companies");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_CompanyResponsibles_Companies_Id",

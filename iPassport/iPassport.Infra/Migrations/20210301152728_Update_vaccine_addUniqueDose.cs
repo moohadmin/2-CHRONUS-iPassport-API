@@ -16,9 +16,7 @@ namespace iPassport.Infra.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "UniqueDose",
-                table: "Vaccines");
+            migrationBuilder.DropColumn(name: "UniqueDose",table: "Vaccines");
         }
     }
 }

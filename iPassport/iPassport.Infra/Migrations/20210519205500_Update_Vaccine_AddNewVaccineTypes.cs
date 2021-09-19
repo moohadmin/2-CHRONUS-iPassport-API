@@ -161,17 +161,11 @@ namespace iPassport.Infra.Migrations
                         + "timezone('utc', now()),"
                         + "timezone('utc', now()) FROM \"Vaccines\"");
 
-            migrationBuilder.DropColumn(
-                name: "MaxTimeNextDose",
-                table: "Vaccines");
+            // migrationBuilder.DropColumn( name: "MaxTimeNextDose", table: "Vaccines");
 
-            migrationBuilder.DropColumn(
-                name: "MinTimeNextDose",
-                table: "Vaccines");
+            // migrationBuilder.DropColumn( name: "MinTimeNextDose", table: "Vaccines");
 
-            migrationBuilder.DropColumn(
-                name: "RequiredDoses",
-                table: "Vaccines");
+            // migrationBuilder.DropColumn( name: "RequiredDoses", table: "Vaccines");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -196,9 +190,7 @@ namespace iPassport.Infra.Migrations
                 name: "IX_Vaccines_DosageTypeId",
                 table: "Vaccines");
 
-            migrationBuilder.DropColumn(
-                name: "DosageTypeId",
-                table: "Vaccines");
+            migrationBuilder.DropColumn( name: "DosageTypeId", table: "Vaccines");
 
             migrationBuilder.AddColumn<int>(
                 name: "MaxTimeNextDose",
