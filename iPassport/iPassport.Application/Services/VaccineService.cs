@@ -69,6 +69,11 @@ namespace iPassport.Application.Services
 
         public async Task<ResponseApi> GetPagged(GetPagedVaccinesFilter filter)
         {
+
+            if (filter.DosageTypeId != null) {
+                filter.VaccineDosageType = await _vaccineDosageTypeRepository.GetByIdentifyer((int)filter.DosageTypeId);
+            }
+
             var res = await _vaccineRepository.GetPagged(filter);
             
             var data = _mapper.Map<List<VaccineViewModel>>(res.Data);
