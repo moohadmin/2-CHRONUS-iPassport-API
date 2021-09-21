@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+using iPassport.Domain.Enums;
+
 
 namespace iPassport.Api.Models.Requests
 {
@@ -22,6 +24,7 @@ namespace iPassport.Api.Models.Requests
         /// <summary>
         /// Dosage Type Id
         /// </summary>
-        public Guid? DosageTypeId { get; set; }
+
+        public EVaccineDosageType? DosageTypeId { get; set; }
     }
 }

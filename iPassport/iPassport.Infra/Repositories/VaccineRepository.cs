@@ -1,4 +1,4 @@
-﻿using iPassport.Application.Exceptions;
+using iPassport.Application.Exceptions;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
@@ -49,6 +49,7 @@ namespace iPassport.Infra.Repositories
 
         public async Task<PagedData<Vaccine>> GetPagged(GetPagedVaccinesFilter filter)
         {
+
             var query = _DbSet
                 .Include(x => x.Manufacturer)
                 .Include(x => x.Diseases)
@@ -57,7 +58,7 @@ namespace iPassport.Infra.Repositories
                 .Include(x => x.DosageType)
                 .Where(v => (filter.ManufacuterId == null || v.ManufacturerId == filter.ManufacuterId.Value)
                             && (filter.DiseaseId == null || v.Diseases.Any(x => x.Id == filter.DiseaseId.Value))
-                            && (filter.DosageTypeId == null || v.DosageTypeId == filter.DosageTypeId.Value)
+                            && (filter.VaccineDosageType == null || v.DosageType.Identifyer == filter.VaccineDosageType.Identifyer)
                             && (string.IsNullOrWhiteSpace(filter.Initials) || v.Name.ToLower().Contains(filter.Initials.ToLower())))
                 .OrderBy(m => m.Name);
 
