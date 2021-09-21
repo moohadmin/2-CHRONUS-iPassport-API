@@ -182,14 +182,18 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
             try
             {
                 var image = await _awsS3.GetObjectAsync(_bucketName, key);
-
                 return image != null;
+            }
+            catch (AmazonS3Exception aS3Ex)
+            {
+                return !(aS3Ex.StatusCode == HttpStatusCode.NotFound);
             }
             catch (Exception e)
             {
-                if (e.InnerException.GetType() == typeof(AmazonS3Exception) && ((AmazonS3Exception)e.InnerException).StatusCode == HttpStatusCode.NotFound)
-                    return false;
-
+                if (e.InnerException.GetType() == typeof(AmazonS3Exception) && 
+                    ((AmazonS3Exception)e.InnerException).StatusCode == HttpStatusCode.NotFound) {
+                        return false;
+                }
                 throw new InternalErrorException(e.Message, (int)HttpStatusCode.InternalServerError, e.StackTrace);
             }
         }
@@ -198,7 +202,8 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
         {
             size = size == null ? EImageSize.medium : size;
 
-            return $"{Constants.S3_USER_IMAGES_PATH}/{size}/{filename}";
+            // return $"{Constants.S3_USER_IMAGES_PATH}/{size}/{filename}";
+            return $"{filename}";
         }
     }
 }
