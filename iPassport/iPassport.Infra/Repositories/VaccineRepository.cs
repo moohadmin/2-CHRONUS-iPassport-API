@@ -1,4 +1,4 @@
-﻿using iPassport.Application.Exceptions;
+using iPassport.Application.Exceptions;
 using iPassport.Domain.Entities;
 using iPassport.Domain.Filters;
 using iPassport.Domain.Repositories;
