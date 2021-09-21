@@ -50,6 +50,7 @@ namespace iPassport.Infra.ExternalServices
         public Task<SendPinResponseDto> SendPin(string text, string phone)
         {
             SendPinResponseDto simulatedSentResponse = PinIntegrationSimulatedSent(phone);
+
             if (simulatedSentResponse != null)
                 return Task.FromResult(simulatedSentResponse);
 
@@ -59,8 +60,7 @@ namespace iPassport.Infra.ExternalServices
             {
                 IgnoreNullValues = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            }
-            );
+            });
 
             Dictionary<string, string> integrationParams = new Dictionary<string, string>
             {
