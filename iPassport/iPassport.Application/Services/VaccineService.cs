@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using iPassport.Application.Exceptions;
 using iPassport.Application.Extensions;
 using iPassport.Application.Interfaces;

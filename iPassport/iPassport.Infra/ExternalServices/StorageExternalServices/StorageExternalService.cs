@@ -1,4 +1,4 @@
-﻿using Amazon.S3;
+using Amazon.S3;
 using Amazon.S3.Model;
 using iPassport.Application.Exceptions;
 using iPassport.Application.Interfaces;
