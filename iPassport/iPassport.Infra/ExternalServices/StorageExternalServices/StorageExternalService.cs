@@ -39,12 +39,16 @@ namespace iPassport.Infra.ExternalServices.StorageExternalServices
 
             try
             {
-                foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
-                {
-                    memoryStream = await ResiseImage(imageFile, size);
-                    string path = GetFilePath(size, fileName);
-                    await UpToS3Async(memoryStream, path);
-                }
+                memoryStream = await ResiseImage(imageFile, EImageSize.extraLarge);
+                string path = GetFilePath(EImageSize.extraLarge, fileName);
+                await UpToS3Async(memoryStream, path);
+
+                // foreach (EImageSize size in Enum.GetValues(typeof(EImageSize)))
+                // {
+                //     memoryStream = await ResiseImage(imageFile, size);
+                //     string path = GetFilePath(size, fileName);
+                //     await UpToS3Async(memoryStream, path);
+                // }
             }
             finally
             {
