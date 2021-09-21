@@ -52,7 +52,7 @@ namespace iPassport.Test.Services
             var result = _service.UploadFileAsync(GetIFormFile(), filename);
 
             // Assert
-            _mockS3Client.Verify(a => a.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
+            _mockS3Client.Verify(a => a.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(1));
             Assert.IsInstanceOfType(result, typeof(Task<string>));
             Assert.IsNotNull(result.Result);
             Assert.AreEqual(filename, result.Result);
