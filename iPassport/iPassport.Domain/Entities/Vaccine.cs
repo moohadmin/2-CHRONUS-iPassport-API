@@ -79,7 +79,8 @@ namespace iPassport.Domain.Entities
 
         public int GetRequiredDoses(DateTime userBirthday)
         {
-            if (AgeGroupVaccines.Any())
+            
+            if (AgeGroupVaccines != null && AgeGroupVaccines.Any())
             {
                 var today = DateTime.Now.Date;
                 var age = today.Year - userBirthday.Year;

@@ -81,6 +81,9 @@ namespace iPassport.Application.Services
             if (editedCompany == null)
                 throw new BusinessException(_localizer["CompanyNotFound"]);
 
+            CompanySegment newSegment = await _companySegmentRepository.GetLoaded(dto.SegmentId);
+            editedCompany.Segment = newSegment;
+
             await ValidateCompanyEditAcessControl(dto, editedCompany);
             await ValidateToSave(dto, dto.Address.CityId, true, editedCompany);
 

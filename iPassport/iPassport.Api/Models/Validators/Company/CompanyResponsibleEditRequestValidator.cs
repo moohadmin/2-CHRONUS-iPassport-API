@@ -17,9 +17,6 @@ namespace iPassport.Api.Models.Validators.Company
         /// <param name="localizer">String localizer</param>
         public CompanyResponsibleEditRequestValidator(IStringLocalizer<Resource> localizer)
         {
-            RuleFor(x => x.Id)
-                .NotEmpty()
-                .WithMessage(string.Format(localizer["RequiredField"], "Id"));
 
             RuleFor(x => x.Name)
                 .NotEmpty()
