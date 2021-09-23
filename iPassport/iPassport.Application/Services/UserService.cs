@@ -911,7 +911,8 @@ namespace iPassport.Application.Services
 
         private IList<ImportedFileDetails> GetExtractionErrors(List<CsvMappingResult<UserImportDto>> fileData, Guid importedFileId)
         {
-            return fileData.Where(f => !f.IsValid).Select(f => new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + ((EFileImportColumns)f.Error.ColumnIndex).ToString()], _localizer["InvalidValue"], f.RowIndex + 1, importedFileId)).ToList();
+            return fileData.Where(f => !f.IsValid).Select(f => 
+            new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + ((EFileImportColumns)f.Error.ColumnIndex).ToString()], _localizer["InvalidValue"], f.RowIndex + 1, importedFileId)).ToList();
         }
 
         private List<CsvMappingResult<UserImportDto>> ReadCsvData(IFormFile file)
