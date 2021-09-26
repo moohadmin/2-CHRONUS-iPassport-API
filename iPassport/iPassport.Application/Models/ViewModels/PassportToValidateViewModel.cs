@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace iPassport.Application.Models.ViewModels
 {
@@ -35,5 +36,9 @@ namespace iPassport.Application.Models.ViewModels
         /// if immunized
         /// </summary>
         public bool Immunized { get; set; }
+        /// <summary>
+        /// Vacceine Details
+        /// </summary>
+        public IList<UserVaccineViewModel> VacceineDetails { get; set; }
     }
 }

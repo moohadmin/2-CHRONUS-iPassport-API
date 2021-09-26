@@ -13,6 +13,7 @@ using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,11 +28,16 @@ namespace iPassport.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IUserDetailsRepository _userDetailsRepository;
         private readonly IHttpContextAccessor _accessor;
+        // private readonly IUserVaccineRepository _userVaccineRepository;
+        private readonly IUserVaccineService _userVaccineService;
         private readonly IStorageExternalService _storageExternalService;
         private readonly IStringLocalizer<Resource> _localizer;
 
-        public PassportService(IMapper mapper, IPassportRepository repository, IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository, IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository, IUserRepository userRepository
-            , IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer)
+        public PassportService(IMapper mapper, IPassportRepository repository,
+            IUserDetailsRepository userDetailsRepository, IPassportUseRepository useRepository,
+            IHttpContextAccessor accessor, IPassportDetailsRepository passportDetailsRepository,
+            IUserVaccineService userVaccineService, IUserRepository userRepository,
+            IStorageExternalService storageExternalService, IStringLocalizer<Resource> localizer)
         {
             _mapper = mapper;
             _repository = repository;
@@ -41,6 +47,7 @@ namespace iPassport.Application.Services
             _passportDetailsRepository = passportDetailsRepository;
             _userRepository = userRepository;
             _storageExternalService = storageExternalService;
+            _userVaccineService = userVaccineService;
             _localizer = localizer;
         }
 
@@ -157,11 +164,15 @@ namespace iPassport.Application.Services
             
             EImageSize? imageEnum = imageSize != null ? imageSize.ToEnum<EImageSize>() : null;
 
+            IList<UserVaccineViewModel> userVaccineViewModelList = await _userVaccineService.GetAllUserVaccines(passportDetailsId);
+            
             var viewModel = _mapper.Map<PassportToValidateViewModel>(passport);
             viewModel.Cpf = passportCitizen.CPF;
             viewModel.UserPhoto = await _storageExternalService.GeneratePreSignedURL(passportCitizen.Photo, imageEnum);
             viewModel.UserFullName = passportCitizen.FullName;
             viewModel.Immunized = passport.UserDetails.IsApprovedPassport(authUser.Birthday);
+
+            viewModel.VacceineDetails = userVaccineViewModelList;
 
             return new ResponseApi(true, _localizer["PassaportToValidate"], viewModel);
         }
