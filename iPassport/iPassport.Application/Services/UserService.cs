@@ -572,14 +572,19 @@ namespace iPassport.Application.Services
             List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
             ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
 
-            await _importedFileRepository.InsertAsync(importedFile);
+            
 
             importedFile.ImportedFileDetails = GetExtractionErrors(fileData, importedFile.Id);
             ValidateExtractedData(fileData, importedFile);
 
             var validData = fileData.Where(f => f.IsValid).ToList();
             await GetComplementaryDatForUserImport(validData, importedFile);
+
+            // Save imported file and his details
+            await _importedFileRepository.InsertAsync(importedFile);
+
             var citizenUserTypeId = await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen);
+
             foreach (var data in validData.Where(d => d.IsValid))
             {
                 _unitOfWork.BeginTransactionIdentity();
@@ -621,7 +626,7 @@ namespace iPassport.Application.Services
                 }
             }
 
-            await _importedFileRepository.InsertDetailsAsync(importedFile.ImportedFileDetails);
+            // await _importedFileRepository.InsertDetailsAsync(importedFile.ImportedFileDetails);
 
             return;
         }
