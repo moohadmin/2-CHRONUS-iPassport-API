@@ -13,7 +13,7 @@
         public const string CONST_NAO_VALUE = "NÃO";
         public const string CONST_NENHUM_VALUE = "NENHUM";
 
-        public const int MAX_LENGHT_IMPORT_USERS_FILE = 82160; // 80KB
+        public const int MAX_LENGHT_IMPORT_USERS_FILE = 1024000; //204800; // 80KB
 
         public const string ADMIN_PROFILE_KEY = "admin";
 

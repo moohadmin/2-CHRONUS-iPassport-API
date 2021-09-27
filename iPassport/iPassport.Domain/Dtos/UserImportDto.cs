@@ -5,12 +5,38 @@ namespace iPassport.Domain.Dtos
 {
     public class UserImportDto
     {
+        private readonly int CNPJ_SIZE = 14;
+        private readonly int CPF_SIZE = 11;
+
+        private string _cpf;
+        private string _cnpj;
         public string FullName { get; set; }
         public string Gender { get; set; }
         public DateTime Birthday { get; set; }
-        public string Cpf { get; set; }
+
+        
+        public string Cpf
+        {
+            get
+            {
+                return _cpf;
+            }
+            set
+            {
+                _cpf = value != null ? value.Trim().PadLeft(CPF_SIZE, '0') : value;
+            }
+        }
         public string Cns { get; set; }
-        public string Cnpj { get; set; }
+        public string Cnpj  {
+            get
+            {
+                return _cnpj;
+            }
+            set
+            {
+                _cnpj = value != null ? value.Trim().PadLeft(CNPJ_SIZE, '0') : value;
+            }
+        }
         public string Occupation { get; set; }
         public string Bond { get; set; }
         public string PriorityGroup { get; set; }
@@ -151,7 +177,7 @@ namespace iPassport.Domain.Dtos
             get => Result.ToUpper() == Constants.CONST_NENHUM_VALUE ? null : Result.ToUpper() == Constants.CONST_POSITIVO_VALUE;
         }
         public Guid UserId { get; set; }
-        
+
         public string Complement { get; set; }
         public string RG { get; set; }
         public string InternationalDocument { get; set; }
