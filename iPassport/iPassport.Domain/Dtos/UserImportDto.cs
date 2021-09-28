@@ -23,7 +23,7 @@ namespace iPassport.Domain.Dtos
             }
             set
             {
-                _cpf = value != null ? value.Trim().PadLeft(CPF_SIZE, '0') : value;
+                _cpf = !string.IsNullOrEmpty(value) ? value.Trim().PadLeft(CPF_SIZE, '0') : value;
             }
         }
         public string Cns { get; set; }
@@ -34,7 +34,7 @@ namespace iPassport.Domain.Dtos
             }
             set
             {
-                _cnpj = value != null ? value.Trim().PadLeft(CNPJ_SIZE, '0') : value;
+                _cnpj = !string.IsNullOrEmpty(value) ? value.Trim().PadLeft(CNPJ_SIZE, '0') : value;
             }
         }
         public string Occupation { get; set; }
