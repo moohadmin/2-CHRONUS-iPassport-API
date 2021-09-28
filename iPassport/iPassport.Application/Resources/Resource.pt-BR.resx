@@ -493,10 +493,10 @@
     <value>Data do teste PCR</value>
   </data>
   <data name="ColumnNameImportFileVaccinationDateFirstDose" xml:space="preserve">
-    <value>Data - Dose I</value>
+    <value>Data Vacina - Dose I</value>
   </data>
   <data name="ColumnNameImportFileVaccinationDateSecondDose" xml:space="preserve">
-    <value>CNPJ da Unidade Vacinação - Dose II</value>
+    <value>Data Vacina - Dose II</value>
   </data>
   <data name="ColumnNameImportFileVaccinationDateThirdDose" xml:space="preserve">
     <value>Data - Dose III</value>

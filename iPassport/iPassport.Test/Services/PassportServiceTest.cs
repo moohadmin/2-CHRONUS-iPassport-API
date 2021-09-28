@@ -28,6 +28,7 @@ namespace iPassport.Test.Services
         Mock<IPassportRepository> _mockRepository;
         Mock<IPassportDetailsRepository> _mockRepositoryPassportDetails;
         Mock<IPassportUseRepository> _mockUseRepository;
+        Mock<IUserVaccineService> _userVaccineService;
         Mock<IUserRepository> _mockUserRepository;
         Mock<IUserDetailsRepository> _mockUserDetailsRepository;
         IHttpContextAccessor _accessor;
@@ -44,13 +45,18 @@ namespace iPassport.Test.Services
             _mockRepository = new Mock<IPassportRepository>();
             _mockUserDetailsRepository = new Mock<IUserDetailsRepository>();
             _mockUseRepository = new Mock<IPassportUseRepository>();
+            _userVaccineService = new Mock<IUserVaccineService>();
             _mockUserRepository = new Mock<IUserRepository>();
             _accessor = HttpContextAccessorFactory.Create();
             _mockRepositoryPassportDetails = new Mock<IPassportDetailsRepository>();
             _externalStorageService = new Mock<IStorageExternalService>();
             _mockLocalizer = ResourceFactory.GetStringLocalizer();
 
-            _service = new PassportService(_mapper, _mockRepository.Object, _mockUserDetailsRepository.Object, _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object, _mockUserRepository.Object, _externalStorageService.Object, _mockLocalizer);
+            _service = new PassportService(
+                _mapper, _mockRepository.Object, _mockUserDetailsRepository.Object,
+                _mockUseRepository.Object, _accessor, _mockRepositoryPassportDetails.Object,
+                _userVaccineService.Object, _mockUserRepository.Object,
+                _externalStorageService.Object, _mockLocalizer);
 
             _accessDto = new PassportUseCreateDto()
             {

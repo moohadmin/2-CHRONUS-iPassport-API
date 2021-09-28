@@ -10,6 +10,7 @@ using iPassport.Domain.Repositories;
 using iPassport.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,6 +39,22 @@ namespace iPassport.Application.Services
             _accessor = accessor;
             _userDetailsRepository = userDetailsRepository;
             _userRepository = userRepository;
+        }
+
+        public async Task<IList<UserVaccineViewModel>> GetAllUserVaccines(Guid Id)
+        {
+            var user = await _userDetailsRepository.GetByPassportId(Id);
+            var userBirthday = await  _userRepository.GetUserBirthdayDate(user.Id);
+
+            GetByIdPagedFilter pageFilter = new GetByIdPagedFilter(Id, new PageFilter(0, 1000));
+
+            var res = await _repository.GetPagedUserVaccinesByPassportId(pageFilter, userBirthday);
+
+            await GetVaccineDetailsStatus(res.Data);
+
+            var result = _mapper.Map<IList<UserVaccineViewModel>>(res.Data);
+
+            return result;
         }
 
         public async Task<PagedResponseApi> GetCurrentUserVaccines(PageFilter pageFilter)

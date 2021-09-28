@@ -572,14 +572,19 @@ namespace iPassport.Application.Services
             List<CsvMappingResult<UserImportDto>> fileData = ReadCsvData(file);
             ImportedFile importedFile = new(file.FileName, fileData.Count, _accessor.GetCurrentUserId());
 
-            await _importedFileRepository.InsertAsync(importedFile);
-
             importedFile.ImportedFileDetails = GetExtractionErrors(fileData, importedFile.Id);
             ValidateExtractedData(fileData, importedFile);
 
             var validData = fileData.Where(f => f.IsValid).ToList();
             await GetComplementaryDatForUserImport(validData, importedFile);
+
+            // Save imported file and his details
+            await _importedFileRepository.InsertAsync(importedFile);
+
             var citizenUserTypeId = await GetUserTypeIdByIdentifierWhenExists(EUserType.Citizen);
+
+            IList<ImportedFileDetails> importedErrors = new List<ImportedFileDetails>();
+
             foreach (var data in validData.Where(d => d.IsValid))
             {
                 _unitOfWork.BeginTransactionIdentity();
@@ -609,19 +614,19 @@ namespace iPassport.Application.Services
                     _unitOfWork.RollbackPassport();
 
                     if (ex.ToString().Contains("IX_Users_CNS"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cns.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileCns"]), data.RowIndex + 1, importedFile.Id));
+                        importedErrors.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cns.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileCns"]), data.RowIndex + 1, importedFile.Id));
                     else if (ex.ToString().Contains("IX_Users_CPF"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cpf.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileCpf"]), data.RowIndex + 1, importedFile.Id));
+                        importedErrors.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Cpf.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileCpf"]), data.RowIndex + 1, importedFile.Id));
                     else if (ex.ToString().Contains("IX_Users_Email"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Email.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileEmail"]), data.RowIndex + 1, importedFile.Id));
+                        importedErrors.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.Email.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFileEmail"]), data.RowIndex + 1, importedFile.Id));
                     else if (ex.ToString().Contains("IX_Users_PhoneNumber"))
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PhoneNumber.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFilePhoneNumber"]), data.RowIndex + 1, importedFile.Id));
+                        importedErrors.Add(new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + EFileImportColumns.PhoneNumber.ToString()], string.Format(_localizer["DataAlreadyRegistered"], _localizer["ColumnNameImportFilePhoneNumber"]), data.RowIndex + 1, importedFile.Id));
                     else
-                        importedFile.ImportedFileDetails.Add(new ImportedFileDetails("", ex.Message, data.RowIndex + 1, importedFile.Id));
+                        importedErrors.Add(new ImportedFileDetails("", ex.Message, data.RowIndex + 1, importedFile.Id));
                 }
             }
 
-            await _importedFileRepository.InsertDetailsAsync(importedFile.ImportedFileDetails);
+            await _importedFileRepository.InsertDetailsAsync(importedErrors);
 
             return;
         }
@@ -911,7 +916,20 @@ namespace iPassport.Application.Services
 
         private IList<ImportedFileDetails> GetExtractionErrors(List<CsvMappingResult<UserImportDto>> fileData, Guid importedFileId)
         {
-            return fileData.Where(f => !f.IsValid).Select(f => new ImportedFileDetails(_localizer[Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + ((EFileImportColumns)f.Error.ColumnIndex).ToString()], _localizer["InvalidValue"], f.RowIndex + 1, importedFileId)).ToList();
+            return fileData.Where(f => !f.IsValid).Select(f => 
+            {
+
+                string resourceName = Domain.Utils.Constants.COLUMN_NAME_IMPORT_FILE_TO_RESOURCE + ((EFileImportColumns)f.Error.ColumnIndex).ToString();
+
+                var importedFileDetails = new ImportedFileDetails(
+
+                _localizer[resourceName],
+                _localizer["InvalidValue"], 
+                f.RowIndex + 1, 
+                importedFileId);
+
+                return importedFileDetails;
+            }).ToList();
         }
 
         private List<CsvMappingResult<UserImportDto>> ReadCsvData(IFormFile file)
