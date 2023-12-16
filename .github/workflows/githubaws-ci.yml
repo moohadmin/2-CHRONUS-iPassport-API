@@ -1,8 +1,9 @@
 name: GitHub to AWS CI Pipeline
 
 on:
-  release:
-    types: [ published ]
+  push:
+    branches:
+      - main
 
 jobs:
   build:
