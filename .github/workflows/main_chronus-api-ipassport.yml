@@ -24,7 +24,7 @@ jobs:
         run: dotnet build iPassport/iPassport.sln --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish iPassport/iPassport.sln -c Release -o ./publish
+        run: dotnet publish iPassport/iPassport.Api/iPassport.Api.csproj -c Release -o ./publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -60,3 +60,4 @@ jobs:
           app-name: 'chronus-api-ipassport'
           slot-name: 'Production'
           package: ./publish
+
