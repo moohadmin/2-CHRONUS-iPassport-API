@@ -156,4 +156,3 @@ $ docker run -it --rm -p 80:80 \
     --env="NOTIFICATIONS_GET_API_URL=/sms/1/reports" \
     ipassport:local
 ```
- 
